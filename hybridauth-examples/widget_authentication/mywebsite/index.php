@@ -6,7 +6,7 @@
 	$CURRENT_URL = (!empty($_SERVER['HTTPS'])) ? "https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] : "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 	
 	// change the following paths if necessary 
-	$config   = dirname(__FILE__) . '/../../../hybridauth/hybridauth.php';
+	$config   = dirname(__FILE__) . '/../../../hybridauth/config.php';
 	require_once( "../../../hybridauth/Hybrid/Auth.php" );
 
 	try{

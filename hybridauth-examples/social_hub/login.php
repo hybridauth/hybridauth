@@ -15,7 +15,7 @@
 	if( isset( $_GET["provider"] ) && $_GET["provider"] ):
 		try{
 			// change the following paths if necessary 
-			$config = dirname(__FILE__) . '/../../hybridauth/hybridauth.php';
+			$config = dirname(__FILE__) . '/../../hybridauth/config.php';
 			require_once( "../../hybridauth/Hybrid/Auth.php" );
 
 			// create an instance for Hybridauth with the configuration file path as parameter

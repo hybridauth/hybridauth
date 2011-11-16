@@ -1,6 +1,6 @@
 <?php
 	// config and whatnot
-    $config = dirname(__FILE__) . '/../../hybridauth/hybridauth.php';
+    $config = dirname(__FILE__) . '/../../hybridauth/config.php';
     require_once( "../../hybridauth/Hybrid/Auth.php" );
 
 	$user_data = NULL;
