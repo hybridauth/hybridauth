@@ -31,8 +31,7 @@
 return 
 	array( 
 		// set on "base_url" the url that point to HybridAuth Endpoint (where the index.php is found) 
-		"base_url"       => "http://localhost/hybridauth/2.0.8/hybridauth/",
-		// "base_url"       => "http://hauth.sx33.net/20/hybridauth/",
+		"base_url"       => "http://localhost/hybridauth/2.0.8/hybridauth/", 
  
 		"providers"      => array (
 			// openid
@@ -53,38 +52,36 @@ return
 			// facebook
 			"Facebook" 			=> array ( // 'id' is your facebook application id
 									"enabled" 	=> true,
-									"keys"	 	=> array ( "id" => "185915804256", "secret" => "e23fb1aae9fa44b27113284a7c6a49d7" ) 
+									"keys"	 	=> array ( "id" => "", "secret" => "" ) 
 								),
 
 			// twitter 
-			"Twitter"   	    => 	array ( 
+			"Twitter"   	    => 	array ( // 'key' is your twitter application consumer key 
 									"enabled" 	=> true,
-									"keys"	 	=> array ( "key" => "3Xq2hqLhP6lTU2Qh0RUeA", "secret" => "ugsQgG9d5Mh1IIZygtrpRcmwNSiuyT7giVdDqHLA" ) 
-									// "keys"	 	=> array ( "key" => "tRGbOY4RlTRSJXDgifjRkg", "secret" => "zWCgOlgcjIIPtJgJoloJcWxovku7IyWhDe69pDjJAM" ) 
-									// "keys"	 	=> array ( "key" => "M3BMFHMxDQmfwNdvYrpQ", "secret" => "JkrVeiExyjIcL5xdysL6pbqI1CqwrRAHq9h7WJwp0" ) 
+									"keys"	 	=> array ( "key" => "", "secret" => "" ) 
 								),
 
 			// myspace
-			"MySpace" 	        => 	array ( // 'key' is your twitter application consumer key
+			"MySpace" 	        => 	array (
 									"enabled" 	=> true,
-									"keys"	 	=> array ( "key" => "c85b177d77d84c57a7f7d83d65db8015", "secret" => "e1c47b515c31436ab1752ba58a02a0fb7d581a531667441c99c299addcb90e25" )
+									"keys"	 	=> array ( "key" => "", "secret" => "" )
 								),
 
 			// windows live
 			"Live"  			=> array ( 
 									"enabled" 	=> true,
-									"keys"	 	=> array ( "id" => "000000004005E70C", "secret" => "XMcnx1G1GvKLZEIPjXxulSKakpn8pgzj" ) 
+									"keys"	 	=> array ( "id" => "", "secret" => "" ) 
 								),
 
 			// linkedin
 			"LinkedIn"          => 	array ( 
 									"enabled" 	=> true,
-									"keys"	 	=> array ( "key" => "QC_e8WQKkEuQ4G8BK3Cpuu3sOZwynbfbdGD8PBh7uh6qEUN-aslbDyOR8he9GAyJ", "secret" => "Yl5ZluTn2jw2qwhtsdGmRaprGzFzyIAnse8EpWH0fU_2e7bPj05idxum8mRZPEzI" )
+									"keys"	 	=> array ( "key" => "", "secret" => "" )
 								),
 		),
 
 		// if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
-		"debug_mode"            => false ,
+		"debug_mode"            => false,
 		
-		"debug_file"            => "C:\\xampp\\htdocs\\ha\\130\\temp\\log.log", 
+		"debug_file"            => "", 
 	);
