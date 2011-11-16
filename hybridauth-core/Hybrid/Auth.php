@@ -15,7 +15,7 @@
 
 class Hybrid_Auth 
 {
-	public static $version = "2.0.7";
+	public static $version = "2.0.8";
 
 	public static $config  = ARRAY();
 
@@ -130,7 +130,7 @@ class Hybrid_Auth
 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: no error found. initialization succeed." );
 		
-		// Eo initialize 
+		// Endof initialize 
 	}
 
 	// --------------------------------------------------------------------

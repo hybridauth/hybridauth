@@ -42,10 +42,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	*/
 	function loginBegin()
 	{
-		// if we have extra perm
+		// override requested scope
 		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) )
 		{
-			$this->scope = $this->scope . ", ". $this->config["scope"];
+			$this->scope = $this->config["scope"];
 		}
 
 		// get the login url 
