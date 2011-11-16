@@ -17,13 +17,13 @@ require_once Hybrid_Auth::$config["path_providers"] . "/OpenID.php";
 class Hybrid_Providers_Google extends Hybrid_Providers_OpenID
 {
 	var $googleIdentifiers = Array(
-								"Users" => "https://www.google.com/accounts/o8/id", 
-								"Apps" 	=> "https://www.google.com/accounts/o8/site-xrds?hd={hosted_domain_name}"
-							);
+		"Users" => "https://www.google.com/accounts/o8/id", 
+		"Apps" 	=> "https://www.google.com/accounts/o8/site-xrds?hd={hosted_domain_name}"
+	);
 	var $openidIdentifier  = NULL;
 	var $hostedDomain      = NULL; // hosted_domain_name for Google "Apps" (hosted) accounts 
 
-   /**
+   	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize()
@@ -36,7 +36,7 @@ class Hybrid_Providers_Google extends Hybrid_Providers_OpenID
 		parent::initialize();
 	}
 
-   /**
+   	/**
 	* begin login step
 	* 
 	* google_service must be "User" for Google user accounts service or "Apps" for Google hosted Apps

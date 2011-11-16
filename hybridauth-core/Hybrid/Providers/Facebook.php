@@ -184,7 +184,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			$response = $this->api->api( "/me/feed", "post", $parameters );
 		}
 		catch( FacebookApiException $e ){
-			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: $e" );
+			throw new Exception( "Update user status failed! {$this->providerId} returned an error: $e" );
 		}
  	}
 
@@ -204,7 +204,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			}
 		}
 		catch( FacebookApiException $e ){
-			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: $e" );
+			throw new Exception( "User activity stream request failed! {$this->providerId} returned an error: $e" );
 		} 
 
 		if( ! $response || ! count(  $response['data'] ) ){

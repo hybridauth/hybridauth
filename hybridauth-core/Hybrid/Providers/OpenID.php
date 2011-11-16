@@ -31,7 +31,7 @@ class Hybrid_Providers_OpenID extends Hybrid_Provider_Model
 		$this->api = new LightOpenID( parse_url( Hybrid_Auth::$config["base_url"], PHP_URL_HOST) ); 
 	}
  
-   /**
+   	/**
 	* begin login step 
 	*/
 	function loginBegin( )
@@ -39,8 +39,8 @@ class Hybrid_Providers_OpenID extends Hybrid_Provider_Model
 		$this->api->identity  = $this->openidIdentifier;
 		$this->api->returnUrl = $this->endpoint;
 		$this->api->required  = ARRAY( 
-									'namePerson/first'		 ,
-									'namePerson/last'		 ,
+									'namePerson/first'	 ,
+									'namePerson/last'	 ,
 									'namePerson/friendly'    ,
 									'namePerson'             ,
 
@@ -65,7 +65,7 @@ class Hybrid_Providers_OpenID extends Hybrid_Provider_Model
 		Hybrid_Auth::redirect( $this->api->authUrl() );
 	}
 	
-   /**
+   	/**
 	* finish login step 
 	*/
 	function loginFinish( )
@@ -136,7 +136,7 @@ class Hybrid_Providers_OpenID extends Hybrid_Provider_Model
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user", $this->user );
 	}
 
-   /**
+   	/**
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
