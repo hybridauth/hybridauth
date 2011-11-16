@@ -292,7 +292,7 @@ class Hybrid_Auth
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Auth::logoutAllProviders()" );
 
-		$idps = $hybridauth::getConnectedProviders();
+		$idps = Hybrid_Auth::getConnectedProviders();
 
 		foreach( $idps as $idp ){
 			$adapter = Hybrid_Auth::getAdapter( $idp );
