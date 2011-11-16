@@ -232,7 +232,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model
 			$ua = new Hybrid_User_Activity();
 
 			$ua->id                 = @ $item->id;
-			$ua->date               = @ $item->created_at;
+			$ua->date               = @ strtotime( $item->created_at );
 			$ua->text               = @ $item->text;
 
 			$ua->user->identifier   = @ $item->user->id;

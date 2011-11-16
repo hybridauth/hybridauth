@@ -214,7 +214,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model
 				$ua = new Hybrid_User_Activity();
 
 				$ua->id                 = @ $item->statusId;
-				$ua->date               = NULL;
+				$ua->date               = NULL; // to find out!!
 				$ua->text               = @ $item->status;
 
 				$ua->user->identifier   = @ $item->user->userId;

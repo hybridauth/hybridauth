@@ -221,7 +221,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			$ua = new Hybrid_User_Activity();
 
 			$ua->id                 = @ $item["id"];
-			$ua->date               = @ $item["created_time"];
+			$ua->date               = @ strtotime( $item["created_time"] );
 
 			if( $item["type"] == "video" ){
 				$ua->text           = @ $item["name"] . " " . $item["link"];
