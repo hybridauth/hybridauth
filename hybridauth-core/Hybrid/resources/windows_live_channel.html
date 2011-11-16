@@ -1,0 +1,37 @@
+<html>
+<head>
+    <meta name="ROBOTS" content="NONE" />
+    <script type="text/javascript">
+    function parseIsLiveUserResponse(e) {
+        var b = "isLiveUser";
+        if (!e) return false;
+        for (var d = e.substring(1).split("&"), a = [], c = 0; c < d.length; c++) {
+            parm = d[c].split("=");
+            a[unescape(parm[0])] = unescape(parm[1])
+        }
+        if (a[b] !== undefined && a[b].length != 0 && window.parent && window.parent.parent && window.parent.parent.Microsoft !== undefined) {
+            var f = a[b] == "true";
+            window.parent.parent.Microsoft.Live.App.get_auth().set_isLiveUser(f);
+            return true
+        }
+        return false
+    }
+    function onLoad() {
+        try {
+            var c = window.location.hash.substr(1),
+                d = window.location.search;
+            if (window.location.replace == null) window.location.replace = window.location.assign;
+            window.location.replace("about:blank");
+            if (parseIsLiveUserResponse(d)) return;
+            var b = c.split("/")[0],
+                a = null;
+            if (b && b != ".parent") a = window.parent.frames[b];
+            else a = window.parent.parent;
+            a.Microsoft && a.Microsoft.Live.Channels.Mux._recv_chunk(c)
+        } catch (e) {}
+    }
+    < /script>
+</head>
+<body onload="onLoad();">
+</body>
+</html>

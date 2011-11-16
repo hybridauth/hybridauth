@@ -1,0 +1,30 @@
+BODY {
+	margin: 10px;
+	padding: 0;
+}
+H1 {
+	margin-bottom: 2px;
+	font-family: Garamond, "Times New Roman", Times, Serif;
+}
+FIELDSET {
+	border: 1px solid #ccc;
+	padding: 1em;
+	margin: 0;
+}
+LEGEND {
+	color: #666666;
+}
+INPUT[type=text] {
+	display: block;
+	font-family: Arial, verdana;
+	padding: 7px;
+	border: 1px solid #999;
+	margin: 10px;
+}
+PRE {
+	background:#EFEFEF none repeat scroll 0 0;
+	border-left:4px solid #CCCCCC;
+	display:block;
+	padding:15px;
+	text-align:left;
+}
