@@ -26,18 +26,19 @@ HybridAuth can be used for many purposes, such as:
 - enable users to sign-in/sign-up using popular social services,
 - allow users to share their comments, reviews and other activities from
   your site to their friends via social networks,
-- build social applications and tools to be integrated on your blog, web
+- build social applications and tools to be integrated on a blog, web
   site, web applications, ERP or CRM, etc.
 
 ## HybridAuth Repository
 
-HybridAuth is made up of several projects:
+HybridAuth repository is made up of several projects:
 
 - **HybridAuth Core library** which include OpenID, Facebook, Twitter, LinkedIn,
   MySpace, Google, Yahoo and Windows Live.
 - **The additional providers project** which contains many others services
-  which you may want to use.
-- **Examples and demos**, which contains three working examples for you to test
+  which you may want to use,
+- **Examples and demos**, which contains three working examples for you to test,
+- **HybridAuth auto installer**, which can make life a bit easier.
 
 ## Getting Started
 
