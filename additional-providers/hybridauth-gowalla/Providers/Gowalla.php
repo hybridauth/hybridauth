@@ -32,13 +32,14 @@ class Hybrid_Providers_Gowalla extends Hybrid_Provider_Model
 
 		// If we have an access token, we try to init the gowalla api with it
 		if ( $this->token( "access_token" ) ){
-            // inti gowalla api with the old access_token
+            // inti gowalla api with the access_token we have
             $this->api = new Gowalla( $this->config["keys"]["key"], $this->config["keys"]["secret"], $this->redirect_uri, $this->token( "access_token" ) );
 
-            // check if the token has expired,
-            if( strtotime( $this->token( "expires_in" ) ) <= strtotime("now") ){
-                // call Gowalla::refreshToken() to get new tokens
-                $response = $this->api->refreshToken( $this->token( "access_token" ), $this->token( "refresh_token" ) )
+            // check if the access_token has expired, 
+            if( $this->token( "expires_at" ) <= time() ){ 
+                
+                // if token has expired, then call Gowalla::refreshToken() to get new tokens
+                $response = $this->api->refreshToken( $this->token( "access_token" ), $this->token( "refresh_token" ) );
 
                 // check if gowalla response is valid 
                 if ( ! isset( $response["access_token"] ) ){
@@ -51,7 +52,8 @@ class Hybrid_Providers_Gowalla extends Hybrid_Provider_Model
                 // store the new access token, refresh token and the access token expire time
                 $this->token( "access_token"  , $response['access_token']  );
                 $this->token( "refresh_token" , $response['refresh_token'] );
-                $this->token( "expires_in"    , $response['expires_in']    );
+                $this->token( "expires_in"    , $response['expires_in']    );           // OPTIONAL. The duration in seconds of the access token lifetime
+                $this->token( "expires_at"    , strtotime( $response['expires_at'] ) ); // if not provided by the social api, then it should be calculated: expires_at = now + expires_in
 
                 // inti gowalla api with the new access_token
                 $this->api = new Gowalla( $this->config["keys"]["key"], $this->config["keys"]["secret"], $this->redirect_uri, $this->token( "access_token" ) );
@@ -90,8 +92,9 @@ class Hybrid_Providers_Gowalla extends Hybrid_Provider_Model
         // set access token, refresh token and access token expire time
         $this->token( "scope"         , $response['scope']         );
         $this->token( "access_token"  , $response['access_token']  );
-        $this->token( "refresh_token" , $response['refresh_token'] );
-        $this->token( "expires_in"    , $response['expires_in']    );
+        $this->token( "refresh_token" , $response['refresh_token'] ); 
+        $this->token( "expires_in"    , $response['expires_in']    );           // OPTIONAL. The duration in seconds of the access token lifetime
+        $this->token( "expires_at"    , strtotime( $response['expires_at'] ) ); // if not provided by the social api, then it should be calculated: expires_at = now + expires_in
 
 		// set user as logged in
 		$this->setUserConnected();

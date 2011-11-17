@@ -79,7 +79,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		}
  
         // store the scope
-        $this->token( "scope", $this->config["scope"] );
+        $this->token( "scope", $this->scope );
 	}
 
    /**
