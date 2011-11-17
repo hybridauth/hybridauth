@@ -30,53 +30,53 @@
 
 return 
 	array( 
-		// set on "base_url" the url that point to HybridAuth Endpoint (where the index.php is found)
-		"base_url"       => "http://localhost/hybridauth-2.0.8/hybridauth/", 
+		// set on "base_url" the url that point to HybridAuth Endpoint (where the index.php is found) 
+		"base_url"       => "#GLOBAL_HYBRID_AUTH_URL_BASE#", 
  
 		"providers"      => array (
 			// openid
 			"OpenID" => array ( // no keys required for OpenID based providers
-					"enabled" => true
+					"enabled" => #OPENID_ADAPTER_STATUS#
 			),
 
 			// google
-			"Google" => array (
-					"enabled" => true 
+			"Google" => array ( 
+					"enabled" => #GOOGLE_ADAPTER_STATUS# 
 			),
 
 			// yahoo
-			"Yahoo"  => array (
-					"enabled" => true 
+			"Yahoo"  => array ( 
+					"enabled" => #YAHOO_ADAPTER_STATUS# 
 			),
 
 			// facebook
-			"Facebook" => array (
-					"enabled" => true,
-					"keys"    => array ( "id" => "", "secret" => "" ) 
+			"Facebook" => array ( 
+					"enabled" => #FACEBOOK_ADAPTER_STATUS#,
+					"keys"    => array ( "id" => "#FACEBOOK_APPLICATION_APP_ID#", "secret" => "#FACEBOOK_APPLICATION_SECRET#" ) 
 			),
 
 			// twitter 
 			"Twitter" => array ( 
-					"enabled" => true,
-					"keys"    => array ( "key" => "", "secret" => "" ) 
+					"enabled" => #TWITTER_ADAPTER_STATUS#,
+					"keys"    => array ( "key" => "#TWITTER_APPLICATION_KEY#", "secret" => "#TWITTER_APPLICATION_SECRET#" ) 
 			),
 
 			// myspace
 			"MySpace" => array ( 
-					"enabled" => true,
-					"keys"    => array ( "key" => "", "secret" => "" ) 
+					"enabled" => #MYSPACE_ADAPTER_STATUS#,
+					"keys"    => array ( "key" => "#MYSPACE_APPLICATION_KEY#", "secret" => "#MYSPACE_APPLICATION_SECRET#" ) 
 			),
 
 			// windows live
 			"Live"    => array ( 
-					"enabled" => true,
-					"keys"    => array ( "id" => "", "secret" => "" ) 
+					"enabled" => #LIVE_ADAPTER_STATUS#,
+					"keys"    => array ( "id" => "#LIVE_APPLICATION_KEY#", "secret" => "#LIVE_APPLICATION_SECRET#" ) 
 			),
 
 			// linkedin
 			"LinkedIn" => array ( 
-					"enabled" => true,
-					"keys"    => array ( "key" => "", "secret" => "" ) 
+					"enabled" => #LINKEDIN_ADAPTER_STATUS#,
+					"keys"    => array ( "key" => "#LINKEDIN_APPLICATION_KEY#", "secret" => "#LINKEDIN_APPLICATION_SECRET#" ) 
 			),
 		),
 
