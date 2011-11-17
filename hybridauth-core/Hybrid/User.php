@@ -16,34 +16,34 @@
  */
 class Hybrid_User 
 {
-   /**
+   	/**
 	* The ID (name) of the connected provider
 	*/
-	var $providerId   = NULL;
+	public $providerId   = NULL;
 
-   /**
+   	/**
 	* timestamp connection to the provider
 	*/
-	var $timestamp    = NULL; 
+	public $timestamp    = NULL; 
 
-   /**
+   	/**
 	* user profile, containts the list of fields available in the normalized user profile structure used by HybridAuth.
 	*/
-	var $profile      = NULL;
+	public $profile      = NULL;
 
-   /**
+  	/**
 	* user contacts list, for future use
 	*/
 	# for future use, HybridAuth dont provide users contats on this version
 	#     var $contacts     = NULL;
 
-   /**
+   	/**
 	* inisialize the user object,
 	*/
 	function __construct()
 	{
-		$this->timestamp    = time(); 
+		$this->timestamp = time(); 
 
-		$this->profile      = new Hybrid_User_Profile(); 
+		$this->profile   = new Hybrid_User_Profile(); 
 	}
 }

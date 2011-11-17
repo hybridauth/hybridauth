@@ -14,37 +14,37 @@
 */
 abstract class Hybrid_Provider_Model
 {
-   /**
+   	/**
 	* the IDp api client (optional)
 	*/
-	var $api              = NULL; 
+	public $api              = NULL; 
 
 	/**
 	* Hybrid_User obj, represents the current user
 	*/
-	var $user             = NULL;
+	public $user             = NULL;
 
-   /**
+   	/**
 	* IDp adapter config on hybridauth.php
 	*/
-	var $config           = NULL;
+	public $config           = NULL;
 
-   /**
+   	/**
 	* IDp adapter requireds params
 	*/
-	var $params           = NULL;
+	public $params           = NULL;
 
-   /**
+   	/**
 	* IDp ID (or unique name)
 	*/
-	var $providerId       = NULL;
+	public $providerId       = NULL;
 
-   /**
+   	/**
 	* Hybridauth Endpoint URL
 	*/
-	var $endpoint        = NULL; 
+	public $endpoint        = NULL; 
 
-   /**
+   	/**
 	* common IDp wrappers constructor
 	*/
 	function __construct( $providerId, $config, $params = NULL )
@@ -76,7 +76,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* IDp wrappers initializer
 	*
 	* The main job of wrappers initializer is to performs (depend on the IDp api client it self): 
@@ -89,21 +89,21 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* begin login 
 	*/
 	abstract protected function loginBegin();
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* finish login
 	*/
 	abstract protected function loginFinish();
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* generic logout, just erase current provider adapter stored data to let Hybrid_Auth all forget about it
 	*/
 	function logout()
@@ -117,14 +117,14 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* grab the user profile from the IDp api client
 	*/
 	abstract protected function getUserProfile();
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* load the current logged in user contacts list from the IDp api client  
 	*/
 	function getUserContacts() 
@@ -136,7 +136,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* return the user activity stream  
 	*/
 	function getUserActivity( $stream ) 
@@ -148,7 +148,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* return the user activity stream  
 	*/ 
 	function setUserStatus( $status )
@@ -160,7 +160,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* return true if the user is connected to the current provider
 	*/ 
 	public function isUserConnected()
@@ -171,7 +171,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* set user to connected 
 	*/ 
 	public function setUserConnected()
@@ -183,7 +183,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* set user to unconnected 
 	*/ 
 	public function setUserUnconnected()
@@ -195,7 +195,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* get or set a token 
 	*/ 
 	public function token( $token, $value = NULL )
@@ -210,7 +210,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* clear all existen tokens for this provider
 	*/ 
 	public function clearTokens()

@@ -17,7 +17,7 @@ class Hybrid_Auth
 {
 	public static $version = "2.0.8";
 
-	public static $config  = ARRAY();
+	public static $config  = array();
 
 	public static $store   = NULL;
 
@@ -32,11 +32,11 @@ class Hybrid_Auth
 	*/
 	function __construct( $config )
 	{
-		if ( ! session_id() ):
-			if( ! session_start() ):
+		if ( ! session_id() ){
+			if( ! session_start() ){
 				throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
-			endif;
-		endif;
+			}
+		}
 
 		Hybrid_Auth::initialize( $config ); 
 	}
@@ -48,9 +48,9 @@ class Hybrid_Auth
 	*/
 	public static function initialize( $config )
 	{
-		if ( ! session_id() ): 
+		if ( ! session_id() ){
 			throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script.", 1 );
-		endif;
+		}
 
 		if( ! is_array( $config ) && ! file_exists( $config ) ){
 			throw new Exception( "Hybriauth config does not exist on the given path.", 1 );

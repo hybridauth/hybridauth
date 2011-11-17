@@ -10,7 +10,7 @@
 			<legend>Providers you are logged with</legend>
 			<?php
 				foreach( $connected_adapters_list as $adapter_id ){
-					echo '&nbsp;&nbsp;<a href="profile.php?provider=' . $adapter_id . '">Show your ' . $adapter_id . ' profile</a><br />'; 
+					echo '&nbsp;&nbsp;<a href="profile.php?provider=' . $adapter_id . '">Switch to <b>' . $adapter_id . '</b>  account</a><br />'; 
 				}
 			?>
 		</fieldset> 

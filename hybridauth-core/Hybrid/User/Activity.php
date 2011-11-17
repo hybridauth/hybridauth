@@ -14,25 +14,25 @@
  */
 class Hybrid_User_Activity
 {
-   /**
-	* activity/event id on the provider side
+   	/**
+	* activity/event id on the provider side, usually given as integer
 	*/	
-	var $id 	= NULL;
+	public $id 	= NULL;
 
-   /**
-	* activity/event date of creation
+  	/**
+	* activity date of creation
 	*/	
-	var $date 	= NULL;
+	public $date 	= NULL;
 
-   /**
-	* activity/event content as string
+   	/**
+	* activity content as string
 	*/	
-	var $text 	= NULL;
+	public $text 	= NULL;
 
-   /**
-	* user who created the activity/event
+   	/**
+	* user who created the activity 
 	*/	
-	var $user 	= NULL;
+	public $user 	= NULL;
 
 	public function __construct()
 	{

@@ -17,108 +17,108 @@
  */
 class Hybrid_User_Profile
 {
-   /**
+   	/**
 	* The Unique user's ID on the connected provider
 	*/	
-	var $identifier 	= NULL;
+	public $identifier 	= NULL;
 
-   /**
+   	/**
 	* User website, blog, web page, 
 	*/	
-	var $webSiteURL 	= NULL;
+	public $webSiteURL 	= NULL;
 
-   /**
+   	/**
 	* URL link to profile page on the IDp web site 
 	*/
-	var $profileURL 	= NULL;
+	public $profileURL 	= NULL;
 
-   /**
+   	/**
 	* URL link to user photo or avatar 
 	*/	
-	var $photoURL 		= NULL;
+	public $photoURL 		= NULL;
 
-   /**
+   	/**
 	* User dispalyName provided by the IDp or a concatenation of first and last name. 
 	*/
-	var $displayName 	= NULL;
+	public $displayName 	= NULL;
 
-   /**
+   	/**
 	* A short about_me 
 	*/
-	var $description 	= NULL;
+	public $description 	= NULL;
 
-   /**
+   	/**
 	* User's first name 
 	*/
-	var $firstName   	= NULL;
+	public $firstName   	= NULL;
 
-   /**
+   	/**
 	* User's last name 
 	*/
-	var $lastName 		= NULL;
+	public $lastName 		= NULL;
 
-   /**
+   	/**
 	* male or female 
 	*/
-	var $gender 		= NULL;
+	public $gender 		= NULL;
 
-   /**
+   	/**
 	* language
 	*/
-	var $language 		= NULL;
+	public $language 		= NULL;
 
-   /**
+   	/**
 	* User age, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	var $age 			= NULL;
+	public $age 			= NULL;
 
-   /**
+   	/**
 	* User birth Day, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	var $birthDay 		= NULL;
+	public $birthDay 		= NULL;
 
-   /**
+   	/**
 	* User birth Month, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	var $birthMonth 	= NULL;
+	public $birthMonth 	= NULL;
 
-   /**
+   	/**
 	* User birth Year, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	var $birthYear 		= NULL;
+	public $birthYear 		= NULL;
 
-   /**
+   	/**
 	* User email. Not all of IDp garant access to the user email
 	*/
-	var $email 			= NULL;
+	public $email 			= NULL;
 
-   /**
+   	/**
 	*  phone number
 	*/
-	var $phone 			= NULL;
+	public $phone 			= NULL;
 
-   /**
+   	/**
 	* complete user address
 	*/
-	var $address 		= NULL;
+	public $address 		= NULL;
 
-   /**
+   	/**
 	* user country
 	*/
-	var $country 		= NULL;
+	public $country 		= NULL;
 
-   /**
+   	/**
 	* region
 	*/
-	var $region			= NULL;
+	public $region			= NULL;
 
-   /**
+   	/**
 	*  city
 	*/
-	var $city 			= NULL;
+	public $city 			= NULL;
 
-   /**
+   	/**
 	* Postal code or zipcode. 
 	*/
-	var $zip 			= NULL;
+	public $zip 			= NULL;
 }

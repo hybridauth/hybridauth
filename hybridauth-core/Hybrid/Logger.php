@@ -16,15 +16,15 @@ class Hybrid_Logger
 {
 	function __construct()
 	{
-		if ( Hybrid_Auth::$config["debug_mode"] ):
-			if ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) ):
+		if ( Hybrid_Auth::$config["debug_mode"] ){
+			if ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) ){
 				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' do not exist.", 1 );
-			endif; 
+			} 
 
-			if ( ! is_writable( Hybrid_Auth::$config["debug_file"] ) ):
+			if ( ! is_writable( Hybrid_Auth::$config["debug_file"] ) ){
 				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writable file.", 1 );
-			endif; 
-		endif; 
+			}
+		} 
 	}
 
 	// --------------------------------------------------------------------
@@ -34,7 +34,7 @@ class Hybrid_Logger
      *
      * @param $message The message to log.
      */
-    public static function debug($message, $object = NULL)
+    public static function debug( $message, $object = NULL )
 	{
 		if( Hybrid_Auth::$config["debug_mode"] )
 		{

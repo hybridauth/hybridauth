@@ -14,30 +14,30 @@
  */
 class Hybrid_Provider_Adapter
 {
-   /**
+   	/**
 	* IDp ID (or unique name)
 	*/
-	var $id       = NULL ;
+	public $id       = NULL ;
 
-   /**
+   	/**
 	* IDp adapter config on hybrid.config.php
 	*/
-	var $config   = NULL ;
+	public $config   = NULL ;
 
-   /**
+   	/**
 	* IDp adapter requireds params
 	*/
-	var $params   = NULL ; 
+	public $params   = NULL ; 
 
-   /**
+   	/**
 	* IDp adapter path
 	*/
-	var $wrapper  = NULL ;
+	public $wrapper  = NULL ;
 
-   /**
+   	/**
 	* IDp adapter instance
 	*/
-	var $adapter  = NULL ;
+	public $adapter  = NULL ;
 
     /**
      * create a new adapter switch IDp name or ID
@@ -140,7 +140,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* let hybridauth forget all about the user
 	*/
 	function logout()
@@ -150,7 +150,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* return true if the user is connected to the current provider
 	*/ 
 	public function isUserConnected()
@@ -161,7 +161,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* handle :
 	*   getUserProfile()
 	*   getUserContacts()
@@ -192,7 +192,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* If the user is connected, then return the access_token and access_token_secret
 	* if the provider api use oauth
 	*/
@@ -206,14 +206,17 @@ class Hybrid_Provider_Adapter
 
 		return
 				ARRAY(
+					"scope"               => $this->adapter->token( "scope" ),
 					"access_token"        => $this->adapter->token( "access_token" ),
 					"access_token_secret" => $this->adapter->token( "access_token_secret" ),
+					"refresh_token"       => $this->adapter->token( "refresh_token" ),
+					"expires_in"          => $this->adapter->token( "expires_in" ),
 				);
 	}
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* Naive getter of the current connected IDp API client
 	*/
 	function api()
@@ -229,7 +232,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* redirect the user to hauth_return_to (the callback url)
 	*/
 	function returnToCallbackUrl()

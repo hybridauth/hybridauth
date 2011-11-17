@@ -15,9 +15,9 @@
 class Hybrid_Storage {
 	function __construct()
 	{
-		if( ! session_id() ):
+		if( ! session_id() ){
 			throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script", 1 );
-		endif;
+		}
 	}
 
 	// --------------------------------------------------------------------

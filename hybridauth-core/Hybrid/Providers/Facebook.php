@@ -14,8 +14,8 @@
  */
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 {
-	// default permissions
-	var $scope = "email, user_about_me, user_birthday, user_hometown, user_website, read_stream, publish_stream, read_friendlists";
+	// default permissions, and alot of them. You can change them from the configuration by setting the scope to what you want/need
+	var $scope = "email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
 
 	/**
 	* IDp wrappers initializer 
@@ -77,6 +77,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		if( isset( $_SESSION["fb_" . $this->api->getAppId() . "_access_token" ] ) ){
 			$this->token( "access_token", $_SESSION["fb_" . $this->api->getAppId() . "_access_token" ] );
 		}
+ 
+        // store the scope
+        $this->token( "scope", $this->config["scope"] );
 	}
 
    /**

@@ -10,7 +10,7 @@
 */
 
 // ------------------------------------------------------------------------
-//	HybridAuth Config
+//	HybridAuth Config file
 // ------------------------------------------------------------------------
 
 /**
@@ -31,57 +31,58 @@
 return 
 	array( 
 		// set on "base_url" the url that point to HybridAuth Endpoint (where the index.php is found) 
-		"base_url"       => "http://localhost/hybridauth/2.0.8/hybridauth/", 
+		"base_url"       => "http://localhost/hybridauth-2.0.8/hybridauth/", 
  
 		"providers"      => array (
 			// openid
-			"OpenID" 		=> 	array ( 
-									"enabled" 	=> true // no keys required for OpenID based providers
-								),
+			"OpenID" => array ( // no keys required for OpenID based providers
+					"enabled" => true
+			            ),
 
 			// google
-			"Google" 		=> 	array ( 
-									"enabled" 	=> true 
-								),
+			"Google" => array ( 
+					"enabled" => true 
+				    ),
 
 			// yahoo
-			"Yahoo"             => 	array ( 
-									"enabled" 	=> true 
-								),
+			"Yahoo"  => array ( 
+					"enabled" => true 
+				    ),
  
 			// facebook
-			"Facebook" 			=> array ( // 'id' is your facebook application id
-									"enabled" 	=> true,
-									"keys"	 	=> array ( "id" => "", "secret" => "" ) 
-								),
+			"Facebook" => array ( // 'id' is your facebook application id
+					"enabled" => true,
+					"keys"    => array ( "id" => "", "secret" => "" ) 
+				      ),
 
 			// twitter 
-			"Twitter"   	    => 	array ( // 'key' is your twitter application consumer key 
-									"enabled" 	=> true,
-									"keys"	 	=> array ( "key" => "", "secret" => "" ) 
-								),
+			"Twitter" => array ( // 'key' is your twitter application consumer key 
+					"enabled" => true,
+					"keys"    => array ( "key" => "", "secret" => "" ) 
+			             ),
 
 			// myspace
-			"MySpace" 	        => 	array (
-									"enabled" 	=> true,
-									"keys"	 	=> array ( "key" => "", "secret" => "" )
-								),
+			"MySpace" => array ( 
+					"enabled" => true,
+					"keys"    => array ( "key" => "", "secret" => "" ) 
+			             ),
 
 			// windows live
-			"Live"  			=> array ( 
-									"enabled" 	=> true,
-									"keys"	 	=> array ( "id" => "", "secret" => "" ) 
-								),
+			"Live"    => array ( 
+					"enabled" => true,
+					"keys"    => array ( "id" => "", "secret" => "" ) 
+				     ),
 
 			// linkedin
-			"LinkedIn"          => 	array ( 
-									"enabled" 	=> true,
-									"keys"	 	=> array ( "key" => "", "secret" => "" )
-								),
+			"LinkedIn" => array ( 
+					"enabled" => true,
+					"keys"    => array ( "key" => "", "secret" => "" ) 
+			             ),
 		),
 
 		// if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
 		"debug_mode"            => false,
-		
+
 		"debug_file"            => "", 
 	);
+

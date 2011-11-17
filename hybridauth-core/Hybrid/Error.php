@@ -14,7 +14,7 @@
  */
 class Hybrid_Error
 {
-   /**
+   	/**
 	* store error in HybridAuth cache system
 	*/
 	public static function setError( $message, $code = NULL, $trace = NULL, $previous = NULL )
@@ -28,7 +28,7 @@ class Hybrid_Error
 		Hybrid_Auth::storage()->set( "hauth_session.error.previous", $previous   );
 	}
 
-   /**
+   	/**
 	* store error in HybridAuth cache system
 	*/
 	public static function clearError()
@@ -44,7 +44,7 @@ class Hybrid_Error
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* Checks to see if there is a an error.
 	*
 	* errors are stored in Hybrid::storage() Hybrid storage system
@@ -60,7 +60,7 @@ class Hybrid_Error
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* a naive error message getter
 	*
 	* @return string very short error message.
@@ -73,7 +73,7 @@ class Hybrid_Error
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* a naive error code getter
 	*
 	* @return int error code defined on Hybrid_Auth.
@@ -86,7 +86,7 @@ class Hybrid_Error
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* a naive error backtrace getter
 	*
 	* @return string detailled error backtrace as string.
@@ -99,7 +99,7 @@ class Hybrid_Error
 
 	// --------------------------------------------------------------------
 
-   /**
+   	/**
 	* a naive error backtrace getter
 	*
 	* @return string detailled error backtrace as string.
