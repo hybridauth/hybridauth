@@ -46,7 +46,7 @@ class Hybrid_Providers_Gowalla extends Hybrid_Provider_Model
                     // set the user as disconnected at this point and throw an exception
                     $this->setUserUnconnected();
 
-                    throw new Exception( "Authentification failed! {$this->providerId} access token has expired and returned an invalid refresh token.", 5 );
+                    throw new Exception( "Authentification failed! Access token has expired and {$this->providerId} has returned an invalid refresh token.", 5 );
                 }
 
                 // store the new access token, refresh token and the access token expire time
