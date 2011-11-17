@@ -71,7 +71,7 @@
 			case 8 : echo "Provider does not support this feature."; break;
 		} 
 
-		// well, in normal manner your should not display these to the end user...
+		// well, basically your should not display this to the end user, just give him a hint and move on..
 		echo "<br /><br /><b>Original error message:</b> " . $e->getMessage();
 
 		echo "<hr /><h3>Trace</h3> <pre>" . $e->getTraceAsString() . "</pre>"; 

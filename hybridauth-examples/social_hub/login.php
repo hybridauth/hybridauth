@@ -51,7 +51,7 @@
 					     break;
 			} 
 
-			// make sure you show these to the end user
+			// well, basically your should not display this to the end user, just give him a hint and move on..
 			$error .= "<br /><br /><b>Original error message:</b> " . $e->getMessage(); 
 			$error .= "<hr /><pre>Trace:<br />" . $e->getTraceAsString() . "</pre>";
 		}
