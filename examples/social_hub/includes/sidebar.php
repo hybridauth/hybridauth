@@ -14,11 +14,6 @@
 				}
 			?>
 		</fieldset> 
-		<fieldset>
-			<legend>Clear hybridauth session</legend>
-			
-			<a href="logout_all.php">Logout all connected providers</a>
-		</fieldset> 
 <?php
 		}
 	}
