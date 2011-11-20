@@ -184,7 +184,7 @@ class Hybrid_Provider_Adapter
 
 		if( count( $arguments ) ){
 			return $this->adapter->$name( $arguments[0] ); 
-		}
+		} 
 		else{	
 			return $this->adapter->$name(); 
 		}
@@ -206,7 +206,6 @@ class Hybrid_Provider_Adapter
 
 		return
 				ARRAY(
-					"scope"               => $this->adapter->token( "scope" )              , // requested permissions
 					"access_token"        => $this->adapter->token( "access_token" )       , // OAuth access token
 					"access_token_secret" => $this->adapter->token( "access_token_secret" ), // OAuth access token secret
 					"refresh_token"       => $this->adapter->token( "refresh_token" )      , // OAuth refresh token

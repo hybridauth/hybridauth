@@ -76,32 +76,11 @@
 ?>
 <br />
 
-<table width="740" border="0" cellpadding="2" cellspacing="2">
-  <tr>
-   <td align="left" valign="top"> 
-		<fieldset>
-        <legend>Sign-in form</legend>
-        <table border="0" cellpadding="2" cellspacing="2">
-          <tr>
-            <td><div align="right"><strong>login</strong></div></td>
-            <td><input type="text" name="textfield" id="textfield" disabled /></td>
-          </tr>
-          <tr>
-            <td><div align="right"><strong>password</strong></div></td>
-            <td><input type="text" name="textfield2" id="textfield2" disabled /></td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td> 
-                <input type="submit" value="Um supposed to be a Submit button, but i do nothing" style="width:350px;height:32px;" disabled />
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-	</td>
+<table width="260" border="0" cellpadding="2" cellspacing="2">
+  <tr> 
     <td align="left" valign="top"> 
 		<fieldset>
-        <legend>Or use one of thoses providers</legend>
+        <legend>Sign-in with one of these providers</legend>
 			&nbsp;&nbsp;<a href="?provider=Google">Sign-in with Google</a><br /> 
 			&nbsp;&nbsp;<a href="?provider=Yahoo">Sign-in with Yahoo</a><br /> 
 			&nbsp;&nbsp;<a href="?provider=Facebook">Sign-in with Facebook</a><br />

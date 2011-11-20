@@ -15,7 +15,7 @@
 
 class Hybrid_Auth 
 {
-	public static $version = "2.0.8";
+	public static $version = "2.0.9";
 
 	public static $config  = array();
 
@@ -36,6 +36,16 @@ class Hybrid_Auth
 			if( ! session_start() ){
 				throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
 			}
+		}
+
+		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
+		if (! function_exists('curl_init')) {
+		  throw new Exception('The Google PHP API Library needs the CURL PHP extension');
+		}
+
+		// PHP JSON extension [http://php.net/manual/en/book.json.php]
+		if (! function_exists('json_decode')) {
+		  throw new Exception('The Google PHP API Library needs the JSON PHP extension');
 		}
 
 		Hybrid_Auth::initialize( $config ); 

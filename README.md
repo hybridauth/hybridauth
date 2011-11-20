@@ -1,4 +1,4 @@
-# HybridAuth 2.0.8
+# HybridAuth 2.0.9
 
 HybridAuth enable developers to easily build social applications and tools 
 to engage websites vistors and customers on a social level by implementing 
@@ -37,8 +37,7 @@ HybridAuth repository is made up of several projects:
   MySpace, Google, Yahoo and Windows Live.
 - **The additional providers project** which contains many others services
   which you may want to use,
-- **Examples and demos**, which contains three working examples for you to test,
-- **HybridAuth auto installer**, which can make life a bit easier.
+- **Examples and demos**, which contains three working examples for you to test, 
 
 ## Getting Started
 
@@ -53,3 +52,10 @@ at [http://hybridauth.sourceforge.net/userguide.html](http://hybridauth.sourcefo
 
 **To get help and support**, join us and participate in the hybriauth discussion group
 at [http://hybridauth.sourceforge.net/support.html](http://hybridauth.sourceforge.net/support.html)
+
+## Quick Start
+
+- CHMOD 777 config.php 
+- Run install.php. 
+- Once configured, delete install.php.
+That's it!

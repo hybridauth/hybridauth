@@ -27,6 +27,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
 		}
 
+ 		// override requested scope
+		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) )
+		{
+			$this->scope = $this->config["scope"];
+		}
+
 		require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/base_facebook.php";
 		require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/facebook.php";
 
@@ -42,12 +48,6 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	*/
 	function loginBegin()
 	{
-		// override requested scope
-		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) )
-		{
-			$this->scope = $this->config["scope"];
-		}
-
 		// get the login url 
 		$url = $this->api->getLoginUrl( array( 'scope' => $this->scope, 'redirect_uri' => $this->endpoint ) );
 
@@ -76,10 +76,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		// try to detect the access token for facebook
 		if( isset( $_SESSION["fb_" . $this->api->getAppId() . "_access_token" ] ) ){
 			$this->token( "access_token", $_SESSION["fb_" . $this->api->getAppId() . "_access_token" ] );
-		}
- 
-        // store the scope
-        $this->token( "scope", $this->scope );
+		} 
 	}
 
    /**

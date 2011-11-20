@@ -70,20 +70,59 @@ ul li label {
 } 
 </style> 
 <?php
-	$HYBRIDAUTH_VERSION             = "2.0.8";
-
+	$HYBRIDAUTH_VERSION             = "2.0.9";
 	$CONFIG_TEMPLATE                = "";
 
-	$GLOBAL_HYBRID_AUTH_URL_BASE    = "http" . ((!empty($_SERVER['HTTPS'])) ? "s" : "") . "://".$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
-	$GLOBAL_HYBRID_AUTH_URL_BASE    = str_ireplace( "index.php", "", $GLOBAL_HYBRID_AUTH_URL_BASE);
-	$GLOBAL_HYBRID_AUTH_URL_BASE    = str_ireplace( "/install/", "/hybridauth/", $GLOBAL_HYBRID_AUTH_URL_BASE);
-	$GLOBAL_HYBRID_AUTH_URL_BASE    = str_ireplace( "/hybridauth-install/", "/hybridauth/", $GLOBAL_HYBRID_AUTH_URL_BASE);
+   /**
+	* Utility function, return the current url 
+	*/
+	function getCurrentUrl() 
+	{
+		if(
+			isset( $_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )
+		|| 	isset( $_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+		){
+			$protocol = 'https://';
+		}
+		else {
+			$protocol = 'http://';
+		}
 
-	$GLOBAL_HYBRID_AUTH_PATH_BASE   = realpath( dirname( __FILE__ ) ) . "/../hybridauth/"; 
+		$url = $protocol . $_SERVER['HTTP_HOST'];
 
+		// use port if non default
+		$url .= 
+			isset( $_SERVER['SERVER_PORT'] ) 
+			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
+			? ':' . $_SERVER['SERVER_PORT'] 
+			: '';
+
+		$url .= $_SERVER['PHP_SELF'];
+
+		// return current url
+		return $url;
+	}
+
+	$GLOBAL_HYBRID_AUTH_URL_BASE    = getCurrentUrl();
+	$GLOBAL_HYBRID_AUTH_URL_BASE    = str_ireplace( "install.php", "", $GLOBAL_HYBRID_AUTH_URL_BASE );
+	$GLOBAL_HYBRID_AUTH_PATH_BASE   = realpath( dirname( __FILE__ ) ) . "/";
 	$CONFIG_FILE_NAME               = $GLOBAL_HYBRID_AUTH_PATH_BASE . "config.php";
 
+	// deault providers
 	$PROVIDERS_CONFIG      = ARRAY(
+								ARRAY( 
+									"label"             => "Facebook",
+									"new_app_link"      => "https://www.facebook.com/developers/apps.php",
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Facebook.html",
+								)
+								,
+								ARRAY( 
+									"label"             => "Google",
+									"callback"          => TRUE,
+									"new_app_link"      => "https://code.google.com/apis/console/",
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html",
+								) 
+								,
 								ARRAY( 
 									"label"             => "Twitter",
 									"callback"          => TRUE,
@@ -92,9 +131,15 @@ ul li label {
 								)
 								,
 								ARRAY( 
-									"label"             => "Facebook",
-									"new_app_link"      => "https://www.facebook.com/developers/apps.php",
-									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Facebook.html",
+									"label"             => "Live",
+									"new_app_link"      => "https://manage.dev.live.com/ApplicationOverview.aspx",
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Live.html",
+								)
+								,
+								ARRAY( 
+									"label"             => "MySpace",
+									"new_app_link"      => "http://www.developer.myspace.com/",
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_MySpace.html",
 								)
 								,
 								ARRAY( 
@@ -105,28 +150,10 @@ ul li label {
 								)
 								,
 								ARRAY( 
-									"label"             => "MySpace",
-									"new_app_link"      => "http://www.developer.myspace.com/",
-									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_MySpace.html",
-								) 
-								,
-								ARRAY( 
-									"label"             => "Live",
-									"new_app_link"      => "https://manage.dev.live.com/ApplicationOverview.aspx",
-									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Live.html",
-								)
-								,
-								ARRAY( 
 									"label"             => "OpenID",
 									"new_app_link"      => NULL,
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_OpenID.html",
 								)
-								,
-								ARRAY( 
-									"label"             => "Google",
-									"new_app_link"      => NULL,
-									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html",
-								) 
 								,
 								ARRAY( 
 									"label"             => "Yahoo",
@@ -136,11 +163,7 @@ ul li label {
 							);
 
 	if( count( $_POST ) ):
-		$CONFIG_TEMPLATE = file_get_contents( "config.php.tpl" );
-
-		if( isset( $_POST["GLOBAL_HYBRID_AUTH_PATH_BASE"] ) && DIRECTORY_SEPARATOR == "\\" ):
-			$_POST["GLOBAL_HYBRID_AUTH_PATH_BASE"]   = str_replace( "\\", "/", $_POST["GLOBAL_HYBRID_AUTH_PATH_BASE"] ); 
-		endif;
+		$CONFIG_TEMPLATE = file_get_contents( "Hybrid/resources/config.php.tpl" );
  
 		foreach( $_POST AS $k => $v ):
 			$v = strip_tags( $v );
@@ -148,20 +171,18 @@ ul li label {
 			
 			$CONFIG_TEMPLATE = str_replace( $z, $v, $CONFIG_TEMPLATE );
 		endforeach;
- 
+
 		$CONFIG_TEMPLATE = str_replace( "<?php", "<?php\n\t#AUTOGENERATED BY HYBRIDAUTH $HYBRIDAUTH_VERSION INSTALLER - " . date("l jS \of F Y h:i:s A") . "\n", $CONFIG_TEMPLATE );
- 
+
 		$is_installed = file_put_contents( $GLOBAL_HYBRID_AUTH_PATH_BASE . "config.php",  $CONFIG_TEMPLATE );
 
-		// echo "<pre>";echo htmlentities( $CONFIG_TEMPLATE );
-
-			if( ! $is_installed ):
+		if( ! $is_installed ):
 	?>
 		<p style='background-color:#EE3322;color:#FFFFFF;margin:1em 0;padding:0.8em;border:1px #C52F24 solid;'><strong>Installation Error: </strong> HybridAuth configuration file <span style='color:#000000;font-weight:normal;'><?php echo $CONFIG_FILE_NAME; ?></span> must be <b >WRITABLE</b> in order for the installer to work.</p>
 		<br />
 		Please try again!
 	<?php
-			else:
+		else:
 	?>
 		<center>
 		<table width="90%" border="0">
@@ -174,9 +195,10 @@ ul li label {
 			<hr />
 			<br /> 
 
-			<ul style="list-style:disc inside;">
-				<li style="color: #000000;font-size: 15px;">Dont forget to delete this ("<b>install</b>") folder and all the files inside of it as soon as you complete the installation process,</li> 
-				<li style="color: #000000;font-size: 15px;">Visit the <a href="../examples/">examples</a> directory to try some working demos.</li> 
+			<ul style="list-style:disc inside;"> 
+				<li style="color: #000000;font-size: 14px;"><b style="color:red">Don't forget to delete</b> ("<b>install.php</b>") file,</li>
+				<li style="color: #000000;font-size: 15px;">Visit the <a href="../examples/">examples</a> directory to try some working demos,</li> 
+				<li style="color: #000000;font-size: 15px;">Check out HybridAuth documentation at <a href="http://hybridauth.sourceforge.net">http://hybridauth.sourceforge.net</a>.</li> 
 			</ul> 
 
 			<br /> 			
@@ -186,7 +208,6 @@ ul li label {
 		</tr>
 		</table> 
 		</div>
-		
 	<?php
 			endif;
 		die();
@@ -197,10 +218,9 @@ ul li label {
 <tr>
 <td align="left">
 
-<div id="content">
-
+<div id="content"> 
 	<?php
-		// check if php 5+
+		// check if php 5+. well donno the exact version to test, because it depend on which providers will be used..
 		if ( version_compare( PHP_VERSION, '5.0.0', '<' ) ):
 	?>
 		<p style='background-color:#EE3322;color:#FFFFFF;margin:1em 0;padding:0.8em;border:1px #C52F24 solid;'><strong>Error: </strong> HybridAuth requires PHP 5 or higher</p>
@@ -224,7 +244,7 @@ ul li label {
 		<p style='background-color:#EE3322;color:#FFFFFF;margin:1em 0;padding:0.8em;border:1px #C52F24 solid;'><strong>Error: </strong>HybridAuth will require to use <a href="http://php.net/manual/en/book.curl.php" style="color:white" target="_blank"><b>CURL library</b></a>. Please install/enable it before continuing.</p>
 	<?php
 		endif;
-	?> 
+	?>
 
 	<?php
 		// warn if we are local
@@ -233,7 +253,7 @@ ul li label {
 		<p style='background-color:#F90;color:#FFFFFF;margin:1em 0;padding:0.8em;border:1px #F00 solid;'><strong>NOTE: </strong> HybridAuth will not work properly in localhost, as some social networks DO NOT TRUST localhost requests</p>
 	<?php
 		endif;
-	?> 
+	?>
 
 <form method="post"> 
 	<h1 style="margin-bottom: 15px;">HybridAuth <?php echo $HYBRIDAUTH_VERSION; ?> Installer</h1> 
@@ -242,8 +262,8 @@ ul li label {
 	<h4>Imporant notices</h4> 
 
 	<ul style="list-style:disc inside;">
-		<li style="color: #000000;font-size: 14px;">For security reason, please delete this folder ("<b>install</b>") and all the files inside of it as soon as you complete the installation process,</li>
-		<li style="color: #000000;font-size: 14px;">Using the HybridAuth installer will erase your the existen configuration file. If you already have an old installation of HybridAuth you might keep a copy of <b>hybridauth/config.php</b> file,</li>
+		<li style="color: #000000;font-size: 14px;">For security reason, please delete ("<b>install.php</b>") file as soon as you complete the installation process,</li>
+		<li style="color: #000000;font-size: 14px;">Using the HybridAuth installer will erase your the existen configuration file. If you already have an old installation of HybridAuth you might keep a copy of <b>config.php</b> file,</li>
 		<li style="color: #000000;font-size: 14px;">HybridAuth include by default 8 of the major social networks and identities providers. If you want more providers, please goto to HybridAuth web site and download the <a href="http://hybridauth.sourceforge.net/download.html">Additional Providers Package</a>.</li>
 		<li style="color: #000000;font-size: 14px;">Visit <a href="http://hybridauth.sourceforge.net/#installer">HybridAuth</a> Home page to make sure if there is any newer version.</li>
 	</ul> 
@@ -305,44 +325,46 @@ ul li label {
 						<option value="false">Disabled</option>
 					</select>
 				</li>
-				<?php if ( $provider_new_app_link && $provider != "PayPal" ) : ?>
-					<?php if ( $provider == "Facebook" ) : ?>
-						<li><label>Application ID</label><input type="text"    class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_APP_ID"    ></li>
+				<?php if ( $provider_new_app_link ) : ?>
+					<?php if ( in_array( $provider, array( "Facebook", "Google", "Live" ) ) ) : ?>
+						<li><label>Application ID</label><input type="text" class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_APP_ID"    ></li>
 					<?php else: ?>	
-						<li><label>Application Key</label><input type="text"    class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_KEY"    ></li>
-					<?php endif; ?>	
-
+						<li><label>Application Key</label><input type="text" class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_KEY"    ></li>
+					<?php endif; ?>	 
 					<li><label>Application Secret</label><input type="text" class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_SECRET" ></li>
 				<?php endif; ?>
 			  </ul> 
 		   </div>
 		   <div class="cgftip">
-				<p>In order to set up <?php echo $provider ?>, you must register your website with <?php echo $provider ?> at <a href="<?php echo $provider_new_app_link ?>" target ="_blanck"><?php echo $provider_new_app_link ?></a></p>
+				<?php if ( $provider_new_app_link  ) : ?>
+					<p>In order to set up <?php echo $provider ?>, you must register your website with <?php echo $provider ?> at <a href="<?php echo $provider_new_app_link ?>" target ="_blanck"><?php echo $provider_new_app_link ?></a></p>
+	 
+					<?php if ( $provider_callback_url ) : ?>
+						<p>Provide <?php echo $provider_callback_url ?> as the Callback URL for your application.</p>
+					<?php endif; ?> 
 
-				<?php if ( $provider_callback_url ) : ?>
-					<p>Provide <?php echo $provider_callback_url ?> as the Callback URL for your application.</p>
-				<?php endif; ?> 
+					<?php if ( $provider == "MySpace" ) : ?>
+						<p>Make sure to put your correct website adress in the "External Url" and "External Callback Validation" fields. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>".</p>
+					<?php endif; ?> 
 
-				<?php if ( $provider == "Google" ) : ?>
-					<p>Make sure to put your correct website adress in the "Target URL path prefix" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>".</p>
-				<?php endif; ?> 
+					<?php if ( $provider == "Live" ) : ?>
+						<p>Make sure to put your correct website adress in the "Redirect Domain" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>".</p>
+					<?php endif; ?> 
 
-				<?php if ( $provider == "MySpace" ) : ?>
-					<p>Make sure to put your correct website adress in the "External Url" and "External Callback Validation" fields. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>".</p>
-				<?php endif; ?> 
-
-				<?php if ( $provider == "Live" ) : ?>
-					<p>Make sure to put your correct website adress in the "Redirect Domain" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>".</p>
-				<?php endif; ?> 
-
-				<?php if ( $provider == "Facebook" ) : ?>
-					<p>Make sure to put your correct website adress in the "Site Url" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>". - btw, facebook wont work on <em>"http://localhost"</em>.</p>
-					<p>Once you have registered, you must copy the APP ID and Secret into this setup page or set them manually on the <a href="http://hybridauth.sourceforge.net/userguide/Configuration.html" target ="_blanck">configuration file</a>.</p> 
+					<?php if ( $provider == "Facebook" ) : ?>
+						<p>Make sure to put your correct website adress in the "Site Url" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>". - btw, facebook wont work on <em>"http://localhost"</em>.</p>
+						<p>Once you have registered, copy the created application ID and Secret into this setup page.</p> 
+					<?php elseif ( $provider == "Google" ) : ?>
+						<p>On the <b>"Create Client ID"</b> popup switch to advanced settings by clicking on <b>(more options)</b>.</p>
+						<p>Once you have registered, copy the created application client ID and client secret into this setup page.</p> 
+					<?php else: ?>	
+						<p>Once you have registered, copy the created application consumer key and Secret into this setup page.</p> 
+					<?php endif; ?>
 				<?php else: ?>	
-					<p>Once you have registered, you must copy the Key and Secret into this setup page or set them manually on the <a href="http://hybridauth.sourceforge.net/userguide/Configuration.html" target ="_blanck">configuration file</a>.</p> 
+					<p>No registration required for OpenID based providers</p> 
 				<?php endif; ?>
 
-				For more informations check out <a href="<?php echo $provider_userguide_section ?>" target ="_blanck"><?php echo $provider ?></a> section on the online userguide. 
+				For more informations check out <a href="<?php echo $provider_userguide_section ?>" target ="_blanck"><?php echo $provider ?> adapter specifications</a> section on the online userguide. 
 		   </div>
 		</div>   
 	</div> 

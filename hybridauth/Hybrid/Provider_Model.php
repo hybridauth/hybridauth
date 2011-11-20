@@ -67,8 +67,8 @@ abstract class Hybrid_Provider_Model
 		$this->config             = $config;
 
 		// new user instance
-		$this->user               = new Hybrid_User();  
-		$this->user->providerId   = $providerId; 
+		$this->user             = new Hybrid_User();
+		$this->user->providerId = $providerId;
 
 		// initialize the adapter
 		$this->initialize(); 

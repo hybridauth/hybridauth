@@ -29,9 +29,9 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
  
 		$this->api = new LinkedIn( array( 'appKey' => $this->config["keys"]["key"], 'appSecret' => $this->config["keys"]["secret"], 'callbackUrl' => $this->endpoint ) ); 
 
-		if( $this->token( "access_token" ) )
+		if( $this->token( "access_token_linkedin" ) )
 		{
-			$this->api->setTokenAccess( $this->token( "access_token" ) );
+			$this->api->setTokenAccess( $this->token( "access_token_linkedin" ) );
 		}
 	}
 
@@ -74,7 +74,11 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
         if( isset( $response['success'] ) && $response['success'] === TRUE ) 
 		{
-			$this->token( "access_token", $response['linkedin'] ); 
+			$this->token( "access_token_linkedin", $response['linkedin'] ); 
+
+			$this->token( "access_token"       , $response['linkedin']['oauth_token'] ); 
+			$this->token( "access_token_secret", $response['linkedin']['oauth_token_secret'] ); 
+			$this->token( "expires_in"         , $response['linkedin']['oauth_expires_in'] ); 
 
 			// set user as logged in
 			$this->setUserConnected();
@@ -172,8 +176,22 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 	*/
 	function setUserStatus( $status )
 	{
-		try{ 
-			$response  = $this->api->updateNetwork( $status );
+		$parameters = array();
+		$private    = true; // share with your connections only
+
+		if( is_array( $status ) ){
+			if( isset( $status[0] ) && ! empty( $status[0] ) ) $parameters["title"]               = $status[0]; // post title
+			if( isset( $status[1] ) && ! empty( $status[1] ) ) $parameters["comment"]             = $status[1]; // post comment
+			if( isset( $status[2] ) && ! empty( $status[2] ) ) $parameters["submitted-url"]       = $status[2]; // post url
+			if( isset( $status[3] ) && ! empty( $status[3] ) ) $parameters["submitted-image-url"] = $status[3]; // post picture url
+			if( isset( $status[4] ) && ! empty( $status[4] ) ) $private                           = $status[4]; // true or false 
+		}
+		else{
+			$parameters["comment"] = $status; 
+		}
+
+		try{
+			$response  = $this->api->share( 'new', $parameters, $private );
 		}
 		catch( LinkedInException $e ){
 			throw new Exception( "Update user status update failed!  {$this->providerId} returned an error: $e" );
@@ -182,7 +200,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		if ( ! $response || ! $response['success'] )
 		{
 			throw new Exception( "Update user status update failed! {$this->providerId} returned an error." );
-		} 
+		}
  	}
 
    /**

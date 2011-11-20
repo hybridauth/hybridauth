@@ -30,7 +30,7 @@ class Hybrid_Providers_OpenID extends Hybrid_Provider_Model
 
 		$this->api = new LightOpenID( parse_url( Hybrid_Auth::$config["base_url"], PHP_URL_HOST) ); 
 	}
- 
+
    	/**
 	* begin login step 
 	*/
@@ -64,7 +64,7 @@ class Hybrid_Providers_OpenID extends Hybrid_Provider_Model
 		# redirect the user 
 		Hybrid_Auth::redirect( $this->api->authUrl() );
 	}
-	
+
    	/**
 	* finish login step 
 	*/

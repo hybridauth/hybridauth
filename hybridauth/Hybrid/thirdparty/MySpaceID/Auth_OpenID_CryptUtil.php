@@ -4,46 +4,14 @@
 
 /**
  * CryptUtil: A suite of wrapper utility functions for the OpenID
- * library.
- *
- * PHP versions 4 and 5
- *
- * LICENSE: See the COPYING file included in this distribution.
- *
- * @access private
- * @package OpenID
- * @author JanRain, Inc. <openid@janrain.com>
- * @copyright 2005-2008 Janrain, Inc.
- * @license http://www.apache.org/licenses/LICENSE-2.0 Apache
+ * library. 
  */
 
-if (!defined('Auth_OpenID_RAND_SOURCE')) {
-    /**
-     * The filename for a source of random bytes. Define this yourself
-     * if you have a different source of randomness.
-     *
-     * TODO: this file should not be OS Dependent.
-     */
-    //define('Auth_OpenID_RAND_SOURCE', 'C:\_net_capture\001.pcap');
-
-//    define('Auth_OpenID_RAND_SOURCE', '/dev/urandom');// for linux
+if (!defined('Auth_OpenID_RAND_SOURCE')) { 
     define('Auth_OpenID_RAND_SOURCE', null);
 }
 
-class Auth_OpenID_CryptUtil {
-    /**
-     * Get the specified number of random bytes.
-     *
-     * Attempts to use a cryptographically secure (not predictable)
-     * source of randomness if available. If there is no high-entropy
-     * randomness source available, it will fail. As a last resort,
-     * for non-critical systems, define
-     * <code>Auth_OpenID_RAND_SOURCE</code> as <code>null</code>, and
-     * the code will fall back on a pseudo-random number generator.
-     *
-     * @param int $num_bytes The length of the return value
-     * @return string $bytes random bytes
-     */
+class Auth_OpenID_CryptUtil { 
     public static function getBytes($num_bytes)
     {
         static $f = null;
@@ -72,18 +40,7 @@ class Auth_OpenID_CryptUtil {
         }
         return $bytes;
     }
-
-    /**
-     * Produce a string of length random bytes, chosen from chrs.  If
-     * $chrs is null, the resulting string may contain any characters.
-     *
-     * @param integer $length The length of the resulting
-     * randomly-generated string
-     * @param string $chrs A string of characters from which to choose
-     * to build the new string
-     * @return string $result A string of randomly-chosen characters
-     * from $chrs
-     */
+ 
     public static function randomString($length, $population = null)
     {
         if ($population === null) {
