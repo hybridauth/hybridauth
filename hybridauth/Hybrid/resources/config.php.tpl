@@ -1,4 +1,14 @@
-<?php 
+<?php
+/**
+* HybridAuth
+* 
+* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
+* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
+* Vimeo, Foursquare, AOL, Gowalla, and others.
+*
+* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+*/
+
 // ----------------------------------------------------------------------------------------
 //	HybridAuth Config file: http://hybridauth.sourceforge.net/userguide/Configuration.html
 // ----------------------------------------------------------------------------------------
@@ -13,14 +23,18 @@ return
 				"enabled" => #OPENID_ADAPTER_STATUS#
 			),
 
+			"Yahoo" => array ( 
+				"enabled" => #YAHOO_ADAPTER_STATUS# 
+			),
+
+			"AOL"  => array ( 
+				"enabled" => #AOL_ADAPTER_STATUS# 
+			),
+
 			"Google" => array ( 
 				"enabled" => #GOOGLE_ADAPTER_STATUS#,
 				"keys"    => array ( "id" => "#GOOGLE_APPLICATION_APP_ID#", "secret" => "#GOOGLE_APPLICATION_SECRET#" ),
 				"scope"   => ""
-			),
-
-			"Yahoo" => array ( 
-				"enabled" => #YAHOO_ADAPTER_STATUS# 
 			),
 
 			"Facebook" => array ( 
@@ -48,6 +62,11 @@ return
 			"LinkedIn" => array ( 
 				"enabled" => #LINKEDIN_ADAPTER_STATUS#,
 				"keys"    => array ( "key" => "#LINKEDIN_APPLICATION_KEY#", "secret" => "#LINKEDIN_APPLICATION_SECRET#" ) 
+			),
+
+			"Foursquare" => array (
+				"enabled" => true,
+				"keys"    => array ( "id" => "#FOURSQUARE_APPLICATION_APP_ID#", "secret" => "#FOURSQUARE_APPLICATION_SECRET#" ) 
 			),
 		),
 

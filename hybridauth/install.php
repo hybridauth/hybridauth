@@ -143,6 +143,13 @@ ul li label {
 								)
 								,
 								ARRAY( 
+									"label"             => "Foursquare",
+									"callback"          => TRUE,
+									"new_app_link"      => "https://www.foursquare.com/oauth/",
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html",
+								)
+								,
+								ARRAY( 
 									"label"             => "LinkedIn",
 									"callback"          => TRUE,
 									"new_app_link"      => "https://www.linkedin.com/secure/developer?newapp=",
@@ -159,6 +166,12 @@ ul li label {
 									"label"             => "Yahoo",
 									"new_app_link"      => NULL,
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html",
+								)
+								,
+								ARRAY( 
+									"label"             => "AOL",
+									"new_app_link"      => NULL,
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_AOL.html",
 								)
 							);
 
@@ -326,7 +339,7 @@ ul li label {
 					</select>
 				</li>
 				<?php if ( $provider_new_app_link ) : ?>
-					<?php if ( in_array( $provider, array( "Facebook", "Google", "Live" ) ) ) : ?>
+					<?php if ( in_array( $provider, array( "Facebook", "Google", "Live", "Foursquare" ) ) ) : ?>
 						<li><label>Application ID</label><input type="text" class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_APP_ID"    ></li>
 					<?php else: ?>	
 						<li><label>Application Key</label><input type="text" class="inputgnrc" value="" name="<?php echo strtoupper( $provider ) ?>_APPLICATION_KEY"    ></li>

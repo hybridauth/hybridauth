@@ -1,17 +1,17 @@
 <?php
-	/**
-	* HybridAuth
-	* 
-	* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-	* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-	* Vimeo, Foursquare, AOL, Gowalla, and others.
-	*
-	* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-	*/
+/**
+* HybridAuth
+* 
+* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
+* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
+* Vimeo, Foursquare, AOL, Gowalla, and others.
+*
+* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+*/
 
-	// ----------------------------------------------------------------------------------------
-	//	HybridAuth Config file: http://hybridauth.sourceforge.net/userguide/Configuration.html
-	// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+//	HybridAuth Config file: http://hybridauth.sourceforge.net/userguide/Configuration.html
+// ----------------------------------------------------------------------------------------
 
 return 
 	array(
@@ -24,6 +24,10 @@ return
 			),
 
 			"Yahoo"  => array ( 
+				"enabled" => true 
+			),
+
+			"AOL"  => array ( 
 				"enabled" => true 
 			),
 
@@ -58,6 +62,11 @@ return
 			"LinkedIn" => array ( 
 				"enabled" => true,
 				"keys"    => array ( "key" => "", "secret" => "" ) 
+			),
+
+			"Foursquare" => array ( 
+				"enabled" => true,
+				"keys"    => array ( "id" => "", "secret" => "" ) 
 			),
 		),
 
