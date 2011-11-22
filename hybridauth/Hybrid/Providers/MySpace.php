@@ -12,98 +12,31 @@
 /**
  * Hybrid_Providers_MySpace class, wrapper for MySpaceID  
  */
-class Hybrid_Providers_MySpace extends Hybrid_Provider_Model
+class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
 {
    /**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
 	{
-		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] )
-		{
-			throw new Exception( "Your application key and secret are required in order to connect to {$this->providerId}.", 4 );
+		parent::initialize();
+
+		// setup provider apis endpoints
+		$this->api->api_endpoint_url  = "http://api.myspace.com/v1/";
+		$this->api->authorize_url     = "http://api.myspace.com/authorize";
+		$this->api->request_token_url = "http://api.myspace.com/request_token";
+		$this->api->access_token_url  = "http://api.myspace.com/access_token";
+	}
+
+	public function getCurrentUserId()
+	{
+		$response = $this->api->get( 'user.json' );
+
+		if ( ! isset( $response->userId ) ){
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		} 
 
-		require_once Hybrid_Auth::$config["path_libraries"] . "MySpaceID/Auth_OpenID_CryptUtil.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "MySpaceID/OAuth.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "MySpaceID/MySpace.php";  
-
-		// If we have an access token, set it
-		if ( $this->token( "access_token" ) && $this->token( "access_token_secret" ) )
-		{
-			$this->api = new MySpace
-						(
-							$this->config["keys"]["key"], $this->config["keys"]["secret"],
-							$this->token( "access_token" ), $this->token( "access_token_secret" )
-						); 
-		}
-	}
-
-   /**
-	* begin login step 
-	*/
-	function loginBegin()
-	{
-		# init new MySpace obj with key + secret
-		$this->api = new MySpace( $this->config["keys"]["key"], $this->config["keys"]["secret"] ); 
-
-		# reqest a token from myspaceid api
-		try{ 
-			$tokz = $this->api->getRequestToken( $this->endpoint );
-		}
-		catch( MySpaceException $e ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error while requesting a request token.", 5 );
-		}
-
-		if ( ! isset( $tokz["oauth_token"] ) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid request token.", 5 );
-		}
-
-		$this->token( "request_token" , $tokz['oauth_token'] );
-		$this->token( "request_secret", $tokz['oauth_token_secret'] ); 
-
-		# redirect user to MySpace authorisation web page
-		Hybrid_Auth::redirect( $this->api->getAuthorizeURL( $tokz['oauth_token'] ) );
-	}
-
-   /**
-	* finish login step 
-	*/
-	function loginFinish()
-	{ 
-		$oauth_verifier = @ $_REQUEST['oauth_verifier']; 
-
-		if ( ! $oauth_verifier )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Access Token.", 5 );
-		}
-
-		try{
-			$this->api = new MySpace
-						(
-							$this->config["keys"]["key"], $this->config["keys"]["secret"],
-							$this->token( "request_token" ), $this->token( "request_secret" ),
-							TRUE, 
-							$oauth_verifier
-						);
-
-			$tokz = $this->api->getAccessToken();
-		}
-		catch( MySpaceException $e ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error while requesting an access token.", 5 );
-		}
-
-		if ( ! is_string($tokz->key) || ! is_string($tokz->secret) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
-		}
-
-		$this->token( "access_token"  , $tokz->key ); 
-		$this->token( "access_token_secret" , $tokz->secret );
-
-		// set user as logged in
-		$this->setUserConnected(); 
+		return $response->userId;
 	}
 
    /**
@@ -111,19 +44,15 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model
 	*/
 	function getUserProfile()
 	{
-		try{ 
-			$data = $this->api->getProfile( $this->api->getCurrentUserId() );
-		}
-		catch( MySpaceException $e ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error while requesting the user profile.", 6 );
-		}
+		$userId = $this->getCurrentUserId();
 
-		if ( ! is_object( $data ) )
-		{
+		$data = $this->api->get( 'http://api.myspace.com/v1/users/' . $userId . '/profile.json' );
+
+		if ( ! is_object( $data ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
-		} 
+		}
 
-		$this->user->profile->identifier    = $this->api->getCurrentUserId();
+		$this->user->profile->identifier    = $userId;
 		$this->user->profile->displayName  	= @ $data->basicprofile->name;
 		$this->user->profile->description  	= @ $data->aboutme;
 		$this->user->profile->gender     	= @ $data->basicprofile->gender;
@@ -143,11 +72,12 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model
 	*/
 	function getUserContacts()
 	{
-		try{ 
-			$response  = $this->api->getFriends( $this->api->getCurrentUserId() ); 
-		}
-		catch( MySpaceException $e ){
-			throw new Exception( "User contacts request failed! {$this->providerId} returned an error" );
+		$userId = $this->getCurrentUserId();
+
+		$response = $this->api->get( "http://api.myspace.com/v1/users/" . $userId . "/friends.json" );
+
+		if ( ! is_object( $response ) ){
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 
 		$contacts = ARRAY();
@@ -172,17 +102,18 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model
 	*/
 	function setUserStatus( $status )
 	{
-		try{ 
-			$response = $this->api->updateStatus( $this->api->getCurrentUserId(), $status ); 
-		}
-		catch( MySpaceException $e ){
-			throw new Exception( "Update user status update failed! {$this->providerId} returned an error" );
-		}
- 
-		if ( ! $response  )
+	// crappy myspace... gonna see this asaic
+		$userId = $this->getCurrentUserId();
+		
+		$parameters = array( 'status' => $status );
+
+		$response = $this->api->api( "http://api.myspace.com/v1/users/" . $userId . "/status", 'PUT', $parameters ); 
+
+		// check the last HTTP status code returned
+		if ( $this->api->http_code != 200 )
 		{
-			throw new Exception( "Update user status update failed! {$this->providerId} returned an error" );
-		} 
+			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+		}
  	}
 
    /**
@@ -191,21 +122,22 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model
 	*    - me       : the user activity only  
 	*/
 	function getUserActivity( $stream )
-	{  
-		try{ 
-			if( $stream == "me" ){
-				$response  = $this->api->getUserStatus( $this->api->getCurrentUserId() ); 
-			}                                                          
-			else{                                                      
-				$response  = $this->api->getFriendsStatus( $this->api->getCurrentUserId() ); 
-			} 
+	{
+		$userId = $this->getCurrentUserId();
+
+		if( $stream == "me" ){
+			$response = $this->api->get( "http://api.myspace.com/v1/users/" . $userId . "/status.json" ); 
+		}                                                          
+		else{                                                      
+			$response = $this->api->get( "http://api.myspace.com/v1/users/" . $userId . "/friends/status.json" );
 		}
-		catch( MySpaceException $e ){
-			throw new Exception( "User activity stream request failed! {$this->providerId} returned an error" );
+
+		if ( ! is_object( $response ) ){
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 
 		$activities = ARRAY();
-		
+
 		if( $stream == "me" ){
 			// todo
 		}                                                          

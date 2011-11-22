@@ -72,6 +72,8 @@ abstract class Hybrid_Provider_Model
 
 		// initialize the adapter
 		$this->initialize(); 
+
+		Hybrid_Logger::debug( "Hybrid_Provider_Model::__construct( $providerId ) initialized. dump adapter api: ", serialize( $this->api ) );
 	}
 
 	// --------------------------------------------------------------------
@@ -120,7 +122,12 @@ abstract class Hybrid_Provider_Model
    	/**
 	* grab the user profile from the IDp api client
 	*/
-	abstract protected function getUserProfile();
+	function getUserProfile()
+	{
+		Hybrid_Logger::error( "HybridAuth do not provide users contats list for {$this->providerId} yet." ); 
+		
+		throw new Exception( "Provider does not support this feature.", 8 ); 
+	}
 
 	// --------------------------------------------------------------------
 
@@ -206,6 +213,16 @@ abstract class Hybrid_Provider_Model
 		else{
 			Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.token.$token", $value );
 		}
+	}
+
+	// --------------------------------------------------------------------
+
+   	/**
+	* delete a stored token 
+	*/ 
+	public function deleteToken( $token )
+	{
+		Hybrid_Auth::storage()->delete( "hauth_session.{$this->providerId}.token.$token" );
 	}
 
 	// --------------------------------------------------------------------

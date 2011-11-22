@@ -39,13 +39,18 @@ class Hybrid_Auth
 		}
 
 		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
-		if (! function_exists('curl_init')) {
-		  throw new Exception('The Google PHP API Library needs the CURL PHP extension');
+		if ( ! function_exists('curl_init') ) {
+			throw new Exception('Hybriauth Library needs the CURL PHP extension.');
 		}
 
 		// PHP JSON extension [http://php.net/manual/en/book.json.php]
-		if (! function_exists('json_decode')) {
-		  throw new Exception('The Google PHP API Library needs the JSON PHP extension');
+		if ( ! function_exists('json_decode') ) {
+			throw new Exception('Hybriauth Library needs the JSON PHP extension.');
+		}
+
+		// the PECL extension is present, which is not compatible with this library
+		if( extension_loaded('oauth') ) {
+			throw new Exception('Hybriauth Library not compatible with installed PECL OAuth extension. Please disable it.');
 		}
 
 		Hybrid_Auth::initialize( $config ); 
@@ -91,6 +96,10 @@ class Hybrid_Auth
 		require_once $config["path_base"] . "Provider_Model.php";
 		require_once $config["path_base"] . "Provider_Adapter.php"; 
 
+		require_once $config["path_base"] . "Protocols/OpenID.php"; 
+		require_once $config["path_base"] . "Protocols/OAuth1.php"; 
+		require_once $config["path_base"] . "Protocols/OAuth2.php"; 
+
 		require_once $config["path_base"] . "User.php"; 
 		require_once $config["path_base"] . "User/Profile.php";
 		require_once $config["path_base"] . "User/Contact.php";
@@ -110,12 +119,11 @@ class Hybrid_Auth
 
 		// store php session.. well juste pour faire beau
 		$_SESSION["HA::PHP_SESSION_ID"] = session_id(); 
-		
+
 		// almost done, check for error then move on
-		Hybrid_Logger::info( "Hybrid_Auth::initialize(), stated. Hybrid_Auth has been called from: " . Hybrid_Auth::getCurrentUrl() );
-
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(), stated. Hybrid_Auth has been called from: " . Hybrid_Auth::getCurrentUrl() ); 
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump used config: ", serialize( $config ) );
-
+		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", serialize( $_SESSION ) ); 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: check if any error is stored on the endpoint..." );
 
 		if( Hybrid_Error::hasError() ){ 
@@ -125,7 +133,7 @@ class Hybrid_Auth
 
 			Hybrid_Logger::error( "Hybrid_Auth initialize: A stored Error found, Throw an new Exception and delete it from the store: Error#$c, '$m'" );
 
-			Hybrid_Error::clearError(); 
+			Hybrid_Error::clearError();
 
 			// try to provide the previous if any
 			// Exception::getPrevious (PHP 5 >= 5.3.0) 
@@ -266,8 +274,6 @@ class Hybrid_Auth
 	*/ 
 	public static function isConnectedWith( $providerId = NULL )
 	{
-		Hybrid_Logger::info( "Enter Hybrid_Auth::isConnectedWith( $providerId )" );
-
 		return 
 			( bool) Hybrid_Auth::storage()->get( "hauth_session.{$providerId}.is_logged_in" );
 	}
@@ -279,8 +285,6 @@ class Hybrid_Auth
 	*/ 
 	public static function getConnectedProviders()
 	{
-		Hybrid_Logger::info( "Enter Hybrid_Auth::getAuthenticatedAdapters()" );
-
 		$authenticatedProviders = ARRAY();
 		
 		foreach( Hybrid_Auth::$config["providers"] as $idpid => $params ){
@@ -300,8 +304,6 @@ class Hybrid_Auth
 	*/ 
 	public static function logoutAllProviders()
 	{
-		Hybrid_Logger::info( "Enter Hybrid_Auth::logoutAllProviders()" );
-
 		$idps = Hybrid_Auth::getConnectedProviders();
 
 		foreach( $idps as $idp ){
@@ -317,7 +319,7 @@ class Hybrid_Auth
 	* Utility function, redirect to a given URL with php header or using javascript location.href
 	*/
 	public static function redirect( $url, $mode = "PHP", $postdata = ARRAY() )
-	{ 
+	{
 		Hybrid_Logger::info( "Enter Hybrid_Auth::redirect( $url, $mode )" );
 
 		if( $mode == "PHP" )
@@ -363,7 +365,7 @@ class Hybrid_Auth
 		// use port if non default
 		$url .= 
 			isset( $_SERVER['SERVER_PORT'] ) 
-			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] !== 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] !== 443) )
+			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
 			? ':' . $_SERVER['SERVER_PORT'] 
 			: '';
 

@@ -102,7 +102,11 @@ class Hybrid_Provider_Adapter
 		}
 
 		// clear all existen tokens if any and rest user status to unconnected
-		$this->adapter->clearTokens();
+		foreach( Hybrid_Auth::$config["providers"] as $idpid => $params ){
+			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.hauth_return_to"    );
+			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.hauth_endpoint"     ); 
+			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.id_provider_params" );
+		}
 
 		$this->adapter->setUserUnconnected();
 
@@ -126,7 +130,7 @@ class Hybrid_Provider_Adapter
 		$this->params["login_done"]  = $HYBRID_AUTH_URL_BASE . ( strpos( $HYBRID_AUTH_URL_BASE, '?' ) ? '&' : '?' ) . "hauth.done={$this->id}";
 
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_return_to"	, $this->params["hauth_return_to"] );
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_endpoint"	    , $this->params["login_done"]      ); 
+		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_endpoint"	    , $this->params["login_done"] ); 
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.id_provider_params"	, $this->params );
 
 		// store config to be used by the end point

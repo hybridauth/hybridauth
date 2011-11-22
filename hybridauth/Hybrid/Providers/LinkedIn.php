@@ -19,8 +19,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 	*/
 	function initialize() 
 	{
-		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] )
-		{
+		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] ){
 			throw new Exception( "Your application key and secret are required in order to connect to {$this->providerId}.", 4 );
 		} 
 
@@ -29,8 +28,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
  
 		$this->api = new LinkedIn( array( 'appKey' => $this->config["keys"]["key"], 'appSecret' => $this->config["keys"]["secret"], 'callbackUrl' => $this->endpoint ) ); 
 
-		if( $this->token( "access_token_linkedin" ) )
-		{
+		if( $this->token( "access_token_linkedin" ) ){
 			$this->api->setTokenAccess( $this->token( "access_token_linkedin" ) );
 		}
 	}
@@ -43,16 +41,14 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
         // send a request for a LinkedIn access token
         $response = $this->api->retrieveTokenRequest();
 
-        if( isset( $response['success'] ) && $response['success'] === TRUE ) 
-		{
+        if( isset( $response['success'] ) && $response['success'] === TRUE ){
 			$this->token( "oauth_token",        $response['linkedin']['oauth_token'] ); 
 			$this->token( "oauth_token_secret", $response['linkedin']['oauth_token_secret'] ); 
 
 			# redirect user to LinkedIn authorisation web page
 			Hybrid_Auth::redirect( LINKEDIN::_URL_AUTH . $response['linkedin']['oauth_token'] );
         }
-		else 
-		{
+		else{
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Token.", 5 );
         }
 	}
@@ -65,26 +61,23 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		$oauth_token    = @ $_REQUEST['oauth_token'];
 		$oauth_verifier = @ $_REQUEST['oauth_verifier'];
 
-		if ( ! $oauth_verifier )
-		{
+		if ( ! $oauth_verifier ){
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Token.", 5 );
 		}
 
 		$response = $this->api->retrieveTokenAccess( $oauth_token, $this->token( "oauth_token_secret" ), $oauth_verifier );
 
-        if( isset( $response['success'] ) && $response['success'] === TRUE ) 
-		{
-			$this->token( "access_token_linkedin", $response['linkedin'] ); 
-
-			$this->token( "access_token"       , $response['linkedin']['oauth_token'] ); 
-			$this->token( "access_token_secret", $response['linkedin']['oauth_token_secret'] ); 
-			$this->token( "expires_in"         , $response['linkedin']['oauth_expires_in'] ); 
+        if( isset( $response['success'] ) && $response['success'] === TRUE ){
+			$this->deleteToken( "oauth_token"        );
+			$this->deleteToken( "oauth_token_secret" );
+			$this->token( "access_token_linkedin", $response['linkedin'] );  
+			$this->token( "access_token"         , $response['linkedin']['oauth_token'] ); 
+			$this->token( "access_token_secret"  , $response['linkedin']['oauth_token_secret'] );  
 
 			// set user as logged in
 			$this->setUserConnected();
         }
-		else 
-		{
+		else{
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Token.", 5 );
         } 
 	}
@@ -102,12 +95,10 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
 		}
 
-		if( isset( $response['success'] ) && $response['success'] === TRUE ) 
-		{
+		if( isset( $response['success'] ) && $response['success'] === TRUE ){
 			$data = @ new SimpleXMLElement( $response['linkedin'] ); 
 
-			if ( ! is_object( $data ) )
-			{
+			if ( ! is_object( $data ) ){
 				throw new Exception( "User profile request failed! {$this->providerId} returned an invalide xml data.", 6 );
 			}  
 
@@ -130,8 +121,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 			return $this->user->profile;
 		}
-		else 
-		{
+		else{
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
         } 
 	}

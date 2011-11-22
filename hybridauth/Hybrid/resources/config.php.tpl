@@ -5,9 +5,9 @@
 
 return 
 	array(
-		"base_url"       => "#GLOBAL_HYBRID_AUTH_URL_BASE#", 
+		"base_url" => "#GLOBAL_HYBRID_AUTH_URL_BASE#", 
 
-		"providers"      => array ( 
+		"providers" => array ( 
 			// openid providers
 			"OpenID" => array (
 				"enabled" => #OPENID_ADAPTER_STATUS#
@@ -19,7 +19,7 @@ return
 				"scope"   => ""
 			),
 
-			"Yahoo"  => array ( 
+			"Yahoo" => array ( 
 				"enabled" => #YAHOO_ADAPTER_STATUS# 
 			),
 
@@ -35,7 +35,7 @@ return
 			),
 
 			// windows live
-			"Live"    => array ( 
+			"Live" => array ( 
 				"enabled" => #LIVE_ADAPTER_STATUS#,
 				"keys"    => array ( "id" => "#LIVE_APPLICATION_APP_ID#", "secret" => "#LIVE_APPLICATION_SECRET#" ) 
 			),
@@ -52,7 +52,7 @@ return
 		),
 
 		// if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
-		"debug_mode"            => false,
+		"debug_mode" => false,
 
-		"debug_file"            => "",
+		"debug_file" => "",
 	);

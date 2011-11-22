@@ -15,21 +15,19 @@
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 {
 	// default permissions, and alot of them. You can change them from the configuration by setting the scope to what you want/need
-	var $scope = "email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
+	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
 
 	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
 	{
-		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] )
-		{
+		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
 			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
 		}
 
  		// override requested scope
-		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) )
-		{
+		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) ){
 			$this->scope = $this->config["scope"];
 		}
 
@@ -103,8 +101,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		} 
 
 		// if the provider identifier is not recived, we assume the auth has failed
-		if ( ! isset( $data["id"] ) )
-		{ 
+		if ( ! isset( $data["id"] ) ){ 
 			throw new Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
 		}
 

@@ -19,8 +19,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 	*/
 	function initialize() 
 	{
-		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] )
-		{
+		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
 			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
 		}
 
@@ -57,8 +56,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 	{
 		$response = $this->api->ProcessRequest();
 
-		if ( ! isset( $response['c_uid'] ) || ! isset( $response['c_accessToken'] ) )
-		{
+		if ( ! isset( $response['c_uid'] ) || ! isset( $response['c_accessToken'] ) ){
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Token.", 5 );
 		}
 
@@ -71,21 +69,6 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 		# store the user id. 
 		$this->token( "user_id",  $response['c_uid'] );
  	}
-
-   /**
-	* IDp wrappers initializer 
-	*/
-	function logout()
-	{
-		try{
-			$this->api->ExpireCookies();
-		}
-		catch( Exception $e ){
-			// well ...
-		} 
-
-		parent::logout();
-	}
 
 	/**
 	* load the user profile from the IDp api client 
@@ -107,8 +90,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error while requesting the user profile.", 6 );
 		}
 
-		if ( ! is_object( $response ) )
-		{
+		if ( ! is_object( $response ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid user data.", 6 );
 		}
 

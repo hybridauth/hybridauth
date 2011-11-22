@@ -9,12 +9,10 @@
 * Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
 */
 
-require_once Hybrid_Auth::$config["path_providers"] . "/OpenID.php"; 
-
 /**
  * Hybrid_Providers_Yahoo class 
  */
-class Hybrid_Providers_Yahoo extends Hybrid_Providers_OpenID
+class Hybrid_Providers_Yahoo extends Hybrid_Providers_Protocols_OpenID
 {
 	var $openidIdentifier = "https://www.yahoo.com/";
 }

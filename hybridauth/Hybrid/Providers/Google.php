@@ -10,38 +10,24 @@
 */
 
 /**
- * Hybrid_Providers_Google class 
+ * Hybrid_Providers_Google 
  */
-class Hybrid_Providers_Google extends Hybrid_Provider_Model
+class Hybrid_Providers_Google extends Hybrid_Providers_Protocols_OAuth2
 {
 	// default permissions 
-	var $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me";
+	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me";
 
    /**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
 	{
-		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
-			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
-		}
+		parent::initialize();
 
- 		// override requested scope
-		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) )
-		{
-			$this->scope = $this->config["scope"];
-		}
-
-		require_once Hybrid_Auth::$config["path_libraries"] . "Google/Google.php";
-
-		$this->api = new googleoauth( $this->config["keys"]["id"], $this->config["keys"]["secret"], $this->endpoint );
-
-		// If we have an access token, set it
-		if( $this->token( "access_token" ) && $this->token( "refresh_token" ) )
-		{
-			$this->api->accesstoken  = $this->token( "access_token" );
-			$this->api->refreshtoken = $this->token( "refresh_token" );
-		}
+		// provider apis endpoints
+		$this->api->auth_url       = "https://accounts.google.com/o/oauth2/auth";
+		$this->api->token_url      = "https://accounts.google.com/o/oauth2/token";
+		$this->api->token_info_url = "https://www.googleapis.com/oauth2/v1/tokeninfo";
 	}
 
    /**
@@ -49,33 +35,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model
 	*/
 	function loginBegin()
 	{
-		Hybrid_Auth::redirect( $this->api->loginurl( $this->scope ) ); 
-	}
- 
-   /**
-	* finish login step 
-	*/
-	function loginFinish()
-	{
-		try{ 
-			$this->api->authenticate( false ); 
-		}
-		catch( Exception $e ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
-		} 
-
-		if ( isset( $_REQUEST['error'] ) ){ 
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error.", 5 );
-		}
-
-		if ( ! $this->api->authenticated() ){ 
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
-		}
-
-		$this->token( "access_token" , $this->api->accesstoken  );
-		$this->token( "refresh_token", $this->api->refreshtoken );
-
-		$this->setUserConnected();
+		Hybrid_Auth::redirect( $this->api->authorizeUrl( array( "scope" => $this->scope, "access_type" => "offline" ) ) ); 
 	}
 
    /**
@@ -84,10 +44,9 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model
 	function getUserProfile()
 	{
 		// ask google api for user infos
-		$response = $this->api->call( "https://www.googleapis.com/oauth2/v1/userinfo" );
-		$response = json_decode( $response );
+		$response = $this->api->api( "https://www.googleapis.com/oauth2/v1/userinfo" ); 
 
-		if ( ! is_object( $response ) ){
+		if ( ! is_object( $response ) || isset( $response->error ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 
@@ -102,8 +61,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model
 		$this->user->profile->language      = @ $response->locale;
 
 		// if user hava a Google+ account and consented then update his name, profile url and avatar
-		$response = $this->api->call( "https://www.googleapis.com/plus/v1/people/" . $response->id );
-		$response = json_decode( $response );
+		$response = $this->api->api( "https://www.googleapis.com/plus/v1/people/" . $response->id ); 
 
 		if ( is_object( $response ) && ! isset( $response->error ) ){
 			if( isset( $response->displayName ) && ! empty( $response->displayName ) ) 
@@ -115,34 +73,5 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model
 		} 
 
 		return $this->user->profile;
-	} 
-	
-
-   /**
-	* load the user latest activity  
-	*    - timeline : all the stream
-	*    - me       : the user activity only  
-	*/
-	function _getUserActivity( $stream )
-	{
-		if ( ! $this->token( "googleplus_user_id" ) ){
-			throw new Exception( "User do not have a Google Plus account or haven't consented to access his account." ); 
-		}
-
-		try{ 
-			$response = $this->api->call( "https://www.googleapis.com/plus/v1/people/" . $this->token( "googleplus_user_id" ) . "/activities/public" );
-			$response = json_decode( $response );			
-		}
-		catch( Exception $e ){
-			throw new Exception( "User activity stream request failed! {$this->providerId} returned an error: $e" );
-		} 
-
-		echo "<pre>";
-		print_r( $response );
-		print_r( $this );
-		
-		$activities = ARRAY();
- 
-		return $activities;
- 	}
+	}
 }
