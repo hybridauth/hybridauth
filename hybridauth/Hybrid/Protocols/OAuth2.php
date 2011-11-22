@@ -54,13 +54,15 @@ class Hybrid_Providers_Protocols_OAuth2 extends Hybrid_Provider_Model
 	*/
 	function loginFinish()
 	{
+		$error = @ trim( strip_tags( $_REQUEST['error'] ) );
+
 		// check for errors
-		if ( isset( $_REQUEST['error'] ) ){ 
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error.", 5 );
+		if ( $error ){ 
+			throw new Exception( "Authentification failed! {$this->providerId} returned an error: $error", 5 );
 		}
 
 		// try to authenicate user
-		$code = @ $_REQUEST['code'];
+		$code = @ trim( strip_tags( $_REQUEST['code'] ) );
 
 		try{
 			$this->api->authenticate( $code ); 

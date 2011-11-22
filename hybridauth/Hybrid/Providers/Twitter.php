@@ -21,8 +21,8 @@ class Hybrid_Providers_Twitter extends Hybrid_Providers_Protocols_OAuth1
 	{
 		parent::initialize();
 
-		// setup provider apis endpoints
-		$this->api->api_endpoint_url  = "https://api.twitter.com/1/";
+		// Provider apis end-points
+		$this->api->api_base_url      = "https://api.twitter.com/1/";
 		$this->api->authorize_url     = "https://api.twitter.com/oauth/authorize";
 		$this->api->request_token_url = "https://api.twitter.com/oauth/request_token";
 		$this->api->access_token_url  = "https://api.twitter.com/oauth/access_token";

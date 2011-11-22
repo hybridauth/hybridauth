@@ -2,7 +2,7 @@
 // A service client for the OAuth 1/1.0a flow.
 // v0.1
 class OAuth1Client{
-	public $api_endpoint_url      = "";
+	public $api_base_url          = "";
 	public $authorize_url         = "";
 	public $authenticate_url      = "";
 	public $request_token_url     = "";
@@ -84,6 +84,7 @@ class OAuth1Client{
 	{
 		$parameters = array();
 
+		// 1.0a
 		if ( $oauth_verifier ) {
 			$parameters['oauth_verifier'] = $oauth_verifier; 
 		}
@@ -117,7 +118,7 @@ class OAuth1Client{
 	function api( $url, $method = 'GET', $parameters = array() )
 	{
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
-			$url = $this->api_endpoint_url . $url;
+			$url = $this->api_base_url . $url;
 		}
 
 		$response = $this->signedRequest( $url, $method, $parameters );

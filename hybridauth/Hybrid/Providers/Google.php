@@ -24,8 +24,8 @@ class Hybrid_Providers_Google extends Hybrid_Providers_Protocols_OAuth2
 	{
 		parent::initialize();
 
-		// provider apis endpoints
-		$this->api->auth_url       = "https://accounts.google.com/o/oauth2/auth";
+		// Provider apis end-points
+		$this->api->authorize_url  = "https://accounts.google.com/o/oauth2/auth";
 		$this->api->token_url      = "https://accounts.google.com/o/oauth2/token";
 		$this->api->token_info_url = "https://www.googleapis.com/oauth2/v1/tokeninfo";
 	}
@@ -46,7 +46,7 @@ class Hybrid_Providers_Google extends Hybrid_Providers_Protocols_OAuth2
 		// ask google api for user infos
 		$response = $this->api->api( "https://www.googleapis.com/oauth2/v1/userinfo" ); 
 
-		if ( ! is_object( $response ) || isset( $response->error ) ){
+		if ( ! isset( $response->id ) || isset( $response->error ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 

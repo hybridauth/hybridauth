@@ -21,7 +21,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
 	{
 		parent::initialize();
 
-		// setup provider apis endpoints
+		// Provider apis end-points
 		$this->api->api_endpoint_url  = "http://api.myspace.com/v1/";
 		$this->api->authorize_url     = "http://api.myspace.com/authorize";
 		$this->api->request_token_url = "http://api.myspace.com/request_token";

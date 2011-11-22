@@ -809,7 +809,7 @@ abstract class BaseFacebook
     if (
 	   curl_errno($ch) == 60 // CURLE_SSL_CACERT 
 	|| curl_errno($ch) == 77 // CURLE_SSL_CACERT_BADFILE 
-	){ 
+	){
       self::errorLog('Invalid or no certificate authority found, '.
                      'using bundled information');
       curl_setopt($ch, CURLOPT_CAINFO,
