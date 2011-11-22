@@ -1,11 +1,9 @@
 <?php
-	session_start();
-
-	session_name("foo");
+	session_start(); 
 
 	// config and includes
    	$config = dirname(__FILE__) . '/../../hybridauth/config.php';
-    	require_once( "../../hybridauth/Hybrid/Auth.php" );
+    require_once( "../../hybridauth/Hybrid/Auth.php" );
 
 	try{
 		// hybridauth EP

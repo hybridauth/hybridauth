@@ -1,5 +1,9 @@
 <?php
-	session_start();
+	session_start(); 
+
+	// change the following paths if necessary 
+	$config = dirname(__FILE__) . '/../../hybridauth/config.php';
+	require_once( "../../hybridauth/Hybrid/Auth.php" );
 
 	// check for erros and whatnot
 	$error = "";
@@ -14,10 +18,6 @@
 		// finally redirect him to his profile page
 	if( isset( $_GET["provider"] ) && $_GET["provider"] ):
 		try{
-			// change the following paths if necessary 
-			$config = dirname(__FILE__) . '/../../hybridauth/config.php';
-			require_once( "../../hybridauth/Hybrid/Auth.php" );
-
 			// create an instance for Hybridauth with the configuration file path as parameter
 			$hybridauth = new Hybrid_Auth( $config );
  
@@ -55,7 +55,7 @@
 			$error .= "<br /><br /><b>Original error message:</b> " . $e->getMessage(); 
 			$error .= "<hr /><pre>Trace:<br />" . $e->getTraceAsString() . "</pre>";
 		}
-    endif; 
+    endif;
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en">
@@ -76,7 +76,7 @@
 ?>
 <br />
 
-<table width="260" border="0" cellpadding="2" cellspacing="2">
+<table width="500" border="0" cellpadding="2" cellspacing="2">
   <tr> 
     <td align="left" valign="top"> 
 		<fieldset>
@@ -88,8 +88,43 @@
 			&nbsp;&nbsp;<a href="?provider=MySpace">Sign-in with MySpace</a><br />  
 			&nbsp;&nbsp;<a href="?provider=Live">Sign-in with Windows Live</a><br />  
 			&nbsp;&nbsp;<a href="?provider=LinkedIn">Sign-in with LinkedIn</a><br /> 
+			&nbsp;&nbsp;<a href="?provider=Foursquare">Sign-in with Foursquare</a><br /> 
+			&nbsp;&nbsp;<a href="?provider=AOL">Sign-in with AOL</a><br /> 
+			&nbsp;&nbsp;<a href="?provider=GitHub">Sign-in with GitHub</a><br /> 
       </fieldset> 
-	</td>
+	</td> 
+<?php 
+	// try to get already authenticated provider list
+	try{
+		$hybridauth = new Hybrid_Auth( $config );
+
+		$connected_adapters_list = $hybridauth->getConnectedProviders(); 
+
+		if( count( $connected_adapters_list ) ){
+?> 
+    <td align="left" valign="top">  
+		<fieldset>
+			<legend>Providers you are logged with</legend>
+			<?php
+				foreach( $connected_adapters_list as $adapter_id ){
+					echo '&nbsp;&nbsp;<a href="profile.php?provider=' . $adapter_id . '">Switch to <b>' . $adapter_id . '</b>  account</a><br />'; 
+				}
+			?> 
+		</fieldset> 
+	</td>		
+<?php
+		}
+	}
+	catch( Exception $e ){
+		echo "Ooophs, we got an error: " . $e->getMessage();
+
+		echo " Error code: " . $e->getCode();
+
+		echo "<br /><br />Please try again.";
+
+		echo "<hr /><h3>Trace</h3> <pre>" . $e->getTraceAsString() . "</pre>"; 
+	}
+?> 
   </tr> 
 </table>
 

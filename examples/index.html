@@ -1,41 +1,79 @@
 <center> 
-<br /> 
-<h1><u>HybridAuth examples and demos</u></h1>  
-<table width="60%" border="0" cellspacing="10">
-<tr>
-<td width="33%" align="center"><a href="hello_world/index.php"><h3>Hello world</h3></a></td> 
-<td align="center"><a href="widget_authentication/index.php"><h3>Widget integration</h3></a></td> 
-<td width="33%" align="center"><a href="social_hub/login.php"><h3>Tiny Social Hub</h3></a></td> 
-</tr>
-<tr>  
-<td align="center"><a href="hello_world/index.php"><img src="helloworld.gif" width="250"   style="border:1px solid #ccc;padding:4px;" /></a></td>
-<td align="center"><a href="widget_authentication/index.php"><img src="widget.gif" width="250"  style="border:1px solid #ccc;padding:4px;" /></a></td> 
-<td align="center"><a href="social_hub/index.php"><img src="embed.gif" width="250"   style="border:1px solid #ccc;padding:4px;" /></a></td>  
-</tr>  
-</table>
- 
-<br /> 
-
-<table width="630" border="0" cellspacing="10">
+<table width="80%" border="0" cellspacing="10">
 <tr>  
 <td>
-<hr />
-<h2>Getting Started</h2>
-<p align="justify">To install HybridAuth, you can use the <a href="../install/">HybridAuth Auto Installer</a></p>
+<h2>Getting Started</h2> 
+<p align="justify">To install HybridAuth, you can use the <a href="../hybridauth/install.php">HybridAuth Auto Installer</a></p>
 
 <p align="justify">You can also install HybridAuth manually by refering to <strong>Installation and Configuration</strong> sections at <a href="http://hybridauth.sourceforge.net/userguide.html">http://hybridauth.sourceforge.net/userguide.html</a></p>
 
 <p align="justify">We also highly recommend to download and use <b>the latest release</b> from HybridAuth website at <a href="http://hybridauth.sourceforge.net/download.html"></a><a href="http://hybridauth.sourceforge.net/download.html">http://hybridauth.sourceforge.net/download.html</a> </p>
 
 <p><strong>To get help and support</strong>, join us and participate in the hybridauth discussion group at <a href="http://hybridauth.sourceforge.net/support.html"></a><a href="http://hybridauth.sourceforge.net/support.html">http://hybridauth.sourceforge.net/support.html</a></p> 
+<hr />
 </td>
 </tr> 
-</table>
+</table> 
+</center>
+
+
+
+<center>
+<h2><u>HybridAuth Examples and Demos</u></h2>  
+<table width="60%" border="0" cellspacing="10">
+
+<tr>
+<td width="280" align="center"><a href="hello_world/index.php"><img src="helloworld.gif" width="250"   style="border:1px solid #ccc;padding:4px;" /></a></td>
+<td align="left" valign="top"><a href="hello_world/index.php"><b>1 - Hello world</b></a>
+<p align="justify">
+A very simple sign-in script which will try to directly connect the user with Twitter then grab his complete profile and also access the twitter social api. 
+How this script work is well <a href="http://hybridauth.sourceforge.net/userguide/Integrating_HybridAuth_SignIn.html">explained in this online guide</a>.
+</p>
+</td>  
+</tr> 
+
+<tr> 
+<td align="center"><a href="widget_authentication/index.php"><img src="widget.gif" width="250"  style="border:1px solid #ccc;padding:4px;" /></a></td> 
+<td align="left" valign="top"><a href="widget_authentication/index.php"><b>2 - Widget integration</b></a>
+<p align="justify">
+A simple user friendly sign-in interface (aka: provider selector UI) which you can integrate, customize, redesign and improve (and hopefully you will share some of your work with the comminuty). 
+</p>
+</td>  
+</tr>
+
+<tr>  
+<td align="center"><a href="social_hub/index.php"><img src="embed.gif" width="250"   style="border:1px solid #ccc;padding:4px;" /></a></td>  
+<td align="left" valign="top"><a href="social_hub/index.php"><b>3 - Tiny Social Hub</b></a>
+<p align="justify">
+This exapmle show how users can login with providers using HybridAuth. It also show how to grab their profile, update their status or to grab their freinds list from services such as facebook, twitter, myspace.
+</p>
+</tr>  
+
+<tr>  
+<td align="center"><a href="signin_signup/index.php"><img src="singup.gif" width="250"   style="border:1px solid #ccc;padding:4px;" /></a></td>  
+<td align="left" valign="top"><a href="signin_signup/index.php"><b>4 - Sign-in/Sign-up users</b></a>
+<p align="justify">
+An attempt to put together an answer to how to sign-in/sign-up users using HybridAuth in an existing web application. <p align="justify">
+This exapmle provide a simple implementation of the whole sign-in/sign-up process on a MVC environment.</p>
+</tr>  
+
+<tr>  
+<td align="center"><a href="facebook_integration/index.php"><img src="fb.gif" width="250" style="border:1px solid #ccc;padding:4px;" /></a></td>  
+<td align="left" valign="top"><a href="facebook_integration/index.php"><b>5 - Basic Facebook integration</b></a>
+<p align="justify">
+A basic example which show how to integrate Facebook Dialogs and stuff on your website side by side whith HybridAuth. 
+</p>
+</tr>  
+
+</table> 
 </center>
 <br /> 
 <br /> 
 
+<hr />
+<p>HybridAuth Open Source Social Sign On Library, 2011.</p> 
  
+<script type="text/javascript"> 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -47,3 +85,5 @@ pageTracker._trackPageview();
 } catch(err) {}</script>
 <script type="text/javascript"> var sc_project=7312365; var sc_invisible=1; var sc_security="30da00f3"; </script>
 <script type="text/javascript" src="http://www.statcounter.com/counter/counter.js"></script> 
+</body>
+</html>
