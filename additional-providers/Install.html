@@ -77,20 +77,22 @@
 		</p>
 
 		<ol>
-			<li><b>HybridAuth Core library</b> which include 
+			<li><b>HybridAuth Core library</b> which include by default 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_OpenID.html">OpenID</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Facebook.html">Facebook</a>,
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Twitter.html">Twitter</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_LinkedIn.html">LinkedIn</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_MySpace.html">MySpace</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html">Google</a>, 
-					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html">Yahoo</a> 
+					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html">Yahoo</a>, 
+					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html">Foursquare</a>,
+					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_AOL.html">AOL</a> 
 					and 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Live.html">Windows Live</a>.</li>
 			<li>
 			
 				And the <b>additional providers package</b> which contains many others social services and identitiy providers you may want to use such as 
-					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html">Foursquare</a>, 
+					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Github.html">Github</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Tumblr.html">Tumblr</a>,   
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Viadeo.html">Viadeo</a>,
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Vimeo.html">Vimeo</a>,
@@ -114,15 +116,15 @@
 		</p> 
 		
 		<p>
-			For example, lets say you want to add <b>Foursquare</b> to your authetication service:
+			For example, lets say you want to add <b>Gwalla</b> to your authetication service:
 		</p>
 
 		<ol>
-			<li>First, open <code>hybridauth-foursquare/</code> folder,</li>
-			<li>Copy <code>hybridauth-foursquare/Providers/</code> and  <code>hybridauth-foursquare/thirdparty/</code> folders,</li>
-			<li>Then, past them into HybridAuth core library: <code>hybridauth-2.x.x/Hybrid/Providers/</code> and <code>hybridauth-2.x.x/Hybrid/thirdparty/</code>,</li>
-			<li>Goto <a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html">Foursquare adapter specification</a> web page on the online user guide to find out how to setup an new application,</li> 
-			<li>Finally, add the created foursquare application credentials to your configuration :</li> 
+			<li>First, goto <code>hybridauth-gowalla/</code>,</li>
+			<li>Copy <code>hybridauth-gowalla/Providers/</code> and  <code>hybridauth-gowalla/thirdparty/</code> folders,</li>
+			<li>Then, past them into HybridAuth core library: <code>hybridauth-2.x.x/Hybrid/</code>,</li>
+			<li>Goto <a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Gowalla.html">Gowalla adapter specification</a> web page on the online user guide to find out how to setup an new application,</li> 
+			<li>Finally, add the created gowalla application credentials to your configuration :</li> 
 		</ol>
 
 		<pre>
@@ -133,8 +135,8 @@
 				&quot;providers&quot; =&gt; array (
 					// ... others providers already setup ... // 
 
-					// foursquare application credentials
-					&quot;Foursquare&quot; =&gt;   array ( 
+					// gowalla application credentials
+					&quot;Gowalla&quot; =&gt;   array ( 
 					   &quot;enabled&quot;   =&gt; true,
 					   &quot;keys&quot;   =&gt; array ( &quot;key&quot; =&gt; &quot;*****************&quot;, &quot;secret&quot; =&gt; &quot;*********************************&quot; )
 					) 
