@@ -1,16 +1,12 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-*/ 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
 
 /**
- * Hybrid_Providers_LinkedIn class, wrapper for LinkedIn  
+ * Hybrid_Providers_LinkedIn 
  */
 class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 { 
@@ -33,7 +29,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		}
 	}
 
-   /**
+	/**
 	* begin login step 
 	*/
 	function loginBegin()
@@ -53,7 +49,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
         }
 	}
 
-   /**
+	/**
 	* finish login step 
 	*/
 	function loginFinish()
@@ -102,21 +98,21 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 				throw new Exception( "User profile request failed! {$this->providerId} returned an invalide xml data.", 6 );
 			}  
 
-			$this->user->profile->identifier    = @ (string) $data->{'id'};
-			$this->user->profile->firstName  	= @ (string) $data->{'first-name'};
-			$this->user->profile->lastName  	= @ (string) $data->{'last-name'}; 
-			$this->user->profile->displayName  	= trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
+			$this->user->profile->identifier  = @ (string) $data->{'id'};
+			$this->user->profile->firstName   = @ (string) $data->{'first-name'};
+			$this->user->profile->lastName    = @ (string) $data->{'last-name'}; 
+			$this->user->profile->displayName = trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
 
-			$this->user->profile->photoURL  	= @ (string) $data->{'picture-url'}; 
-			$this->user->profile->profileURL    = @ (string) $data->{'public-profile-url'}; 
-			$this->user->profile->description   = @ (string) $data->{'summary'};  
+			$this->user->profile->photoURL    = @ (string) $data->{'picture-url'}; 
+			$this->user->profile->profileURL  = @ (string) $data->{'public-profile-url'}; 
+			$this->user->profile->description = @ (string) $data->{'summary'};  
 
-			$this->user->profile->phone         = @ (string) $data->{'phone-numbers'}->{'phone-number'}->{'phone-number'};  
+			$this->user->profile->phone       = @ (string) $data->{'phone-numbers'}->{'phone-number'}->{'phone-number'};  
 
 			if( $data->{'date-of-birth'} ) { 
-				$this->user->profile->birthDay      = @ (string) $data->{'date-of-birth'}->day;  
-				$this->user->profile->birthMonth    = @ (string) $data->{'date-of-birth'}->month;  
-				$this->user->profile->birthYear     = @ (string) $data->{'date-of-birth'}->year;  
+				$this->user->profile->birthDay   = @ (string) $data->{'date-of-birth'}->day;  
+				$this->user->profile->birthMonth = @ (string) $data->{'date-of-birth'}->month;  
+				$this->user->profile->birthYear  = @ (string) $data->{'date-of-birth'}->year;  
 			} 
 
 			return $this->user->profile;
@@ -126,7 +122,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
         } 
 	}
 
-   /**
+	/**
 	* load the user contacts
 	*/
 	function getUserContacts()
@@ -149,19 +145,19 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		foreach( $connections->person as $connection ) {
 			$uc = new Hybrid_User_Contact();
 
-			$uc->identifier   = @ $connection->id;
-			$uc->displayName  = @ $connection->{'last-name'} . " " . $connection->{'first-name'};
-			$uc->profileURL   = @ $connection->{'public-profile-url'};
-			$uc->photoURL     = @ $connection->{'picture-url'};
-			$uc->description  = @ $connection->{'summary'};
+			$uc->identifier  = @ $connection->id;
+			$uc->displayName = @ $connection->{'last-name'} . " " . $connection->{'first-name'};
+			$uc->profileURL  = @ $connection->{'public-profile-url'};
+			$uc->photoURL    = @ $connection->{'picture-url'};
+			$uc->description = @ $connection->{'summary'};
 
 			$contacts[] = $uc; 
 		}
 
 		return $contacts;
- 	}
+	}
 	
-   /**
+	/**
 	* update user status
 	*/
 	function setUserStatus( $status )
@@ -191,9 +187,9 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		{
 			throw new Exception( "Update user status update failed! {$this->providerId} returned an error." );
 		}
- 	}
+	}
 
-   /**
+	/**
 	* load the user latest activity  
 	*    - timeline : all the stream
 	*    - me       : the user activity only  
@@ -239,5 +235,5 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		}
 
 		return $activities;
- 	}
+	}
 }

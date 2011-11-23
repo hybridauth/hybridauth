@@ -1,13 +1,9 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-*/ 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
 
 // ------------------------------------------------------------------------
 // The main file to include in Hybrid_Auth package 
@@ -38,6 +34,7 @@ class Hybrid_Auth
 			}
 		}
 
+	#{{{ well, should we check this each time? ..
 		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
 		if ( ! function_exists('curl_init') ) {
 			throw new Exception('Hybriauth Library needs the CURL PHP extension.');
@@ -52,6 +49,7 @@ class Hybrid_Auth
 		if( extension_loaded('oauth') ) {
 			throw new Exception('Hybriauth Library not compatible with installed PECL OAuth extension. Please disable it.');
 		}
+	#}}}
 
 		Hybrid_Auth::initialize( $config ); 
 	}
@@ -87,23 +85,23 @@ class Hybrid_Auth
 			$config["debug_file"] = null;
 		}
 
-		# some required includes  
+		# some required includes
 		require_once $config["path_base"] . "Error.php"; 
 		require_once $config["path_base"] . "Logger.php"; 
 
 		require_once $config["path_base"] . "Storage.php";  
 
-		require_once $config["path_base"] . "Provider_Model.php";
 		require_once $config["path_base"] . "Provider_Adapter.php"; 
 
-		require_once $config["path_base"] . "Protocols/OpenID.php"; 
-		require_once $config["path_base"] . "Protocols/OAuth1.php"; 
-		require_once $config["path_base"] . "Protocols/OAuth2.php"; 
+		require_once $config["path_base"] . "Provider_Model.php";
+		require_once $config["path_base"] . "Provider_Model_OpenID.php";
+		require_once $config["path_base"] . "Provider_Model_OAuth1.php";
+		require_once $config["path_base"] . "Provider_Model_OAuth2.php"; 
 
 		require_once $config["path_base"] . "User.php"; 
-		require_once $config["path_base"] . "User/Profile.php";
-		require_once $config["path_base"] . "User/Contact.php";
-		require_once $config["path_base"] . "User/Activity.php";
+		require_once $config["path_base"] . "User_Profile.php";
+		require_once $config["path_base"] . "User_Contact.php";
+		require_once $config["path_base"] . "User_Activity.php";
 
 		// hash given config
 		Hybrid_Auth::$config = $config;
@@ -147,7 +145,7 @@ class Hybrid_Auth
 		}
 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: no error found. initialization succeed." );
-		
+
 		// Endof initialize 
 	}
 
@@ -222,7 +220,7 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* Return the adapter instance for a given provider
 	*/ 
 	public static function getAdapter( $providerId = NULL )
@@ -234,7 +232,7 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* Setup an adapter for a given provider
 	*/ 
 	public static function setup( $providerId, $params = NULL )
@@ -269,7 +267,7 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* Check if the current user is connected to a given provider
 	*/ 
 	public static function isConnectedWith( $providerId = NULL )
@@ -280,7 +278,7 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* Return array listing all authenticated providers
 	*/ 
 	public static function getConnectedProviders()
@@ -298,7 +296,7 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* A generic function to logout all connected provider at once
 	* #3435186, http://sourceforge.net/tracker/?func=detail&atid=1195295&aid=3435186&group_id=281757
 	*/ 
@@ -315,19 +313,17 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* Utility function, redirect to a given URL with php header or using javascript location.href
 	*/
 	public static function redirect( $url, $mode = "PHP", $postdata = ARRAY() )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Auth::redirect( $url, $mode )" );
 
-		if( $mode == "PHP" )
-		{
+		if( $mode == "PHP" ){
 			header( "Location: $url" ) ;
 		}
-		elseif( $mode == "JS" )
-		{
+		elseif( $mode == "JS" ){
 			echo '<html>';
 			echo '<head>';
 			echo '<script type="text/javascript">';
@@ -345,7 +341,7 @@ class Hybrid_Auth
 
 	// --------------------------------------------------------------------
 
-   /**
+	/**
 	* Utility function, return the current url. TRUE to get $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
 	*/
 	public static function getCurrentUrl( $request_uri = true ) 

@@ -1,12 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -17,108 +13,108 @@
  */
 class Hybrid_User_Profile
 {
-   	/**
+	/**
 	* The Unique user's ID on the connected provider
 	*/	
-	public $identifier 	= NULL;
+	public $identifier = NULL;
 
-   	/**
+	/**
 	* User website, blog, web page, 
 	*/	
-	public $webSiteURL 	= NULL;
+	public $webSiteURL = NULL;
 
-   	/**
+	/**
 	* URL link to profile page on the IDp web site 
 	*/
-	public $profileURL 	= NULL;
+	public $profileURL = NULL;
 
-   	/**
+	/**
 	* URL link to user photo or avatar 
 	*/	
-	public $photoURL 		= NULL;
+	public $photoURL = NULL;
 
-   	/**
+	/**
 	* User dispalyName provided by the IDp or a concatenation of first and last name. 
 	*/
-	public $displayName 	= NULL;
+	public $displayName = NULL;
 
-   	/**
+	/**
 	* A short about_me 
 	*/
-	public $description 	= NULL;
+	public $description = NULL;
 
-   	/**
+	/**
 	* User's first name 
 	*/
-	public $firstName   	= NULL;
+	public $firstName = NULL;
 
-   	/**
+	/**
 	* User's last name 
 	*/
-	public $lastName 		= NULL;
+	public $lastName = NULL;
 
-   	/**
+	/**
 	* male or female 
 	*/
-	public $gender 		= NULL;
+	public $gender = NULL;
 
-   	/**
+	/**
 	* language
 	*/
-	public $language 		= NULL;
+	public $language = NULL;
 
-   	/**
+	/**
 	* User age, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	public $age 			= NULL;
+	public $age = NULL;
 
-   	/**
+	/**
 	* User birth Day, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	public $birthDay 		= NULL;
+	public $birthDay = NULL;
 
-   	/**
+	/**
 	* User birth Month, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	public $birthMonth 	= NULL;
+	public $birthMonth = NULL;
 
-   	/**
+	/**
 	* User birth Year, we dont calculate it. we return it as is if the IDp provide it.
 	*/
-	public $birthYear 		= NULL;
+	public $birthYear = NULL;
 
-   	/**
+	/**
 	* User email. Not all of IDp garant access to the user email
 	*/
-	public $email 			= NULL;
+	public $email = NULL;
 
-   	/**
+	/**
 	*  phone number
 	*/
-	public $phone 			= NULL;
+	public $phone = NULL;
 
-   	/**
+	/**
 	* complete user address
 	*/
-	public $address 		= NULL;
+	public $address = NULL;
 
-   	/**
+	/**
 	* user country
 	*/
-	public $country 		= NULL;
+	public $country = NULL;
 
-   	/**
+	/**
 	* region
 	*/
-	public $region			= NULL;
+	public $region = NULL;
 
-   	/**
+	/**
 	*  city
 	*/
-	public $city 			= NULL;
+	public $city = NULL;
 
-   	/**
+	/**
 	* Postal code or zipcode. 
 	*/
-	public $zip 			= NULL;
+	public $zip = NULL;
 }

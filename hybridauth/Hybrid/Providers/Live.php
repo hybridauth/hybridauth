@@ -1,20 +1,16 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-*/ 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
 
 /**
- * Hybrid_Providers_Live class, wrapper for Windows Live 
+ * Hybrid_Providers_Live 
  */
 class Hybrid_Providers_Live extends Hybrid_Provider_Model
 {
-   /**
+	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
@@ -24,22 +20,22 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 		}
 
 		// Application Specific Globals
-		define( 'WRAP_CLIENT_ID'       , $this->config["keys"]["id"] );
-		define( 'WRAP_CLIENT_SECRET'   , $this->config["keys"]["secret"] ); 
-		define( 'WRAP_CALLBACK'        , $this->endpoint );
-		define( 'WRAP_CHANNEL_URL'     , Hybrid_Auth::$config["base_url"] . "?get=windows_live_channel" );
+		define( 'WRAP_CLIENT_ID'    , $this->config["keys"]["id"] );
+		define( 'WRAP_CLIENT_SECRET', $this->config["keys"]["secret"] ); 
+		define( 'WRAP_CALLBACK'     , $this->endpoint );
+		define( 'WRAP_CHANNEL_URL'  , Hybrid_Auth::$config["base_url"] . "?get=windows_live_channel" );
 
 		// Live URLs required for making requests.
-		define('WRAP_CONSENT_URL'      , 'https://consent.live.com/Connect.aspx');
-		define('WRAP_ACCESS_URL'       , 'https://consent.live.com/AccessToken.aspx');
-		define('WRAP_REFRESH_URL'      , 'https://consent.live.com/RefreshToken.aspx');
+		define('WRAP_CONSENT_URL'  , 'https://consent.live.com/Connect.aspx');
+		define('WRAP_ACCESS_URL'   , 'https://consent.live.com/AccessToken.aspx');
+		define('WRAP_REFRESH_URL'  , 'https://consent.live.com/RefreshToken.aspx');
 
 		require_once Hybrid_Auth::$config["path_libraries"] . "WindowsLive/OAuthWrapHandler.php";  
 
 		$this->api = new OAuthWrapHandler();
 	}
 
-   /**
+	/**
 	* begin login step 
 	*/
 	function loginBegin()
@@ -49,7 +45,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 		Hybrid_Auth::redirect( WRAP_CONSENT_URL . "?wrap_client_id=" . WRAP_CLIENT_ID . "&wrap_callback=" . urlencode( WRAP_CALLBACK ) . "&wrap_scope=WL_Profiles.View" ); 
 	}
 
-   /**
+	/**
 	* finish login step 
 	*/ 
 	function loginFinish()

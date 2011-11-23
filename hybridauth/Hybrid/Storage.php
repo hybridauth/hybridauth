@@ -1,13 +1,9 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-*/ 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
  
 /**
 * PHP Session storage  
@@ -20,21 +16,16 @@ class Hybrid_Storage {
 		}
 	}
 
-	// --------------------------------------------------------------------
-
 	public function get($key, $expiration = false) 
 	{
 		$key = strtolower( $key );  
 
-		if( isset( $_SESSION["HA::STORE"][$key] ) ) 
-		{ 
+		if( isset( $_SESSION["HA::STORE"][$key] ) ){ 
 			return unserialize( $_SESSION["HA::STORE"][$key] );  
 		}
 
 		return NULL; 
 	}
-
-	// --------------------------------------------------------------------
 
 	public function set( $key, $value )
 	{
@@ -43,26 +34,19 @@ class Hybrid_Storage {
 		$_SESSION["HA::STORE"][$key] = serialize( $value ); 
 	}
 
-	// --------------------------------------------------------------------
-
 	function clear()
 	{ 
 		$_SESSION["HA::STORE"] = ARRAY(); 
 	} 
 
-	// --------------------------------------------------------------------
-
 	function delete($key)
 	{
 		$key = strtolower( $key );  
 
-		if( isset( $_SESSION["HA::STORE"][$key] ) ) 
-		{ 
+		if( isset( $_SESSION["HA::STORE"][$key] ) ){ 
 			unset( $_SESSION["HA::STORE"][$key] );
 		} 
 	}
-
-	// --------------------------------------------------------------------
 
 	function deleteMatch($key)
 	{
@@ -77,14 +61,10 @@ class Hybrid_Storage {
 		}
 	}
 
-	// --------------------------------------------------------------------
-
 	function getSessionData()
 	{ 
 		return serialize( $_SESSION["HA::STORE"] );
 	}
-
-	// --------------------------------------------------------------------
 
 	function restoreSessionData( $sessiondata = NULL )
 	{ 

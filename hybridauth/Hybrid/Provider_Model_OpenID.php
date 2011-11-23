@@ -1,19 +1,15 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
-class Hybrid_Providers_Protocols_OpenID extends Hybrid_Provider_Model
+class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 {
 	var $openidIdentifier = ""; 
 
-   /**
+	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize()
@@ -27,7 +23,7 @@ class Hybrid_Providers_Protocols_OpenID extends Hybrid_Provider_Model
 		$this->api = new LightOpenID( parse_url( Hybrid_Auth::$config["base_url"], PHP_URL_HOST) ); 
 	}
 
-   	/**
+	/**
 	* begin login step 
 	*/
 	function loginBegin( )
@@ -61,7 +57,7 @@ class Hybrid_Providers_Protocols_OpenID extends Hybrid_Provider_Model
 		Hybrid_Auth::redirect( $this->api->authUrl() );
 	}
 
-   	/**
+	/**
 	* finish login step 
 	*/
 	function loginFinish( )

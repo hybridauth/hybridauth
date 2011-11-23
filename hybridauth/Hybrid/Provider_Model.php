@@ -1,12 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -14,7 +10,7 @@
 */
 abstract class Hybrid_Provider_Model
 {
-   	/**
+	/**
 	* the IDp api client (optional)
 	*/
 	public $api              = NULL; 
@@ -24,7 +20,7 @@ abstract class Hybrid_Provider_Model
 	*/
 	public $user             = NULL;
 
-   	/**
+	/**
 	* IDp adapter config on hybridauth.php
 	*/
 	public $config           = NULL;
@@ -34,17 +30,17 @@ abstract class Hybrid_Provider_Model
 	*/
 	public $params           = NULL;
 
-   	/**
+	/**
 	* IDp ID (or unique name)
 	*/
 	public $providerId       = NULL;
 
-   	/**
+	/**
 	* Hybridauth Endpoint URL
 	*/
 	public $endpoint        = NULL; 
 
-   	/**
+	/**
 	* common IDp wrappers constructor
 	*/
 	function __construct( $providerId, $config, $params = NULL )
@@ -78,7 +74,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* IDp wrappers initializer
 	*
 	* The main job of wrappers initializer is to performs (depend on the IDp api client it self): 
@@ -91,14 +87,14 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* begin login 
 	*/
 	abstract protected function loginBegin();
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* finish login
 	*/
 	abstract protected function loginFinish();
@@ -119,7 +115,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* grab the user profile from the IDp api client
 	*/
 	function getUserProfile()
@@ -131,7 +127,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* load the current logged in user contacts list from the IDp api client  
 	*/
 	function getUserContacts() 
@@ -143,7 +139,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* return the user activity stream  
 	*/
 	function getUserActivity( $stream ) 
@@ -155,7 +151,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* return the user activity stream  
 	*/ 
 	function setUserStatus( $status )
@@ -167,7 +163,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* return true if the user is connected to the current provider
 	*/ 
 	public function isUserConnected()
@@ -178,7 +174,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* set user to connected 
 	*/ 
 	public function setUserConnected()
@@ -190,7 +186,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* set user to unconnected 
 	*/ 
 	public function setUserUnconnected()
@@ -202,7 +198,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* get or set a token 
 	*/ 
 	public function token( $token, $value = NULL )
@@ -217,7 +213,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* delete a stored token 
 	*/ 
 	public function deleteToken( $token )
@@ -227,7 +223,7 @@ abstract class Hybrid_Provider_Model
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* clear all existen tokens for this provider
 	*/ 
 	public function clearTokens()

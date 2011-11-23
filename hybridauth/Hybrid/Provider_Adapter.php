@@ -1,12 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -14,37 +10,37 @@
  */
 class Hybrid_Provider_Adapter
 {
-   	/**
+	/**
 	* IDp ID (or unique name)
 	*/
 	public $id       = NULL ;
 
-   	/**
+	/**
 	* IDp adapter config on hybrid.config.php
 	*/
 	public $config   = NULL ;
 
-   	/**
+	/**
 	* IDp adapter requireds params
 	*/
 	public $params   = NULL ; 
 
-   	/**
+	/**
 	* IDp adapter path
 	*/
 	public $wrapper  = NULL ;
 
-   	/**
+	/**
 	* IDp adapter instance
 	*/
 	public $adapter  = NULL ;
 
-    /**
-     * create a new adapter switch IDp name or ID
-     *
-     * @param string  $id      The id or name of the IDp
-     * @param array   $params  (optional) required parameters by the adapter 
-     */
+	/**
+	* create a new adapter switch IDp name or ID
+	*
+	* @param string  $id      The id or name of the IDp
+	* @param array   $params  (optional) required parameters by the adapter 
+	*/
 	function factory( $id, $params = NULL )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Provider_Adapter::factory( $id )" );
@@ -86,12 +82,12 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-    /**
-     * This is the methode that should be specified when a user requests a sign in whith an IDp.
-     * 
-     * Hybrid_Provider_Adapter::login(), prepare the user session and the authentification request
-	 * for hybrid.endpoint.php
-     */
+	/**
+	* This is the methode that should be specified when a user requests a sign in whith an IDp.
+	* 
+	* Hybrid_Provider_Adapter::login(), prepare the user session and the authentification request
+	* for hybrid.endpoint.php
+	*/
 	function login()
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Provider_Adapter::login( {$this->id} ) " );
@@ -129,9 +125,9 @@ class Hybrid_Provider_Adapter
 		# 	auth.done   required  the IDp ID
 		$this->params["login_done"]  = $HYBRID_AUTH_URL_BASE . ( strpos( $HYBRID_AUTH_URL_BASE, '?' ) ? '&' : '?' ) . "hauth.done={$this->id}";
 
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_return_to"	, $this->params["hauth_return_to"] );
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_endpoint"	    , $this->params["login_done"] ); 
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.id_provider_params"	, $this->params );
+		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_return_to"    , $this->params["hauth_return_to"] );
+		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_endpoint"     , $this->params["login_done"] ); 
+		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.id_provider_params" , $this->params );
 
 		// store config to be used by the end point
 		$_SESSION["HA::CONFIG"] = serialize( Hybrid_Auth::$config );
@@ -144,7 +140,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* let hybridauth forget all about the user
 	*/
 	function logout()
@@ -154,7 +150,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* return true if the user is connected to the current provider
 	*/ 
 	public function isUserConnected()
@@ -165,7 +161,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* handle :
 	*   getUserProfile()
 	*   getUserContacts()
@@ -196,7 +192,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* If the user is connected, then return the access_token and access_token_secret
 	* if the provider api use oauth
 	*/
@@ -209,18 +205,18 @@ class Hybrid_Provider_Adapter
 		}
 
 		return
-				ARRAY(
-					"access_token"        => $this->adapter->token( "access_token" )       , // OAuth access token
-					"access_token_secret" => $this->adapter->token( "access_token_secret" ), // OAuth access token secret
-					"refresh_token"       => $this->adapter->token( "refresh_token" )      , // OAuth refresh token
-					"expires_in"          => $this->adapter->token( "expires_in" )         , // OPTIONAL. The duration in seconds of the access token lifetime
-                    "expires_at"          => $this->adapter->token( "expires_at" )         , // OPTIONAL. Timestamp when the access_token expire. if not provided by the social api, then it should be calculated: expires_at = now + expires_in
-				);
+			ARRAY(
+				"access_token"        => $this->adapter->token( "access_token" )       , // OAuth access token
+				"access_token_secret" => $this->adapter->token( "access_token_secret" ), // OAuth access token secret
+				"refresh_token"       => $this->adapter->token( "refresh_token" )      , // OAuth refresh token
+				"expires_in"          => $this->adapter->token( "expires_in" )         , // OPTIONAL. The duration in seconds of the access token lifetime
+				"expires_at"          => $this->adapter->token( "expires_at" )         , // OPTIONAL. Timestamp when the access_token expire. if not provided by the social api, then it should be calculated: expires_at = now + expires_in
+			);
 	}
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* Naive getter of the current connected IDp API client
 	*/
 	function api()
@@ -236,7 +232,7 @@ class Hybrid_Provider_Adapter
 
 	// --------------------------------------------------------------------
 
-   	/**
+	/**
 	* redirect the user to hauth_return_to (the callback url)
 	*/
 	function returnToCallbackUrl()

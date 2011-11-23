@@ -1,4 +1,10 @@
-<?php 
+<?php
+/*!
+* HybridAuth
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
+
 // A service client for the OAuth 1/1.0a flow.
 // v0.1
 class OAuth1Client{

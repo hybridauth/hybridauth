@@ -1,20 +1,16 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-*/ 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
 
 /**
  * Hybrid_Providers_Foursquare 
  */
-class Hybrid_Providers_Foursquare extends Hybrid_Providers_Protocols_OAuth2
+class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 { 
-   /**
+	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
@@ -29,7 +25,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Providers_Protocols_OAuth2
 		$this->api->sign_token_name = "oauth_token";
 	}
 
-   /**
+	/**
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
@@ -42,15 +38,15 @@ class Hybrid_Providers_Foursquare extends Hybrid_Providers_Protocols_OAuth2
 
 		$data = $data->response->user;
 
-		$this->user->profile->identifier    = @ $data->id;
-		$this->user->profile->firstName  	= @ $data->firstName;
-		$this->user->profile->lastName  	= @ $data->lastName;
-		$this->user->profile->displayName  	= trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
-		$this->user->profile->photoURL  	= @ $data->photo;
-		$this->user->profile->profileURL    = @ "https://www.foursquare.com/user/" . $data->id;
-		$this->user->profile->gender        = @ $data->gender;
-		$this->user->profile->city          = @ $data->homeCity;
-		$this->user->profile->email         = @ $data->contact->email;
+		$this->user->profile->identifier  = @ $data->id;
+		$this->user->profile->firstName   = @ $data->firstName;
+		$this->user->profile->lastName    = @ $data->lastName;
+		$this->user->profile->displayName = trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
+		$this->user->profile->photoURL    = @ $data->photo;
+		$this->user->profile->profileURL  = @ "https://www.foursquare.com/user/" . $data->id;
+		$this->user->profile->gender      = @ $data->gender;
+		$this->user->profile->city        = @ $data->homeCity;
+		$this->user->profile->email       = @ $data->contact->email;
 
 		return $this->user->profile;
 	}

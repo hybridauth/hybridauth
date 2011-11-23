@@ -52,10 +52,3 @@ at [http://hybridauth.sourceforge.net/userguide.html](http://hybridauth.sourcefo
 
 **To get help and support**, join us and participate in the hybriauth discussion group
 at [http://hybridauth.sourceforge.net/support.html](http://hybridauth.sourceforge.net/support.html)
-
-## Quick Start
-
-- CHMOD 777 config.php 
-- Run install.php. 
-- Once configured, delete install.php.
-That's it!

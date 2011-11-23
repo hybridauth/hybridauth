@@ -89,8 +89,7 @@
 			&nbsp;&nbsp;<a href="?provider=Live">Sign-in with Windows Live</a><br />  
 			&nbsp;&nbsp;<a href="?provider=LinkedIn">Sign-in with LinkedIn</a><br /> 
 			&nbsp;&nbsp;<a href="?provider=Foursquare">Sign-in with Foursquare</a><br /> 
-			&nbsp;&nbsp;<a href="?provider=AOL">Sign-in with AOL</a><br /> 
-			&nbsp;&nbsp;<a href="?provider=GitHub">Sign-in with GitHub</a><br /> 
+			&nbsp;&nbsp;<a href="?provider=AOL">Sign-in with AOL</a><br />  
       </fieldset> 
 	</td> 
 <?php 

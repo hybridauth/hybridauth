@@ -1,12 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /** 
@@ -14,25 +10,25 @@
  */
 class Hybrid_User_Activity
 {
-   	/**
+	/**
 	* activity/event id on the provider side, usually given as integer
 	*/	
-	public $id 	= NULL;
+	public $id = NULL;
 
-  	/**
+	/**
 	* activity date of creation
 	*/	
-	public $date 	= NULL;
+	public $date = NULL;
 
-   	/**
+	/**
 	* activity content as string
 	*/	
-	public $text 	= NULL;
+	public $text = NULL;
 
-   	/**
+	/**
 	* user who created the activity 
 	*/	
-	public $user 	= NULL;
+	public $user = NULL;
 
 	public function __construct()
 	{

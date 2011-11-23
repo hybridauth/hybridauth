@@ -13,7 +13,7 @@
 					echo '&nbsp;&nbsp;<a href="profile.php?provider=' . $adapter_id . '">Switch to <b>' . $adapter_id . '</b>  account</a><br />'; 
 				}
 			?>
-			<hr />
+			<br />
 			&nbsp;&nbsp;<a href="logout_all.php">Logout all connected providers</a>
 		</fieldset> 
 <?php

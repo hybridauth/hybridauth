@@ -1,106 +1,27 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
-* Hybrid_Providers_Tumblr class 
+* Hybrid_Providers_Tumblr 
 */
-class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model
+class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 {
-   /**
+   	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize()
 	{
-		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] )
-		{
-			throw new Exception( "Your application key and secret are required in order to connect to {$this->providerId}.", 4 );
-		}
+		parent::initialize();
 
-		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "TwitterCompatible/TwitterCompatibleClient.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "TwitterCompatible/Tumblr.php";
-
-		if( $this->token( "access_token" ) && $this->token( "access_token_secret" ) )
-		{
-			$this->api = new Tumblr_Client
-							( 
-								$this->config["keys"]["key"], $this->config["keys"]["secret"],
-								$this->token( "access_token" ), $this->token( "access_token_secret" ) 
-							);
-		}
-	}
-	
-   /**
-	* begin login step 
-	*/
-	function loginBegin()
-	{
- 	    $this->api = new Tumblr_Client( $this->config["keys"]["key"], $this->config["keys"]["secret"] );
-
-		$tokz = $this->api->getRequestToken( $this->endpoint ); 
-
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus(), 5 );
-		}
-
-		if ( ! isset( $tokz["oauth_token"] ) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth token.", 5 );
-		}
-
-		$this->token( "request_token"       , $tokz["oauth_token"] ); 
-		$this->token( "request_token_secret", $tokz["oauth_token_secret"] ); 
-
-		# redirect user to twitter 
-		Hybrid_Auth::redirect( $this->api->getAuthorizeURL( $tokz ) );
-	}
-
-   /**
-	* finish login step 
-	*/ 
-	function loginFinish()
-	{ 
-		$oauth_token    = @ $_REQUEST['oauth_token']; 
-		$oauth_verifier = @ $_REQUEST['oauth_verifier']; 
-
-		if ( ! $oauth_token || ! $oauth_verifier )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth verifier.", 5 );
-		}
-
-		$this->api = new Tumblr_Client( 
-							$this->config["keys"]["key"], $this->config["keys"]["secret"], 
-							$this->token( "request_token" ), $this->token( "request_token_secret" ) 
-						);
-
-		$tokz = $this->api->getAccessToken( $oauth_verifier );
-
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus(), 5 );
-		}
-
-		if ( ! isset( $tokz["oauth_token"] ) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
-		}
-
-		$this->token( "access_token"        , $tokz['oauth_token'] );
-		$this->token( "access_token_secret" , $tokz['oauth_token_secret'] ); 
-
-		// set user as logged in
-		$this->setUserConnected();
+		// provider api end-points
+		$this->api->api_base_url      = "http://www.tumblr.com/";
+		$this->api->authorize_url     = "http://www.tumblr.com/oauth/authorize";
+		$this->api->request_token_url = "http://www.tumblr.com/oauth/request_token";
+		$this->api->access_token_url  = "http://www.tumblr.com/oauth/access_token";
 	}
 
    /**
@@ -113,7 +34,7 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 )
 		{
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus(), 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an error: " . $this->errorMessageByStatus( $this->api->http_code ), 6 );
 		}
 
 		try{ 
@@ -134,7 +55,31 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model
 
 		return $this->user->profile;
  	}
-	
+
+   	/**
+	* load the current logged in user contacts list from the IDp api client  
+	*/
+	function getUserContacts() 
+	{
+		throw new Exception( "Provider does not support this feature.", 8 ); 
+	}
+
+   	/**
+	* return the user activity stream  
+	*/
+	function getUserActivity( $stream ) 
+	{
+		throw new Exception( "Provider does not support this feature.", 8 ); 
+	}
+
+   	/**
+	* return the user activity stream  
+	*/ 
+	function setUserStatus( $status )
+	{
+		throw new Exception( "Provider does not support this feature.", 8 ); 
+	}
+
    /**
 	* Utility function, convert xml to array
 	*/
@@ -153,5 +98,5 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model
 		} 
 		$arXML['children']=$t; 
 		return($arXML); 
-	} 	
+	}
 }

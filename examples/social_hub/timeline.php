@@ -22,7 +22,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="public/css.css" type="text/css">
+<link rel="stylesheet" href="public/css.css" type="text/css"> 
 </head>
 <body>  
 <table width="90%" border="0" cellpadding="2" cellspacing="2">

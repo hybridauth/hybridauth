@@ -1,106 +1,27 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
-* Hybrid_Providers_Identica class 
+* Hybrid_Providers_Identica 
 */
-class Hybrid_Providers_Identica extends Hybrid_Provider_Model
+class Hybrid_Providers_Identica extends Hybrid_Provider_Model_OAuth1
 {
-   /**
+   	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize()
 	{
-		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] )
-		{
-			throw new Exception( "Your application key and secret are required in order to connect to {$this->providerId}.", 4 );
-		}
+		parent::initialize();
 
-		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "TwitterCompatible/TwitterCompatibleClient.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "TwitterCompatible/Identica.php";
-
-		if( $this->token( "access_token" ) && $this->token( "access_token_secret" ) )
-		{
-			$this->api = new Identica_Client
-							( 
-								$this->config["keys"]["key"], $this->config["keys"]["secret"],
-								$this->token( "access_token" ), $this->token( "access_token_secret" ) 
-							);
-		}
-	}
-
-   /**
-	* begin login step 
-	*/
-	function loginBegin()
-	{
- 	    $this->api = new Identica_Client( $this->config["keys"]["key"], $this->config["keys"]["secret"] );
-
-		$tokz = $this->api->getRequestToken( $this->endpoint ); 
-
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus(), 5 );
-		}
-
-		if ( ! isset( $tokz["oauth_token"] ) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth token.", 5 );
-		}
-
-		$this->token( "request_token"       , $tokz["oauth_token"] ); 
-		$this->token( "request_token_secret", $tokz["oauth_token_secret"] ); 
-
-		# redirect user to twitter 
-		Hybrid_Auth::redirect( $this->api->getAuthorizeURL( $tokz ) );
-	}
-
-   /**
-	* finish login step 
-	*/ 
-	function loginFinish()
-	{ 
-		$oauth_token    = @ $_REQUEST['oauth_token']; 
-		$oauth_verifier = @ $_REQUEST['oauth_verifier']; 
-
-		if ( ! $oauth_token || ! $oauth_verifier )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth verifier.", 5 );
-		}
-
-		$this->api = new Identica_Client( 
-							$this->config["keys"]["key"], $this->config["keys"]["secret"], 
-							$this->token( "request_token" ), $this->token( "request_token_secret" ) 
-						);
-
-		$tokz = $this->api->getAccessToken( $oauth_verifier );
-
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus(), 5 );
-		}
-
-		if ( ! isset( $tokz["oauth_token"] ) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
-		}
-
-		$this->token( "access_token"        , $tokz['oauth_token'] );
-		$this->token( "access_token_secret" , $tokz['oauth_token_secret'] ); 
-
-		// set user as logged in
-		$this->setUserConnected();
+		// provider api end-points
+		$this->api->api_base_url      = "https://identi.ca/api/";
+		$this->api->authorize_url     = "https://identi.ca/api/oauth/authorize";
+		$this->api->request_token_url = "https://identi.ca/api/oauth/request_token";
+		$this->api->access_token_url  = "https://identi.ca/api/oauth/access_token";
 	}
 
    /**
@@ -108,12 +29,12 @@ class Hybrid_Providers_Identica extends Hybrid_Provider_Model
 	*/
 	function getUserProfile()
 	{
-		$response = $this->api->get( 'account/verify_credentials' ); 
+		$response = $this->api->get( 'account/verify_credentials.json' ); 
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 )
 		{
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus(), 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 6 );
 		}
 
 		if ( ! is_object( $response ) )
@@ -140,12 +61,12 @@ class Hybrid_Providers_Identica extends Hybrid_Provider_Model
 	function getUserContacts( $arguments = ARRAY() )
 	{
 		$parameters = array( 'cursor' => '-1' ); 
-		$response  = $this->api->get( 'friends/ids', $parameters ); 
+		$response  = $this->api->get( 'friends/ids.json', $parameters ); 
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 )
 		{
-			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus() );
+			throw new Exception( "User contacts request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
 		if( ! $response ){
@@ -157,12 +78,12 @@ class Hybrid_Providers_Identica extends Hybrid_Provider_Model
 		// donno if users/lookup is supported by identica.. to do
 		foreach( $response as $item ){
 			$parameters = array( 'user_id' => $item ); 
-			$responseud = $this->api->get( 'users/show', $parameters ); 
+			$responseud = $this->api->get( 'users/show.json', $parameters ); 
 
 			// check the last HTTP status code returned
 			if ( $this->api->http_code != 200 )
 			{
-				throw new Exception( "User contacts request failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus() );
+				throw new Exception( "User contacts request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
 			}
 
 			if( $responseud ){
@@ -189,12 +110,12 @@ class Hybrid_Providers_Identica extends Hybrid_Provider_Model
 		$status  = $arguments[0]; // status content  
 		
 		$parameters = array( 'status' => $status ); 
-		$response  = $this->api->post( 'statuses/update', $parameters ); 
+		$response  = $this->api->post( 'statuses/update.json', $parameters ); 
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 )
 		{
-			throw new Exception( "Update user status update failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus() );
+			throw new Exception( "Update user status update failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
  	}
 
@@ -206,16 +127,16 @@ class Hybrid_Providers_Identica extends Hybrid_Provider_Model
 	function getUserActivity( $arguments = ARRAY() )
 	{ 
 		if( isset( $arguments[0] ) && $arguments[0] == "me" ){
-			$response  = $this->api->get( 'statuses/user_timeline' ); 
+			$response  = $this->api->get( 'statuses/user_timeline.json' ); 
 		}                                                          
 		else{                                                      
-			$response  = $this->api->get( 'statuses/home_timeline' ); 
+			$response  = $this->api->get( 'statuses/home_timeline.json' ); 
 		}
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 )
 		{
-			throw new Exception( "User activity stream request failed! {$this->providerId} returned an error: " . $this->api->lastErrorMessageFromStatus() );
+			throw new Exception( "User activity stream request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
 		if( ! $response ){

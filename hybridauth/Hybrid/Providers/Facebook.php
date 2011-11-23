@@ -1,16 +1,12 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
- * Hybrid_Providers_Facebook class, wrapper for Facebook Connect
+ * Hybrid_Providers_Facebook 
  */
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 {
@@ -39,7 +35,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$this->api->getUser();
 	}
 
-   /**
+	/**
 	* begin login step
 	* 
 	* simply call Facebook::require_login(). 
@@ -77,7 +73,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		} 
 	}
 
-   /**
+	/**
 	* logout
 	*/
 	function logout()
@@ -87,7 +83,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		parent::logout();
 	}
 
-   /**
+	/**
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
@@ -106,30 +102,30 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		}
 
 		# store the user profile.  
-		$this->user->profile->identifier    = @ $data['id'];
-		$this->user->profile->displayName   = @ $data['name'];
-		$this->user->profile->firstName     = @ $data['first_name'];
-		$this->user->profile->lastName     	= @ $data['last_name'];
-		$this->user->profile->photoURL      = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?type=square";
-		$this->user->profile->profileURL 	= @ $data['link']; 
-		$this->user->profile->webSiteURL 	= @ $data['website']; 
-		$this->user->profile->gender     	= @ $data['gender'];
-		$this->user->profile->description  	= @ $data['bio'];
-		$this->user->profile->email      	= @ $data['email'];
-		$this->user->profile->region      	= @ $data['hometown']["name"];
+		$this->user->profile->identifier  = @ $data['id'];
+		$this->user->profile->displayName = @ $data['name'];
+		$this->user->profile->firstName   = @ $data['first_name'];
+		$this->user->profile->lastName    = @ $data['last_name'];
+		$this->user->profile->photoURL    = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?type=square";
+		$this->user->profile->profileURL  = @ $data['link']; 
+		$this->user->profile->webSiteURL  = @ $data['website']; 
+		$this->user->profile->gender      = @ $data['gender'];
+		$this->user->profile->description = @ $data['bio'];
+		$this->user->profile->email       = @ $data['email'];
+		$this->user->profile->region      = @ $data['hometown']["name"];
 
 		if( isset( $data['birthday'] ) ) {
 			list($birthday_month, $birthday_day, $birthday_year) = @ explode('/', $data['birthday'] );
 
-			$this->user->profile->birthDay      = $birthday_day;
-			$this->user->profile->birthMonth    = $birthday_month;
-			$this->user->profile->birthYear     = $birthday_year;
+			$this->user->profile->birthDay   = $birthday_day;
+			$this->user->profile->birthMonth = $birthday_month;
+			$this->user->profile->birthYear  = $birthday_year;
 		}
 
 		return $this->user->profile;
  	}
 
-   /**
+	/**
 	* load the user contacts
 	*/
 	function getUserContacts()
@@ -150,10 +146,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		foreach( $response["data"] as $item ){
 			$uc = new Hybrid_User_Contact();
 
-			$uc->identifier   = @ $item["id"];
-			$uc->displayName  = @ $item["name"];
-			$uc->profileURL   = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
-			$uc->photoURL     = "https://graph.facebook.com/" . $uc->identifier . "/picture?type=square"; 
+			$uc->identifier  = @ $item["id"];
+			$uc->displayName = @ $item["name"];
+			$uc->profileURL  = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
+			$uc->photoURL    = "https://graph.facebook.com/" . $uc->identifier . "/picture?type=square"; 
 
 			$contacts[] = $uc;
 		}
@@ -161,7 +157,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		return $contacts;
  	}
 
-   /**
+	/**
 	* update user status
 	*/
 	function setUserStatus( $status )
@@ -185,7 +181,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		}
  	}
 
-   /**
+	/**
 	* load the user latest activity  
 	*    - timeline : all the stream
 	*    - me       : the user activity only  

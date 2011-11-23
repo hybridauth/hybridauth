@@ -1,36 +1,35 @@
 <?php
-/**
+/*!
 * HybridAuth
-* 
-* A Social-Sign-On PHP Library for authentication through identity providers like Facebook,
-* Twitter, Google, Yahoo, LinkedIn, MySpace, Windows Live, Tumblr, Friendster, OpenID, PayPal,
-* Vimeo, Foursquare, AOL, Gowalla, and others.
-*
-* Copyright (c) 2009-2011 (http://hybridauth.sourceforge.net) 
-*/ 
+* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
+*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*/
 
 /**
- * Hybrid_Providers_MySpace class, wrapper for MySpaceID  
+ * Hybrid_Providers_MySpace 
  */
-class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
+class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 {
-   /**
+	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
 	{
 		parent::initialize();
 
-		// Provider apis end-points
+		// Provider api end-points
 		$this->api->api_endpoint_url  = "http://api.myspace.com/v1/";
 		$this->api->authorize_url     = "http://api.myspace.com/authorize";
 		$this->api->request_token_url = "http://api.myspace.com/request_token";
 		$this->api->access_token_url  = "http://api.myspace.com/access_token";
 	}
 
+	/**
+	* get the connected uid from myspace api
+	*/
 	public function getCurrentUserId()
 	{
-		$response = $this->api->get( 'user.json' );
+		$response = $this->api->get( 'http://api.myspace.com/v1/user.json' );
 
 		if ( ! isset( $response->userId ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
@@ -39,7 +38,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
 		return $response->userId;
 	}
 
-   /**
+	/**
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
@@ -52,22 +51,22 @@ class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 
-		$this->user->profile->identifier    = $userId;
-		$this->user->profile->displayName  	= @ $data->basicprofile->name;
-		$this->user->profile->description  	= @ $data->aboutme;
-		$this->user->profile->gender     	= @ $data->basicprofile->gender;
-		$this->user->profile->photoURL   	= @ $data->basicprofile->image;
-		$this->user->profile->profileURL 	= @ $data->basicprofile->webUri;
-		$this->user->profile->age 			= @ $data->age;
-		$this->user->profile->country 		= @ $data->country;
-		$this->user->profile->region 		= @ $data->region;
-		$this->user->profile->city 			= @ $data->city;
-		$this->user->profile->zip 			= @ $data->postalcode;
+		$this->user->profile->identifier  = $userId;
+		$this->user->profile->displayName = @ $data->basicprofile->name;
+		$this->user->profile->description = @ $data->aboutme;
+		$this->user->profile->gender      = @ $data->basicprofile->gender;
+		$this->user->profile->photoURL    = @ $data->basicprofile->image;
+		$this->user->profile->profileURL  = @ $data->basicprofile->webUri;
+		$this->user->profile->age         = @ $data->age;
+		$this->user->profile->country     = @ $data->country;
+		$this->user->profile->region      = @ $data->region;
+		$this->user->profile->city        = @ $data->city;
+		$this->user->profile->zip         = @ $data->postalcode;
 
 		return $this->user->profile;
 	}
 
-   /**
+	/**
 	* load the user contacts
 	*/
 	function getUserContacts()
@@ -97,7 +96,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
 		return $contacts;
  	}
 
-   /**
+	/**
 	* update user status
 	*/
 	function setUserStatus( $status )
@@ -116,7 +115,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Providers_Protocols_OAuth1
 		}
  	}
 
-   /**
+	/**
 	* load the user latest activity  
 	*    - timeline : all the stream
 	*    - me       : the user activity only  
