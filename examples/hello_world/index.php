@@ -35,7 +35,7 @@
 		// ex. on how to access the twitter api with hybridauth
 		//     Returns the current count of friends, followers, updates (statuses) and favorites of the authenticating user.
 		//     https://dev.twitter.com/docs/api/1/get/account/totals
-		$account_totals = $twitter->api()->get( 'account/totals' );
+		$account_totals = $twitter->api()->get( 'account/totals.json' );
 
 		// print recived stats 
 		echo "Here some of yours stats on twitter:<br /><pre>" . print_r( $account_totals, true ) . "</pre>";
