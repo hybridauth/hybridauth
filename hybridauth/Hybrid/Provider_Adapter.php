@@ -6,34 +6,33 @@
 */
 
 /**
- * The Hybrid_Provider_Adapter class is a kinda of factory to create providers wrapper instances,  
+ * Hybrid_Provider_Adapter is the basic class which Hybrid_Auth will use
+ * to connect users to a given provider. 
+ * 
+ * Basically Hybrid_Provider_Adapterwill create a bridge from your php 
+ * application to the provider api.
+ * 
+ * Hybrid_Auth will automatically load Hybrid_Provider_Adapter and create
+ * an instance of it for each authenticated provider.
  */
 class Hybrid_Provider_Adapter
 {
-	/**
-	* IDp ID (or unique name)
-	*/
+	/* Provider ID (or unique name) */
 	public $id       = NULL ;
 
-	/**
-	* IDp adapter config on hybrid.config.php
-	*/
+	/* Provider adapter specific config */
 	public $config   = NULL ;
 
-	/**
-	* IDp adapter requireds params
-	*/
+	/* Provider adapter extra parameters */
 	public $params   = NULL ; 
 
-	/**
-	* IDp adapter path
-	*/
+	/* Provider adapter wrapper path */
 	public $wrapper  = NULL ;
 
-	/**
-	* IDp adapter instance
-	*/
+	/* Provider adapter instance */
 	public $adapter  = NULL ;
+
+	// --------------------------------------------------------------------
 
 	/**
 	* create a new adapter switch IDp name or ID
@@ -52,20 +51,17 @@ class Hybrid_Provider_Adapter
 		$this->config = $this->getConfigById( $this->id );
 
 		# check the IDp id
-		if( ! $this->id )
-		{
+		if( ! $this->id ){
 			throw new Exception( "No provider ID specified.", 2 ); 
 		}
 
 		# check the IDp config
-		if( ! $this->config )
-		{
+		if( ! $this->config ){
 			throw new Exception( "Unknown Provider ID, check your configuration file.", 3 ); 
 		}
 
 		# check the IDp adapter is enabled
-		if( ! $this->config["enabled"] )
-		{
+		if( ! $this->config["enabled"] ){
 			throw new Exception( "The provider '{$this->id}' is not enabled.", 3 );
 		}
 
@@ -83,27 +79,25 @@ class Hybrid_Provider_Adapter
 	// --------------------------------------------------------------------
 
 	/**
-	* This is the methode that should be specified when a user requests a sign in whith an IDp.
-	* 
 	* Hybrid_Provider_Adapter::login(), prepare the user session and the authentification request
-	* for hybrid.endpoint.php
+	* for index.php
 	*/
 	function login()
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Provider_Adapter::login( {$this->id} ) " );
 
-		if( ! $this->adapter )
-		{
-			throw new Exception( "Hybrid_Provider_Adapter::login() should not used directly." );
+		if( ! $this->adapter ){
+			throw new Exception( "Hybrid_Provider_Adapter::login() should not directly used." );
 		}
 
-		// clear all existen tokens if any and rest user status to unconnected
+		// clear all unneeded params
 		foreach( Hybrid_Auth::$config["providers"] as $idpid => $params ){
 			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.hauth_return_to"    );
-			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.hauth_endpoint"     ); 
+			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.hauth_endpoint"     );
 			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.id_provider_params" );
 		}
 
+		// set the user status to unconnected for the given provider
 		$this->adapter->setUserUnconnected();
 
 		# get hybridauth base url
@@ -141,7 +135,7 @@ class Hybrid_Provider_Adapter
 	// --------------------------------------------------------------------
 
 	/**
-	* let hybridauth forget all about the user
+	* let hybridauth forget all about the user for the current provider
 	*/
 	function logout()
 	{
@@ -155,8 +149,7 @@ class Hybrid_Provider_Adapter
 	*/ 
 	public function isUserConnected()
 	{
-		return 
-			$this->adapter->isUserConnected();
+		return $this->adapter->isUserConnected();
 	}
 
 	// --------------------------------------------------------------------
@@ -168,27 +161,25 @@ class Hybrid_Provider_Adapter
 	*   getUserActivity() 
 	*   setUserStatus() 
 	*/ 
-    public function __call( $name, $arguments ) 
+	public function __call( $name, $arguments ) 
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Provider_Adapter::$name(), Provider: {$this->id}" );
 
-		if ( ! $this->isUserConnected() )
-		{
+		if ( ! $this->isUserConnected() ){
 			throw new Exception( "User not connected to the provider {$this->id}.", 7 );
 		} 
 
-		if ( ! method_exists( $this->adapter, $name ) )
-		{
+		if ( ! method_exists( $this->adapter, $name ) ){
 			throw new Exception( "Call to undefined function Hybrid_Providers_{$this->id}::$name()." );
 		}
 
 		if( count( $arguments ) ){
 			return $this->adapter->$name( $arguments[0] ); 
 		} 
-		else{	
+		else{
 			return $this->adapter->$name(); 
 		}
-    }
+	}
 
 	// --------------------------------------------------------------------
 
@@ -237,7 +228,7 @@ class Hybrid_Provider_Adapter
 	*/
 	function returnToCallbackUrl()
 	{ 
-		// get stored callback url
+		// get the stored callback url
 		$callback_url = Hybrid_Auth::storage()->get( "hauth_session.{$this->id}.hauth_return_to" );
 
 		// remove some unneed'd stored data 
@@ -258,7 +249,7 @@ class Hybrid_Provider_Adapter
 	{ 
 		if( isset( Hybrid_Auth::$config["providers"][$id] ) ){
 			return Hybrid_Auth::$config["providers"][$id];
-		} 
+		}
 
 		return NULL;
 	}
@@ -266,7 +257,7 @@ class Hybrid_Provider_Adapter
 	// --------------------------------------------------------------------
 
 	/**
-	* return the provider config by id insensitive  
+	* return the provider config by id; insensitive
 	*/
 	function getProviderCiId( $id )
 	{

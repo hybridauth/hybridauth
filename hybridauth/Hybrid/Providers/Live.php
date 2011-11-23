@@ -6,7 +6,11 @@
 */
 
 /**
- * Hybrid_Providers_Live 
+ * Hybrid_Providers_Live provider adapter based on OAuth1 protocol
+ * 
+ * Hybrid_Providers_Live use OAuthWrapHandler class provided by microsoft
+ * 
+ * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Live.html
  */
 class Hybrid_Providers_Live extends Hybrid_Provider_Model
 {

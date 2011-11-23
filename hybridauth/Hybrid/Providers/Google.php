@@ -6,7 +6,9 @@
 */
 
 /**
- * Hybrid_Providers_Google 
+ * Hybrid_Providers_Google provider adapter based on OAuth2 protocol
+ * 
+ * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
  */
 class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 {

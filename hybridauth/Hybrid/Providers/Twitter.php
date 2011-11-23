@@ -6,7 +6,7 @@
 */
 
 /**
-* Hybrid_Providers_Twitter 
+* Hybrid_Providers_Twitter provider adapter based on OAuth1 protocol
 */
 class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 {

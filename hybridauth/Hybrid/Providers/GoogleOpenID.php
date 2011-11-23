@@ -7,6 +7,10 @@
 
 /**
  * Hybrid_Providers_Google OpenID based
+ * 
+ * Provided as a way to keep backward compatibility for Google OpenID based on HybridAuth <= 2.0.8 
+ * 
+ * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
  */
 class Hybrid_Providers_Google extends Hybrid_Provider_Model_OpenID
 {

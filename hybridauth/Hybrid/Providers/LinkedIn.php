@@ -6,7 +6,11 @@
 */
 
 /**
- * Hybrid_Providers_LinkedIn 
+ * Hybrid_Providers_LinkedIn provider adapter based on OAuth1 protocol
+ * 
+ * Hybrid_Providers_LinkedIn use linkedinPHP library created by fiftyMission Inc.
+ * 
+ * http://hybridauth.sourceforge.net/userguide/IDProvider_info_LinkedIn.html
  */
 class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 { 

@@ -6,16 +6,17 @@
 */
  
 /**
- * Debugging and Logging class
+ * Debugging and Logging manager
  */
 class Hybrid_Logger
 {
 	function __construct()
 	{
+		// if debug mode is set to true, then check for the writable log file
 		if ( Hybrid_Auth::$config["debug_mode"] ){
 			if ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) ){
-				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' do not exist.", 1 );
-			} 
+				throw new Exception( "'debug_mode' is set to 'true', but no log file path 'debug_file' given.", 1 );
+			}
 
 			if ( ! is_writable( Hybrid_Auth::$config["debug_file"] ) ){
 				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writable file.", 1 );

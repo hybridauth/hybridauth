@@ -4,11 +4,12 @@
 * http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
 *  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
- 
+
 /**
-* PHP Session storage  
-*/
-class Hybrid_Storage {
+ * HybridAuth storage manager
+ */
+class Hybrid_Storage 
+{
 	function __construct()
 	{
 		if( ! session_id() ){

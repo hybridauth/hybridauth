@@ -5,13 +5,27 @@
 *  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
+/**
+ * To implement an OAuth 2 based service provider, Hybrid_Provider_Model_OAuth2
+ * can be used to save the hassle of the authentication flow. 
+ * 
+ * Each class that inherit from Hybrid_Provider_Model_OAuth2 have to implemenent
+ * at least 2 methods:
+ *   Hybrid_Providers_{provider_name}::initialize()     to setup the provider api end-points urls
+ *   Hybrid_Providers_{provider_name}::getUserProfile() to grab the user profile
+ *
+ * Hybrid_Provider_Model_OAuth2 use OAuth2Client v0.1 which can be found on
+ * Hybrid/thirdparty/OAuth/OAuth2Client.php
+ */
 class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 {
 	// default permissions 
 	public $scope = "";
 
-   /**
-	* IDp wrappers initializer 
+	// --------------------------------------------------------------------
+
+	/**
+	* adapter initializer 
 	*/
 	function initialize() 
 	{
@@ -34,18 +48,23 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 		if( $this->token( "access_token" ) ){
 			$this->api->access_token  = $this->token( "access_token" );
 			$this->api->refresh_token = $this->token( "refresh_token" );
-		} 
+		}
 	}
 
-   /**
+	// --------------------------------------------------------------------
+
+	/**
 	* begin login step 
 	*/
 	function loginBegin()
 	{
+		// redirect the user to the provider authentication url
 		Hybrid_Auth::redirect( $this->api->authorizeUrl( array( "scope" => $this->scope ) ) ); 
 	}
- 
-   /**
+
+	// --------------------------------------------------------------------
+
+	/**
 	* finish login step 
 	*/
 	function loginFinish()

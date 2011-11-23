@@ -5,10 +5,13 @@
 *  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
-// ------------------------------------------------------------------------
-// The main file to include in Hybrid_Auth package 
-// ------------------------------------------------------------------------
-
+/**
+ * Hybrid_Auth class
+ * 
+ * Hybrid_Auth class provide a simple way to authenticate users via OpenID and OAuth.
+ * 
+ * Generally, Hybrid_Auth is the only class you should instanciate and use throughout your application.
+ */
 class Hybrid_Auth 
 {
 	public static $version = "2.0.9";
@@ -25,6 +28,11 @@ class Hybrid_Auth
 
 	/**
 	* Try to start a new session of none then initialize Hybrid_Auth
+    * 
+    * Hybrid_Auth constructor will require either a valid config array or
+    * a path for a configuration file as parameter. To know more please 
+    * refer to the Configuration section:
+    * http://hybridauth.sourceforge.net/userguide/Configuration.html
 	*/
 	function __construct( $config )
 	{
@@ -45,7 +53,7 @@ class Hybrid_Auth
 			throw new Exception('Hybriauth Library needs the JSON PHP extension.');
 		}
 
-		// the PECL extension is present, which is not compatible with this library
+		// OAuth PECL extension is not compatible with this library
 		if( extension_loaded('oauth') ) {
 			throw new Exception('Hybriauth Library not compatible with installed PECL OAuth extension. Please disable it.');
 		}
@@ -57,7 +65,7 @@ class Hybrid_Auth
 	// --------------------------------------------------------------------
 
 	/**
-	* Try to initialize Hybrid_Auth
+	* Try to initialize Hybrid_Auth with given $config hash or file
 	*/
 	public static function initialize( $config )
 	{
@@ -85,7 +93,7 @@ class Hybrid_Auth
 			$config["debug_file"] = null;
 		}
 
-		# some required includes
+		# load hybridauth required files, a autoload is on the way...
 		require_once $config["path_base"] . "Error.php"; 
 		require_once $config["path_base"] . "Logger.php"; 
 
@@ -106,7 +114,7 @@ class Hybrid_Auth
 		// hash given config
 		Hybrid_Auth::$config = $config;
 
-		// start session storage
+		// start session storage mng
 		Hybrid_Auth::$store = new Hybrid_Storage();
 		
 		// instace of errors mng
@@ -115,10 +123,11 @@ class Hybrid_Auth
 		// instace of log mng
 		Hybrid_Auth::$logger = new Hybrid_Logger();
 
-		// store php session.. well juste pour faire beau
+		// store php session and version..
 		$_SESSION["HA::PHP_SESSION_ID"] = session_id(); 
+		$_SESSION["HA::VERSION"]        = Hybrid_Auth::$version; 
 
-		// almost done, check for error then move on
+		// almost done, check for errors then move on
 		Hybrid_Logger::info( "Hybrid_Auth::initialize(), stated. Hybrid_Auth has been called from: " . Hybrid_Auth::getCurrentUrl() ); 
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump used config: ", serialize( $config ) );
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", serialize( $_SESSION ) ); 
@@ -134,8 +143,7 @@ class Hybrid_Auth
 			Hybrid_Error::clearError();
 
 			// try to provide the previous if any
-			// Exception::getPrevious (PHP 5 >= 5.3.0) 
-			// http://php.net/manual/en/exception.getprevious.php
+			// Exception::getPrevious (PHP 5 >= 5.3.0) http://php.net/manual/en/exception.getprevious.php
 			if ( version_compare( PHP_VERSION, '5.3.0', '>=' ) ) {  
 				throw new Exception( $m, $c, $p );
 			}
@@ -166,7 +174,7 @@ class Hybrid_Auth
 	// --------------------------------------------------------------------
 
 	/**
-	* Get the session stored data. To be used in case you want to store session on a more persistent backend
+	* Get hybridauth session data. 
 	*/
 	function getSessionData()
 	{ 
@@ -176,7 +184,7 @@ class Hybrid_Auth
 	// --------------------------------------------------------------------
 
 	/**
-	* set the session data. To be used in case you want to store session on a more persistent backend
+	* restore hybridauth session data. 
 	*/
 	function restoreSessionData( $sessiondata = NULL )
 	{ 
@@ -221,7 +229,7 @@ class Hybrid_Auth
 	// --------------------------------------------------------------------
 
 	/**
-	* Return the adapter instance for a given provider
+	* Return the adapter instance for an authenticated provider
 	*/ 
 	public static function getAdapter( $providerId = NULL )
 	{
@@ -269,11 +277,10 @@ class Hybrid_Auth
 
 	/**
 	* Check if the current user is connected to a given provider
-	*/ 
-	public static function isConnectedWith( $providerId = NULL )
+	*/
+	public static function isConnectedWith( $providerId )
 	{
-		return 
-			( bool) Hybrid_Auth::storage()->get( "hauth_session.{$providerId}.is_logged_in" );
+		return (bool) Hybrid_Auth::storage()->get( "hauth_session.{$providerId}.is_logged_in" );
 	}
 
 	// --------------------------------------------------------------------
@@ -283,22 +290,21 @@ class Hybrid_Auth
 	*/ 
 	public static function getConnectedProviders()
 	{
-		$authenticatedProviders = ARRAY();
-		
+		$idps = array();
+
 		foreach( Hybrid_Auth::$config["providers"] as $idpid => $params ){
-			if( ( bool) Hybrid_Auth::storage()->get( "hauth_session.{$idpid}.is_logged_in" ) ){
-				$authenticatedProviders[] = $idpid;
+			if( Hybrid_Auth::isConnectedWith( $idpid ) ){
+				$idps[] = $idpid;
 			}
 		}
 
-		return $authenticatedProviders;
+		return $idps;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	* A generic function to logout all connected provider at once
-	* #3435186, http://sourceforge.net/tracker/?func=detail&atid=1195295&aid=3435186&group_id=281757
+	* A generic function to logout all connected provider at once 
 	*/ 
 	public static function logoutAllProviders()
 	{
@@ -316,7 +322,7 @@ class Hybrid_Auth
 	/**
 	* Utility function, redirect to a given URL with php header or using javascript location.href
 	*/
-	public static function redirect( $url, $mode = "PHP", $postdata = ARRAY() )
+	public static function redirect( $url, $mode = "PHP" )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Auth::redirect( $url, $mode )" );
 

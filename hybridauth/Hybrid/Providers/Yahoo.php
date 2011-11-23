@@ -6,7 +6,7 @@
 */
 
 /**
- * Hybrid_Providers_Yahoo 
+ * Hybrid_Providers_Yahoo provider adapter based on OpenID protocol
  */
 class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OpenID
 {

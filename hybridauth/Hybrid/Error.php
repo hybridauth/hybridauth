@@ -6,26 +6,28 @@
 */
 
 /**
- * The Hybrid_Error manage and store error for HybridAuth 
+ * Errors manager
+ * 
+ * HybridAuth errors are stored in Hybrid::storage() and not displayed directly to the end user 
  */
 class Hybrid_Error
 {
 	/**
-	* store error in HybridAuth cache system
+	* store error in session
 	*/
 	public static function setError( $message, $code = NULL, $trace = NULL, $previous = NULL )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Error::setError( $message )" );
 
-		Hybrid_Auth::storage()->set( "hauth_session.error.status"  , 1           );
-		Hybrid_Auth::storage()->set( "hauth_session.error.message" , $message    );
-		Hybrid_Auth::storage()->set( "hauth_session.error.code"    , $code       );
-		Hybrid_Auth::storage()->set( "hauth_session.error.trace"   , $trace      );
-		Hybrid_Auth::storage()->set( "hauth_session.error.previous", $previous   );
+		Hybrid_Auth::storage()->set( "hauth_session.error.status"  , 1         );
+		Hybrid_Auth::storage()->set( "hauth_session.error.message" , $message  );
+		Hybrid_Auth::storage()->set( "hauth_session.error.code"    , $code     );
+		Hybrid_Auth::storage()->set( "hauth_session.error.trace"   , $trace    );
+		Hybrid_Auth::storage()->set( "hauth_session.error.previous", $previous );
 	}
 
 	/**
-	* store error in HybridAuth cache system
+	* clear the last error
 	*/
 	public static function clearError()
 	{ 
@@ -38,12 +40,9 @@ class Hybrid_Error
 		Hybrid_Auth::storage()->delete( "hauth_session.error.previous" );
 	}
 
-   	/**
-	* Checks to see if there is a an error.
-	*
-	* errors are stored in Hybrid::storage() Hybrid storage system
-	* and not displayed directly to user 
-	*
+	/**
+	* Checks to see if there is a an error. 
+	* 
 	* @return boolean True if there is an error.
 	*/
 	public static function hasError()
@@ -51,10 +50,8 @@ class Hybrid_Error
 		return (bool) Hybrid_Auth::storage()->get( "hauth_session.error.status" );
 	}
 
-   	/**
-	* a naive error message getter
-	*
-	* @return string very short error message.
+	/**
+	* return error message 
 	*/
 	public static function getErrorMessage()
 	{ 
@@ -62,9 +59,7 @@ class Hybrid_Error
 	}
 
 	/**
-	* a naive error code getter
-	*
-	* @return int error code defined on Hybrid_Auth.
+	* return error code  
 	*/
 	public static function getErrorCode()
 	{ 
@@ -72,9 +67,7 @@ class Hybrid_Error
 	}
 
 	/**
-	* a naive error backtrace getter
-	*
-	* @return string detailled error backtrace as string.
+	* return string detailled error backtrace as string.
 	*/
 	public static function getErrorTrace()
 	{ 
@@ -82,8 +75,6 @@ class Hybrid_Error
 	}
 
 	/**
-	* a naive error backtrace getter
-	*
 	* @return string detailled error backtrace as string.
 	*/
 	public static function getErrorPrevious()

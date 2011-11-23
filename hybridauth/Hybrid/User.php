@@ -6,32 +6,18 @@
 */
 
 /**
- * The Hybrid_User class represents the current loggedin user
- *
- * Note: As with all APIs, we are limited by the amout of data which the API provider provides us. 
+ * The Hybrid_User class represents the current loggedin user 
  */
 class Hybrid_User 
 {
-	/**
-	* The ID (name) of the connected provider
-	*/
+	/* The ID (name) of the connected provider */
 	public $providerId = NULL;
 
-	/**
-	* timestamp connection to the provider
-	*/
+	/* timestamp connection to the provider */
 	public $timestamp = NULL; 
 
-	/**
-	* user profile, containts the list of fields available in the normalized user profile structure used by HybridAuth.
-	*/
+	/* user profile, containts the list of fields available in the normalized user profile structure used by HybridAuth. */
 	public $profile = NULL;
-
-	/**
-	* user contacts list, for future use
-	*/
-	# for future use, HybridAuth dont provide users contats on this version
-	#     var $contacts     = NULL;
 
 	/**
 	* inisialize the user object,

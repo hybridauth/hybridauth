@@ -6,7 +6,9 @@
 */
 
 /**
- * Hybrid_Providers_MySpace 
+ * Hybrid_Providers_MySpace provider adapter based on OAuth1 protocol
+ * 
+ * http://hybridauth.sourceforge.net/userguide/IDProvider_info_MySpace.html
  */
 class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 {
@@ -32,8 +34,8 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		$response = $this->api->get( 'http://api.myspace.com/v1/user.json' );
 
 		if ( ! isset( $response->userId ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
-		} 
+			throw new Exception( "User id request failed! {$this->providerId} returned an invalide response." );
+		}
 
 		return $response->userId;
 	}

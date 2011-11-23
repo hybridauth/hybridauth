@@ -5,29 +5,25 @@
 *  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
-/** 
+/**
  * Hybrid_User_Activity 
+ * 
+ * used to provider the connected user activity stream on a standardized structure across supported social apis.
+ * 
+ * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Activity.html
  */
 class Hybrid_User_Activity
 {
-	/**
-	* activity/event id on the provider side, usually given as integer
-	*/	
+	/* activity id on the provider side, usually given as integer */
 	public $id = NULL;
 
-	/**
-	* activity date of creation
-	*/	
+	/* activity date of creation */ 
 	public $date = NULL;
 
-	/**
-	* activity content as string
-	*/	
+	/* activity content as a string */ 
 	public $text = NULL;
 
-	/**
-	* user who created the activity 
-	*/	
+	/* user who created the activity */
 	public $user = NULL;
 
 	public function __construct()

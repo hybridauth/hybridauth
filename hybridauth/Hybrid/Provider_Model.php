@@ -6,42 +6,41 @@
 */
 
 /**
-* Providers Model Class
-*/
+ * Hybrid_Provider_Model provide a common interface for supported IDps on HybridAuth.
+ *
+ * Basically, each provider adapter has to define at least 4 methods:
+ *   Hybrid_Providers_{provider_name}::initialize()
+ *   Hybrid_Providers_{provider_name}::loginBegin()
+ *   Hybrid_Providers_{provider_name}::loginFinish()
+ *   Hybrid_Providers_{provider_name}::getUserProfile()
+ *
+ * HybridAuth also come with three others models
+ *   Class Hybrid_Provider_Model_OpenID for providers that uses the OpenID 1 and 2 protocol.
+ *   Class Hybrid_Provider_Model_OAuth1 for providers that uses the OAuth 1 protocol.
+ *   Class Hybrid_Provider_Model_OAuth2 for providers that uses the OAuth 2 protocol.
+ */
 abstract class Hybrid_Provider_Model
 {
-	/**
-	* the IDp api client (optional)
-	*/
-	public $api              = NULL; 
+	/* IDp ID (or unique name) */
+	public $providerId = NULL;
+
+	/* specific provider adapter config */
+	public $config     = NULL;
+
+   	/* provider extra parameters */
+	public $params     = NULL;
+
+	/* Endpoint URL for that provider */
+	public $endpoint   = NULL; 
+
+	/* Hybrid_User obj, represents the current loggedin user */
+	public $user       = NULL;
+
+	/* the provider api client (optional) */
+	public $api        = NULL; 
 
 	/**
-	* Hybrid_User obj, represents the current user
-	*/
-	public $user             = NULL;
-
-	/**
-	* IDp adapter config on hybridauth.php
-	*/
-	public $config           = NULL;
-
-   	/**
-	* IDp adapter requireds params
-	*/
-	public $params           = NULL;
-
-	/**
-	* IDp ID (or unique name)
-	*/
-	public $providerId       = NULL;
-
-	/**
-	* Hybridauth Endpoint URL
-	*/
-	public $endpoint        = NULL; 
-
-	/**
-	* common IDp wrappers constructor
+	* common providers adapter constructor
 	*/
 	function __construct( $providerId, $config, $params = NULL )
 	{
@@ -54,22 +53,22 @@ abstract class Hybrid_Provider_Model
 		}
 
 		// idp id
-		$this->providerId         = $providerId;
+		$this->providerId = $providerId;
 
 		// set HybridAuth endpoint for this provider
-		$this->endpoint           = Hybrid_Auth::storage()->get( "hauth_session.$providerId.hauth_endpoint" );
+		$this->endpoint = Hybrid_Auth::storage()->get( "hauth_session.$providerId.hauth_endpoint" );
 
 		// idp config
-		$this->config             = $config;
+		$this->config = $config;
 
 		// new user instance
-		$this->user             = new Hybrid_User();
+		$this->user = new Hybrid_User();
 		$this->user->providerId = $providerId;
 
-		// initialize the adapter
+		// initialize the current provider adapter
 		$this->initialize(); 
 
-		Hybrid_Logger::debug( "Hybrid_Provider_Model::__construct( $providerId ) initialized. dump adapter api: ", serialize( $this->api ) );
+		Hybrid_Logger::debug( "Hybrid_Provider_Model::__construct( $providerId ) initialized. dump current adapter instance: ", serialize( $this ) );
 	}
 
 	// --------------------------------------------------------------------
@@ -108,7 +107,7 @@ abstract class Hybrid_Provider_Model
 	{
 		Hybrid_Logger::info( "Enter [{$this->providerId}]::logout()" );
 
-		$this->clearTokens(); 
+		$this->clearTokens();
 
 		return TRUE;
 	}
@@ -168,8 +167,7 @@ abstract class Hybrid_Provider_Model
 	*/ 
 	public function isUserConnected()
 	{
-		return 
-			( bool) Hybrid_Auth::storage()->get( "hauth_session.{$this->providerId}.is_logged_in" );
+		return (bool) Hybrid_Auth::storage()->get( "hauth_session.{$this->providerId}.is_logged_in" );
 	}
 
 	// --------------------------------------------------------------------
