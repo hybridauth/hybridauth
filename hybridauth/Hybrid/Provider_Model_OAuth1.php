@@ -19,6 +19,9 @@
  */
 class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 {
+	public $request_tokens_raw = null; // request_tokens as recived from provider
+	public $access_tokens_raw  = null; // access_tokens as recived from provider
+	
 	/**
 	* try to get the error message from provider api
 	*/ 
@@ -87,6 +90,9 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 	{
 		$tokens = $this->api->requestToken( $this->endpoint ); 
 
+		// request tokens as recived from provider
+		$this->request_tokens_raw = $tokens;
+		
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
 			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
@@ -120,6 +126,9 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 		// request an access token
 		$tokens = $this->api->accessToken( $oauth_verifier );
 
+		// access tokens as recived from provider
+		$this->access_tokens_raw = $tokens;
+
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
 			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
@@ -133,12 +142,12 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 		// we no more need to store requet tokens
 		$this->deleteToken( "request_token"        );
 		$this->deleteToken( "request_token_secret" );
-        
+
 		// sotre access_token for later user
 		$this->token( "access_token"        , $tokens['oauth_token'] );
 		$this->token( "access_token_secret" , $tokens['oauth_token_secret'] ); 
 
 		// set user as logged in to the current provider
-		$this->setUserConnected();
+		$this->setUserConnected(); 
 	}
 }

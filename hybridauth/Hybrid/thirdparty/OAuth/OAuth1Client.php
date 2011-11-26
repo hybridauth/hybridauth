@@ -13,6 +13,9 @@ class OAuth1Client{
 	public $authenticate_url      = "";
 	public $request_token_url     = "";
 	public $access_token_url      = "";
+	
+	public $request_token_method  = "GET";
+	public $access_token_method   = "GET";
 
 	public $redirect_uri          = "";
 
@@ -74,7 +77,7 @@ class OAuth1Client{
 			$this->redirect_uri = $parameters['oauth_callback'] = $callback; 
 		}
 
-		$request     = $this->signedRequest( $this->request_token_url, 'GET', $parameters ); 
+		$request     = $this->signedRequest( $this->request_token_url, $this->request_token_method, $parameters ); 
 		$token       = OAuthUtil::parse_parameters( $request );
 		$this->token = new OAuthConsumer( $token['oauth_token'], $token['oauth_token_secret'] ); 
 
@@ -95,7 +98,7 @@ class OAuth1Client{
 			$parameters['oauth_verifier'] = $oauth_verifier; 
 		}
 
-		$request     = $this->signedRequest( $this->access_token_url, 'GET', $parameters ); 
+		$request     = $this->signedRequest( $this->access_token_url, $this->access_token_method, $parameters ); 
 		$token       = OAuthUtil::parse_parameters( $request ); 
 		$this->token = new OAuthConsumer( $token['oauth_token'], $token['oauth_token_secret'] ); 
 
@@ -144,17 +147,15 @@ class OAuth1Client{
 		$request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
 		$request->sign_request($this->sha1_method, $this->consumer, $this->token);
 		switch ($method) {
-		case 'GET':
-		return $this->request($request->to_url(), 'GET');
-		default:
-		return $this->request($request->get_normalized_http_url(), $method, $request->to_postdata());
+			case 'GET': return $this->request( $request->to_url(), 'GET' );
+			default   : return $this->request( $request->get_normalized_http_url(), $method, $request->to_postdata(), $request->to_header() ) ;
 		}
 	}
 	
 	/** 
 	* Make http request  
 	*/ 
-	function request( $url, $method, $postfields = NULL )
+	function request( $url, $method, $postfields = NULL, $auth_header = null )
 	{
 		Hybrid_Logger::info( "Enter OAuth1Client::request( $method, $url )" );
 		Hybrid_Logger::debug( "OAuth1Client::request(). dump post fields: ", serialize( $postfields ) ); 
@@ -174,9 +175,12 @@ class OAuth1Client{
 
 		switch ($method) {
 			case 'POST':
-				curl_setopt($ci, CURLOPT_POST, TRUE);
+				curl_setopt($ci, CURLOPT_POST, TRUE );
 				if (!empty($postfields)) {
-				  curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
+					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields );
+				}
+				if (!empty($auth_header)) {
+					curl_setopt($ci, CURLOPT_HTTPHEADER, array('Content-Type: application/atom+xml', $auth_header) );
 				}
 				break;
 			case 'DELETE':
