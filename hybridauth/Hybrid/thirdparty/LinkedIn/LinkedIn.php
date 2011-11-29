@@ -1,10 +1,10 @@
 <?php
 // http://code.google.com/p/simple-linkedinphp/
-// 3.1.1 - July 12, 2011
+// 3.2.0 - November 29, 2011
 
 /**
  * This file defines the 'LinkedIn' class. This class is designed to be a 
- * simple, stand-alone implementation of the most-used LinkedIn API functions.
+ * simple, stand-alone implementation of the LinkedIn API functions.
  * 
  * COPYRIGHT:
  *   
@@ -58,36 +58,9 @@
  *   
  * RESOURCES:
  *    
- * LinkedIn API Documentation from developer.linkedin.com
- * Access Out-Of-Network Profiles:  http://developer.linkedin.com/docs/DOC-1160 
- * Comments Network Updates:	      http://developer.linkedin.com/docs/DOC-1043 
- * Company Search API:              http://developer.linkedin.com/docs/DOC-1325 
- * Connections API:				          http://developer.linkedin.com/docs/DOC-1004
- * Experience Levels:               http://developer.linkedin.com/docs/DOC-1155  
- * Field Selectors:				          http://developer.linkedin.com/docs/DOC-1014 
- * Get Network Updates:			        http://developer.linkedin.com/docs/DOC-1006 
- * Industry Codes:				          http://developer.linkedin.com/docs/DOC-1011 
- * Invitation API:				          http://developer.linkedin.com/docs/DOC-1012 
- * Job Bookmarks and Suggestions:   http://developer.linkedin.com/docs/DOC-1323 
- * Job Functions:                   http://developer.linkedin.com/docs/DOC-1143 
- * Job Lookup API:                  http://developer.linkedin.com/docs/DOC-1322
- * Job Posting API:                 http://developer.linkedin.com/docs/DOC-1142
- * Job Search API:                  http://developer.linkedin.com/docs/DOC-1321
- * Job Types:                       http://developer.linkedin.com/docs/DOC-1144  
- * JSON Requests & Responses:       http://developer.linkedin.com/docs/DOC-1203 
- * Messaging API:					          http://developer.linkedin.com/docs/DOC-1044 
- * People Search API:					      http://developer.linkedin.com/docs/DOC-1191
- *   replaces Search API:           http://developer.linkedin.com/docs/DOC-1005
- * Profile API:					            http://developer.linkedin.com/docs/DOC-1002
- * Profile Fields:				          http://developer.linkedin.com/docs/DOC-1061
- * Post Network Update:		          http://developer.linkedin.com/docs/DOC-1009
- * Share API:                       http://developer.linkedin.com/docs/DOC-1212 
- *   replaces Status Update API:	  http://developer.linkedin.com/docs/DOC-1007
- * Throttle Limits:                 http://developer.linkedin.com/docs/DOC-1112
- *                                  http://developer.linkedin.com/message/4626#4626
- *                                  http://developer.linkedin.com/message/3193#3193 
+ * REST API Documentation: http://developer.linkedin.com/rest
  *    
- * @version 3.1.1 - July 12, 2011
+ * @version 3.2.0 - November 8, 2011
  * @author Paul Mennega <paul@fiftymission.net>
  * @copyright Copyright 2011, fiftyMission Inc. 
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License 
@@ -152,7 +125,7 @@ class LinkedIn {
 	const _URL_REVOKE                  = 'https://api.linkedin.com/uas/oauth/invalidateToken';
 	
 	// Library version
-	const _VERSION                     = '3.1.1';
+	const _VERSION                     = '3.2.0';
   
   // oauth properties
   protected $callback;
@@ -174,13 +147,13 @@ class LinkedIn {
 	 * communication with the LinkedIn API.	 
 	 * 
 	 * @param arr $config
-	 *         The 'start-up' object properties:
+	 *    The 'start-up' object properties:
 	 *           - appKey       => The application's API key
 	 *           - appSecret    => The application's secret key
 	 *           - callbackUrl  => [OPTIONAL] the callback URL
 	 *                 	 
 	 * @return obj
-	 *         A new LinkedIn object.	 
+	 *    A new LinkedIn object.	 
 	 */
 	public function __construct($config) {
     if(!is_array($config)) {
@@ -210,10 +183,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1323
 	 * 
 	 * @param str $jid
-	 *         Job ID you want to bookmark.
+	 *    Job ID you want to bookmark.
 	 *         	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function bookmarkJob($jid) {
 	  // check passed data
@@ -256,34 +229,50 @@ class LinkedIn {
 	}
 	
 	/**
+	 * Custom addition to make code compatible with PHP 5.2
+	 */
+	private function intWalker($value, $key) {
+        if(!is_int($value)) {
+			throw new LinkedInException('LinkedIn->checkResponse(): $http_code_required must be an integer or an array of integer values');
+		}
+    }
+	
+	/**
 	 * Used to check whether a response LinkedIn object has the required http_code or not and 
 	 * returns an appropriate LinkedIn object.
 	 * 
-	 * @param int $http_code_required
-	 * 		     The required http response from LinkedIn.
+	 * @param var $http_code_required
+	 * 		The required http response from LinkedIn, passed in either as an integer, 
+	 * 		or an array of integers representing the expected values.	 
 	 * @param arr $response 
-	 *         An array containing a LinkedIn response.
+	 *    An array containing a LinkedIn response.
 	 * 
-	 * @return arr
-	 * 	       An array containing a LinkedIn response with appropriate values
+	 * @return boolean
+	 * 	  TRUE or FALSE depending on if the passed LinkedIn response matches the expected response.
 	 */
 	private function checkResponse($http_code_required, $response) {
 		// check passed data
-    if(!is_array($response)) {
+    if(is_array($http_code_required)) {
+		  array_walk($http_code_required, array($this, 'intWalker'));
+		} else {
+		  if(!is_int($http_code_required)) {
+  			throw new LinkedInException('LinkedIn->checkResponse(): $http_code_required must be an integer or an array of integer values');
+  		} else {
+  		  $http_code_required = array($http_code_required);
+  		}
+		}
+		if(!is_array($response)) {
 			throw new LinkedInException('LinkedIn->checkResponse(): $response must be an array');
-		}
-		if(!is_int($http_code_required)) {
-			throw new LinkedInException('LinkedIn->checkResponse(): $http_code_required must be an integer value');
-		}
+		}		
 		
-		// check the response
-		if($response['info']['http_code'] == $http_code_required) {
-		  //request successful
+		// check for a match
+		if(in_array($response['info']['http_code'], $http_code_required)) {
+		  // response found
 		  $response['success'] = TRUE;
 		} else {
-			//request failed
+			// response not found
 			$response['success'] = FALSE;
-			$response['error']   = 'HTTP response from LinkedIn end-point was not code ' . $http_code_required;
+			$response['error']   = 'HTTP response from LinkedIn end-point was not code ' . implode(', ', $http_code_required);
 		}
 		return $response;
 	}
@@ -296,10 +285,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1151   
 	 * 
 	 * @param str $jid
-	 *         Job ID you want to close.
+	 *    Job ID you want to close.
 	 *            	
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function closeJob($jid) {
 	  // check passed data
@@ -313,7 +302,7 @@ class LinkedIn {
 	  $response = $this->fetch('DELETE', $query);
 	  
 	  /**
-	   * Check for successful job close (a 204 response from LinkedIn server) 
+	   * Check for successful request (a 204 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */
 	  return $this->checkResponse(204, $response);
@@ -328,12 +317,12 @@ class LinkedIn {
 	 * http://developer.linkedin.com/docs/DOC-1043 
 	 * 
 	 * @param str $uid 
-	 *         The LinkedIn update ID.   	 
+	 *    The LinkedIn update ID.   	 
 	 * @param str $comment 
-	 *         The share comment to be posted.
+	 *    The share comment to be posted.
 	 *            	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.       	 
+	 *    Array containing retrieval success, LinkedIn response.       	 
 	 */
 	public function comment($uid, $comment) {
 	  // check passed data
@@ -363,7 +352,7 @@ class LinkedIn {
     $response = $this->fetch('POST', $query, $data);
     
     /**
-	   * Check for successful comment (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
@@ -377,10 +366,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1043
 	 * 
 	 * @param str $uid
-	 *         The LinkedIn update ID.
+	 *    The LinkedIn update ID.
 	 *                     	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.                  
+	 *    Array containing retrieval success, LinkedIn response.                  
 	 */
 	public function comments($uid) {
 	  // check passed data
@@ -394,7 +383,7 @@ class LinkedIn {
     $response = $this->fetch('GET', $query);
     
   	/**
-	   * Check for successful comments retrieval (a 200 response from LinkedIn server) 
+	   * Check for successful request (a 200 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(200, $response);
@@ -411,12 +400,12 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1259   
 	 * 
 	 * @param str $options
-	 *         Data retrieval options.	
+	 *    Data retrieval options.	
 	 * @param	bool $by_email
-	 *         [OPTIONAL] Search by email domain?
+	 *    [OPTIONAL] Search by email domain?
 	 * 	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function company($options, $by_email = FALSE) {
 	  // check passed data
@@ -450,12 +439,12 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1327   
 	 * 
 	 * @param str $cid
-	 *         Company ID you want the producte for.	
+	 *    Company ID you want the producte for.	
 	 * @param str $options
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	
-	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 * @return arr
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function companyProducts($cid, $options = '') {
 	  // check passed data
@@ -486,13 +475,13 @@ class LinkedIn {
 	 * from the Linkedin Connections API. See the official documentation for 
 	 * $options 'field selector' formatting:
 	 * 
-	 * http://developer.linkedin.com/docs/DOC-1014      	 
+	 *   http://developer.linkedin.com/docs/DOC-1014      	 
 	 * 
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function connections($options = '~/connections') {
 	  // check passed data
@@ -513,6 +502,78 @@ class LinkedIn {
 	}
 	
 	/**
+	 * This creates a post in the specified group with the specified title and specified summary.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * @param str $title
+	 * 		The title of the post. This must be non-empty.
+	 * @param str $summary
+	 * 		[OPTIONAL] The content or summary of the post. This can be empty.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function createPost($gid, $title, $summary = '') {
+		if(!is_string($gid)) {
+			throw new LinkedInException('LinkedIn->createPost(): bad data passed, $gid must be of type string.');
+		}
+		if(!is_string($title) || empty($title)) {
+			throw new LinkedInException('LinkedIn->createPost(): bad data passed, $title must be a non-empty string.');
+		}
+		if(!is_string($summary)) {
+			throw new LinkedInException('LinkedIn->createPost(): bad data passed, $summary must be of type string.');
+		}
+		
+		// construct the XML
+		$data = '<?xml version="1.0" encoding="UTF-8"?>
+    				 <post>
+    					 <title>'. $title . '</title>
+    					 <summary>' . $summary . '</summary>
+    				 </post>';
+		
+ 		// construct and send the request
+		$query    = self::_URL_API . '/v1/groups/' . trim($gid) . '/posts';
+		$response = $this->fetch('POST', $query, $data);
+		
+	  /**
+	   * Check for successful request (a 201 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(201, $response);
+	}
+	
+	/**
+	 * This deletes the specified post if you are the owner or moderator that post.
+	 * Otherwise, it just flags the post as inappropriate.
+	 * 
+	 * https://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $pid
+	 * 		The post id.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function deletePost($pid) {
+		if(!is_string($pid)) {
+			throw new LinkedInException('LinkedIn->deletePost(): bad data passed, $pid must be of type string');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/posts/' . trim($pid);
+		$response = $this->fetch('DELETE', $query);
+		
+    /**
+     * Check for successful request (a 204 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(204, $response);
+	}
+	
+	/**
 	 * Edit a job.
 	 * 
 	 * Calling this method causes the passed job to be edited, with the passed
@@ -522,12 +583,12 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1142      
 	 * 
 	 * @param str $jid
-	 *         Job ID you want to renew.
+	 *    Job ID you want to renew.
 	 * @param str $xml
-	 *         The XML containing the job fields to edit.	 
+	 *    The XML containing the job fields to edit.	 
 	 *            	
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function editJob($jid, $xml) {
 	  // check passed data
@@ -547,7 +608,7 @@ class LinkedIn {
 	  $response = $this->fetch('PUT', $query, $xml);
 	  
 	  /**
-	   * Check for successful job renewal (a 200 response from LinkedIn server) 
+	   * Check for successful request (a 200 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */
 	  return $this->checkResponse(200, $response);
@@ -557,16 +618,16 @@ class LinkedIn {
 	 * General data send/request method.
 	 * 
 	 * @param str $method 
-	 *         The data communication method.	 
+	 *    The data communication method.	 
 	 * @param str $url 
-	 *         The Linkedin API endpoint to connect with.
+	 *    The Linkedin API endpoint to connect with.
 	 * @param str $data
-	 *         [OPTIONAL] The data to send to LinkedIn.
+	 *    [OPTIONAL] The data to send to LinkedIn.
 	 * @param arr $parameters 
-	 *         [OPTIONAL] Addition OAuth parameters to send to LinkedIn.
+	 *    [OPTIONAL] Addition OAuth parameters to send to LinkedIn.
 	 *        
 	 * @return arr 
-	 *         Array containing:
+	 *    Array containing:
 	 * 
 	 *           array(
 	 *             'info'      =>	Connection information,
@@ -656,6 +717,51 @@ class LinkedIn {
 	}
 	
 	/**
+	 * This flags a specified post as specified by type.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $pid
+	 * 		The post id.
+	 * @param str $type
+	 * 		The type to flag the post as.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function flagPost($pid, $type) {
+		if(!is_string($pid)) {
+			throw new LinkedInException('LinkedIn->flagPost(): bad data passed, $pid must be of type string');
+		}
+		if(!is_string($type)) {
+			throw new LinkedInException('LinkedIn->flagPost(): bad data passed, $like must be of type string');
+		}
+		//Constructing the xml
+		$data = '<?xml version="1.0" encoding="UTF-8"?>';
+		switch($type) {
+			case 'promotion':
+				$data .= '<code>promotion</code>';
+				break;
+			case 'job':
+				$data .= '<code>job</code>';
+				break;
+			default: 
+				throw new LinkedInException('LinkedIn->flagPost(): invalid value for $type, must be one of: "promotion", "job"');
+				break;	
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/posts/' . $pid . '/category/code';
+		$response = $this->fetch('PUT', $query, $data);
+		  
+  	/**
+     * Check for successful request (a 204 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(204, $response);
+	}
+	
+	/**
 	 * Follow a company.
 	 * 
 	 * Calling this method causes the current user to start following the 
@@ -664,10 +770,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1324
 	 * 
 	 * @param str $cid
-	 *         Company ID you want to follow.
+	 *    Company ID you want to follow.
 	 *         	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function followCompany($cid) {
 	  // check passed data
@@ -688,6 +794,43 @@ class LinkedIn {
 	}
 	
 	/**
+	 * Follows/Unfollows the specified post.
+	 * 
+	 * https://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $pid
+	 * 		The post id.
+	 * @param bool $follow
+	 * 		Determines whether to follow or unfollow the post. TRUE = follow, FALSE = unfollow
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	
+	public function followPost($pid, $follow) {
+		if(!is_string($pid)) {
+			throw new LinkedInException('LinkedIn->followPost(): bad data passed, $pid must be of type string');
+		}
+		if(!($follow === TRUE || $follow === FALSE)) {
+			throw new LinkedInException('LinkedIn->followPost(): bad data passed, $follow must be of type boolean');
+		}
+		
+		// construct the XML
+		$data = '<?xml version="1.0" encoding="UTF-8"?>
+				     <is-following>'. (($follow) ? 'true' : 'false'). '</is-following>';
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/posts/' . trim($pid) . '/relation-to-viewer/is-following';
+		$response = $this->fetch('PUT', $query, $data);
+		
+		/**
+	   * Check for successful request (a 204 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(204, $response);
+	}
+	
+	/**
 	 * Get list of companies you follow.
 	 * 
 	 * Returns a list of companies the current user is currently following, per:
@@ -695,7 +838,7 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1324   
 	 * 	
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function followedCompanies() {	  
 	  // construct and send the request
@@ -713,7 +856,7 @@ class LinkedIn {
 	 * Get the application_key property.
 	 * 
 	 * @return str 
-	 *         The application key.       	 
+	 *    The application key.       	 
 	 */
 	public function getApplicationKey() {
 	  return $this->application_key;
@@ -723,7 +866,7 @@ class LinkedIn {
 	 * Get the application_secret property.
 	 * 
 	 * @return str 
-	 *         The application secret.       	 
+	 *    The application secret.       	 
 	 */
 	public function getApplicationSecret() {
 	  return $this->application_secret;
@@ -733,7 +876,7 @@ class LinkedIn {
 	 * Get the callback property.
 	 * 
 	 * @return str 
-	 *         The callback url.       	 
+	 *    The callback url.       	 
 	 */
 	public function getCallbackUrl() {
 	  return $this->callback;
@@ -743,7 +886,7 @@ class LinkedIn {
 	 * Get the response_format property.
 	 * 
 	 * @return str 
-	 *         The response format.       	 
+	 *    The response format.       	 
 	 */
 	public function getResponseFormat() {
 	  return $this->response_format;
@@ -753,7 +896,7 @@ class LinkedIn {
 	 * Get the token_access property.
 	 * 
 	 * @return arr 
-	 *         The access token.       	 
+	 *    The access token.       	 
 	 */
 	public function getToken() {
 	  return $this->token;
@@ -763,10 +906,198 @@ class LinkedIn {
 	 * [DEPRECATED] Get the token_access property.
 	 * 
 	 * @return arr 
-	 *         The access token.       	 
+	 *    The access token.       	 
 	 */
 	public function getTokenAccess() {
 	  return $this->getToken();
+	}
+	
+	/**
+	 * 
+	 * Get information about a specific group.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 	 	The group id.
+	 *  
+	 * @param str $options
+	 * 		[OPTIONAL] Field selectors for the group.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	
+	public function group($gid, $options = '') {
+		if(!is_string($gid)){
+			throw new LinkedInException('LinkedIn->group(): bad data passed, $gid must be of type string.');
+		}
+		if(!is_string($options)) {
+			throw new LinkedInException('LinkedIn->group(): bad data passed, $options must be of type string');
+		}
+	
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/groups/' . trim($gid) . trim($options); 
+		$response = $this->fetch('GET', $query);
+		
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(200, $response);
+	}
+	
+	/**
+	 * This returns all the groups the user is a member of.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $options
+	 * 		[OPTIONAL] Field selectors for the groups.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function groupMemberships($options = '') {
+		if(!is_string($options)) {
+			throw new LinkedInException('LinkedIn->groupMemberships(): bad data passed, $options must be of type string');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/group-memberships' . trim($options) . '?membership-state=member';
+		$response = $this->fetch('GET', $query);
+		
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(200, $response);
+	}
+	
+	/**
+	 * This gets a specified post made within a group.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $pid
+	 * 		The post id.
+	 * @param str $options
+	 * 		[OPTIONAL] Field selectors for the post.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function groupPost($pid, $options = '') {
+		if(!is_string($pid)) {
+			throw new LinkedInException('LinkedIn->groupPost(): bad data passed, $pid must be of type string.');
+		}
+		if(!is_string($options)) {
+			throw new LinkedInException('LinkedIn->groupPost(): bad data passed, $options must be of type string.');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/posts/' . trim($pid) . trim($options);
+		$response = $this->fetch('GET', $query);
+		
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(200, $response);
+	}
+	
+	/**
+	 * This returns all the comments made on the specified post within a group.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $pid
+	 * 		The post id.
+	 * @param str $options
+	 * 		[OPTIONAL] Field selectors for the post comments.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function groupPostComments($pid, $options = ''){ 
+		if(!is_string($pid)){
+			throw new LinkedInException('LinkedIn->groupPostComments(): bad data passed, $pid must be of type string.');
+		}
+		if(!is_string($options)) {
+			throw new LinkedInException('LinkedIn->groupPostComments(): bad data passed, $options must be of type string.');
+		}		
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/posts/' . trim($pid) . '/comments' . trim($options);
+		$response = $this->fetch('GET', $query);
+
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(200, $response);
+	}
+	
+	/**
+	 * This returns all the posts within a group.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function groupPosts($gid, $options = '') {
+		if(!is_string($gid)){
+			throw new LinkedInException('LinkedIn->groupPosts(): bad data passed, $gid must be of type string');
+		}
+		if(!is_string($options)){
+			throw new LinkedInException('LinkedIn->groupPosts(): bad data passed, $options must be of type string');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/groups/' . trim($gid)  .'/posts' . trim($options);
+		$response = $this->fetch('GET', $query);
+		
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(200, $response);
+	}
+	
+	/**
+	 * This returns the group settings of the specified group
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * @param str $options
+	 * 		[OPTIONAL] Field selectors for the group.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function groupSettings($gid, $options = '') {
+		if(!is_string($gid)) {
+			throw new LinkedInException('LinkedIn->groupSettings(): bad data passed, $gid must be of type string');
+		}
+		if(!is_string($options)) {
+			throw new LinkedInException('LinkedIn->groupSettings(): bad data passed, $options must be of type string');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/group-memberships/' . trim($gid) . trim($options);
+		$response = $this->fetch('GET', $query);
+		
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(200, $response);
 	}
 	
 	/**
@@ -775,21 +1106,21 @@ class LinkedIn {
 	 * Send an invitation to connect to your network, either by email address or 
 	 * by LinkedIn ID. Details on the API here: 
 	 * 
-	 * http://developer.linkedin.com/docs/DOC-1012
+	 *   http://developer.linkedin.com/docs/DOC-1012
 	 * 
 	 * @param str $method 
-	 *         The invitation method to process.	 
+	 *    The invitation method to process.	 
 	 * @param str $recipient 
-	 *         The email/id to send the invitation to.	 	 
+	 *    The email/id to send the invitation to.	 	 
 	 * @param str $subject 
-	 *         The subject of the invitation to send.
+	 *    The subject of the invitation to send.
 	 * @param str $body 
-	 *         The body of the invitation to send.
+	 *    The body of the invitation to send.
 	 * @param str $type 
-	 *         [OPTIONAL] The invitation request type (only friend is supported at this time by the Invite API).
+	 *    [OPTIONAL] The invitation request type (only friend is supported at this time by the Invite API).
 	 * 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.  	 
+	 *    Array containing retrieval success, LinkedIn response.  	 
 	 */
 	public function invite($method, $recipient, $subject, $body, $type = 'friend') {
     /**
@@ -909,7 +1240,7 @@ class LinkedIn {
     $response = $this->fetch('POST', $query, $data);
 		
 		/**
-	   * Check for successful update (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
@@ -924,10 +1255,10 @@ class LinkedIn {
 	 *   10 alpha-numeric mixed-case characters, plus underscores and dashes.          	 
 	 * 
 	 * @param str $id 
-	 *         A possible LinkedIn ID.         	 
+	 *    A possible LinkedIn ID.         	 
 	 * 
 	 * @return bool 
-	 *         TRUE/FALSE depending on valid ID format determination.                  
+	 *    TRUE/FALSE depending on valid ID format determination.                  
 	 */
 	public static function isId($id) {
 	  // check passed data
@@ -956,10 +1287,10 @@ class LinkedIn {
 	 * http://developer.linkedin.com/docs/DOC-1112
 	 * 
 	 * @param arr $response 
-	 *         The LinkedIn response.
+	 *    The LinkedIn response.
 	 *                     	 
 	 * @return bool
-	 *         TRUE/FALSE depending on content of response.                  
+	 *    TRUE/FALSE depending on content of response.                  
 	 */
 	public static function isThrottled($response) {
 	  $return_data = FALSE;
@@ -992,12 +1323,12 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1322  
 	 * 
 	 * @param	str $jid 
-	 *         ID of the job you want to look up.
+	 *    ID of the job you want to look up.
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function job($jid, $options = '') {
 	  // check passed data
@@ -1022,11 +1353,46 @@ class LinkedIn {
 	}
 	
 	/**
+	 * Join the specified group, per: 
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.   	 
+	 */
+	public function joinGroup($gid) {
+		if(!is_string($gid)) {
+			throw new LinkedInException('LinkedIn->joinGroup(): bad data passed, $gid must be of type string.');
+		}
+		
+		// constructing the XML
+		$data = '<?xml version="1.0" encoding="UTF-8"?>
+  				   <group-membership>
+  				   	 <membership-state>
+  				  	 	 <code>member</code>
+  				  	 </membership-state>
+  				   </group-membership>';
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/group-memberships/' . trim($gid);
+		$response = $this->fetch('PUT', $query, $data);
+		
+		/**
+	   * Check for successful request (a 200 or 201 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(array(200, 201), $response);
+	}
+	
+	/**
 	 * Returns the last request header from the previous call to the 
 	 * LinkedIn API.
 	 * 
 	 * @returns str
-	 *           The header, in string format.
+	 *    The header, in string format.
 	 */            	
 	public function lastRequestHeader() {
 	   return $this->last_request_headers;
@@ -1037,22 +1403,49 @@ class LinkedIn {
 	 * LinkedIn API.
 	 * 
 	 * @returns str
-	 *           The url, in string format.
+	 *    The url, in string format.
 	 */            	
 	public function lastRequestUrl() {
 	   return $this->last_request_url;
 	}
 	
 	/**
-	 * Like another user's network update:
+	 * Leave the specified group, per:.
 	 * 
-	 * http://developer.linkedin.com/docs/DOC-1043
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function leaveGroup($gid){
+		if(!is_string($gid)) {
+			throw new LinkedInException('LinkedIn->leaveGroup(): bad data passed, $gid must be of type string');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/group-memberships/'  .trim($gid);
+		$response = $this->fetch('DELETE', $query);
+		
+		/**
+	   * Check for successful request (a 204 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */ 
+		return $this->checkResponse(204, $response);
+	}
+	
+	/**
+	 * Like another user's network update, per:
+	 * 
+	 *   http://developer.linkedin.com/docs/DOC-1043
 	 * 
 	 * @param str $uid
-	 *         The LinkedIn update ID.
+	 *    The LinkedIn update ID.
 	 *                     	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.                  
+	 *    Array containing retrieval success, LinkedIn response.                  
 	 */
 	public function like($uid) {
 	  // check passed data
@@ -1061,19 +1454,55 @@ class LinkedIn {
 		  throw new LinkedInException('LinkedIn->like(): bad data passed, $uid must be of type string.');
 	  }
     
-    // construct the xml data
+    // construct the XML
 		$data = '<?xml version="1.0" encoding="UTF-8"?>
 		         <is-liked>true</is-liked>';
 		
-		// send request
+		// construct and send the request
     $query    = self::_URL_API . '/v1/people/~/network/updates/key=' . $uid . '/is-liked';
     $response = $this->fetch('PUT', $query, $data);
     
   	/**
-	   * Check for successful like (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
+	}
+	
+	/**
+	 * Likes/unlikes the specified post, per:
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $pid
+	 * 		The post id.
+	 * @param bool $like
+	 * 		Determines whether to like or unlike. TRUE = like, FALSE = unlike.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function likePost($pid, $like) {
+		if(!is_string($pid)) {
+			throw new LinkedInException ('LinkedIn->likePost(): bad data passed, $pid must be of type string');
+		}
+		if(!($like === TRUE || $like === FALSE)) {
+			throw new LinkedInException('LinkedIn->likePost(): bad data passed, $like must be of type boolean');
+		}
+		
+		// construct the XML
+		$data = '<?xml version="1.0" encoding="UTF-8"?>
+		         <is-liked>'.(($like) ? 'true': 'false').'</is-liked>';
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/posts/' . trim($pid) . '/relation-to-viewer/is-liked';
+		$response = $this->fetch('PUT', $query, $data);
+		
+		/**
+	   * Check for successful request (a 204 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */ 
+		return $this->checkResponse(204, $response);
 	}
 	
 	/**
@@ -1084,10 +1513,10 @@ class LinkedIn {
 	 * http://developer.linkedin.com/docs/DOC-1043
 	 * 
 	 * @param str $uid
-	 *         The LinkedIn update ID.
+	 *    The LinkedIn update ID.
 	 *                     	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.                  
+	 *    Array containing retrieval success, LinkedIn response.                  
 	 */
 	public function likes($uid) {
 	  // check passed data
@@ -1101,7 +1530,7 @@ class LinkedIn {
     $response = $this->fetch('GET', $query);
     
   	/**
-	   * Check for successful likes retrieval (a 200 response from LinkedIn server) 
+	   * Check for successful request (a 200 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(200, $response);
@@ -1116,16 +1545,16 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1044
 	 * 
 	 * @param arr $recipients 
-	 *         The connection(s) to send the message to.	 	 
+	 *    The connection(s) to send the message to.	 	 
 	 * @param str $subject 
-	 *         The subject of the message to send.
+	 *    The subject of the message to send.
 	 * @param str $body 
-	 *         The body of the message to send.
+	 *    The body of the message to send.
 	 * @param bool $copy_self 
-	 *         [OPTIONAL] Also update the teathered Twitter account.
+	 *    [OPTIONAL] Also update the teathered Twitter account.
 	 *    	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.      	 
+	 *    Array containing retrieval success, LinkedIn response.      	 
 	 */
 	public function message($recipients, $subject, $body, $copy_self = FALSE) {
     /**
@@ -1171,7 +1600,7 @@ class LinkedIn {
     $response = $this->fetch('POST', $query, $data);
 		
 		/**
-	   * Check for successful update (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
@@ -1186,10 +1615,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/community/jobs?view=documents
 	 * 
 	 * @param str $xml 
-	 *         The XML defining a job to post.	 	 
+	 *    The XML defining a job to post.	 	 
 	 *    	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.      	 
+	 *    Array containing retrieval success, LinkedIn response.      	 
 	 */
 	public function postJob($xml) {
     // check passed data
@@ -1204,7 +1633,7 @@ class LinkedIn {
     $response = $this->fetch('POST', $query, $xml);
 		
 		/**
-	   * Check for successful job post (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
@@ -1217,14 +1646,14 @@ class LinkedIn {
 	 * Linkedin Profile API. See the official documentation for $options
 	 * 'field selector' formatting:
 	 * 
-	 * http://developer.linkedin.com/docs/DOC-1014
-	 * http://developer.linkedin.com/docs/DOC-1002    
+	 *   http://developer.linkedin.com/docs/DOC-1014
+	 *   http://developer.linkedin.com/docs/DOC-1002    
 	 * 
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function profile($options = '~') {
 	  // check passed data
@@ -1245,6 +1674,69 @@ class LinkedIn {
 	}
 	
 	/**
+	 * Manual API call method, allowing for support for un-implemented API
+	 * functionality to be supported.
+	 * 
+	 * @param str $method 
+	 *    The data communication method.	 
+	 * @param str $url 
+	 *    The Linkedin API endpoint to connect with - should NOT include the 
+	 *    leading https://api.linkedin.com/v1.
+	 * @param str $body
+	 *    [OPTIONAL] The URL-encoded body data to send to LinkedIn with the request.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval information, LinkedIn response. Note that you
+	 * 		must manually check the return code and compare this to the expected 
+	 * 		API response to determine  if the raw call was successful.
+	 */
+	public function raw($method, $url, $body = NULL) {
+	  if(!is_string($method)) {
+	    // bad data passed
+		  throw new LinkedInException('LinkedIn->raw(): bad data passed, $method must be of string value.');
+	  }
+	  if(!is_string($url)) {
+	    // bad data passed
+		  throw new LinkedInException('LinkedIn->raw(): bad data passed, $url must be of string value.');
+	  }
+	  if(!is_null($body) && !is_string($url)) {
+	    // bad data passed
+		  throw new LinkedInException('LinkedIn->raw(): bad data passed, $body must be of string value.');
+	  }
+    
+    // construct and send the request
+	  $query = self::_URL_API . '/v1' . trim($url);
+	  return $this->fetch($method, $query, $body);
+	}
+	
+	/**
+	 * This removes the specified group from the group suggestions, per:
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function removeSuggestedGroup($gid) {
+		if(!is_string($gid)) {
+			throw new LinkedInException('LinkedIn->removeSuggestedGroup(): bad data passed, $gid must be of type string');
+		} 
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/suggestions/groups/'  .trim($gid);
+		$response = $this->fetch('DELETE', $query);
+		
+		/**
+	   * Check for successful request (a 204 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse(204, $response);
+	}
+	
+	/**
 	 * Renew a job.
 	 * 
 	 * Calling this method causes the passed job to be renewed, per:
@@ -1252,12 +1744,12 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1154   
 	 * 
 	 * @param str $jid
-	 *         Job ID you want to renew.
+	 *    Job ID you want to renew.
 	 * @param str $cid
-	 *         Contract ID that covers the passed Job ID.	 
+	 *    Contract ID that covers the passed Job ID.	 
 	 *            	
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function renewJob($jid, $cid) {
 	  // check passed data
@@ -1282,7 +1774,7 @@ class LinkedIn {
 	  $response = $this->fetch('PUT', $query, $data);
 	  
 	  /**
-	   * Check for successful job renewal (a 200 response from LinkedIn server) 
+	   * Check for successful request (a 200 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */
 	  return $this->checkResponse(200, $response);
@@ -1294,14 +1786,14 @@ class LinkedIn {
 	 * Request the user's access token from the Linkedin API.
 	 * 
 	 * @param str $token
-	 *         The token returned from the user authorization stage.
+	 *    The token returned from the user authorization stage.
 	 * @param str $secret
-	 *         The secret returned from the request token stage.
+	 *    The secret returned from the request token stage.
 	 * @param str $verifier
-	 *         The verification value from LinkedIn.
+	 *    The verification value from LinkedIn.
 	 *    	 
 	 * @return arr 
-	 *         The Linkedin OAuth/http response, in array format.      	 
+	 *    The Linkedin OAuth/http response, in array format.      	 
 	 */
 	public function retrieveTokenAccess($token, $secret, $verifier) {
 	  // check passed data
@@ -1346,7 +1838,8 @@ class LinkedIn {
 	 * 
 	 * Get the request token from the Linkedin API.
 	 * 
-	 * @return   arr                   The Linkedin OAuth/http response, in array format.      	 
+	 * @return arr
+	 *    The Linkedin OAuth/http response, in array format.      	 
 	 */
 	public function retrieveTokenRequest() {
     $parameters = array(
@@ -1392,14 +1885,14 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/community/apis/blog/2010/04/29/oauth--now-for-authentication	 
 	 * 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.   	 
+	 *    Array containing retrieval success, LinkedIn response.   	 
 	 */
 	public function revoke() {
 	  // construct and send the request
 	  $response = $this->fetch('GET', self::_URL_REVOKE);
 
 	  /**
-	   * Check for successful revocation (a 200 response from LinkedIn server) 
+	   * Check for successful request (a 200 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */                	  
     return $this->checkResponse(200, $response);
@@ -1415,10 +1908,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1191 
 	 * 
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function search($options = NULL) {
 		return searchPeople($options);
@@ -1431,12 +1924,12 @@ class LinkedIn {
 	 * location, or some other criteria. It returns a collection of matching 
 	 * companies.
 	 * 
-	 * http://developer.linkedin.com/docs/DOC-1325  
+	 *   http://developer.linkedin.com/docs/DOC-1325  
 	 * 
 	 * @param str $options
-	 *         [OPTIONAL] Search options.	
+	 *    [OPTIONAL] Search options.	
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function searchCompanies($options = '') {
 	  // check passed data
@@ -1466,10 +1959,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1321  
 	 * 
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function searchJobs($options = '') {
 	  // check passed data
@@ -1499,10 +1992,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1191 
 	 * 
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 *            	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function searchPeople($options = NULL) {
 	  // check passed data
@@ -1526,7 +2019,7 @@ class LinkedIn {
 	 * Set the application_key property.
 	 * 
 	 * @param str $key 
-	 *         The application key.       	 
+	 *    The application key.       	 
 	 */
 	public function setApplicationKey($key) {
 	  $this->application_key = $key;
@@ -1536,7 +2029,7 @@ class LinkedIn {
 	 * Set the application_secret property.
 	 * 
 	 * @param str $secret 
-	 *         The application secret.       	 
+	 *    The application secret.       	 
 	 */
 	public function setApplicationSecret($secret) {
 	  $this->application_secret = $secret;
@@ -1546,17 +2039,55 @@ class LinkedIn {
 	 * Set the callback property.
 	 * 
 	 * @param str $url 
-	 *         The callback url.       	 
+	 *    The callback url.       	 
 	 */
 	public function setCallbackUrl($url) {
 	  $this->callback = $url;
 	}
 	
 	/**
+	 * This sets the group settings of the specified group.
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @param str $gid
+	 * 		The group id.
+	 * @param str $xml
+	 * 		The group settings to set. The settings are:
+	 * 		  -<show-group-logo-in-profle>
+	 * 		  -<contact-email>
+	 * 		  -<email-digest-frequency>
+	 * 		  -<email-annoucements-from-managers>
+	 * 		  -<allow-messages-from-members>
+	 * 		  -<email-for-every-new-post>
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function setGroupSettings($gid, $xml) {
+		if(!is_string ($gid)) {
+      throw new LinkedInException('LinkedIn->setGroupSettings(): bad data passed, $token_access should be in array format.');
+		}
+		if(!is_string ($xml)) {
+      throw new LinkedInException('LinkedIn->setGroupSettings(): bad data passed, $token_access should be in array format.');
+		}
+		
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/group-memberships/' . trim($gid);
+		$response = $this->fetch('PUT', $query, $xml);
+		
+	  /**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */ 
+		return $this->checkResponse(200, $response);
+	}
+	
+	/**
 	 * Set the response_format property.
 	 * 
 	 * @param str $format 
-	 *         [OPTIONAL] The response format to specify to LinkedIn.       	 
+	 *    [OPTIONAL] The response format to specify to LinkedIn.       	 
 	 */
 	public function setResponseFormat($format = self::_DEFAULT_RESPONSE_FORMAT) {
 	  $this->response_format = $format;
@@ -1566,7 +2097,7 @@ class LinkedIn {
 	 * Set the token property.
 	 * 
 	 * @return arr $token 
-	 *         The LinkedIn OAuth token.
+	 *    The LinkedIn OAuth token.
 	 */
 	public function setToken($token) {
     // check passed data
@@ -1583,7 +2114,7 @@ class LinkedIn {
 	 * [DEPRECATED] Set the token_access property.
 	 * 
 	 * @return arr $token_access 
-	 *         [OPTIONAL] The LinkedIn OAuth access token.
+	 *    [OPTIONAL] The LinkedIn OAuth access token.
 	 */
 	public function setTokenAccess($token_access) {
     $this->setToken($token_access);
@@ -1603,16 +2134,16 @@ class LinkedIn {
 	 *     $action = 'reshare'; $content => ('comment' => 'xxx', 'id' => 'xxx')	 
 	 * 
 	 * @param str $action
-	 *         The sharing action to perform.	 
+	 *    The sharing action to perform.	 
 	 * @param str $content
-	 *         The share content.
+	 *    The share content.
 	 * @param bool $private 
-	 *         [OPTIONAL] Should we restrict this shared item to connections only?	 
+	 *    [OPTIONAL] Should we restrict this shared item to connections only?	 
 	 * @param bool $twitter 
-	 *         [OPTIONAL] Also update the teathered Twitter account.
+	 *    [OPTIONAL] Also update the teathered Twitter account.
 	 *    	 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.      	 
+	 *    Array containing retrieval success, LinkedIn response.      	 
 	 */
 	public function share($action, $content, $private = TRUE, $twitter = FALSE) {
 	  // check the status itself
@@ -1731,7 +2262,7 @@ class LinkedIn {
     }
     
     /**
-	   * Check for successful update (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
@@ -1740,15 +2271,13 @@ class LinkedIn {
 	/**
 	 * Network statistics.
 	 * 
-	 * General network statistics retrieval function.
+	 * General network statistics retrieval function, returns the number of connections, 
+	 * second-connections an authenticated user has. More information here:
 	 * 
-	 * Returns the number of connections, second-connections an authenticated
-	 * user has.  More information here:
-	 * 
-	 * http://developer.linkedin.com/docs/DOC-1006
+	 *   http://developer.linkedin.com/docs/DOC-1006
 	 * 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function statistics() {
 	  // construct and send the request
@@ -1770,7 +2299,7 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1324   
 	 * 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function suggestedCompanies() {
 	  // construct and send the request
@@ -1785,6 +2314,26 @@ class LinkedIn {
 	}
 	
 	/**
+	 * Retrieves suggested groups for the user, per:
+	 * 
+	 *   http://developer.linkedin.com/documents/groups-api
+	 * 
+	 * @return arr
+	 * 		Array containing retrieval success, LinkedIn response.
+	 */
+	public function suggestedGroups() {
+		// construct and send the request
+		$query    = self::_URL_API . '/v1/people/~/suggestions/groups:(id,name,is-open-to-non-members)';
+		$response = $this->fetch('GET', $query);
+		
+		/**
+	   * Check for successful request (a 200 response from LinkedIn server) 
+	   * per the documentation linked in method comments above.
+	   */
+		return $this->checkResponse (200, $response);
+	}
+
+	/**
 	 * Jobs you may be interested in.
 	 * 
 	 * Returns a list of jobs the current user may be interested in, per:
@@ -1792,10 +2341,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1323   
 	 * 
  	 * @param str $options
- 	 *         [OPTIONAL] Data retrieval options.	
+ 	 *    [OPTIONAL] Data retrieval options.	
  	 *          	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function suggestedJobs($options = ':(jobs)') {
 	  // check passed data
@@ -1824,10 +2373,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1323   
 	 * 
 	 * @param str $jid
-	 *         Job ID you want to unbookmark.
+	 *    Job ID you want to unbookmark.
 	 *            	
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function unbookmarkJob($jid) {
 	  // check passed data
@@ -1856,10 +2405,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1324   
 	 * 
 	 * @param str $cid
-	 *         Company ID you want to unfollow.	
+	 *    Company ID you want to unfollow.	
 	 *         	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function unfollowCompany($cid) {
 	  // check passed data
@@ -1873,7 +2422,7 @@ class LinkedIn {
 	  $response = $this->fetch('DELETE', $query);
 	  
 	  /**
-	   * Check for successful 'unfollow' (a 204 response from LinkedIn server) 
+	   * Check for successful request (a 204 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */
 	  return $this->checkResponse(204, $response);
@@ -1887,10 +2436,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1043
 	 * 
 	 * @param str $uid 
-	 *         The LinkedIn update ID.
+	 *    The LinkedIn update ID.
 	 *                     	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.                  
+	 *    Array containing retrieval success, LinkedIn response.                  
 	 */
 	public function unlike($uid) {
 	  // check passed data
@@ -1908,7 +2457,7 @@ class LinkedIn {
     $response = $this->fetch('PUT', $query, $data);
     
   	/**
-	   * Check for successful 'unlike' (a 201 response from LinkedIn server) 
+	   * Check for successful request (a 201 response from LinkedIn server) 
 	   * per the documentation linked in method comments above.
 	   */ 
     return $this->checkResponse(201, $response);
@@ -1924,10 +2473,10 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1009#comment-1077 
 	 * 
 	 * @param str $update
-	 *         The network update.	 
+	 *    The network update.	 
 	 * 
 	 * @return arr 
-	 *         Array containing retrieval success, LinkedIn response.       	 
+	 *    Array containing retrieval success, LinkedIn response.       	 
 	 */
 	public function updateNetwork($update) {
 	  // check passed data
@@ -1979,7 +2528,7 @@ class LinkedIn {
       $response = $this->fetch('POST', $query, $data);
       
       /**
-  	   * Check for successful update (a 201 response from LinkedIn server) 
+  	   * Check for successful request (a 201 response from LinkedIn server) 
   	   * per the documentation linked in method comments above.
   	   */ 
       return $this->checkResponse(201, $response);
@@ -2003,12 +2552,12 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1043         	 
 	 * 
 	 * @param str $options 
-	 *         [OPTIONAL] Data retrieval options.
+	 *    [OPTIONAL] Data retrieval options.
 	 * @param str $id 
-	 *         [OPTIONAL] The LinkedIn ID to restrict the updates for.
+	 *    [OPTIONAL] The LinkedIn ID to restrict the updates for.
 	 *               	 
 	 * @return arr
-	 *         Array containing retrieval success, LinkedIn response.
+	 *    Array containing retrieval success, LinkedIn response.
 	 */
 	public function updates($options = NULL, $id = NULL) {
 	  // check passed data
@@ -2040,12 +2589,12 @@ class LinkedIn {
 	 * Converts passed XML data to an array.
 	 * 
 	 * @param str $xml 
-	 *         The XML to convert to an array.
+	 *    The XML to convert to an array.
 	 *            	 
 	 * @return arr 
-	 *         Array containing the XML data.     
+	 *    Array containing the XML data.     
 	 * @return bool 
-	 *         FALSE if passed data cannot be parsed to an array.     	 
+	 *    FALSE if passed data cannot be parsed to an array.     	 
 	 */
 	public static function xmlToArray($xml) {
 	  // check passed data
@@ -2087,3 +2636,4 @@ class LinkedIn {
   }
 }
 
+?>
