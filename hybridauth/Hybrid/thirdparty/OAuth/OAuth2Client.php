@@ -20,6 +20,9 @@ class OAuth2Client
 	public $access_token     = "" ;
 	public $refresh_token    = "" ;
 
+	public $access_token_expires_in = "" ;
+	public $access_token_expires_at = "" ;
+
 	//--
 
 	public $sign_token_name       = "access_token";
@@ -27,6 +30,7 @@ class OAuth2Client
 	public $curl_time_out         = 30;
 	public $curl_connect_time_out = 30;
 	public $curl_ssl_verifypeer   = false;
+	public $curl_header           = array();
 	public $curl_useragent        = "OAuth/2 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
 
 	//--
@@ -70,8 +74,12 @@ class OAuth2Client
 			throw new Exception( "The Authorization Service has return: " . $response->error );
 		}
 
-		if( isset($response->access_token ) )  $this->access_token  = $response->access_token;
-		if( isset($response->refresh_token ) ) $this->refresh_token = $response->refresh_token; 
+		if( isset( $response->access_token  ) )  $this->access_token           = $response->access_token;
+		if( isset( $response->refresh_token ) ) $this->refresh_token           = $response->refresh_token; 
+		if( isset( $response->expires_in    ) ) $this->access_token_expires_in = $response->expires_in; 
+		
+		// calculate when the access token expire
+		$this->access_token_expires_at = time() + $response->expires_in; 
 
 		return $response;  
     }
@@ -111,7 +119,29 @@ class OAuth2Client
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
 		}
+/*
+		// have an access token?
+		if( $this->access_token ){
 
+			// have to refresh?
+			if( $this->refresh_token && $this->access_token_expires_at ){
+
+				// expired?
+				// if( $this->access_token_expires_at <= time() ){
+				if( 1){
+
+					$response = $this->refreshToken( $this->refresh_token );
+print_r( $response );
+					if( ! isset( $response->access_token ) || ! $response->access_token ){
+						throw new Exception( "The Authorization Service has return an invalid response while requesting a new access token. given up!" ); 
+					}
+
+					// set new access_token
+					$this->access_token = $response->access_token;
+				}
+			} 
+		}
+*/
 		$parameters[$this->sign_token_name] = $this->access_token;
 		$response = null;
 
@@ -152,14 +182,17 @@ class OAuth2Client
 		return $this->parseRequestResult( $response );
 	}
 
-	public function refreshToken($refresh_token)
+	public function refreshToken( $parameters = array() )
 	{
 		$params = array(
-			"client_id"     => $this->client_id, 
+			"client_id"     => $this->client_id,
 			"client_secret" => $this->client_secret, 
-			"refresh_token" => $refresh_token,
 			"grant_type"    => "refresh_token"
 		);
+
+		foreach($parameters as $k=>$v ){
+			$params[$k] = $v; 
+		}
 
 		$response = $this->request( $this->token_url, $params, "POST" );
 		return $this->parseRequestResult( $response );
@@ -171,7 +204,7 @@ class OAuth2Client
 	{
 		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
-		
+
 		if( $type == "GET" ){
 			$url = $url . "?" . http_build_query( $params );
 		}
@@ -183,6 +216,7 @@ class OAuth2Client
 		curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
+		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
 
 		if( $type == "POST" ){
 			curl_setopt($ch, CURLOPT_POST, 1); 

@@ -46,8 +46,10 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 
 		// If we have an access token, set it
 		if( $this->token( "access_token" ) ){
-			$this->api->access_token  = $this->token( "access_token" );
-			$this->api->refresh_token = $this->token( "refresh_token" );
+			$this->api->access_token            = $this->token( "access_token" );
+			$this->api->refresh_token           = $this->token( "refresh_token" );
+			$this->api->access_token_expires_in = $this->token( "expires_in" );
+			$this->api->access_token_expires_at = $this->token( "expires_at" ); 
 		}
 	}
 
@@ -87,15 +89,59 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 		}
 
 		// check if authenticated
-		if ( ! $this->api->authenticated() ){ 
+		if ( ! $this->api->access_token ){ 
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
 		}
 
 		// store tokens
 		$this->token( "access_token" , $this->api->access_token  );
 		$this->token( "refresh_token", $this->api->refresh_token );
+		$this->token( "expires_in"   , $this->api->access_token_expires_in );
+		$this->token( "expires_at"   , $this->api->access_token_expires_at );
 
 		// set user connected locally
 		$this->setUserConnected();
+	}
+	
+	function refreshToken()
+	{
+		// have an access token?
+		if( $this->api->access_token ){
+
+			// have to refresh?
+			if( $this->api->refresh_token && $this->api->access_token_expires_at ){
+
+				// expired?
+				if( $this->api->access_token_expires_at <= time() ){ 
+					$response = $this->api->refreshToken( array( "refresh_token" => $this->api->refresh_token ) );
+
+					if( ! isset( $response->access_token ) || ! $response->access_token ){
+						// set the user as disconnected at this point and throw an exception
+						$this->setUserUnconnected();
+
+						throw new Exception( "The Authorization Service has return an invalid response while requesting a new access token. " . (string) $response->error ); 
+					}
+
+					// set new access_token
+					$this->api->access_token = $response->access_token;
+
+					if( isset( $response->refresh_token ) ) 
+					$this->api->refresh_token = $response->refresh_token; 
+
+					if( isset( $response->expires_in ) ){
+						$this->api->access_token_expires_in = $response->expires_in;
+
+						// even given by some idp, we should calculate this
+						$this->api->access_token_expires_at = time() + $response->expires_in; 
+					}
+				}
+			}
+
+			// re store tokens
+			$this->token( "access_token" , $this->api->access_token  );
+			$this->token( "refresh_token", $this->api->refresh_token );
+			$this->token( "expires_in"   , $this->api->access_token_expires_in );
+			$this->token( "expires_at"   , $this->api->access_token_expires_at );
+		}
 	}
 }

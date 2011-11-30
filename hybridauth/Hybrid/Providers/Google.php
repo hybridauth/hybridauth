@@ -13,7 +13,7 @@
 class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions 
-	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.me";
+	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
 	/**
 	* IDp wrappers initializer 
@@ -41,6 +41,9 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
+		// refresh tokens if needed
+		$this->refreshToken();
+
 		// ask google api for user infos
 		$response = $this->api->api( "https://www.googleapis.com/oauth2/v1/userinfo" ); 
 
@@ -57,18 +60,6 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->gender      = @ $response->gender; 
 		$this->user->profile->email       = @ $response->email;
 		$this->user->profile->language    = @ $response->locale;
-
-		// if user hava a Google+ account and consented then update his name, profile url and avatar
-		$response = $this->api->api( "https://www.googleapis.com/plus/v1/people/" . $response->id ); 
-
-		if ( is_object( $response ) && ! isset( $response->error ) ){
-			if( isset( $response->displayName ) && ! empty( $response->displayName ) ) 
-			$this->user->profile->displayName = @ $response->displayName;
-			$this->user->profile->profileURL  = @ $response->url;
-			$this->user->profile->photoURL    = @ $response->photoURL->url;
-
-			$this->token( "googleplus_user_id" , $response->id );
-		}
 
 		return $this->user->profile;
 	}

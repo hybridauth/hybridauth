@@ -149,18 +149,18 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		foreach( $connections->person as $connection ) {
 			$uc = new Hybrid_User_Contact();
 
-			$uc->identifier  = @ $connection->id;
-			$uc->displayName = @ $connection->{'last-name'} . " " . $connection->{'first-name'};
-			$uc->profileURL  = @ $connection->{'public-profile-url'};
-			$uc->photoURL    = @ $connection->{'picture-url'};
-			$uc->description = @ $connection->{'summary'};
+			$uc->identifier  = @ (string) $connection->id;
+			$uc->displayName = @ (string) $connection->{'last-name'} . " " . $connection->{'first-name'};
+			$uc->profileURL  = @ (string) $connection->{'public-profile-url'};
+			$uc->photoURL    = @ (string) $connection->{'picture-url'};
+			$uc->description = @ (string) $connection->{'summary'};
 
 			$contacts[] = $uc; 
 		}
 
 		return $contacts;
 	}
-	
+
 	/**
 	* update user status
 	*/
@@ -226,13 +226,13 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 			$ua = new Hybrid_User_Activity();
 
-			$ua->id                 = @ $item->id;
-			$ua->date               = @ $item->timestamp;
-			$ua->text               = @ $share->{'comment'};
+			$ua->id                 = @ (string) $item->id;
+			$ua->date               = @ (string) $item->timestamp;
+			$ua->text               = @ (string) $share->{'comment'};
 
-			$ua->user->identifier   = @ $person->id;
-			$ua->user->displayName  = @ $person->{'first-name'} . ' ' . $person->{'last-name'};
-			$ua->user->profileURL   = @ $person->{'site-standard-profile-request'}->url;
+			$ua->user->identifier   = @ (string) $person->id;
+			$ua->user->displayName  = @ (string) $person->{'first-name'} . ' ' . $person->{'last-name'};
+			$ua->user->profileURL   = @ (string) $person->{'site-standard-profile-request'}->url;
 			$ua->user->photoURL     = NULL;
 			
 			$activities[] = $ua;

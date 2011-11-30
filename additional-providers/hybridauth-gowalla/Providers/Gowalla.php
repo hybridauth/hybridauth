@@ -6,120 +6,97 @@
 */
 
 /**
- * Hybrid_Providers_Gowalla class, wrapper for Gowalla  
+ * Hybrid_Providers_Gowalla provider adapter based on OAuth2 protocol
+ * 
+ * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Gowalla.html
  */
-class Hybrid_Providers_Gowalla extends Hybrid_Provider_Model
+class Hybrid_Providers_Gowalla extends Hybrid_Provider_Model_OAuth2
 { 
-	var $redirect_uri = NULL;  
-	
-   /**
+	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
 	{
-		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] )
-		{
-			throw new Exception( "Your application key and secret are required in order to connect to {$this->providerId}.", 4 );
-		}
+		parent::initialize();
 
-		require_once Hybrid_Auth::$config["path_libraries"] . "Gowalla/Gowalla.php";
+		// Provider apis end-points
+		$this->api->api_base_url  = "https://api.gowalla.com/";
+		$this->api->authorize_url = "https://gowalla.com/api/oauth/new";
+		$this->api->token_url     = "https://api.gowalla.com/api/oauth/token"; 
 
-		$this->redirect_uri = $this->endpoint . "&";
-
-		// If we have an access token, we try to init the gowalla api with it
-		if ( $this->token( "access_token" ) ){
-            // inti gowalla api with the access_token we have
-            $this->api = new Gowalla( $this->config["keys"]["key"], $this->config["keys"]["secret"], $this->redirect_uri, $this->token( "access_token" ) );
-
-            // check if the access_token has expired, 
-            if( $this->token( "expires_at" ) <= time() ){ 
-                
-                // if token has expired, then call Gowalla::refreshToken() to get new tokens
-                $response = $this->api->refreshToken( $this->token( "access_token" ), $this->token( "refresh_token" ) );
-
-                // check if gowalla response is valid 
-                if ( ! isset( $response["access_token"] ) ){
-                    // set the user as disconnected at this point and throw an exception
-                    $this->setUserUnconnected();
-
-                    throw new Exception( "Authentification failed! Access token has expired and {$this->providerId} has returned an invalid refresh token.", 5 );
-                }
-
-                // store the new access token, refresh token and the access token expire time
-                $this->token( "access_token"  , $response['access_token']  );
-                $this->token( "refresh_token" , $response['refresh_token'] );
-                $this->token( "expires_in"    , $response['expires_in']    );           // OPTIONAL. The duration in seconds of the access token lifetime
-                $this->token( "expires_at"    , strtotime( $response['expires_at'] ) ); // if not provided by the social api, then it should be calculated: expires_at = now + expires_in
-
-                // inti gowalla api with the new access_token
-                $this->api = new Gowalla( $this->config["keys"]["key"], $this->config["keys"]["secret"], $this->redirect_uri, $this->token( "access_token" ) );
-            }
-		}
-
-        // else we dont have an access token stored
-        else{
-            $this->api = new Gowalla( $this->config["keys"]["key"], $this->config["keys"]["secret"], $this->redirect_uri );
-        }
+		$this->api->curl_header = array( 'X-Gowalla-API-Key: ' . $this->config["keys"]["id"], 'Accept: application/json' );
 	}
 
 	/**
-	* begin login step 
-	*/
-	function loginBegin()
-	{
-		// authenticate app
-		$this->api->authenticate();
-	}
-
-	/**
-	* finish login step 
-	*/ 
-	function loginFinish()
-	{ 
-		$code  = @$_REQUEST['code'];
-
-		$response = $this->api->requestToken( $code );
-
-		if ( ! $response || ! isset( $response["access_token"] ) )
-		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
-		}
-
-        // set access token, refresh token and access token expire time
-        $this->token( "scope"         , $response['scope']         );
-        $this->token( "access_token"  , $response['access_token']  );
-        $this->token( "refresh_token" , $response['refresh_token'] ); 
-        $this->token( "expires_in"    , $response['expires_in']    );           // OPTIONAL. The duration in seconds of the access token lifetime
-        $this->token( "expires_at"    , strtotime( $response['expires_at'] ) ); // if not provided by the social api, then it should be calculated: expires_at = now + expires_in
-
-		// set user as logged in
-		$this->setUserConnected();
- 	}
-	
-   /**
-	* load the user profile from the IDp api client 
+	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
 	{
-		$response = $this->api->getMe();
+		// refresh tokens if needed
+		$this->refreshToken();
 
-		if ( ! $response || ! isset( $response["username"] ) )
+		$data = $this->api->api( "users/me/" ); 
+
+		if ( ! is_object( $data ) || ! isset( $data->username ) )
 		{
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
-		$this->user->providerUID         	= @ (string) $response["username"]; 
-		$this->user->profile->firstName  	= @ (string) $response["first_name"]; 
-		$this->user->profile->lastName  	= @ (string) $response["last_name"]; 
+		$this->user->providerUID         	= @ (string) $data->username; 
+		$this->user->profile->firstName  	= @ (string) $data->first_name; 
+		$this->user->profile->lastName  	= @ (string) $data->last_name; 
 		$this->user->profile->displayName  	= trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
+		$this->user->profile->profileURL  	= @ "http://gowalla.com" . ( (string) $data->url ); 
+		$this->user->profile->webSiteURL 	= @ (string) $data->website; 
+		$this->user->profile->photoURL   	= @ (string) $data->image_url;
 
-		if( isset( $response["url"] ) ){
-			$this->user->profile->profileURL = @ "http://gowalla.com" . ( (string) $response["url"] ); 
+		// make sure to always have a display name
+		if( ! $this->user->profile->displayName ){
+			$this->user->profile->displayName = @ (string) $data->username; 
 		}
 
-		$this->user->profile->webSiteURL 	= @ (string) $response["website"]; 
-		$this->user->profile->photoURL   	= @ (string) $response["image_url"]; 
-
 		return $this->user->profile;
+	}
+
+	function refreshToken()
+	{
+		// have an access token?
+		if( $this->api->access_token ){
+
+			// have to refresh?
+			if( $this->api->refresh_token && $this->api->access_token_expires_at ){
+
+				// expired?
+				if( $this->api->access_token_expires_at <= time() ){  
+					$response = $this->api->refreshToken( array( "refresh_token" => $this->api->refresh_token, "access_token" => $this->api->access_token ) );
+
+					if( ! isset( $response->access_token ) || ! $response->access_token ){
+						// set the user as disconnected at this point and throw an exception
+						$this->setUserUnconnected();
+
+						throw new Exception( "The Authorization Service has return an invalid response while requesting a new access token. " . (string) $response->error ); 
+					}
+
+					// set new access_token
+					$this->api->access_token = $response->access_token;
+
+					if( isset( $response->refresh_token ) ) 
+					$this->api->refresh_token = $response->refresh_token; 
+
+					if( isset( $response->expires_in ) ){
+						$this->api->access_token_expires_in = $response->expires_in;
+
+						// even given by some idp, we should calculate this
+						$this->api->access_token_expires_at = time() + $response->expires_in; 
+					}
+				}
+			}
+
+			// re store tokens
+			$this->token( "access_token" , $this->api->access_token  );
+			$this->token( "refresh_token", $this->api->refresh_token );
+			$this->token( "expires_in"   , $this->api->access_token_expires_in );
+			$this->token( "expires_at"   , $this->api->access_token_expires_at );
+		}
 	}
 }
