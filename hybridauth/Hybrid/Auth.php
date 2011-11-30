@@ -38,24 +38,24 @@ class Hybrid_Auth
 	{
 		if ( ! session_id() ){
 			if( ! session_start() ){
-				throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
+				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
 			}
 		}
 
 	#{{{ well, should we check this each time? ..
 		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
 		if ( ! function_exists('curl_init') ) {
-			throw new Exception('Hybriauth Library needs the CURL PHP extension.');
+			throw new Exception('Hybridauth Library needs the CURL PHP extension.');
 		}
 
 		// PHP JSON extension [http://php.net/manual/en/book.json.php]
 		if ( ! function_exists('json_decode') ) {
-			throw new Exception('Hybriauth Library needs the JSON PHP extension.');
+			throw new Exception('Hybridauth Library needs the JSON PHP extension.');
 		}
 
 		// OAuth PECL extension is not compatible with this library
 		if( extension_loaded('oauth') ) {
-			throw new Exception('Hybriauth Library not compatible with installed PECL OAuth extension. Please disable it.');
+			throw new Exception('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
 		}
 	#}}}
 
