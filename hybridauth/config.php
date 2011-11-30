@@ -11,7 +11,7 @@
 
 return 
 	array(
-		"base_url" => "http://localhost/hybridauth-2.0.9/hybridauth/", 
+		"base_url" => "http://localhost/hybridauth-git/hybridauth/", 
 
 		"providers" => array ( 
 			// openid providers

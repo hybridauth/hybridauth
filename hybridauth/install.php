@@ -70,7 +70,7 @@ ul li label {
 } 
 </style> 
 <?php
-	$HYBRIDAUTH_VERSION             = "2.0.9";
+	$HYBRIDAUTH_VERSION             = "2.0.10-dev";
 	$CONFIG_TEMPLATE                = "";
 
    /**
@@ -365,7 +365,7 @@ ul li label {
 					<?php endif; ?> 
 
 					<?php if ( $provider == "Facebook" ) : ?>
-						<p>Make sure to put your correct website adress in the "Site Url" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>". - btw, facebook wont work on <em>"http://localhost"</em>.</p>
+						<p>Make sure to put your correct website adress in the "Site Url" field. This adresse must match with the current hostname "<em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>".</p>
 						<p>Once you have registered, copy the created application ID and Secret into this setup page.</p> 
 					<?php elseif ( $provider == "Google" ) : ?>
 						<p>On the <b>"Create Client ID"</b> popup switch to advanced settings by clicking on <b>(more options)</b>.</p>
