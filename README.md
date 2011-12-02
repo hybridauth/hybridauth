@@ -34,7 +34,7 @@ HybridAuth can be used for many purposes, such as:
 HybridAuth repository is made up of several projects:
 
 - **HybridAuth Core library** which include OpenID, Facebook, Twitter, LinkedIn,
-  MySpace, Google, Yahoo and Windows Live.
+  MySpace, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** which contains many others services
   which you may want to use,
 - **Examples and demos**, which contains three working examples for you to test, 
@@ -46,9 +46,3 @@ at [http://hybridauth.sourceforge.net/download.html](http://hybridauth.sourcefor
 
 You can find HybridAuth complete documentation 
 at [http://hybridauth.sourceforge.net](http://hybridauth.sourceforge.net)
-
-If you are not familiar with HybridAuth, please refer to **Installation and Configuration** sections
-at [http://hybridauth.sourceforge.net/userguide.html](http://hybridauth.sourceforge.net/userguide.html)
-
-**To get help and support**, join us and participate in the hybriauth discussion group
-at [http://hybridauth.sourceforge.net/support.html](http://hybridauth.sourceforge.net/support.html)
