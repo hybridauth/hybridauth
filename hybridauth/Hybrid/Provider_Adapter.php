@@ -97,8 +97,8 @@ class Hybrid_Provider_Adapter
 			Hybrid_Auth::storage()->delete( "hauth_session.{$idpid}.id_provider_params" );
 		}
 
-		// set the user status to unconnected for the given provider
-		$this->adapter->setUserUnconnected();
+		// make a fresh start
+		$this->logout();
 
 		# get hybridauth base url
 		$HYBRID_AUTH_URL_BASE = Hybrid_Auth::$config["base_url"];
