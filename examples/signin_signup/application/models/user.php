@@ -9,7 +9,7 @@ class user extends model {
 	}
 
 	function update( $user_id, $email, $password, $first_name, $last_name){ 
-		echo $sql = "UPDATE users SET email = '$email', password = '$password', first_name = '$first_name', last_name = '$last_name' WHERE id = '$user_id' LIMIT 1";
+		$sql = "UPDATE users SET email = '$email', password = '$password', first_name = '$first_name', last_name = '$last_name' WHERE id = '$user_id' LIMIT 1";
 
 		return mysql_query_excute($sql);
 	}
@@ -31,7 +31,7 @@ class user extends model {
 	}
 
 	function find_by_email_and_password( $email, $password ){
-		echo $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password' LIMIT 1";
+		$sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password' LIMIT 1";
 
 		$result = mysql_query_excute($sql);
 
