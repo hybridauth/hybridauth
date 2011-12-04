@@ -174,7 +174,7 @@ HR {
 
 			$("#openidbtn").click(
 				function(){
-					un = $( "#openidun" ).val();
+					oi = un = $( "#openidun" ).val();
 
 					if( ! un ){
 						alert( "nah not like that! put your username or blog name on this input field." );
