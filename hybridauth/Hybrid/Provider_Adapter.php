@@ -66,7 +66,7 @@ class Hybrid_Provider_Adapter
 		}
 
 		# include the adapter wrapper
-		require_once Hybrid_Auth::$config["path_providers"] . "/" . $this->id . ".php" ;
+		require_once Hybrid_Auth::$config["path_providers"] . $this->id . ".php" ;
 
 		$this->wrapper = "Hybrid_Providers_" . $this->id;
 

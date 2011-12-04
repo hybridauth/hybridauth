@@ -31,10 +31,6 @@ class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 			$this->openidIdentifier = $this->params["openid_identifier"];
 		}
 
-		if( empty( $this->openidIdentifier ) ){
-			throw new Exception( "OpenID adapter require the identity provider identifier 'openid_identifier' as an extra parameter.", 4 );
-		}
-
 		// include LightOpenID lib
 		require_once Hybrid_Auth::$config["path_libraries"] . "OpenID/LightOpenID.php"; 
 
@@ -47,7 +43,11 @@ class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 	* begin login step 
 	*/
 	function loginBegin()
-	{ 
+	{
+		if( empty( $this->openidIdentifier ) ){
+			throw new Exception( "OpenID adapter require the identity provider identifier 'openid_identifier' as an extra parameter.", 4 );
+		}
+
 		$this->api->identity  = $this->openidIdentifier;
 		$this->api->returnUrl = $this->endpoint;
 		$this->api->required  = ARRAY( 
