@@ -51,15 +51,16 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 
-		$this->user->profile->identifier  = @ $response->id;
-		$this->user->profile->firstName   = @ $response->given_name;
-		$this->user->profile->lastName    = @ $response->family_name;
-		$this->user->profile->displayName = @ $response->name;
-		$this->user->profile->photoURL    = @ $response->picture;
-		$this->user->profile->profileURL  = "https://profiles.google.com/" . $this->user->profile->identifier;
-		$this->user->profile->gender      = @ $response->gender; 
-		$this->user->profile->email       = @ $response->email;
-		$this->user->profile->language    = @ $response->locale;
+		$this->user->profile->identifier    = @ $response->id;
+		$this->user->profile->firstName     = @ $response->given_name;
+		$this->user->profile->lastName      = @ $response->family_name;
+		$this->user->profile->displayName   = @ $response->name;
+		$this->user->profile->photoURL      = @ $response->picture;
+		$this->user->profile->profileURL    = "https://profiles.google.com/" . $this->user->profile->identifier;
+		$this->user->profile->gender        = @ $response->gender; 
+		$this->user->profile->email         = @ $response->email;
+		$this->user->profile->emailVerified = @ $response->email;
+		$this->user->profile->language      = @ $response->locale;
 
 		return $this->user->profile;
 	}

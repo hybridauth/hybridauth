@@ -113,17 +113,18 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		}
 
 		# store the user profile.  
-		$this->user->profile->identifier  = @ $data['id'];
-		$this->user->profile->displayName = @ $data['name'];
-		$this->user->profile->firstName   = @ $data['first_name'];
-		$this->user->profile->lastName    = @ $data['last_name'];
-		$this->user->profile->photoURL    = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?type=square";
-		$this->user->profile->profileURL  = @ $data['link']; 
-		$this->user->profile->webSiteURL  = @ $data['website']; 
-		$this->user->profile->gender      = @ $data['gender'];
-		$this->user->profile->description = @ $data['bio'];
-		$this->user->profile->email       = @ $data['email'];
-		$this->user->profile->region      = @ $data['hometown']["name"];
+		$this->user->profile->identifier    = @ $data['id'];
+		$this->user->profile->displayName   = @ $data['name'];
+		$this->user->profile->firstName     = @ $data['first_name'];
+		$this->user->profile->lastName      = @ $data['last_name'];
+		$this->user->profile->photoURL      = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?type=square";
+		$this->user->profile->profileURL    = @ $data['link']; 
+		$this->user->profile->webSiteURL    = @ $data['website']; 
+		$this->user->profile->gender        = @ $data['gender'];
+		$this->user->profile->description   = @ $data['bio'];
+		$this->user->profile->email         = @ $data['email'];
+		$this->user->profile->emailVerified = @ $data['email'];
+		$this->user->profile->region        = @ $data['hometown']["name"];
 
 		if( isset( $data['birthday'] ) ) {
 			list($birthday_month, $birthday_day, $birthday_year) = @ explode('/', $data['birthday'] );
