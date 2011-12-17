@@ -1,5 +1,5 @@
 <?php
-//!! planned to be replaced Y! openid by the oauth1 adapter on 2.0.10
+//!! planned to be replaced Y! openid by the oauth1 adapter soon
 
 /*!
 * HybridAuth
@@ -8,9 +8,7 @@
 */
 
 /**
-* Hybrid_Providers_Yahoo provider adapter based on OAuth1 protocol
-*
-* Provided as a way to keep backward compatibility for Yahoo OpenID based on HybridAuth <= 2.0.8 
+* Hybrid_Providers_Yahoo provider adapter based on OAuth1 protocol 
 *
 * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html
 */
