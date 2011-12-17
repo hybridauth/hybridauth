@@ -17,5 +17,14 @@
 class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OpenID
 {
 	var $openidIdentifier = "https://www.yahoo.com"; 
+	
+	/**
+	* finish login step 
+	*/
+	function loginFinish()
+	{
+	  parent::loginFinish();
+	  $this->user->profile->emailVerified = $this->user->profile->email;
+	}
 }
 

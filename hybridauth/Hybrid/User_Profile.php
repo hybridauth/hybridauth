@@ -60,6 +60,9 @@ class Hybrid_User_Profile
 
 	/* User email. Note: not all of IDp garant access to the user email */
 	public $email = NULL;
+	
+	/* Verified user email. Note: not all of IDp garant access to verified user email */
+	public $emailVerified = NULL;
 
 	/* phone number */
 	public $phone = NULL;

@@ -10,5 +10,14 @@
  */
 class Hybrid_Providers_PayPal extends Hybrid_Provider_Model_OpenID
 {
-	var $openidIdentifier = "https://www.paypal.com/webapps/auth/server"; 
+	var $openidIdentifier = "https://www.paypal.com/webapps/auth/server";
+	
+	/**
+	* finish login step 
+	*/
+	function loginFinish()
+	{
+	  parent::loginFinish();
+	  $this->user->profile->emailVerified = $this->user->profile->email;
+	}
 }

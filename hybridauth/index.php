@@ -10,7 +10,9 @@
 // ------------------------------------------------------------------------
 
 // start a new session 
-session_start();
+if ( ! session_id() ){
+  session_start();
+}
 
 require_once( "Hybrid/Auth.php" );
 
