@@ -66,9 +66,20 @@ class Hybrid_Provider_Adapter
 		}
 
 		# include the adapter wrapper
-		require_once Hybrid_Auth::$config["path_providers"] . $this->id . ".php" ;
+		if( isset( $this->config["wrapper"] ) && is_array( $this->config["wrapper"] ) ){
+			require_once $this->config["wrapper"]["path"];
 
-		$this->wrapper = "Hybrid_Providers_" . $this->id;
+			if( ! class_exists( $this->config["wrapper"]["class"] ) ){
+				throw new Exception( "Unable to load the adapter class.", 3 );
+			}
+
+			$this->wrapper = $this->config["wrapper"]["class"];
+		}
+		else{ 
+			require_once Hybrid_Auth::$config["path_providers"] . $this->id . ".php" ;
+
+			$this->wrapper = "Hybrid_Providers_" . $this->id; 
+		}
 
 		# create the adapter instance, and pass the current params and config
 		$this->adapter = new $this->wrapper( $this->id, $this->config, $this->params );

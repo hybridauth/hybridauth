@@ -32,7 +32,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) ){
 			$this->scope = $this->config["scope"];
 		}
-		
+
 		// override requested display
 		if( isset( $this->config["display"] ) && ! empty( $this->config["display"] ) ){
 			$this->display = $this->config["display"];
@@ -57,7 +57,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$url = $this->api->getLoginUrl( array( 'scope' => $this->scope, 'display' => $this->display, 'redirect_uri' => $this->endpoint ) );
 
 		// redirect to facebook
-		Hybrid_Auth::redirect( $url ); 
+		Hybrid_Auth::redirect( $url );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		// try to detect the access token for facebook
 		if( isset( $_SESSION["fb_" . $this->api->getAppId() . "_access_token" ] ) ){
 			$this->token( "access_token", $_SESSION["fb_" . $this->api->getAppId() . "_access_token" ] );
-		} 
+		}
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			throw new Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
 		}
 
-		# store the user profile.  
+		# store the user profile.
 		$this->user->profile->identifier    = @ $data['id'];
 		$this->user->profile->displayName   = @ $data['name'];
 		$this->user->profile->firstName     = @ $data['first_name'];
@@ -177,9 +177,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$parameters = array();
 
 		if( is_array( $status ) ){
-			if( isset( $status[0] ) && ! empty( $status[0] ) ) $parameters["message"] = $status[0]; // status content
-			if( isset( $status[1] ) && ! empty( $status[1] ) ) $parameters["link"]    = $status[1]; // item link
-			if( isset( $status[2] ) && ! empty( $status[2] ) ) $parameters["picture"] = $status[2]; // picture link
+			$parameters = $status;
 		}
 		else{
 			$parameters["message"] = $status; 

@@ -11,7 +11,7 @@
 
 // start a new session 
 if ( ! session_id() ){
-  session_start();
+	session_start();
 }
 
 require_once( "Hybrid/Auth.php" );
@@ -58,7 +58,7 @@ if( isset( $_REQUEST["hauth_start"] ) || isset( $_REQUEST["hauth_done"] ) )
 		if( ! isset( $_SESSION["HA::CONFIG"] ) ): 
 			header("HTTP/1.0 404 Not Found");
 
-			die( "Sorry, this page cannot be accessed directly!" );
+			die( "You cannot access this page directly." );
 		endif; 
 
 		Hybrid_Auth::initialize( unserialize( $_SESSION["HA::CONFIG"] ) ); 
@@ -87,7 +87,7 @@ if( isset( $_REQUEST["hauth_start"] ) || isset( $_REQUEST["hauth_done"] ) )
 
 			header("HTTP/1.0 404 Not Found");
 
-			die( "Sorry, this page cannot be accessed directly!" );
+			die( "You cannot access this page directly." );
 		}
 
 		# define:hybrid.endpoint.php step 2.

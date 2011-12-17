@@ -1,5 +1,5 @@
 <?php
-//!! planned to replace Y! openid adapter on 2.0.10, under..
+//!! planned to replace Y! openid adapter, under..
 
 /*!
 * HybridAuth
