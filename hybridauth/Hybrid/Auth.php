@@ -144,7 +144,7 @@ class Hybrid_Auth
 
 			// try to provide the previous if any
 			// Exception::getPrevious (PHP 5 >= 5.3.0) http://php.net/manual/en/exception.getprevious.php
-			if ( version_compare( PHP_VERSION, '5.3.0', '>=' ) ) {  
+			if ( version_compare( PHP_VERSION, '5.3.0', '>=' ) && ($p instanceof Exception) ) {  
 				throw new Exception( $m, $c, $p );
 			}
 			else{
