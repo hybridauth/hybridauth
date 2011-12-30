@@ -113,18 +113,18 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		}
 
 		# store the user profile.
-		$this->user->profile->identifier    = @ $data['id'];
-		$this->user->profile->displayName   = @ $data['name'];
-		$this->user->profile->firstName     = @ $data['first_name'];
-		$this->user->profile->lastName      = @ $data['last_name'];
+		$this->user->profile->identifier    = array_key_exists('id', $data)? $data['id'] : "";
+		$this->user->profile->displayName   = array_key_exists('name', $data)? $data['name'] : "";
+		$this->user->profile->firstName     = array_key_exists('first_name', $data)? $data['first_name'] : "";
+		$this->user->profile->lastName      = array_key_exists('last_name', $data)? $data['last_name'] : "";
 		$this->user->profile->photoURL      = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?type=square";
-		$this->user->profile->profileURL    = @ $data['link']; 
-		$this->user->profile->webSiteURL    = @ $data['website']; 
-		$this->user->profile->gender        = @ $data['gender'];
-		$this->user->profile->description   = @ $data['bio'];
-		$this->user->profile->email         = @ $data['email'];
-		$this->user->profile->emailVerified = @ $data['email'];
-		$this->user->profile->region        = @ $data['hometown']["name"];
+		$this->user->profile->profileURL    = array_key_exists('link', $data)? $data['link'] : "";
+		$this->user->profile->webSiteURL    = array_key_exists('website', $data)? $data['website'] : "";
+		$this->user->profile->gender        = array_key_exists('gender', $data)? $data['gender'] : "";
+		$this->user->profile->description   = array_key_exists('bio', $data)? $data['bio'] : "";
+		$this->user->profile->email         = array_key_exists('email', $data)? $data['email'] : "";
+		$this->user->profile->emailVerified = array_key_exists('email', $data)? $data['email'] : "";
+		$this->user->profile->region        = array_key_exists('hometown', $data)? $data['hometown']["name"] : "";
 
 		if( isset( $data['birthday'] ) ) {
 			list($birthday_month, $birthday_day, $birthday_year) = @ explode('/', $data['birthday'] );
@@ -255,3 +255,4 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		return $activities;
  	}
 }
+
