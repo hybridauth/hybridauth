@@ -51,16 +51,16 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		}
 
-		$this->user->profile->identifier    = @ $response->id;
-		$this->user->profile->firstName     = @ $response->given_name;
-		$this->user->profile->lastName      = @ $response->family_name;
-		$this->user->profile->displayName   = @ $response->name;
-		$this->user->profile->photoURL      = @ $response->picture;
+		$this->user->profile->identifier    = (property_exists($response,'id'))?$response->id:"";
+		$this->user->profile->firstName     = (property_exists($response,'given_name'))?$response->given_name:"";
+		$this->user->profile->lastName      = (property_exists($response,'family_name'))?$response->family_name:"";
+		$this->user->profile->displayName   = (property_exists($response,'name'))?$response->name:"";
+		$this->user->profile->photoURL      = (property_exists($response,'picture'))?$response->picture:"";
 		$this->user->profile->profileURL    = "https://profiles.google.com/" . $this->user->profile->identifier;
-		$this->user->profile->gender        = @ $response->gender; 
-		$this->user->profile->email         = @ $response->email;
-		$this->user->profile->emailVerified = @ $response->email;
-		$this->user->profile->language      = @ $response->locale;
+		$this->user->profile->gender        = (property_exists($response,'gender'))?$response->gender:""; 
+		$this->user->profile->email         = (property_exists($response,'email'))?$response->email:"";
+		$this->user->profile->emailVerified = (property_exists($response,'email'))?$response->email:"";
+		$this->user->profile->language      = (property_exists($response,'locale'))?$response->locale:"";
 
 		return $this->user->profile;
 	}
