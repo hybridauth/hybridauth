@@ -113,21 +113,21 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		}
 
 		# store the user profile.
-		$this->user->profile->identifier    = @ $data['id'];
-		$this->user->profile->displayName   = @ $data['name'];
-		$this->user->profile->firstName     = @ $data['first_name'];
-		$this->user->profile->lastName      = @ $data['last_name'];
+		$this->user->profile->identifier    = (array_key_exists('id',$data))?$data['id']:"";
+		$this->user->profile->displayName   = (array_key_exists('name',$data))?$data['name']:"";
+		$this->user->profile->firstName     = (array_key_exists('first_name',$data))?$data['first_name']:"";
+		$this->user->profile->lastName      = (array_key_exists('last_name',$data))?$data['last_name']:"";
 		$this->user->profile->photoURL      = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?type=square";
-		$this->user->profile->profileURL    = @ $data['link']; 
-		$this->user->profile->webSiteURL    = @ $data['website']; 
-		$this->user->profile->gender        = @ $data['gender'];
-		$this->user->profile->description   = @ $data['bio'];
-		$this->user->profile->email         = @ $data['email'];
-		$this->user->profile->emailVerified = @ $data['email'];
-		$this->user->profile->region        = @ $data['hometown']["name"];
+		$this->user->profile->profileURL    = (array_key_exists('link',$data))?$data['link']:""; 
+		$this->user->profile->webSiteURL    = (array_key_exists('website',$data))?$data['website']:""; 
+		$this->user->profile->gender        = (array_key_exists('gender',$data))?$data['gender']:"";
+		$this->user->profile->description   = (array_key_exists('bio',$data))?$data['bio']:"";
+		$this->user->profile->email         = (array_key_exists('email',$data))?$data['email']:"";
+		$this->user->profile->emailVerified = (array_key_exists('email',$data))?$data['email']:"";
+		$this->user->profile->region        = (array_key_exists("name",$data['hometown']))?$data['hometown']["name"]:"";
 
 		if( isset( $data['birthday'] ) ) {
-			list($birthday_month, $birthday_day, $birthday_year) = @ explode('/', $data['birthday'] );
+			list($birthday_month, $birthday_day, $birthday_year) = (array_key_exists('birthday',$data))?$data['birthday']:"";
 
 			$this->user->profile->birthDay   = $birthday_day;
 			$this->user->profile->birthMonth = $birthday_month;
@@ -158,8 +158,8 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		foreach( $response["data"] as $item ){
 			$uc = new Hybrid_User_Contact();
 
-			$uc->identifier  = @ $item["id"];
-			$uc->displayName = @ $item["name"];
+			$uc->identifier  = (array_key_exists("id",$item))?$item["id"]:"";
+			$uc->displayName = (array_key_exists("name",$item))?$item["name"]:"";
 			$uc->profileURL  = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
 			$uc->photoURL    = "https://graph.facebook.com/" . $uc->identifier . "/picture?type=square"; 
 
@@ -223,30 +223,30 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		
 			$ua = new Hybrid_User_Activity();
 
-			$ua->id                 = @ $item["id"];
-			$ua->date               = @ strtotime( $item["created_time"] );
+			$ua->id                 = (array_key_exists("id",$item))?$item["id"]:"";
+			$ua->date               = (array_key_exists("created_time",$item))?$item["created_time"]:"";
 
 			if( $item["type"] == "video" ){
-				$ua->text           = @ $item["name"] . " " . $item["link"];
+				$ua->text           = (array_key_exists("link",$item))?$item["link"]:"";
 			}
 
 			if( $item["type"] == "link" ){
-				$ua->text           = @ $item["caption"] . " " . $item["link"];
+				$ua->text           = (array_key_exists("link",$item))?$item["link"]:"";
 			}
 
 			if( empty( $ua->text ) && isset( $item["story"] ) ){
-				$ua->text           = @ $item["story"] . " " . $item["link"];
+				$ua->text           = (array_key_exists("link",$item))?$item["link"]:"";
 			}
 
 			if( empty( $ua->text ) && isset( $item["message"] ) ){
-				$ua->text           = @ $item["message"];
+				$ua->text           = (array_key_exists("message",$item))?$item["message"]:"";
 			}
 
 			if( ! empty( $ua->text ) ){
-				$ua->user->identifier   = @ $item["from"]["id"];
-				$ua->user->displayName  = @ $item["from"]["name"];
-				$ua->user->profileURL   = @ "https://www.facebook.com/profile.php?id=" . $ua->user->identifier;
-				$ua->user->photoURL     = @ "https://graph.facebook.com/" . $ua->user->identifier . "/picture?type=square";
+				$ua->user->identifier   = (array_key_exists("id",$item["from"]))?$item["from"]["id"]:"";
+				$ua->user->displayName  = (array_key_exists("name",$item["from"]))?$item["from"]["name"]:"";
+				$ua->user->profileURL   = (property_exists($ua->user,'identifier'))?$ua->user->identifier:"";
+				$ua->user->photoURL     = (property_exists($ua->user,'identifier . "/picture?type=square"'))?$ua->user->identifier . "/picture?type=square":"";
 
 				$activities[] = $ua;
 			}
