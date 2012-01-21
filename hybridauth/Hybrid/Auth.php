@@ -251,7 +251,7 @@ class Hybrid_Auth
 		if( ! $params ){ 
 			$params = Hybrid_Auth::storage()->get( "hauth_session.$providerId.id_provider_params" );
 			
-			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the sotred for this provider.", $params );
+			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the sorted for this provider.", $params );
 		}
 
 		if( ! $params ){ 
