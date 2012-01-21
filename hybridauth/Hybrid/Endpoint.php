@@ -5,8 +5,6 @@
 *  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
-require_once( "Auth.php" );
-
 /**
  * Hybrid_Endpoint class
  * 
