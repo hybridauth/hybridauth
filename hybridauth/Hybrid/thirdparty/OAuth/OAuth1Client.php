@@ -179,9 +179,9 @@ class OAuth1Client{
 				if (!empty($postfields)) {
 					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields );
 				}
-				if (!empty($auth_header)) {
-					curl_setopt($ci, CURLOPT_HTTPHEADER, array('Content-Type: application/atom+xml', $auth_header) );
-				}
+				// if (!empty($auth_header)) {
+					// curl_setopt($ci, CURLOPT_HTTPHEADER, array('Content-Type: application/atom+xml', $auth_header) );
+				// }
 				break;
 			case 'DELETE':
 				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE');
