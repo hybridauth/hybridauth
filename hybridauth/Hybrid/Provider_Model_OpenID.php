@@ -100,30 +100,30 @@ class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 		# sotre the user profile
 		$this->user->profile->identifier  = $this->api->identity;
 
-		$this->user->profile->firstName   = @ $response["namePerson/first"];
-		$this->user->profile->lastName    = @ $response["namePerson/last"];
-		$this->user->profile->displayName = @ $response["namePerson"];
-		$this->user->profile->email       = @ $response["contact/email"];
-		$this->user->profile->language    = @ $response["pref/language"];
-		$this->user->profile->country     = @ $response["contact/country/home"]; 
-		$this->user->profile->zip         = @ $response["contact/postalCode/home"]; 
-		$this->user->profile->gender      = @ strtolower( $response["person/gender"] ); 
-		$this->user->profile->photoURL    = @ $response["media/image/default"]; 
+		$this->user->profile->firstName   = (array_key_exists("namePerson/first",$response))?$response["namePerson/first"]:"";
+		$this->user->profile->lastName    = (array_key_exists("namePerson/last",$response))?$response["namePerson/last"]:"";
+		$this->user->profile->displayName = (array_key_exists("namePerson",$response))?$response["namePerson"]:"";
+		$this->user->profile->email       = (array_key_exists("contact/email",$response))?$response["contact/email"]:"";
+		$this->user->profile->language    = (array_key_exists("pref/language",$response))?$response["pref/language"]:"";
+		$this->user->profile->country     = (array_key_exists("contact/country/home",$response))?$response["contact/country/home"]:""; 
+		$this->user->profile->zip         = (array_key_exists("contact/postalCode/home",$response))?$response["contact/postalCode/home"]:""; 
+		$this->user->profile->gender      = (array_key_exists("person/gender",$response))?$response["person/gender"]:""; 
+		$this->user->profile->photoURL    = (array_key_exists("media/image/default",$response))?$response["media/image/default"]:""; 
 
-		$this->user->profile->birthDay    = @ $response["birthDate/birthDay"]; 
-		$this->user->profile->birthMonth  = @ $response["birthDate/birthMonth"]; 
-		$this->user->profile->birthYear   = @ $response["birthDate/birthDate"];  
+		$this->user->profile->birthDay    = (array_key_exists("birthDate/birthDay",$response))?$response["birthDate/birthDay"]:""; 
+		$this->user->profile->birthMonth  = (array_key_exists("birthDate/birthMonth",$response))?$response["birthDate/birthMonth"]:""; 
+		$this->user->profile->birthYear   = (array_key_exists("birthDate/birthDate",$response))?$response["birthDate/birthDate"]:"";  
 
 		if( ! $this->user->profile->displayName ) {
 			$this->user->profile->displayName = trim( $this->user->profile->lastName . " " . $this->user->profile->firstName ); 
 		}
 
 		if( isset( $response['namePerson/friendly'] ) && ! empty( $response['namePerson/friendly'] ) && ! $this->user->profile->displayName ) { 
-			$this->user->profile->displayName = @ $response["namePerson/friendly"] ; 
+			$this->user->profile->displayName = (array_key_exists("namePerson/friendly",$response))?$response["namePerson/friendly"]:"" ; 
 		}
 
 		if( isset( $response['birthDate'] ) && ! empty( $response['birthDate'] ) && ! $this->user->profile->birthDay ) {
-			list( $birthday_year, $birthday_month, $birthday_day ) = @ explode( '-', $response['birthDate'] );
+			list( $birthday_year, $birthday_month, $birthday_day ) = (array_key_exists('birthDate',$response))?$response['birthDate']:"";
 
 			$this->user->profile->birthDay      = (int) $birthday_day;
 			$this->user->profile->birthMonth    = (int) $birthday_month;

@@ -116,8 +116,8 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 	*/ 
 	function loginFinish()
 	{
-		$oauth_token    = @ $_REQUEST['oauth_token'];
-		$oauth_verifier = @ $_REQUEST['oauth_verifier'];
+		$oauth_token    = (array_key_exists('oauth_token',$_REQUEST))?$_REQUEST['oauth_token']:"";
+		$oauth_verifier = (array_key_exists('oauth_verifier',$_REQUEST))?$_REQUEST['oauth_verifier']:"";
 
 		if ( ! $oauth_token || ! $oauth_verifier ){
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth verifier.", 5 );

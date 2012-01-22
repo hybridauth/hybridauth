@@ -71,7 +71,7 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 	*/
 	function loginFinish()
 	{
-		$error = @ trim( strip_tags( $_REQUEST['error'] ) );
+		$error = (array_key_exists('error',$_REQUEST))?$_REQUEST['error']:"";
 
 		// check for errors
 		if ( $error ){ 
@@ -79,7 +79,7 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 		}
 
 		// try to authenicate user
-		$code = @ trim( strip_tags( $_REQUEST['code'] ) );
+		$code = (array_key_exists('code',$_REQUEST))?$_REQUEST['code']:"";
 
 		try{
 			$this->api->authenticate( $code ); 

@@ -41,14 +41,14 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		}
 
 		# store the user profile.  
-		$this->user->profile->identifier  = @ $response->id;
-		$this->user->profile->displayName = @ $response->screen_name;
-		$this->user->profile->description = @ $response->description;
-		$this->user->profile->firstName   = @ $response->name; 
-		$this->user->profile->photoURL    = @ $response->profile_image_url;
-		$this->user->profile->profileURL  = @ 'http://twitter.com/' . $response->screen_name;
-		$this->user->profile->webSiteURL  = @ $response->url; 
-		$this->user->profile->region      = @ $response->location;
+		$this->user->profile->identifier  = (property_exists($response,'id'))?$response->id:"";
+		$this->user->profile->displayName = (property_exists($response,'screen_name'))?$response->screen_name:"";
+		$this->user->profile->description = (property_exists($response,'description'))?$response->description:"";
+		$this->user->profile->firstName   = (property_exists($response,'name'))?$response->name:""; 
+		$this->user->profile->photoURL    = (property_exists($response,'profile_image_url'))?$response->profile_image_url:"";
+		$this->user->profile->profileURL  = (property_exists($response,'screen_name'))?$response->screen_name:"";
+		$this->user->profile->webSiteURL  = (property_exists($response,'url'))?$response->url:""; 
+		$this->user->profile->region      = (property_exists($response,'location'))?$response->location:"";
 
 		return $this->user->profile;
  	}
@@ -88,11 +88,11 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 				foreach( $response as $item ){ 
 					$uc = new Hybrid_User_Contact();
 
-					$uc->identifier   = @ $item->id;
-					$uc->displayName  = @ $item->name;
-					$uc->profileURL   = @ 'http://twitter.com/' . $item->screen_name;
-					$uc->photoURL     = @ $item->profile_image_url;
-					$uc->description  = @ $item->description; 
+					$uc->identifier   = (property_exists($item,'id'))?$item->id:"";
+					$uc->displayName  = (property_exists($item,'name'))?$item->name:"";
+					$uc->profileURL   = (property_exists($item,'screen_name'))?$item->screen_name:"";
+					$uc->photoURL     = (property_exists($item,'profile_image_url'))?$item->profile_image_url:"";
+					$uc->description  = (property_exists($item,'description'))?$item->description:""; 
 
 					$contacts[] = $uc;
 				} 
@@ -146,14 +146,14 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		foreach( $response as $item ){
 			$ua = new Hybrid_User_Activity();
 
-			$ua->id                 = @ $item->id;
-			$ua->date               = @ strtotime( $item->created_at );
-			$ua->text               = @ $item->text;
+			$ua->id                 = (property_exists($item,'id'))?$item->id:"";
+			$ua->date               = (property_exists($item,'created_at'))?$item->created_at:"";
+			$ua->text               = (property_exists($item,'text'))?$item->text:"";
 
-			$ua->user->identifier   = @ $item->user->id;
-			$ua->user->displayName  = @ $item->user->name;
-			$ua->user->profileURL   = @ 'http://twitter.com/' . $item->user->screen_name;
-			$ua->user->photoURL     = @ $item->user->profile_image_url;
+			$ua->user->identifier   = (property_exists($item->user,'id'))?$item->user->id:"";
+			$ua->user->displayName  = (property_exists($item->user,'name'))?$item->user->name:"";
+			$ua->user->profileURL   = (property_exists($item->user,'screen_name'))?$item->user->screen_name:"";
+			$ua->user->photoURL     = (property_exists($item->user,'profile_image_url'))?$item->user->profile_image_url:"";
 			
 			$activities[] = $ua;
 		}
