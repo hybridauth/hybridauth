@@ -29,7 +29,7 @@ class users extends controller {
 				$this->redirect( "users/profile" );
 			}
 
-			$data["error_message"] = '<b style="color:red">Bad Email or password! try again.</b>';
+			$data["error_message"] = '<b style="color:red">Bad Email or password! Try again.</b>';
 		}
 
 		// load login view
@@ -109,7 +109,7 @@ class users extends controller {
 
 				// if email used on users table, we display an error
 				if( $user_info && $user_info["id"] != $_SESSION["user"] ){
-					$data["error_message"] = '<br /><b style="color:red">Email alredy in use with another account!</b>';
+					$data["error_message"] = '<br /><b style="color:red">Email already in use with another account!</b>';
 				}
 				else{
 					// update user profile

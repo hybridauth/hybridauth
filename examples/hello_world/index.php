@@ -26,10 +26,10 @@
 		// or even inspect it
 		echo "<pre>" . print_r( $user_profile, true ) . "</pre><br />";
 
-		// uncomment the line above to get user freinds list
+		// uncomment the line below to get user friends list
 		// $twitter->getUserContacts();
 
-		// uncomment the line above to post something to twitter if you want to
+		// uncomment the line below to post something to twitter if you want to
 		// $twitter->setUserStatus( "Hello world!" );
 
 		// ex. on how to access the twitter api with hybridauth
@@ -38,7 +38,7 @@
 		$account_totals = $twitter->api()->get( 'account/totals.json' );
 
 		// print recived stats 
-		echo "Here some of yours stats on twitter:<br /><pre>" . print_r( $account_totals, true ) . "</pre>";
+		echo "Here some of yours stats on Twitter:<br /><pre>" . print_r( $account_totals, true ) . "</pre>";
 
 		// logout
 		echo "Logging out.."; 
@@ -52,7 +52,7 @@
 		// to know more please refer to Exceptions handling section on the userguide
 		switch( $e->getCode() ){ 
 			case 0 : echo "Unspecified error."; break;
-			case 1 : echo "Hybriauth configuration error."; break;
+			case 1 : echo "Hybridauth configuration error."; break;
 			case 2 : echo "Provider not properly configured."; break;
 			case 3 : echo "Unknown or disabled provider."; break;
 			case 4 : echo "Missing provider application credentials."; break;
