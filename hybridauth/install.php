@@ -95,8 +95,8 @@ ul li label {
 			isset( $_SERVER['SERVER_PORT'] ) 
 			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
 			? ':' . $_SERVER['SERVER_PORT'] 
-			: '';
-
+			: ''
+;
 		$url .= $_SERVER['PHP_SELF'];
 
 		// return current url
@@ -221,8 +221,8 @@ ul li label {
 			<br /> 
 
 			<ul style="list-style:disc inside;"> 
-				<li style="color: #000000;font-size: 14px;"><b style="color:red">Don't forget to delete</b> ("<b>install.php</b>") file,</li>
-				<li style="color: #000000;font-size: 15px;">Visit the <a href="../examples/">examples</a> directory to try some working demos,</li> 
+				<li style="color: #000000;font-size: 14px;"><b style="color:red">Don't forget to delete</b> "<b>install.php</b>".</li>
+				<li style="color: #000000;font-size: 15px;">Visit the <a href="../examples/">examples</a> directory to try some working demos.</li> 
 				<li style="color: #000000;font-size: 15px;">Check out HybridAuth documentation at <a href="http://hybridauth.sourceforge.net">http://hybridauth.sourceforge.net</a>.</li> 
 			</ul> 
 
@@ -284,13 +284,13 @@ ul li label {
 	<h1 style="margin-bottom: 15px;">HybridAuth <?php echo $HYBRIDAUTH_VERSION; ?> Installer</h1> 
 	<hr />
 
-	<h4>Imporant notices</h4> 
+	<h4>Important notices</h4> 
 
 	<ul style="list-style:disc inside;">
 		<li style="color: #000000;font-size: 14px;">For security reason, please delete ("<b>install.php</b>") file as soon as you complete the installation process,</li>
-		<li style="color: #000000;font-size: 14px;">Using the HybridAuth installer will erase your the existen configuration file. If you already have an old installation of HybridAuth you might want to keep a copy of <b>config.php</b> file,</li>
-		<li style="color: #000000;font-size: 14px;">HybridAuth include by default <?php echo count( $PROVIDERS_CONFIG ) + 1 ?> providers. If you want even more, please goto to HybridAuth web site and download the <a href="http://hybridauth.sourceforge.net/download.html">Additional Providers Package</a>.</li>
-		<li style="color: #000000;font-size: 14px;">Visit <a href="http://hybridauth.sourceforge.net/#installer">HybridAuth</a> Home page to make sure if there is any newer version.</li>
+		<li style="color: #000000;font-size: 14px;">Using the HybridAuth installer will erase your existing configuration file. If you already have an old installation of HybridAuth you might want to keep a copy of <b>config.php</b>,</li>
+		<li style="color: #000000;font-size: 14px;">HybridAuth includes by default <?php echo count( $PROVIDERS_CONFIG ) + 1 ?> providers. If you want even more, please go to to HybridAuth web site and download the <a href="http://hybridauth.sourceforge.net/download.html">Additional Providers Package</a>.</li>
+		<li style="color: #000000;font-size: 14px;">Visit the <a href="http://hybridauth.sourceforge.net/#installer">HybridAuth</a> home page to make sure if there is a newer version.</li>
 	</ul> 
  
 	<h4>HybridAuth Endpoint</h4> 
@@ -417,7 +417,7 @@ ul li label {
 ?>
 	<br /> 
 	<div style="text-align:center">
-		Thanks for scrolling this far down! now click the big button to complete the installation.
+		Thanks for scrolling this far down! Now click the big button to complete the installation.
 		<br />
 		<br />
 		<input type="submit" class="inputsave" value="Setup HybridAuth" /> 
