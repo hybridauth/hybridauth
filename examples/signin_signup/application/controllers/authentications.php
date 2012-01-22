@@ -22,7 +22,7 @@ class authentications extends controller {
 		# 1 - check if user already have authenticated using this provider before
 			$authentication_info = $authentication->find_by_provider_uid( $provider, $user_profile->identifier );
 
-		# 2 - if authentication exist in the database, then we set the user as connected and redirect him to his profile page
+		# 2 - if authentication exists in the database, then we set the user as connected and redirect him to his profile page
 			if( $authentication_info ){
 				// 2.1 - store user_id in session
 				$_SESSION["user"] = $authentication_info["user_id"]; 
@@ -31,9 +31,9 @@ class authentications extends controller {
 				$this->redirect( "users/profile" );
 			}
 
-		# 3 - else, here let check if the user email we got from the provider already exist on our database ( for this example the email is UNIQUE for each user )
-			// if authentication does not exist, but the returned email by the provider exist in database, 
-			// then we tell the user that the email returned by the provider is already in use  
+		# 3 - else, here lets check if the user email we got from the provider already exists in our database ( for this example the email is UNIQUE for each user )
+			// if authentication does not exist, but the email address returned  by the provider does exist in database, 
+			// then we tell the user that the email  is already in use 
 			// but, its up to you if you want to associate the authentification with the user having the adresse email in the database
 			if( $user_profile->email ){
 				$user_info = $user->find_by_email( $user_profile->email );
@@ -43,7 +43,7 @@ class authentications extends controller {
 				}
 			}
 
-		# 4 - if authentication does not exist and email not in use, then we create a new user 
+		# 4 - if authentication does not exist and email is not in use, then we create a new user 
 			$provider_uid  = $user_profile->identifier;
 			$email         = $user_profile->email;
 			$first_name    = $user_profile->firstName;
