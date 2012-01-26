@@ -23,6 +23,7 @@ class OAuth1Client{
 	public $curl_time_out         = 30;
 	public $curl_connect_time_out = 30;
 	public $curl_ssl_verifypeer   = false;
+	public $curl_auth_header      = true;
 	public $curl_useragent        = "OAuth/1 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
 
 	//--
@@ -164,28 +165,30 @@ class OAuth1Client{
 		$ci = curl_init();
 
 		/* Curl settings */
-		curl_setopt($ci, CURLOPT_USERAGENT     , $this->curl_useragent );
-		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->curl_connect_time_out );
-		curl_setopt($ci, CURLOPT_TIMEOUT       , $this->curl_time_out );
-		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE );
-		curl_setopt($ci, CURLOPT_HTTPHEADER    , array('Expect:') );
-		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->curl_ssl_verifypeer );
-		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader') );
-		curl_setopt($ci, CURLOPT_HEADER        , FALSE );
+		curl_setopt( $ci, CURLOPT_USERAGENT     , $this->curl_useragent );
+		curl_setopt( $ci, CURLOPT_CONNECTTIMEOUT, $this->curl_connect_time_out );
+		curl_setopt( $ci, CURLOPT_TIMEOUT       , $this->curl_time_out );
+		curl_setopt( $ci, CURLOPT_RETURNTRANSFER, TRUE );
+		curl_setopt( $ci, CURLOPT_HTTPHEADER    , array('Expect:') );
+		curl_setopt( $ci, CURLOPT_SSL_VERIFYPEER, $this->curl_ssl_verifypeer );
+		curl_setopt( $ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader') );
+		curl_setopt( $ci, CURLOPT_HEADER        , FALSE );
 
-		switch ($method) {
+		switch ($method){
 			case 'POST':
-				curl_setopt($ci, CURLOPT_POST, TRUE );
-				if (!empty($postfields)) {
-					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields );
+				curl_setopt( $ci, CURLOPT_POST, TRUE );
+
+				if ( !empty($postfields) ){
+					curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields );
 				}
-				// if (!empty($auth_header)) {
-					// curl_setopt($ci, CURLOPT_HTTPHEADER, array('Content-Type: application/atom+xml', $auth_header) );
-				// }
+
+				if ( !empty($auth_header) && $this->curl_auth_header ){
+					curl_setopt( $ci, CURLOPT_HTTPHEADER, array( 'Content-Type: application/atom+xml', $auth_header ) );
+				}
 				break;
 			case 'DELETE':
-				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE');
-				if (!empty($postfields)) {
+				curl_setopt( $ci, CURLOPT_CUSTOMREQUEST, 'DELETE' );
+				if ( !empty($postfields) ){
 				  $url = "{$url}?{$postfields}";
 				}
 		}

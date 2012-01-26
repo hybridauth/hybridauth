@@ -54,16 +54,16 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		}
 
 		$this->user->profile->identifier  = $userId;
-		$this->user->profile->displayName = @ $data->basicprofile->name;
-		$this->user->profile->description = @ $data->aboutme;
-		$this->user->profile->gender      = @ $data->basicprofile->gender;
-		$this->user->profile->photoURL    = @ $data->basicprofile->image;
-		$this->user->profile->profileURL  = @ $data->basicprofile->webUri;
-		$this->user->profile->age         = @ $data->age;
-		$this->user->profile->country     = @ $data->country;
-		$this->user->profile->region      = @ $data->region;
-		$this->user->profile->city        = @ $data->city;
-		$this->user->profile->zip         = @ $data->postalcode;
+		$this->user->profile->displayName = $data->basicprofile->name;
+		$this->user->profile->description = $data->aboutme;
+		$this->user->profile->gender      = $data->basicprofile->gender;
+		$this->user->profile->photoURL    = $data->basicprofile->image;
+		$this->user->profile->profileURL  = $data->basicprofile->webUri;
+		$this->user->profile->age         = $data->age;
+		$this->user->profile->country     = $data->country;
+		$this->user->profile->region      = $data->region;
+		$this->user->profile->city        = $data->city;
+		$this->user->profile->zip         = $data->postalcode;
 
 		return $this->user->profile;
 	}
@@ -86,11 +86,11 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		foreach( $response->Friends as $item ){ 
 			$uc = new Hybrid_User_Contact();
 
-			$uc->identifier   = @ $item->userId;
-			$uc->displayName  = @ $item->name;
-			$uc->profileURL   = @ $item->webUri;
-			$uc->photoURL     = @ $item->image;
-			$uc->description  = @ $item->status; 
+			$uc->identifier   = $item->userId;
+			$uc->displayName  = $item->name;
+			$uc->profileURL   = $item->webUri;
+			$uc->photoURL     = $item->image;
+			$uc->description  = $item->status; 
 
 			$contacts[] = $uc;
 		}
@@ -146,14 +146,14 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 			foreach( $response->FriendsStatus as $item ){
 				$ua = new Hybrid_User_Activity();
 
-				$ua->id                 = @ $item->statusId;
+				$ua->id                 = $item->statusId;
 				$ua->date               = NULL; // to find out!!
-				$ua->text               = @ $item->status;
+				$ua->text               = $item->status;
 
-				$ua->user->identifier   = @ $item->user->userId;
-				$ua->user->displayName  = @ $item->user->name;
-				$ua->user->profileURL   = @ $item->user->uri;
-				$ua->user->photoURL     = @ $item->user->image;
+				$ua->user->identifier   = $item->user->userId;
+				$ua->user->displayName  = $item->user->name;
+				$ua->user->profileURL   = $item->user->uri;
+				$ua->user->photoURL     = $item->user->image;
 
 				$activities[] = $ua;
 			}

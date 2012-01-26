@@ -84,7 +84,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 
 			$response = $this->api->GET( $info_url, false, $access_token );
 
-			$response = @ json_decode( $response );
+			$response = json_decode( $response );
 		}
 		catch( Exception $e ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error while requesting the user profile.", 6 );
@@ -95,11 +95,11 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model
 		}
 
 		$this->user->profile->identifier  = $user_id;
-		$this->user->profile->firstName   = @ (string) $response->FirstName; 
-		$this->user->profile->lastName    = @ (string) $response->LastName; 
-		$this->user->profile->profileURL  = @ (string) $response->UxLink; 
-		$this->user->profile->gender      = @ (string) $response->Gender; 
-		$this->user->profile->email       = @ (string) $response->Emails[0]->Address; 
+		$this->user->profile->firstName   = (string) $response->FirstName; 
+		$this->user->profile->lastName    = (string) $response->LastName; 
+		$this->user->profile->profileURL  = (string) $response->UxLink; 
+		$this->user->profile->gender      = (string) $response->Gender; 
+		$this->user->profile->email       = (string) $response->Emails[0]->Address; 
 		$this->user->profile->displayName = trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
 
 		if( $this->user->profile->gender == 1 ){

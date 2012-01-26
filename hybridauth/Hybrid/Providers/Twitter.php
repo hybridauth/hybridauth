@@ -22,6 +22,8 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		$this->api->authorize_url     = "https://api.twitter.com/oauth/authenticate";
 		$this->api->request_token_url = "https://api.twitter.com/oauth/request_token";
 		$this->api->access_token_url  = "https://api.twitter.com/oauth/access_token";
+
+		$this->api->curl_auth_header  = false;
 	}
 
 	/**

@@ -58,8 +58,8 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 	*/
 	function loginFinish()
 	{
-		$oauth_token    = @ $_REQUEST['oauth_token'];
-		$oauth_verifier = @ $_REQUEST['oauth_verifier'];
+		$oauth_token    = $_REQUEST['oauth_token'];
+		$oauth_verifier = $_REQUEST['oauth_verifier'];
 
 		if ( ! $oauth_verifier ){
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Token.", 5 );
@@ -70,6 +70,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
         if( isset( $response['success'] ) && $response['success'] === TRUE ){
 			$this->deleteToken( "oauth_token"        );
 			$this->deleteToken( "oauth_token_secret" );
+
 			$this->token( "access_token_linkedin", $response['linkedin'] );  
 			$this->token( "access_token"         , $response['linkedin']['oauth_token'] ); 
 			$this->token( "access_token_secret"  , $response['linkedin']['oauth_token_secret'] );  
@@ -102,21 +103,21 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 				throw new Exception( "User profile request failed! {$this->providerId} returned an invalide xml data.", 6 );
 			}  
 
-			$this->user->profile->identifier  = @ (string) $data->{'id'};
-			$this->user->profile->firstName   = @ (string) $data->{'first-name'};
-			$this->user->profile->lastName    = @ (string) $data->{'last-name'}; 
+			$this->user->profile->identifier  = (string) $data->{'id'};
+			$this->user->profile->firstName   = (string) $data->{'first-name'};
+			$this->user->profile->lastName    = (string) $data->{'last-name'}; 
 			$this->user->profile->displayName = trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
 
-			$this->user->profile->photoURL    = @ (string) $data->{'picture-url'}; 
-			$this->user->profile->profileURL  = @ (string) $data->{'public-profile-url'}; 
-			$this->user->profile->description = @ (string) $data->{'summary'};  
+			$this->user->profile->photoURL    = (string) $data->{'picture-url'}; 
+			$this->user->profile->profileURL  = (string) $data->{'public-profile-url'}; 
+			$this->user->profile->description = (string) $data->{'summary'};  
 
-			$this->user->profile->phone       = @ (string) $data->{'phone-numbers'}->{'phone-number'}->{'phone-number'};  
+			$this->user->profile->phone       = (string) $data->{'phone-numbers'}->{'phone-number'}->{'phone-number'};  
 
 			if( $data->{'date-of-birth'} ) { 
-				$this->user->profile->birthDay   = @ (string) $data->{'date-of-birth'}->day;  
-				$this->user->profile->birthMonth = @ (string) $data->{'date-of-birth'}->month;  
-				$this->user->profile->birthYear  = @ (string) $data->{'date-of-birth'}->year;  
+				$this->user->profile->birthDay   = (string) $data->{'date-of-birth'}->day;  
+				$this->user->profile->birthMonth = (string) $data->{'date-of-birth'}->month;  
+				$this->user->profile->birthYear  = (string) $data->{'date-of-birth'}->year;  
 			} 
 
 			return $this->user->profile;
@@ -149,11 +150,11 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		foreach( $connections->person as $connection ) {
 			$uc = new Hybrid_User_Contact();
 
-			$uc->identifier  = @ (string) $connection->id;
-			$uc->displayName = @ (string) $connection->{'last-name'} . " " . $connection->{'first-name'};
-			$uc->profileURL  = @ (string) $connection->{'public-profile-url'};
-			$uc->photoURL    = @ (string) $connection->{'picture-url'};
-			$uc->description = @ (string) $connection->{'summary'};
+			$uc->identifier  = (string) $connection->id;
+			$uc->displayName = (string) $connection->{'last-name'} . " " . $connection->{'first-name'};
+			$uc->profileURL  = (string) $connection->{'public-profile-url'};
+			$uc->photoURL    = (string) $connection->{'picture-url'};
+			$uc->description = (string) $connection->{'summary'};
 
 			$contacts[] = $uc; 
 		}
@@ -226,13 +227,13 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 			$ua = new Hybrid_User_Activity();
 
-			$ua->id                 = @ (string) $item->id;
-			$ua->date               = @ (string) $item->timestamp;
-			$ua->text               = @ (string) $share->{'comment'};
+			$ua->id                 = (string) $item->id;
+			$ua->date               = (string) $item->timestamp;
+			$ua->text               = (string) $share->{'comment'};
 
-			$ua->user->identifier   = @ (string) $person->id;
-			$ua->user->displayName  = @ (string) $person->{'first-name'} . ' ' . $person->{'last-name'};
-			$ua->user->profileURL   = @ (string) $person->{'site-standard-profile-request'}->url;
+			$ua->user->identifier   = (string) $person->id;
+			$ua->user->displayName  = (string) $person->{'first-name'} . ' ' . $person->{'last-name'};
+			$ua->user->profileURL   = (string) $person->{'site-standard-profile-request'}->url;
 			$ua->user->photoURL     = NULL;
 			
 			$activities[] = $ua;
