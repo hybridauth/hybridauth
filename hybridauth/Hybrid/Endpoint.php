@@ -31,7 +31,17 @@ class Hybrid_Endpoint {
   public static function process( $request = NULL ) {
     // Setup request variable
     Hybrid_Endpoint::$request = $request;
-    if (is_null(Hybrid_Endpoint::$request)) {
+
+    if (is_null(Hybrid_Endpoint::$request)){
+      // Fix a strange behavior when some provider call back ha endpoint
+      // with /index.php?hauth.done={provider}?{args}... 
+      // >here we need to recreate the $_REQUEST
+      if ( strrpos( $_SERVER["QUERY_STRING"], '?' ) ) {
+        $_SERVER["QUERY_STRING"] = str_replace( "?", "&", $_SERVER["QUERY_STRING"] );
+      
+        parse_str( $_SERVER["QUERY_STRING"], $_REQUEST );
+      }
+
       Hybrid_Endpoint::$request = $_REQUEST;
     }
     
@@ -159,14 +169,6 @@ class Hybrid_Endpoint {
    */
   public static function processAuthDone() {
     Hybrid_Endpoint::authInit();
-    
-    // Fix a strange behavior when some provider call back ha endpoint
-    // with /index.php?hauth.done={provider}?{args}... 
-    if ( strrpos( $_SERVER["QUERY_STRING"], '?' ) ) {
-      $_SERVER["QUERY_STRING"] = str_replace( "?", "&", $_SERVER["QUERY_STRING"] );
-      
-      parse_str( $_SERVER["QUERY_STRING"], Hybrid_Endpoint::$request );
-    }
     
     $provider_id = trim( strip_tags( Hybrid_Endpoint::$request["hauth_done"] ) );
     
