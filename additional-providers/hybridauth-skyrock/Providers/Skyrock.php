@@ -50,8 +50,7 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 		# store the user profile.
 		$this->user->profile->identifier    = (property_exists($response,'id_user'))?$response->id_user:"";
 		$this->user->profile->displayName   = (property_exists($response,'username'))?$response->username:"";
-		$this->user->profile->webSiteURL    = (property_exists($response,'blog_url'))?$response->blog_url:"";
-		$this->user->profile->profileURL    = (property_exists($response,'profile_url'))?$response->profile_url:"";
+		$this->user->profile->profileURL    = (property_exists($response,'blog_url'))?$response->blog_url:"";
 		$this->user->profile->photoURL      = (property_exists($response,'avatar_url'))?$response->avatar_url:"";
 //unknown		$this->user->profile->description   = (property_exists($response,'description'))?$response->description:"";
 		$this->user->profile->firstName     = (property_exists($response,'firstname'))?$response->firstname:"";
@@ -109,30 +108,15 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 			return ARRAY();
 		}
 
-
-		if( $response && count( $response->friends ) ){
-			foreach( $response->friends as $item ){
-				$uc = new Hybrid_User_Contact();
-
-				$uc->identifier   = (property_exists($item,'id_user'))?$item->id_user:"";
-				$uc->displayName  = (property_exists($item,'username'))?$item->username:"";
-				$uc->profileURL   = (property_exists($item,'profile_url'))?$item->profile_url:"";
-				$uc->photoURL     = (property_exists($item,'avatar_url'))?$item->avatar_url:"";
-				//$uc->description  = (property_exists($item,'description'))?$item->description:"";
-
-				$contacts[] = $uc;
-			}
-		}
-
-
-		$max_page = (property_exists($item,'max_page'))?$item->max_page:1;
-		for ($i = 1; $i<$max_page; $i++) {
-
-			$parameters = array( 'page' => $i );
-			$response  = $this->api->get( 'user/list_friends.json', $parameters );
-			// check the last HTTP status code returned
-			if ( $this->api->http_code != 200 ){
-				throw new Exception( "User contacts request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+		$max_page = (property_exists($response,'max_page'))?$response->max_page:1;
+		for ($i = 0; $i<$max_page; $i++) {
+			if( $i > 0 ) {
+				$parameters = array( 'page' => $i );
+				$response  = $this->api->get( 'user/list_friends.json', $parameters );
+				// check the last HTTP status code returned
+				if ( $this->api->http_code != 200 ){
+					throw new Exception( "User contacts request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+				}
 			}
 
 			if( $response && count( $response->friends ) ){
@@ -141,14 +125,7 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 
 					$uc->identifier   = (property_exists($item,'id_user'))?$item->id_user:"";
 					$uc->displayName  = (property_exists($item,'username'))?$item->username:"";
-
-					if ( property_exists($item,'profile_url') ) {
-						$uc->profileURL = $item->profile_url;
-					}
-					elseif ( property_exists($item,'blog_url') ) {
-						$uc->profileURL = $item->blog_url;
-					}
-
+					$uc->profileURL   = (property_exists($item,'blog_url'))?$item->blog_url:"";
 					$uc->photoURL     = (property_exists($item,'avatar_url'))?$item->avatar_url:"";
 					//$uc->description  = (property_exists($item,'description'))?$item->description:"";
 
@@ -188,18 +165,12 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 
 			$ua->id                 = (property_exists($item,'id_event'))?$item->id_event:"";
 			$ua->date               = (property_exists($item,'timestamp'))?$item->timestamp:"";
-			$ua->text               = strip_tags((property_exists($item,'content'))?$item->content:"");
+			$ua->text               = (property_exists($item,'content'))?$item->content:"";
+			$ua->text               = ($ua->text)?trim(strip_tags($ua->text)):"";
 
 			$ua->user->identifier   = (property_exists($item->from,'id_user'))?$item->from->id_user:"";
 			$ua->user->displayName  = (property_exists($item->from,'username'))?$item->from->username:"";
-
-			if ( property_exists($item,'profile_url') ) {
-			        $uc->profileURL = $item->profile_url;
-			}
-			elseif ( property_exists($item,'blog_url') ) {
-			        $uc->profileURL = $item->blog_url;
-			}
-
+			$ua->user->profileURL   = (property_exists($item->from,'blog_url'))?$item->from->blog_url:"";
 			$ua->user->photoURL     = (property_exists($item->from,'avatar_url'))?$item->from->avatar_url:"";
 
 			$activities[] = $ua;
