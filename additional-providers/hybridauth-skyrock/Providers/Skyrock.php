@@ -26,6 +26,8 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 		$this->api->authorize_url     = "https://api.skyrock.com/v2/oauth/authenticate";
 		$this->api->request_token_url = "https://api.skyrock.com/v2/oauth/initiate";
 		$this->api->access_token_url  = "https://api.skyrock.com/v2/oauth/token";
+
+		$this->api->curl_auth_header  = false;
 	}
 
    /**
