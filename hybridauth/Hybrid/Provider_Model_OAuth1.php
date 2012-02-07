@@ -25,7 +25,7 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 	/**
 	* try to get the error message from provider api
 	*/ 
-	function errorMessageByStatus() { 
+	function errorMessageByStatus( $code = null ) { 
 		$http_status_codes = ARRAY(
 			200 => "OK: Success!",
 			304 => "Not Modified: There was no new data to return.",
@@ -39,8 +39,11 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 			503 => "Service Unavailable."
 		);
 
-		if( $this->api && isset( $http_status_codes[$this->api->http_code] ) ) 
-		return  $this->api->http_code . " " .$http_status_codes[ $this->api->http_code ];
+		if( ! $code && $this->api ) 
+			$code = $this->api->http_code;
+
+		if( isset( $http_status_codes[ $code ] ) )
+			return $code . " " . $http_status_codes[ $code ];
 	}
 
 	// --------------------------------------------------------------------

@@ -22,6 +22,30 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 	// default permissions 
 	public $scope = "";
 
+	/**
+	* try to get the error message from provider api
+	*/ 
+	function errorMessageByStatus( $code = null ) { 
+		$http_status_codes = ARRAY(
+			200 => "OK: Success!",
+			304 => "Not Modified: There was no new data to return.",
+			400 => "Bad Request: The request was invalid.",
+			401 => "Unauthorized.",
+			403 => "Forbidden: The request is understood, but it has been refused.",
+			404 => "Not Found: The URI requested is invalid or the resource requested does not exists.",
+			406 => "Not Acceptable.", 
+			500 => "Internal Server Error: Something is broken.",
+			502 => "Bad Gateway.",
+			503 => "Service Unavailable."
+		);
+
+		if( ! $code && $this->api ) 
+			$code = $this->api->http_code;
+
+		if( isset( $http_status_codes[ $code ] ) )
+			return $code . " " . $http_status_codes[ $code ];
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
