@@ -35,6 +35,11 @@ class OAuth2Client
 
 	//--
 
+	public $http_code             = "";
+	public $http_info             = "";
+
+	//--
+
 	public function __construct( $client_id = false, $client_secret = false, $redirect_uri='' )
 	{
 		$this->client_id     = $client_id;
@@ -119,29 +124,7 @@ class OAuth2Client
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
 		}
-/*
-		// have an access token?
-		if( $this->access_token ){
 
-			// have to refresh?
-			if( $this->refresh_token && $this->access_token_expires_at ){
-
-				// expired?
-				// if( $this->access_token_expires_at <= time() ){
-				if( 1){
-
-					$response = $this->refreshToken( $this->refresh_token );
-print_r( $response );
-					if( ! isset( $response->access_token ) || ! $response->access_token ){
-						throw new Exception( "The Authorization Service has return an invalid response while requesting a new access token. given up!" ); 
-					}
-
-					// set new access_token
-					$this->access_token = $response->access_token;
-				}
-			} 
-		}
-*/
 		$parameters[$this->sign_token_name] = $this->access_token;
 		$response = null;
 
@@ -206,10 +189,12 @@ print_r( $response );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
 
 		if( $type == "GET" ){
-			$url = $url . "?" . http_build_query( $params );
+			$url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query( $params );
 		}
 
+		$this->http_info = array();
 		$ch = curl_init();
+
 		curl_setopt($ch, CURLOPT_URL            , $url );
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER , 1 );
 		curl_setopt($ch, CURLOPT_TIMEOUT        , $this->curl_time_out );
@@ -223,14 +208,17 @@ print_r( $response );
 			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
 		}
 
-		$result=curl_exec($ch);
-		$info=curl_getinfo($ch);
-		curl_close($ch);
+		$response = curl_exec($ch);
 
-		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( $info ) );
-		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $result ) );
+		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
+		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
 
-		return $result;
+		$this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$this->http_info = array_merge($this->http_info, curl_getinfo($ch));
+
+		curl_close ($ch);
+
+		return $response; 
 	}
 
 	private function parseRequestResult( $result )

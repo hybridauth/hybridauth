@@ -227,8 +227,8 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 			$ua = new Hybrid_User_Activity();
 
-			$ua->id                 = (string) $item->id;
-			$ua->date               = (string) $item->timestamp;
+			$ua->id                 = (string) $update->id;
+			$ua->date               = (string) $update->timestamp;
 			$ua->text               = (string) $share->{'comment'};
 
 			$ua->user->identifier   = (string) $person->id;

@@ -1,8 +1,4 @@
 <?php
-// https://raw.github.com/facebook/php-sdk/master/src/facebook.php 
-// modified
-// Facebook PHP SDK (v.3.1.1)
-
 /**
  * Copyright 2011 Facebook, Inc.
  *
@@ -18,7 +14,8 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
- 
+
+require_once "base_facebook.php";
 
 /**
  * Extends the BaseFacebook class with the intent of using

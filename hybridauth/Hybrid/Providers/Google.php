@@ -13,7 +13,7 @@
 class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions 
-	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/";
 
 	/**
 	* IDp wrappers initializer 
@@ -41,7 +41,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-		// refresh tokens if needed
+		// refresh tokens if needed 
 		$this->refreshToken();
 
 		// ask google api for user infos
@@ -64,4 +64,34 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 
 		return $this->user->profile;
 	}
+
+	/**
+	* load the user (Gmail) contacts 
+	*  ..toComplete
+	*/
+	function getUserContacts()
+	{ 
+		// refresh tokens if needed 
+		$this->refreshToken();  
+
+		$response = $this->api->api( "https://www.google.com/m8/feeds/contacts/default/full?alt=json" ); 
+
+		if( ! $response ){
+			return ARRAY();
+		}
+ 
+		$contacts = ARRAY(); 
+
+		foreach( $response->feed->entry as $idx => $entry ){
+			$uc = new Hybrid_User_Contact();
+
+			$uc->email        = isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : ''; 
+			$uc->displayName  = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';  
+			$uc->identifier   = $uc->email;
+
+			$contacts[] = $uc;
+		}  
+
+		return $contacts;
+ 	}
 }
