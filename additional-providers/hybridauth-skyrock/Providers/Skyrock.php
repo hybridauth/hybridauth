@@ -55,7 +55,7 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 		$this->user->profile->firstName   = (property_exists($response,'firstname'))?$response->firstname:"";
 		$this->user->profile->lastName    = (property_exists($response,'name'))?$response->name:"";
 
-		if( (property_exists($response,'gender') ) { 
+		if( property_exists($response,'gender') ) { 
 			if( $response->gender == 1 ){
 		        	$this->user->profile->gender = "male";
 			}
@@ -142,7 +142,8 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 
 					if ( property_exists($item,'profile_url') ) {
 						$uc->profileURL = $item->profile_url;
-					else if ( property_exists($item,'blog_url') ) {
+					}
+					elseif ( property_exists($item,'blog_url') ) {
 						$uc->profileURL = $item->blog_url;
 					}
 
@@ -192,7 +193,8 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 
 			if ( property_exists($item,'profile_url') ) {
 			        $uc->profileURL = $item->profile_url;
-			else if ( property_exists($item,'blog_url') ) {
+			}
+			elseif ( property_exists($item,'blog_url') ) {
 			        $uc->profileURL = $item->blog_url;
 			}
 
