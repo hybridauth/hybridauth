@@ -50,7 +50,7 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 		# store the user profile.
 		$this->user->profile->identifier    = (property_exists($response,'id_user'))?$response->id_user:"";
 		$this->user->profile->displayName   = (property_exists($response,'username'))?$response->username:"";
-		$this->user->profile->profileURL    = (property_exists($response,'blog_url'))?$response->blog_url:"";
+		$this->user->profile->profileURL    = (property_exists($response,'user_url'))?$response->user_url:"";
 		$this->user->profile->photoURL      = (property_exists($response,'avatar_url'))?$response->avatar_url:"";
 //unknown		$this->user->profile->description   = (property_exists($response,'description'))?$response->description:"";
 		$this->user->profile->firstName     = (property_exists($response,'firstname'))?$response->firstname:"";
@@ -125,7 +125,7 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 
 					$uc->identifier   = (property_exists($item,'id_user'))?$item->id_user:"";
 					$uc->displayName  = (property_exists($item,'username'))?$item->username:"";
-					$uc->profileURL   = (property_exists($item,'blog_url'))?$item->blog_url:"";
+					$uc->profileURL   = (property_exists($item,'user_url'))?$item->user_url:"";
 					$uc->photoURL     = (property_exists($item,'avatar_url'))?$item->avatar_url:"";
 					//$uc->description  = (property_exists($item,'description'))?$item->description:"";
 
@@ -170,7 +170,7 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 
 			$ua->user->identifier   = (property_exists($item->from,'id_user'))?$item->from->id_user:"";
 			$ua->user->displayName  = (property_exists($item->from,'username'))?$item->from->username:"";
-			$ua->user->profileURL   = (property_exists($item->from,'blog_url'))?$item->from->blog_url:"";
+			$ua->user->profileURL   = (property_exists($item->from,'user_url'))?$item->from->user_url:"";
 			$ua->user->photoURL     = (property_exists($item->from,'avatar_url'))?$item->from->avatar_url:"";
 
 			$activities[] = $ua;
