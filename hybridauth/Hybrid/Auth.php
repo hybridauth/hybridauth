@@ -316,7 +316,7 @@ class Hybrid_Auth
 
 				if( Hybrid_Auth::isConnectedWith( $idpid ) ){
 					$idps[$idpid]['connected'] = true;
-                }
+				}
 			}
 		}
 
