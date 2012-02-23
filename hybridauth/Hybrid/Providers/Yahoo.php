@@ -14,7 +14,7 @@
 */
 class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OpenID
 {
-	var $openidIdentifier = "https://www.yahoo.com"; 
+	var $openidIdentifier = "https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds"; 
 
 	/**
 	* finish login step 
