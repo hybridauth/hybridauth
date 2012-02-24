@@ -29,6 +29,7 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 	*/
 	function getUserProfile()
 	{
+		$this->api->decode_json=false;
 		$response = $this->api->get( 'http://www.tumblr.com/api/authenticate' );
 
 		// check the last HTTP status code returned
