@@ -43,6 +43,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		$this->api = new Facebook( ARRAY( 'appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"] ) ); 
 
+		if ( $this->token("access_token") ) {
+			$this->api->setAccessToken( $this->token("access_token") );
+		}
+
 		$this->api->getUser();
 	}
 
@@ -224,7 +228,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			$ua = new Hybrid_User_Activity();
 
 			$ua->id                 = (array_key_exists("id",$item))?$item["id"]:"";
-			$ua->date               = (array_key_exists("created_time",$item))?$item["created_time"]:"";
+			$ua->date               = (array_key_exists("created_time",$item))?strtotime($item["created_time"]):"";
 
 			if( $item["type"] == "video" ){
 				$ua->text           = (array_key_exists("link",$item))?$item["link"]:"";
@@ -246,7 +250,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 				$ua->user->identifier   = (array_key_exists("id",$item["from"]))?$item["from"]["id"]:"";
 				$ua->user->displayName  = (array_key_exists("name",$item["from"]))?$item["from"]["name"]:"";
 				$ua->user->profileURL   = (property_exists($ua->user,'identifier'))?$ua->user->identifier:"";
-				$ua->user->photoURL     = (property_exists($ua->user,'identifier . "/picture?type=square"'))?$ua->user->identifier . "/picture?type=square":"";
+				$ua->user->photoURL     = "https://graph.facebook.com/" . $ua->user->identifier . "/picture?type=square"; 
 
 				$activities[] = $ua;
 			}

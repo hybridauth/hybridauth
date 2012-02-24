@@ -149,7 +149,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 			$ua = new Hybrid_User_Activity();
 
 			$ua->id                 = (property_exists($item,'id'))?$item->id:"";
-			$ua->date               = (property_exists($item,'created_at'))?$item->created_at:"";
+			$ua->date               = (property_exists($item,'created_at'))?strtotime($item->created_at):"";
 			$ua->text               = (property_exists($item,'text'))?$item->text:"";
 
 			$ua->user->identifier   = (property_exists($item->user,'id'))?$item->user->id:"";
