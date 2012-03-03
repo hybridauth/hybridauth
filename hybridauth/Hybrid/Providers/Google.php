@@ -62,12 +62,12 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->emailVerified = (property_exists($response,'email'))?$response->email:"";
 		$this->user->profile->language      = (property_exists($response,'locale'))?$response->locale:"";
 
-		if( (property_exists($response, 'birthday') ) && $response->birthday ) {
-			list($birthday_year, $birthday_month, $birthday_day) = explode('-', $response->birthday );
+		if( property_exists($response,'birthday') ){ 
+			list($birthday_year, $birthday_month, $birthday_day) = explode( '-', $response->birthday );
 
-			$this->user->profile->birthDay   = $birthday_day;
-			$this->user->profile->birthMonth = $birthday_month;
-			$this->user->profile->birthYear  = $birthday_year;
+			$this->user->profile->birthDay   = (int) $birthday_day;
+			$this->user->profile->birthMonth = (int) $birthday_month;
+			$this->user->profile->birthYear  = (int) $birthday_year;
 		}
 
 		return $this->user->profile;

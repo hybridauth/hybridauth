@@ -128,7 +128,9 @@ class Hybrid_Auth
 		$_SESSION["HA::VERSION"]        = Hybrid_Auth::$version; 
 
 		// almost done, check for errors then move on
-		Hybrid_Logger::info( "Hybrid_Auth::initialize(), stated. Hybrid_Auth has been called from: " . Hybrid_Auth::getCurrentUrl() ); 
+		Hybrid_Logger::info( "Enter Hybrid_Auth::initialize()"); 
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth used version: " . Hybrid_Auth::$version ); 
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth called from: " . Hybrid_Auth::getCurrentUrl() ); 
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump used config: ", serialize( $config ) );
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", serialize( $_SESSION ) ); 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: check if any error is stored on the endpoint..." );
