@@ -38,6 +38,7 @@ A VERY basic example showing how to integrate Facebook Javascript SDK side by si
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="../social_hub/public/css.css" type="text/css">
+<script src="https://raw.github.com/douglascrockford/JSON-js/master/json2.js"></script> 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script> 
 <style>
 pre{width:450px;overflow:auto;}
@@ -88,15 +89,14 @@ $(function(){
 		xfbml:true
 	});
 
-	FB.api('/me', function(response) {
-		$("#hellomessage").html( "<b>Hi " + response.name + "</b>,<br />your profile url is: " + response.link );
-	});
-
 	FB.getLoginStatus(function(response) {
 		console.log( response );
-		if ( response.session ) {
-			$("#hellomessage").after( "<br /><hr />FB.getLoginStatus() response:<pre>access_token:" + response.session.access_token + "</pre>" );
-		} 
+		$("#hellomessage").after( "<br /><hr /><b>Facebook JavaScript SDK Login Status :</b>:<pre>" + JSON.stringify( response ) + "</pre>" );
+
+		FB.api('/me', function(response) {
+			console.log( response );
+			$("#hellomessage").html( "<b>Hi " + response.name + "</b>,<br />your profile url is: " + response.link );
+		}); 
 	});
 });
 
@@ -133,6 +133,16 @@ function post_to_wall() {
 
 	FB.ui(obj, callback);
 }
+
+function o2s (obj) {
+    var str = '';
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            str += p + '::' + obj[p] + '\n';
+        }
+    }
+    return str;
+} 
 </script> 
 
 
