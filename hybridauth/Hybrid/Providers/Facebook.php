@@ -15,7 +15,7 @@
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 {
 	// default permissions, and alot of them. You can change them from the configuration by setting the scope to what you want/need
-	public $scope = "manage_pages, email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
+	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
 	
 	public $display = "page";
 
