@@ -15,7 +15,7 @@
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 {
 	// default permissions, and alot of them. You can change them from the configuration by setting the scope to what you want/need
-	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
+	public $scope = "manage_pages, email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists";
 	
 	public $display = "page";
 
@@ -247,7 +247,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			if( ! empty( $ua->text ) ){
 				$ua->user->identifier   = (array_key_exists("id",$item["from"]))?$item["from"]["id"]:"";
 				$ua->user->displayName  = (array_key_exists("name",$item["from"]))?$item["from"]["name"]:"";
-				$ua->user->profileURL   = (property_exists($ua->user,'identifier'))?$ua->user->identifier:"";
+				$ua->user->profileURL   = "https://www.facebook.com/profile.php?id=" . $ua->user->identifier;
 				$ua->user->photoURL     = "https://graph.facebook.com/" . $ua->user->identifier . "/picture?type=square";
 
 				$activities[] = $ua;
