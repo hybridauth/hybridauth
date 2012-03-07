@@ -57,7 +57,7 @@
 									?>  
 								</td>
 								<td align="left">  
-									<b><?php echo $item->displayName; ?></b> <small>(ID:<?php echo $item->identifier; ?>)</small>
+									<a href="<?php echo $item->profileURL; ?>"><b><?php echo $item->displayName; ?></b></a> <small>(ID:<?php echo $item->identifier; ?>)</small>
 									<br /><?php echo $item->description; ?>
 									<br /><small><?php echo $item->profileURL; ?></small>
 									<br /><hr />

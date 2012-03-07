@@ -60,7 +60,7 @@
 						?>  
 					</td>
 					<td align="left">  
-						<b><?php echo $item->user->displayName; ?></b> <small>(ID:<?php echo $item->user->identifier; ?>)</small><br />
+						<a href="<?php echo $item->user->profileURL; ?>"><b><?php echo $item->user->displayName; ?></b></a> <small>(ID:<?php echo $item->user->identifier; ?>)</small><br />
 						<?php echo format_string( $item->text ); ?>
 						<br /><small><?php echo timestamp_to_relative_time( $item->date ); ?></small>
 						<hr />

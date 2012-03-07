@@ -95,7 +95,7 @@
                   </tr> 
                   <tr>
                     <td>profileURL</td>
-                    <td>&nbsp; <?php echo $user_data->profileURL; ?></td>
+                    <td>&nbsp; <a href="<?php echo $user_data->profileURL; ?>"><?php echo $user_data->profileURL; ?></a></td>
                   </tr>
                   <tr>
                     <td>webSiteURL</td>
