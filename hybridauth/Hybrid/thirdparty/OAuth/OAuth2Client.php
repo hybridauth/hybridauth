@@ -16,7 +16,7 @@ class OAuth2Client
 
 	public $client_id        = "" ;
 	public $client_secret    = "" ;
-    public $redirect_uri     = "" ;
+	public $redirect_uri     = "" ;
 	public $access_token     = "" ;
 	public $refresh_token    = "" ;
 
@@ -63,7 +63,7 @@ class OAuth2Client
 		return $this->authorize_url . "?" . http_build_query( $params );
 	}
 
-    public function authenticate( $code )
+	public function authenticate( $code )
 	{
 		$params = array(
 			"client_id"     => $this->client_id,
@@ -89,7 +89,7 @@ class OAuth2Client
 		$this->access_token_expires_at = time() + $response->expires_in; 
 
 		return $response;  
-    }
+	}
 
 	public function authenticated()
 	{

@@ -28,11 +28,11 @@ class Hybrid_Auth
 
 	/**
 	* Try to start a new session of none then initialize Hybrid_Auth
-    * 
-    * Hybrid_Auth constructor will require either a valid config array or
-    * a path for a configuration file as parameter. To know more please 
-    * refer to the Configuration section:
-    * http://hybridauth.sourceforge.net/userguide/Configuration.html
+	* 
+	* Hybrid_Auth constructor will require either a valid config array or
+	* a path for a configuration file as parameter. To know more please 
+	* refer to the Configuration section:
+	* http://hybridauth.sourceforge.net/userguide/Configuration.html
 	*/
 	function __construct( $config )
 	{ 
