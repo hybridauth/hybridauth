@@ -70,7 +70,7 @@ ul li label {
 } 
 </style> 
 <?php
-	$HYBRIDAUTH_VERSION             = "2.0.11-dev";
+	$HYBRIDAUTH_VERSION             = "2.1.0-dev";
 	$CONFIG_TEMPLATE                = "";
 
    /**

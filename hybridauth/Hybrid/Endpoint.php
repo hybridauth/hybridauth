@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
-*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -37,11 +37,6 @@ class Hybrid_Endpoint {
 			Hybrid_Endpoint::$request = $_REQUEST;
 		}
 
-		// If windows_live_channel requested, we return our windows_live WRAP_CHANNEL_URL
-		if ( isset( Hybrid_Endpoint::$request["get"] ) && Hybrid_Endpoint::$request["get"] == "windows_live_channel" ) {
-			Hybrid_Endpoint::processWindowsLiveChannel();
-		}
-
 		// If openid_policy requested, we return our policy document
 		if ( isset( Hybrid_Endpoint::$request["get"] ) && Hybrid_Endpoint::$request["get"] == "openid_policy" ) {
 			Hybrid_Endpoint::processOpenidPolicy();
@@ -64,16 +59,6 @@ class Hybrid_Endpoint {
 		else {
 			Hybrid_Endpoint::processOpenidRealm();
 		}
-	}
-
-	/**
-	* Process Windows Live channel request
-	*/
-	public static function processWindowsLiveChannel()
-	{
-		$output = file_get_contents( dirname(__FILE__) . "/resources/windows_live_channel.html" ); 
-		print $output;
-		die();
 	}
 
 	/**
@@ -207,20 +192,19 @@ class Hybrid_Endpoint {
 		if ( ! Hybrid_Endpoint::$initDone) {
 			Hybrid_Endpoint::$initDone = TRUE;
 
-			// Start a new session 
-			if ( ! session_id() ){
-				session_start();
-			}
-
 			# Init Hybrid_Auth
 			try {
+				require_once realpath( dirname( __FILE__ ) )  . "/Storage.php";
+				
+				$storage = new Hybrid_Storage(); 
+
 				// Check if Hybrid_Auth session already exist
-				if ( ! isset( $_SESSION["HA::CONFIG"] ) ) { 
+				if ( ! $storage->config( "CONFIG" ) ) { 
 					header( "HTTP/1.0 404 Not Found" );
 					die( "You cannot access this page directly." );
 				}
 
-				Hybrid_Auth::initialize( unserialize( $_SESSION["HA::CONFIG"] ) ); 
+				Hybrid_Auth::initialize( $storage->config( "CONFIG" ) ); 
 			}
 			catch ( Exception $e ){
 				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth" ); 

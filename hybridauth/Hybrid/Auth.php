@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
-*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -14,7 +14,7 @@
  */
 class Hybrid_Auth 
 {
-	public static $version = "2.0.11-dev";
+	public static $version = "2.1.0-dev";
 
 	public static $config  = array();
 
@@ -35,30 +35,7 @@ class Hybrid_Auth
     * http://hybridauth.sourceforge.net/userguide/Configuration.html
 	*/
 	function __construct( $config )
-	{
-		if ( ! session_id() ){
-			if( ! session_start() ){
-				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
-			}
-		}
-
-	#{{{ well, should we check this each time? ..
-		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
-		if ( ! function_exists('curl_init') ) {
-			throw new Exception('Hybridauth Library needs the CURL PHP extension.');
-		}
-
-		// PHP JSON extension [http://php.net/manual/en/book.json.php]
-		if ( ! function_exists('json_decode') ) {
-			throw new Exception('Hybridauth Library needs the JSON PHP extension.');
-		}
-
-		// OAuth PECL extension is not compatible with this library
-		if( extension_loaded('oauth') ) {
-			throw new Exception('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
-		}
-	#}}}
-
+	{ 
 		Hybrid_Auth::initialize( $config ); 
 	}
 
@@ -69,17 +46,13 @@ class Hybrid_Auth
 	*/
 	public static function initialize( $config )
 	{
-		if ( ! session_id() ){
-			throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script.", 1 );
-		}
-
 		if( ! is_array( $config ) && ! file_exists( $config ) ){
 			throw new Exception( "Hybriauth config does not exist on the given path.", 1 );
 		}
 
 		if( ! is_array( $config ) ){
 			$config = include $config;
-		} 
+		}
 
 		// build some need'd paths
 		$config["path_base"]        = realpath( dirname( __FILE__ ) )  . "/"; 
@@ -94,19 +67,19 @@ class Hybrid_Auth
 		}
 
 		# load hybridauth required files, a autoload is on the way...
-		require_once $config["path_base"] . "Error.php"; 
-		require_once $config["path_base"] . "Logger.php"; 
+		require_once $config["path_base"] . "Error.php";
+		require_once $config["path_base"] . "Logger.php";
 
-		require_once $config["path_base"] . "Storage.php";  
+		require_once $config["path_base"] . "Storage.php";
 
-		require_once $config["path_base"] . "Provider_Adapter.php"; 
+		require_once $config["path_base"] . "Provider_Adapter.php";
 
 		require_once $config["path_base"] . "Provider_Model.php";
 		require_once $config["path_base"] . "Provider_Model_OpenID.php";
 		require_once $config["path_base"] . "Provider_Model_OAuth1.php";
-		require_once $config["path_base"] . "Provider_Model_OAuth2.php"; 
+		require_once $config["path_base"] . "Provider_Model_OAuth2.php";
 
-		require_once $config["path_base"] . "User.php"; 
+		require_once $config["path_base"] . "User.php";
 		require_once $config["path_base"] . "User_Profile.php";
 		require_once $config["path_base"] . "User_Contact.php";
 		require_once $config["path_base"] . "User_Activity.php";
@@ -114,25 +87,21 @@ class Hybrid_Auth
 		// hash given config
 		Hybrid_Auth::$config = $config;
 
-		// start session storage mng
-		Hybrid_Auth::$store = new Hybrid_Storage();
-		
-		// instace of errors mng
-		Hybrid_Auth::$error = new Hybrid_Error();
-
 		// instace of log mng
 		Hybrid_Auth::$logger = new Hybrid_Logger();
 
-		// store php session and version..
-		$_SESSION["HA::PHP_SESSION_ID"] = session_id(); 
-		$_SESSION["HA::VERSION"]        = Hybrid_Auth::$version; 
+		// instace of errors mng
+		Hybrid_Auth::$error = new Hybrid_Error();
+
+		// start session storage mng
+		Hybrid_Auth::$store = new Hybrid_Storage();
 
 		// almost done, check for errors then move on
 		Hybrid_Logger::info( "Enter Hybrid_Auth::initialize()"); 
 		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth used version: " . Hybrid_Auth::$version ); 
 		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth called from: " . Hybrid_Auth::getCurrentUrl() ); 
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump used config: ", serialize( $config ) );
-		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", serialize( $_SESSION ) ); 
+		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", Hybrid_Auth::storage()->getSessionData() ); 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: check if any error is stored on the endpoint..." );
 
 		if( Hybrid_Error::hasError() ){ 

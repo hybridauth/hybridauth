@@ -1,4 +1,4 @@
-# HybridAuth 2.0.11-dev
+# HybridAuth 2.1.0-dev
 
 HybridAuth enables developers to easily build social applications and tools 
 to engage websites vistors and customers on a social level by implementing 
@@ -37,7 +37,7 @@ HybridAuth repository is made up of several projects:
   MySpace, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** contains many others services
   which you may want to use,
-- **Examples and demos**  contains three working examples for you to test, 
+- **Examples and demos** contains five working examples for you to test, 
 
 ## Getting Started
 

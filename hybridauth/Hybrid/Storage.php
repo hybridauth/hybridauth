@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
-*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -12,12 +12,31 @@ class Hybrid_Storage
 {
 	function __construct()
 	{
-		if( ! session_id() ){
-			throw new Exception( "Hybriauth require the use of 'session_start()' at the start of your script", 1 );
+		if ( ! session_id() ){
+			if( ! session_start() ){
+				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
+			}
 		}
+
+		$this->config( "PHP_SESSION_ID", session_id() );
+		$this->config( "VERSION", Hybrid_Auth::$version );
 	}
 
-	public function get($key, $expiration = false) 
+	public function config($key, $value) 
+	{
+		$key = strtolower( $key );  
+
+		if( $value ){
+			$_SESSION["HA::CONFIG"][$key] = serialize( $value ); 
+		}
+		elseif( isset( $_SESSION["HA::CONFIG"][$key] ) ){
+			return unserialize( $_SESSION["HA::CONFIG"][$key] );  
+		}
+
+		return NULL; 
+	}
+
+	public function get($key) 
 	{
 		$key = strtolower( $key );  
 
@@ -63,12 +82,16 @@ class Hybrid_Storage
 	}
 
 	function getSessionData()
-	{ 
-		return serialize( $_SESSION["HA::STORE"] );
+	{
+		if( isset( $_SESSION["HA::STORE"] ) ){ 
+			return serialize( $_SESSION["HA::STORE"] ); 
+		}
+
+		return NULL; 
 	}
 
 	function restoreSessionData( $sessiondata = NULL )
 	{ 
 		$_SESSION["HA::STORE"] = unserialize( $sessiondata );
-	}
+	} 
 }

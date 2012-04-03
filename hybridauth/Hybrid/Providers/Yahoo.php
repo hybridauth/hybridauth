@@ -1,10 +1,8 @@
 <?php
-//!! planned to be replaced Y! openid by the oauth1 adapter soon
-
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
-*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -29,4 +27,3 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OpenID
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user", $this->user );
 	}
 }
-
