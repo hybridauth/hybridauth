@@ -89,24 +89,4 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 	{
 		throw new Exception( "Provider does not support this feature.", 8 ); 
 	}
-
-   /**
-	* Utility function, convert xml to array
-	*/
-	public function xml2array($xml) { 
-		$arXML=array(); 
-		$arXML['name']=trim($xml->getName()); 
-		$arXML['value']=trim((string)$xml); 
-		$t=array(); 
-		foreach($xml->attributes() as $name => $value){ 
-			$t[$name]=trim($value); 
-		} 
-		$arXML['attr']=$t; 
-		$t=array(); 
-		foreach($xml->children() as $name => $xmlchild) { 
-			$t[$name][]=$this->xml2array($xmlchild); //FIX : For multivalued node 
-		} 
-		$arXML['children']=$t; 
-		return($arXML); 
-	}
 }
