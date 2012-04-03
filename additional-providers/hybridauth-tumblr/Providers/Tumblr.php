@@ -52,8 +52,8 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 			}
 			$avatar = $this->api->get( 'http://api.tumblr.com/v2/blog/'.$base_host.'avatar' );
 			
-			$this->user->profile->identifier    = $url;
-			$this->user->profile->displayName  	= $profile->response->user->name;
+			$this->user->profile->identifier 	= $url;
+			$this->user->profile->displayName	= $profile->response->user->name;
 			$this->user->profile->profileURL	= $url;
 			$this->user->profile->webSiteURL	= $url;
 			$this->user->profile->photoURL 		= $avatar->response->avatar_url;
