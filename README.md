@@ -9,27 +9,7 @@ The main goal of HybridAuth is to act as an abstract API between your applicatio
 and various social apis and identities providers such as Facebook, Twitter, 
 MySpace and Google.
 
-## FEATURES 
-
-- HybridAuth makes it easy to authenticate users with a wide variety of 
-  well known social networks.
-- HybridAuth provides the connected user profiles in a rich, simple and 
-  standardized structure across all the social apis.
-- Besides authentication, HybridAuth enables you to interact with the 
-  social API that the users are connected to in a simple way.
-- The complexity of implementing identity providers authentication and 
-  authorization protocols are simplified for developers.
-- All transactions are completely transparent to the end user.
-
-HybridAuth can be used for many purposes, such as: 
-
-- enabling users to sign-in/sign-up using popular social services;
-- allowing users to share their comments, reviews and other activities from
-  your site to their friends via social networks;
-- building social applications and tools to be integrated on a blog, web
-  site, web applications, ERP or CRM, etc.
-
-## HybridAuth Repository
+## Repository
 
 HybridAuth repository is made up of several projects:
 
