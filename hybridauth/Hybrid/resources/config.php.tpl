@@ -19,12 +19,13 @@ return
 				"enabled" => #OPENID_ADAPTER_STATUS#
 			),
 
-			"Yahoo" => array ( 
-				"enabled" => #YAHOO_ADAPTER_STATUS# 
-			),
-
 			"AOL"  => array ( 
 				"enabled" => #AOL_ADAPTER_STATUS# 
+			),
+
+			"Yahoo" => array ( 
+				"enabled" => #YAHOO_ADAPTER_STATUS#,
+				"keys"    => array ( "id" => "#YAHOO_APPLICATION_KEY#", "secret" => "#YAHOO_APPLICATION_SECRET#" ),
 			),
 
 			"Google" => array ( 

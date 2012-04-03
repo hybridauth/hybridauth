@@ -135,6 +135,13 @@ ul li label {
 								)
 								,
 								ARRAY( 
+									"label"             => "Yahoo",
+									"provider_name"     => "Yahoo!", 
+									"new_app_link"      => "https://developer.apps.yahoo.com/dashboard/createKey.html",
+									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html",
+								)
+								,
+								ARRAY( 
 									"label"             => "Live",
 									"provider_name"     => "Windows Live", 
 									"require_client_id" => TRUE, 
@@ -170,13 +177,6 @@ ul li label {
 									"provider_name"     => "OpenID", 
 									"new_app_link"      => NULL,
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_OpenID.html",
-								)
-								,
-								ARRAY( 
-									"label"             => "Yahoo",
-									"provider_name"     => "Yahoo!", 
-									"new_app_link"      => NULL,
-									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html",
 								)
 								,
 								ARRAY( 
@@ -381,25 +381,29 @@ ul li label {
 					<?php endif; ?> 
 
 					<?php if ( $provider == "MySpace" ) : ?>
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>External Url</b> and <b>External Callback Validation</b> fields. This should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p>
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>External Url</b> and <b>External Callback Validation</b> fields. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p>
 					<?php endif; ?> 
 
 					<?php if ( $provider == "Live" ) : ?>
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Redirect Domain</b> field. This should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p>
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Redirect Domain</b> field. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p>
 					<?php endif; ?> 
 
 					<?php if ( $provider == "Facebook" ) : ?>
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Site Url</b> field. This should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Site Url</b> field. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
 					<?php endif; ?>	
 
 					<?php if ( $provider == "LinkedIn" ) : ?>
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Integration URL</b> field. This should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Integration URL</b> field. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
 						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Set the <b>Application Type</b> to <em style="color:#CB4B16;">Web Application</em>.</p> 
 					<?php endif; ?>	
 
+					<?php if ( $provider == "Yahoo" ) : ?>
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Application URL</b> and <b>Application Domain</b> fields. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Set the <b>Kind of Application</b> to <em style="color:#CB4B16;">Web-based</em>.</p> 
+					<?php endif; ?>	
+
 					<?php if ( $provider == "Twitter" ) : ?>
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Application Website</b> and <b>Application Callback URL</b> fields. This should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Set the <b>Application Type</b> to <em style="color:#CB4B16;">Browser</em>.</p> 
+						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Application Website</b> and <b>Application Callback URL</b> fields. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p> 
 						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Set the <b>Default Access Type</b> to <em style="color:#CB4B16;">Read, Write, & Direct Messages</em>.</p> 
 					<?php endif; ?>	
 					

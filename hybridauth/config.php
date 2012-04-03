@@ -20,7 +20,8 @@ return
 			),
 
 			"Yahoo" => array ( 
-				"enabled" => true 
+				"enabled" => true,
+				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"AOL"  => array ( 

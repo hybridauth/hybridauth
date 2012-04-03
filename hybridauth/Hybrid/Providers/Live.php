@@ -8,9 +8,9 @@
 /** 
  * Windows Live OAuth2 Class
  * 
- * @package             HybridAuth additional providers package 
+ * @package             HybridAuth providers package 
  * @author              Lukasz Koprowski <azram19@gmail.com>
- * @version             0.1
+ * @version             0.2
  * @license             BSD License
  */ 
 
@@ -63,9 +63,9 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->emailVerified = (property_exists($data,'emails'))?$data->emails->account:"";
 
 		//wl.birthday
-		$this->user->profile->birthDay 		= (property_exists($data,'birth_day'))?$data->birth_day:"";
-		$this->user->profile->birthMonth 	= (property_exists($data,'birth_month'))?$data->birth_month:"";
-		$this->user->profile->birthYear 	= (property_exists($data,'birth_year'))?$data->birth_year:"";
+		$this->user->profile->birthDay      = (property_exists($data,'birth_day'))?$data->birth_day:"";
+		$this->user->profile->birthMonth    = (property_exists($data,'birth_month'))?$data->birth_month:"";
+		$this->user->profile->birthYear     = (property_exists($data,'birth_year'))?$data->birth_year:"";
 
 		return $this->user->profile;
 	}
