@@ -34,14 +34,15 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 	{
 		$this->api->decode_json=false;
 		$response = $this->api->get( 'http://www.tumblr.com/api/authenticate' );
-
+	
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 )
 		{
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error: " . $this->errorMessageByStatus( $this->api->http_code ), 6 );
 		}
-
+	
 		try{ 
+			
 			$profile = $this->api->get( 'http://api.tumblr.com/v2/user/info' );
 			foreach ($profile->response->user->blogs as &$blog) {
 				if($blog->primary>0){
@@ -62,7 +63,7 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 		catch( Exception $e ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error while requesting the user profile.", 6 );
 		}	
-
+	
 		return $this->user->profile;
  	}
 
