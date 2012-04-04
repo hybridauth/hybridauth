@@ -69,8 +69,33 @@ class Hybrid_Providers_px500 extends Hybrid_Provider_Model_OAuth1
 	*/ 
 	function setUserStatus( $status )
 	{
-		throw new Exception( "Commit does not support this feature yet.", 8 );
-		// 500px is for posting photos, we will implement it tomorrow 
+		// README : posting to a 500px.com blog requires the post's TITLE to be set somehow
+		// So it is strongly recommended that you submit status as an ARRAY, like :
+		
+		// setUserStatus( array( 'title'=>'YOUR TITLE HERE', 'body'=>'YOUR MESSAGE HERE' ) )
+		
+		
+		if(is_array($status) && isset($status['title']) && isset($status['body'])){
+			$t = $status['title'];
+			$b = $status['body'];
+		} else {
+			$t = '...';
+			$b = $status;	
+		}
+		
+		$parameters = array( 'title' => $t, 'body' => $b ); 
+		$response  = $this->api->post( 'blogs', $parameters );  
+
+		if ( property_exists($response,'id') ){
+			return $response->id;
+		} else {
+			throw new Exception( "Update user status failed! {$this->providerId} returned an error. "  );	
+		}
+		
+		// this function is for 'plain' blog posting only :
+		// we will commit photo upload soon in an extra function, called setUpload -
+		// because 500px users can also get an additional Upload Key to upload pictures
+		// refer to  http://developers.500px.com/docs/upload-post  for now
 	}
 	
    	/**
