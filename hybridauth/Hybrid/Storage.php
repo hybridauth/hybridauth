@@ -11,25 +11,25 @@
 class Hybrid_Storage 
 {
 	function __construct()
-	{
+	{ 
 		if ( ! session_id() ){
 			if( ! session_start() ){
 				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
 			}
 		}
 
-		$this->config( "PHP_SESSION_ID", session_id() );
-		$this->config( "VERSION", Hybrid_Auth::$version );
+		$this->config( "php_session_id", session_id() );
+		$this->config( "version", Hybrid_Auth::$version );
 	}
 
-	public function config($key, $value) 
+	public function config($key, $value=null) 
 	{
 		$key = strtolower( $key );  
 
 		if( $value ){
 			$_SESSION["HA::CONFIG"][$key] = serialize( $value ); 
 		}
-		elseif( isset( $_SESSION["HA::CONFIG"][$key] ) ){
+		elseif( isset( $_SESSION["HA::CONFIG"][$key] ) ){ 
 			return unserialize( $_SESSION["HA::CONFIG"][$key] );  
 		}
 

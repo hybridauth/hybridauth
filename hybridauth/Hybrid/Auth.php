@@ -96,10 +96,44 @@ class Hybrid_Auth
 		// start session storage mng
 		Hybrid_Auth::$store = new Hybrid_Storage();
 
-		// almost done, check for errors then move on
 		Hybrid_Logger::info( "Enter Hybrid_Auth::initialize()"); 
-		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth used version: " . Hybrid_Auth::$version ); 
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). PHP version: " . PHP_VERSION ); 
+		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth version: " . Hybrid_Auth::$version ); 
 		Hybrid_Logger::info( "Hybrid_Auth::initialize(). Hybrid_Auth called from: " . Hybrid_Auth::getCurrentUrl() ); 
+
+		// PHP Curl extension [http://www.php.net/manual/en/intro.curl.php]
+		if ( ! function_exists('curl_init') ) {
+			Hybrid_Logger::error('Hybridauth Library needs the CURL PHP extension.');
+			throw new Exception('Hybridauth Library needs the CURL PHP extension.');
+		}
+
+		// PHP JSON extension [http://php.net/manual/en/book.json.php]
+		if ( ! function_exists('json_decode') ) {
+			Hybrid_Logger::error('Hybridauth Library needs the JSON PHP extension.');
+			throw new Exception('Hybridauth Library needs the JSON PHP extension.');
+		}
+
+		// OAuth PECL extension is not compatible with this library
+		if( extension_loaded('oauth') ) {
+			Hybrid_Logger::error('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
+			throw new Exception('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
+		}
+
+		// session.name
+		if( session_name() != "PHPSESSID" ){
+			Hybrid_Logger::info('PHP session.name diff from default PHPSESSID. http://php.net/manual/en/session.configuration.php#ini.session.name.');
+		}
+
+		// safe_mode is on
+		if( ini_get('safe_mode') ){
+			Hybrid_Logger::info('PHP safe_mode is on. http://php.net/safe-mode.');
+		}
+
+		// open basedir is on
+		if( ini_get('open_basedir') ){
+			Hybrid_Logger::info('PHP open_basedir is on. http://php.net/open-basedir.');
+		}
+
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump used config: ", serialize( $config ) );
 		Hybrid_Logger::debug( "Hybrid_Auth initialize. dump current session: ", Hybrid_Auth::storage()->getSessionData() ); 
 		Hybrid_Logger::info( "Hybrid_Auth initialize: check if any error is stored on the endpoint..." );
