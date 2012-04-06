@@ -10,7 +10,7 @@
  */
 class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 { 
-   /**
+	/**
 	* IDp wrappers initializer 
 	*/
 	function initialize() 
@@ -30,16 +30,16 @@ class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 		}
 	}
 
-   /**
+	/**
 	* begin login step 
 	*/
 	function loginBegin()
 	{ 
  		# redirect to Authorize url
-		Hybrid_Auth::redirect( $this->api->getLoginUrl( urlencode( $this->endpoint ) ) );
+		Hybrid_Auth::redirect( $this->api->getLoginUrl( $this->endpoint ) );
 	}
  
-   /**
+	/**
 	* finish login step 
 	*/
 	function loginFinish()
@@ -74,7 +74,7 @@ class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
         }
 	}
 
-   /**
+	/**
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
