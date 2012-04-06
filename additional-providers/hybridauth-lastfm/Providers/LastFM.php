@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
-*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -58,8 +58,7 @@ class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 			throw new Exception( "Authentification failed! {$this->providerId} returned an error while requesting and access token. $e.", 6 );
 		}
 
-        if( isset( $response['sk'] ) && isset( $response['name'] ) ) 
-		{
+		if( isset( $response['sk'] ) && isset( $response['name'] ) ){
 			$this->token( "access_token" , $response['sk'] );
 			
 			// let set the user name as access_token_secret ...
@@ -67,11 +66,10 @@ class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 
 			// set user as logged in
 			$this->setUserConnected();
-        }
-		else 
-		{
+		}
+		else{
 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access Token.", 5 );
-        }
+		}
 	}
 
 	/**
