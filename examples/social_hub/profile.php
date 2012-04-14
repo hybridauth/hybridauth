@@ -59,6 +59,9 @@
 <link rel="stylesheet" href="public/css.css" type="text/css">
 </head>
 <body>  
+<?php
+	if( $user_data ){
+?> 
 <table width="90%" border="0" cellpadding="2" cellspacing="2">
   <tr>
     <td valign="top">
@@ -178,7 +181,7 @@
 			  </td>
           </tr>  
         </table>
-      </fieldset>
+		</fieldset>
 	</td>
     <td valign="top" width="250" align="left"> 
 		<?php
@@ -186,8 +189,10 @@
 		?>
 	</td>
   </tr>
-</table>   
+</table>  
 <?php
+	} // if( $user_data )
+
 	include "includes/debugger.php";
 ?> 
 </body>

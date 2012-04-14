@@ -1,4 +1,4 @@
-<?php
+<?php 
 	session_start(); 
 
 	// change the following paths if necessary 
