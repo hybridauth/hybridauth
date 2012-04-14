@@ -1,4 +1,6 @@
 <?php
+// Modified
+
 /**
  * Copyright 2011 Facebook, Inc.
  *
@@ -1266,4 +1268,49 @@ abstract class BaseFacebook
    * @return void
    */
   abstract protected function clearAllPersistentData();
+  
+
+	/**
+	* Extending access_token expiration time through fb new endpoint
+	*  returns an new access token which expires in 60 days
+	*
+	* http://developers.facebook.com/roadmap/offline-access-removal/#extend_token
+	* http://stackoverflow.com/a/9035036/1106794
+	*/
+	function extendedAccessToken( $old_access_token )
+	{
+		// Make a OAuth Request.
+		try {
+			$params = array(
+				'client_id'         => $this->getAppId(),
+				'client_secret'     => $this->getAppSecret(),
+				'grant_type'        => 'fb_exchange_token',
+				'fb_exchange_token' => $old_access_token,
+			);
+
+			$response = $this->_oauthRequest( $this->getUrl( 'graph', '/oauth/access_token' ), $params );
+			
+			// print_r( array( $this->getUrl( 'graph', '/oauth/access_token' ), $params, $response ) );
+		}
+		catch ( FacebookApiException $e ) {
+			// most likely that user very recently revoked authorization.
+			// In any event, we don't have an access token, so say so.
+			return false;
+		}
+
+		if (empty($response)) {
+			return false;
+		}
+
+		$response_params = array();
+
+		parse_str($response, $response_params);
+
+		if (!isset($response_params['access_token'])) {
+			return false;
+		}
+
+		return $response_params['access_token'];
+	}
+
 }
