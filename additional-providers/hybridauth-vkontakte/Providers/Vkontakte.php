@@ -7,9 +7,10 @@
 
 /**
  * Hybrid_Providers_Vkontakte provider adapter based on OAuth2 protocol
- * 
- * author: guiltar
+ *
+ * added by guiltar | https://github.com/guiltar
  */
+
 class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions 
@@ -58,7 +59,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		$this->token( "expires_in"   , $this->api->access_token_expires_in );
 		$this->token( "expires_at"   , $this->api->access_token_expires_at );
 
-		// store user id
+		// store user id. it is required for api access to Vkontakte
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_id", $response->user_id );
 
 		// set user connected locally
@@ -73,6 +74,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		// refresh tokens if needed 
 		$this->refreshToken();
 
+		// Vkontakte requires user id, not just token for api access
 		$params['uid'] = Hybrid_Auth::storage()->get( "hauth_session.{$this->providerId}.user_id" );
 		$params['fields'] = 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big';
 		// ask vkontakte api for user infos
