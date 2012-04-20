@@ -24,7 +24,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		parent::initialize();
 
 		// Provider api end-points
-		$this->api->authorize_url  = "http://api.vkontakte.ru/oauth/authorize";
+		$this->api->authorize_url  = "http://api.vk.com/oauth/authorize";
 		$this->api->token_url      = "https://api.vk.com/oauth/token";
 		//$this->api->token_info_url
 	}
@@ -78,7 +78,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		$params['uid'] = Hybrid_Auth::storage()->get( "hauth_session.{$this->providerId}.user_id" );
 		$params['fields'] = 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big';
 		// ask vkontakte api for user infos
-		$response = $this->api->api( "https://api.vkontakte.ru/method/getProfiles" , 'GET', $params);
+		$response = $this->api->api( "https://api.vk.com/method/getProfiles" , 'GET', $params);
 
 
 		if (!isset( $response->response[0] ) || !isset( $response->response[0]->uid ) || isset( $response->error ) ){
