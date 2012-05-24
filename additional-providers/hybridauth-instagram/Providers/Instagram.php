@@ -11,7 +11,7 @@
  *2 set redirect url to http://mywebsite.com/path_to_hybridauth/?hauth.done=Instagram
  *3 set in config: 
  "Instagram" => array ( "enabled" => true, "keys" => array ( "id" => "YOUR CLIENT ID", "secret" => "YOUR CLIENT SECRET" ) )
- * see http://instagr.am/developer/endpoints/ for other endpoints
+ * see http://instagr.am/developer/endpoints/ for other API endpoints
  */
 class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2
 { 
