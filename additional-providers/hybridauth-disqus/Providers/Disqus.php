@@ -6,7 +6,8 @@
 */
 
 /**
- * Hybrid_Providers_Disqus 
+ * Hybrid_Providers_Disqus - DO NOT USE, does not work yet
+ * says wrong API version, wrote a mail to Disqus support
  */
 class Hybrid_Providers_Disqus extends Hybrid_Provider_Model_OAuth2
 { 
@@ -19,11 +20,12 @@ class Hybrid_Providers_Disqus extends Hybrid_Provider_Model_OAuth2
 	function initialize() 
 	{
 		parent::initialize();
-
 		// Provider api end-points
 		$this->api->api_base_url  = "https://disqus.com/api/3.0/";
-		$this->api->authorize_url = "https://disqus.com/api/oauth/2.0/authorize";
-		$this->api->token_url     = "https://disqus.com/api/oauth/2.0/access_token";
+		$this->api->authorize_url = "https://disqus.com/api/3.0/oauth/2.0/authorize";	   
+		$this->api->token_url     = "https://disqus.com/api/3.0/oauth/2.0/access_token";
+		
+		$this->api->curl_header = array( 'client_id: ' . $this->config["keys"]["id"], 'Accept: application/json' );
 	}
 
 	/**
@@ -31,8 +33,8 @@ class Hybrid_Providers_Disqus extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-		$data = $this->api->get( "details.json" ); 
-
+		$data = $this->api->get( "users/details" ); 
+		print_r($data);
 		if ( ! isset( $data->code ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
 		} else if ( $data->code != 0 ){
