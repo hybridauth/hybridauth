@@ -265,4 +265,99 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		return $activities;
  	}
+
+	/**
+	 * get the user work history
+	 */
+	public function getUserWorkHistory()
+	{
+		try {
+			$response = $this->api->api('/me?fields=work');
+		} catch (FacebookApiException $e) {
+			throw new Exception("User work history request failed! {$this->providerId} returned an error: $e");
+		}
+
+		if (!$response || !count($response["work"])) {
+			return ARRAY();
+		}
+
+		$workHistory = array();
+		foreach ($response["work"] as $item){
+			$wh = new Hybrid_User_Work_History();
+			if (array_key_exists('position', $item) && array_key_exists('name', $item['position'])){
+				$wh->position = $item['position']['name'];
+			}
+			if (array_key_exists('employer', $item) && array_key_exists('name', $item['employer'])){
+				$wh->employer = $item['employer']['name'];
+			}
+			if (array_key_exists('location', $item) && array_key_exists('name', $item['location'])){
+				$wh->location = $item['location']['name'];
+			}
+			if (array_key_exists('start_date', $item)){
+				$t = strtotime($item['start_date']);
+				$wh->startYear = date('Y', $t);
+				$wh->startMonth = date('m', $t);
+			}
+			if (array_key_exists('end_date', $item)){
+				$t = strtotime($item['end_date']);
+				$wh->endYear = date('Y', $t);
+				$wh->endMonth = date('m', $t);
+			}
+			if (array_key_exists('description', $item)){
+				$wh->description = $item['description'];
+			}
+			$workHistory[] = $wh;
+		}
+
+		return $workHistory;
+	}
+
+	/**
+	 * get the user education
+	 */
+	public function getUserEducation()
+	{
+		try {
+			$response = $this->api->api('/me?fields=education');
+		} catch (FacebookApiException $e) {
+			throw new Exception("User education request failed! {$this->providerId} returned an error: $e");
+		}
+
+		$educations = array();
+
+		if (!$response || !count($response["education"])){
+			return $educations;
+		}
+
+		foreach ($response["education"] as $item) {
+			$edu = new Hybrid_User_Education();
+			if (array_key_exists('school', $item) && array_key_exists('name', $item['school'])){
+				$edu->school = $item['school']['name'];
+			}
+			if (array_key_exists('degree', $item) && array_key_exists('name', $item['degree'])){
+				$edu->degree = $item['degree']['name'];
+			}
+			if (array_key_exists('year', $item) && array_key_exists('name', $item['year'])){
+				$edu->endYear = $item['year']['name'];
+			}
+			//concentration is an array
+			if (array_key_exists('concentration', $item) && count($item['concentration'])){
+				$concentrations = array();
+				foreach ($item['concentration'] as $c){
+					if (array_key_exists('name', $c)){
+						$concentrations[] = $c['name'];
+					}
+				}
+				$edu->field = implode(', ', $concentrations);
+			}
+			if (array_key_exists('type', $item)){
+				$edu->type = $item['type'];
+			}
+
+			$educations[] = $edu;
+		}
+
+		return $educations;
+	}
+
 }

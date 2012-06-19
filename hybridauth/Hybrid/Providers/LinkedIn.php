@@ -241,4 +241,119 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 		return $activities;
 	}
+
+	/**
+	 * get the user work history
+	 */
+	public function getUserWorkHistory()
+	{
+		try {
+			// http://developer.linkedin.com/docs/DOC-1061
+			$response = $this->api->profile('~:(positions)');
+		} catch (LinkedInException $e) {
+			throw new Exception("User work history request failed! {$this->providerId} returned an error: $e", 6);
+		}
+
+		if (isset($response['success']) && $response['success'] === TRUE){
+			$positions = @ new SimpleXMLElement($response['linkedin']);
+
+			if (!is_object($positions)){
+				throw new Exception("User work history request failed! {$this->providerId} returned an invalid xml data.", 6);
+			}
+
+			$workHistory = array();
+			foreach ($positions->positions->position as $position){
+				$wh = new Hybrid_User_Work_History();
+				$wh->position    = (string) $position->title;
+				$wh->employer    = (string) $position->company->name;
+				$wh->description = (string) $position->summary;
+				if( $position->{'start-date'}){
+					$wh->startDay    = (string) $position->{'start-date'}->day;
+					$wh->startMonth  = (string) $position->{'start-date'}->month;
+					$wh->startYear   = (string) $position->{'start-date'}->year;
+				}
+				if( $position->{'end-date'} ) {
+					$wh->endDay    = (string) $position->{'end-date'}->day;
+					$wh->endMonth  = (string) $position->{'end-date'}->month;
+					$wh->endYear   = (string) $position->{'end-date'}->year;
+				}
+				$workHistory[] = $wh;
+			}
+
+			return $workHistory;
+		}else{
+			throw new Exception("User work history request failed! {$this->providerId} returned an invalid response.", 6);
+		}
+	}
+
+	/**
+	 * get the user education
+	 */
+	public function getUserEducation()
+	{
+		try{
+			// http://developer.linkedin.com/docs/DOC-1061
+			$response = $this->api->profile('~:(educations)');
+		} catch (LinkedInException $e) {
+			throw new Exception("User education request failed! {$this->providerId} returned an error: $e", 6);
+		}
+
+		if (isset($response['success']) && $response['success'] === TRUE) {
+			$educations = @ new SimpleXMLElement($response['linkedin']);
+
+			if (!is_object($educations)) {
+				throw new Exception("User education request failed! {$this->providerId} returned an invalid xml data.", 6);
+			}
+
+			$result = array();
+			foreach ($educations->educations->education as $education) {
+				$edu = new Hybrid_User_Education();
+				$edu->degree        = (string) $education->degree;
+				$edu->school        = (string) $education->{'school-name'};
+				$edu->field         = (string) $education->{'field-of-study'};
+				if( $education->{'start-date'} ) {
+					$edu->startYear = (string) $education->{'start-date'}->year;
+				}
+				if( $education->{'end-date'} ) {
+					$edu->endYear   = (string) $education->{'end-date'}->year;
+				}
+				$result[] = $edu;
+			}
+
+			return $result;
+		} else {
+			throw new Exception("User education request failed! {$this->providerId} returned an invalid response.", 6);
+		}
+	}
+
+	/**
+	 * get the user skills
+	 */
+	public function getUserSkills()
+	{
+		try{
+			// http://developer.linkedin.com/docs/DOC-1061
+			$response = $this->api->profile('~:(skills)');
+		} catch (LinkedInException $e){
+			throw new Exception("User skills request failed! {$this->providerId} returned an error: $e", 6);
+		}
+
+		if (isset($response['success']) && $response['success'] === TRUE){
+			$skills = @ new SimpleXMLElement($response['linkedin']);
+
+			if (!is_object($skills)){
+				throw new Exception("User skills request failed! {$this->providerId} returned an invalid xml data.", 6);
+			}
+
+			$result = array();
+			foreach ($skills->skills->skill as $skill){
+				$result[] = (string) $skill->skill->name;
+			}
+
+			return $result;
+		} else{
+			throw new Exception("User skills request failed! {$this->providerId} returned an invalid response.", 6);
+		}
+	}
+
 }
