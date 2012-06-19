@@ -131,7 +131,7 @@ abstract class Hybrid_Provider_Model
 	*/
 	function getUserContacts() 
 	{
-		Hybrid_Logger::error( "HybridAuth do not provide users contats list for {$this->providerId} yet." ); 
+		Hybrid_Logger::error( "HybridAuth do not provide users contacts list for {$this->providerId} yet." );
 		
 		throw new Exception( "Provider does not support this feature.", 8 ); 
 	}
@@ -146,6 +146,42 @@ abstract class Hybrid_Provider_Model
 		Hybrid_Logger::error( "HybridAuth do not provide user's activity stream for {$this->providerId} yet." ); 
 		
 		throw new Exception( "Provider does not support this feature.", 8 ); 
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* get the user work history
+	*/
+	function getUserWorkHistory()
+	{
+		Hybrid_Logger::error( "HybridAuth do not provide users work history for {$this->providerId} yet." );
+
+		throw new Exception( "Provider does not support this feature.", 8 );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * get the user education
+	*/
+	function getUserEducation()
+	{
+		Hybrid_Logger::error( "HybridAuth do not provide users education for {$this->providerId} yet." );
+
+		throw new Exception( "Provider does not support this feature.", 8 );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * get the user skills
+	*/
+	function getUserSkills()
+	{
+		Hybrid_Logger::error( "HybridAuth do not provide users skills for {$this->providerId} yet." );
+
+		throw new Exception( "Provider does not support this feature.", 8 );
 	}
 
 	// --------------------------------------------------------------------
