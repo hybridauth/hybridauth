@@ -75,6 +75,10 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
 			$this->api->access_token_expires_in = $this->token( "expires_in" );
 			$this->api->access_token_expires_at = $this->token( "expires_at" ); 
 		}
+                // Set curl proxy if exist
+                if( isset( Hybrid_Auth::$config["proxy"] ) ){
+                    $this->api->curl_proxy = Hybrid_Auth::$config["proxy"];
+		}
 	}
 
 	// --------------------------------------------------------------------
