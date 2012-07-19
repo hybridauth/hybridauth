@@ -82,7 +82,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		// refresh tokens if needed 
 		$this->refreshToken();  
 
-		$response = $this->api->api( "https://www.google.com/m8/feeds/contacts/default/full?alt=json&max-results=500" ); 
+		$response = $this->api->api( "https://www.google.com/m8/feeds/contacts/default/full?" . http_build_query(array_merge(array('alt' => 'json'), $this->config['contacts_param']))  ); 
 
 		if( ! $response ){
 			return ARRAY();
