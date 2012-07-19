@@ -128,7 +128,7 @@ class LightOpenID
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
         if($this->proxy){
-            curl_setopt( $ci, CURLOPT_PROXY, $this->proxy);
+            curl_setopt( $curl, CURLOPT_PROXY, $this->proxy);
         }
         if($this->verify_peer !== null) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
