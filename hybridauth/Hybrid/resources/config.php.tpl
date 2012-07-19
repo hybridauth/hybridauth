@@ -71,4 +71,6 @@ return
 		"debug_mode" => false,
 
 		"debug_file" => "",
+
+		"proxy" => null
 	);
