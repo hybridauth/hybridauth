@@ -25,6 +25,7 @@ class OAuth1Client{
 	public $curl_ssl_verifypeer   = false;
 	public $curl_auth_header      = true;
 	public $curl_useragent        = "OAuth/1 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
+        public $curl_proxy               = null;
 
 	//--
 
@@ -173,7 +174,10 @@ class OAuth1Client{
 		curl_setopt( $ci, CURLOPT_SSL_VERIFYPEER, $this->curl_ssl_verifypeer );
 		curl_setopt( $ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader') );
 		curl_setopt( $ci, CURLOPT_HEADER        , FALSE );
-
+                if($this->curl_proxy){
+                    curl_setopt( $ci, CURLOPT_PROXY        , $this->curl_proxy);
+                }
+                
 		switch ($method){
 			case 'POST':
 				curl_setopt( $ci, CURLOPT_POST, TRUE );
