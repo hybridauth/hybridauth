@@ -206,7 +206,7 @@ class OAuth2Client
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
 		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
                 if($this->curl_proxy){
-                    curl_setopt( $ci, CURLOPT_PROXY        , $this->curl_proxy);
+                    curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
                 }
 		if( $type == "POST" ){
 			curl_setopt($ch, CURLOPT_POST, 1); 
