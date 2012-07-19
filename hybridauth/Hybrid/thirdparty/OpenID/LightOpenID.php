@@ -21,7 +21,7 @@ class LightOpenID
          , $data;
     private $identity, $claimed_id;
     protected $server, $version, $trustRoot, $aliases, $identifier_select = false
-            , $ax = false, $sreg = false, $setup_url = null, $headers = array();
+            , $ax = false, $sreg = false, $setup_url = null, $headers = array(), $proxy = null;
     static protected $ax_to_sreg = array(
         'namePerson/friendly'     => 'nickname',
         'contact/email'           => 'email',
@@ -34,8 +34,9 @@ class LightOpenID
         'pref/timezone'           => 'timezone',
         );
 
-    function __construct($host)
+    function __construct($host, $proxy)
     {
+        $this->proxy = $proxy;
         $this->trustRoot = (strpos($host, '://') ? $host : 'http://' . $host);
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
             || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
@@ -126,7 +127,9 @@ class LightOpenID
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
-
+        if($this->proxy){
+            curl_setopt( $ci, CURLOPT_PROXY, $this->proxy);
+        }
         if($this->verify_peer !== null) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
             if($this->capath) {
@@ -244,6 +247,9 @@ class LightOpenID
                 ),
             );
             $url = $url . ($params ? '?' . $params : '');
+            if($this->proxy){
+                $opts['http']['proxy'] = 'http://' . $this->proxy;
+            }
             break;
         case 'POST':
             $opts = array(
@@ -256,6 +262,9 @@ class LightOpenID
                     'CN_match' => parse_url($url, PHP_URL_HOST),
                 ),
             );
+            if($this->proxy){
+                $opts['http']['proxy'] = 'http://' . $this->proxy;
+            }
             break;
         case 'HEAD':
             # We want to send a HEAD request,
@@ -312,7 +321,7 @@ class LightOpenID
             $this->headers = $this->parse_header_array($http_response_header, $update_claimed_id);
         }
 
-        return file_get_contents($url, false, $context);
+        return $data;
     }
 
     protected function request($url, $method='GET', $params=array(), $update_claimed_id=false)
