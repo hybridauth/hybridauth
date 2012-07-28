@@ -31,7 +31,8 @@ return
 			"Google" => array ( 
 				"enabled" => #GOOGLE_ADAPTER_STATUS#,
 				"keys"    => array ( "id" => "#GOOGLE_APPLICATION_APP_ID#", "secret" => "#GOOGLE_APPLICATION_SECRET#" ),
-				"scope"   => ""
+				"scope"   => "", 
+				"contacts_param" => array("max-results" => 1000)
 			),
 
 			"Facebook" => array ( 
@@ -71,4 +72,6 @@ return
 		"debug_mode" => false,
 
 		"debug_file" => "",
+
+		"proxy" => null
 	);
