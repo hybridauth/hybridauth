@@ -16,8 +16,6 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 {
 	// default permissions, and alot of them. You can change them from the configuration by setting the scope to what you want/need
 	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, read_stream, offline_access, publish_stream, read_friendlists";
-	
-	public $display = "page";
 
 	/**
 	* IDp wrappers initializer 
@@ -26,16 +24,6 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	{
 		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
 			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
-		}
-
- 		// override requested scope
-		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) ){
-			$this->scope = $this->config["scope"];
-		}
-
-		// override requested display
-		if( isset( $this->config["display"] ) && ! empty( $this->config["display"] ) ){
-			$this->display = $this->config["display"];
 		}
 
 		if ( ! class_exists('FacebookApiException') ) {
@@ -66,8 +54,17 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	*/
 	function loginBegin()
 	{
+		$parameters = array("scope" => $this->scope, "redirect_uri" => $this->endpoint, "display" => "page");
+		$optionals  = array("scope", "redirect_uri", "display");
+
+		foreach ($optionals as $parameter){
+			if( isset( $this->config[$parameter] ) && ! empty( $this->config[$parameter] ) ){
+				$parameters[$parameter] = $this->config[$parameter];
+			}
+		}
+
 		// get the login url 
-		$url = $this->api->getLoginUrl( array( 'scope' => $this->scope, 'display' => $this->display, 'redirect_uri' => $this->endpoint ) );
+		$url = $this->api->getLoginUrl( $parameters );
 
 		// redirect to facebook
 		Hybrid_Auth::redirect( $url );
