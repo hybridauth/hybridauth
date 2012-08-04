@@ -82,9 +82,10 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 		else{
 			$this->api = new OAuth1Client( $this->config["keys"]["key"], $this->config["keys"]["secret"] );
 		}
-                // Set curl proxy if exist
-                if( isset( Hybrid_Auth::$config["proxy"] ) ){
-                    $this->api->curl_proxy = Hybrid_Auth::$config["proxy"];
+
+		// Set curl proxy if exist
+		if( isset( Hybrid_Auth::$config["proxy"] ) ){
+			$this->api->curl_proxy = Hybrid_Auth::$config["proxy"];
 		}
 	}
 

@@ -1,8 +1,14 @@
 Hybridauth Change log
 =====================
 
-2.1.0 - 03 apr 2012 
-	...
+2.1.0 - 04 aug 2012 
+	Yahoo! provider adapter is now based on OAuth1 protocol (by Lukasz Koprowski)
+	Windows Live provider adapter is now based on OAuth2 protocol (by Lukasz Koprowski)
+	Yahoo! and Google openid based are now part of the "additional providers package"
+	Add proxy config for providers API (by fedetorre)
+	Fix Hybrid_Providers_Google::getUserContacts()
+	Fix Twitter user's profile url
+	Fix the user profile url on Hybrid_Providers_Facebook::getUserActivity()
 	...
 
 

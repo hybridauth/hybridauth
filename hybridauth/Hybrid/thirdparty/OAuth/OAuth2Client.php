@@ -205,13 +205,16 @@ class OAuth2Client
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
 		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
-                if($this->curl_proxy){
-                    curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
-                }
+
+		if($this->curl_proxy){
+			curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
+		}
+
 		if( $type == "POST" ){
 			curl_setopt($ch, CURLOPT_POST, 1); 
 			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
 		}
+
 		$response = curl_exec($ch);
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
