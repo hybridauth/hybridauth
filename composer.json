@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-0": {
-            "hybridauth": "hybridauth/"
+            "Hybrid": "hybridauth/"
         } 
     }
 }
