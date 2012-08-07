@@ -3,6 +3,8 @@
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* 
+* Provider writed by xbreaker | https://github.com/xbreaker/hybridauth
 */
 
 /**
