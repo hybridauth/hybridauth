@@ -19,7 +19,13 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 
 		// Provider api end-points
 		$this->api->api_base_url      = "https://api.twitter.com/1/";
-		$this->api->authorize_url     = "https://api.twitter.com/oauth/authenticate";
+		
+		if ( isset($this->config['authorize']) && $this->config['authorize']){
+			$this->api->authorize_url     = "https://api.twitter.com/oauth/authorize";
+		}else{
+			$this->api->authorize_url     = "https://api.twitter.com/oauth/authenticate";
+		}
+
 		$this->api->request_token_url = "https://api.twitter.com/oauth/request_token";
 		$this->api->access_token_url  = "https://api.twitter.com/oauth/access_token";
 
