@@ -724,6 +724,15 @@ abstract class BaseFacebook
       return false;
     }
 
+    // Check for errors, which are returned as json data, rather than query-strings.
+    if (is_string($access_token_response)) {
+      $json = json_decode($access_token_response, true);
+      
+      if (is_array($json)) {
+        $this->throwAPIExceptionIfError($json);
+      }
+    }
+
     $response_params = array();
     parse_str($access_token_response, $response_params);
     if (!isset($response_params['access_token'])) {
@@ -752,10 +761,8 @@ abstract class BaseFacebook
     ), true);
 
     // results are returned, errors are thrown
-    if (is_array($result) && isset($result['error_code'])) {
-      $this->throwAPIException($result);
-    }
-
+    $this->throwAPIExceptionIfError($result);
+    
     if ($params['method'] === 'auth.expireSession' ||
         $params['method'] === 'auth.revokeAuthorization') {
       $this->destroySession();
@@ -763,7 +770,21 @@ abstract class BaseFacebook
 
     return $result;
   }
-
+  
+  /**
+   * Throws an exception if an error occurred during an oauth call.
+   *
+   * @param array $response
+   */
+  protected function throwAPIExceptionIfError($response)
+  {
+    if (is_array($response) &&
+        (isset($response['error_code']) ||
+         isset($response['error']))) {
+      $this->throwAPIException($response);
+    }
+  }
+  
   /**
    * Return true if this is video post.
    *
@@ -808,9 +829,7 @@ abstract class BaseFacebook
     ), true);
 
     // results are returned, errors are thrown
-    if (is_array($result) && isset($result['error'])) {
-      $this->throwAPIException($result);
-    }
+    $this->throwAPIExceptionIfError($result);
 
     return $result;
   }
@@ -836,7 +855,11 @@ abstract class BaseFacebook
       }
     }
 
-    return $this->makeRequest($url, $params);
+    $result = $this->makeRequest($url, $params);
+    
+    $this->throwAPIExceptionIfError($result);
+    
+    return $result;
   }
 
   /**
@@ -1277,7 +1300,7 @@ abstract class BaseFacebook
 	* http://developers.facebook.com/roadmap/offline-access-removal/#extend_token
 	* http://stackoverflow.com/a/9035036/1106794
 	*/
-	function extendedAccessToken( $old_access_token )
+	public function extendedAccessToken( $old_access_token )
 	{
 		// Make a OAuth Request.
 		try {
@@ -1301,7 +1324,9 @@ abstract class BaseFacebook
 		if (empty($response)) {
 			return false;
 		}
-
+    
+    $this->throwAPIExceptionIfError($response);
+    
 		$response_params = array();
 
 		parse_str($response, $response_params);
