@@ -67,22 +67,7 @@ class Hybrid_Auth
 		}
 
 		# load hybridauth required files, a autoload is on the way...
-		require_once $config["path_base"] . "Error.php";
-		require_once $config["path_base"] . "Logger.php";
-
-		require_once $config["path_base"] . "Storage.php";
-
-		require_once $config["path_base"] . "Provider_Adapter.php";
-
-		require_once $config["path_base"] . "Provider_Model.php";
-		require_once $config["path_base"] . "Provider_Model_OpenID.php";
-		require_once $config["path_base"] . "Provider_Model_OAuth1.php";
-		require_once $config["path_base"] . "Provider_Model_OAuth2.php";
-
-		require_once $config["path_base"] . "User.php";
-		require_once $config["path_base"] . "User_Profile.php";
-		require_once $config["path_base"] . "User_Contact.php";
-		require_once $config["path_base"] . "User_Activity.php";
+		require_once($config["path_base"] . "Autoload.php");
 
 		// hash given config
 		Hybrid_Auth::$config = $config;
