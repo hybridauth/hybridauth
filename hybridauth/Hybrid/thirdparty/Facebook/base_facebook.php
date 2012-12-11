@@ -1,6 +1,4 @@
 <?php
-// Modified
-
 /**
  * Copyright 2011 Facebook, Inc.
  *
@@ -122,7 +120,12 @@ abstract class BaseFacebook
   /**
    * Version.
    */
-  const VERSION = '3.1.1';
+  const VERSION = '3.2.2';
+
+  /**
+   * Signed Request Algorithm.
+   */
+  const SIGNED_REQUEST_ALGORITHM = 'HMAC-SHA256';
 
   /**
    * Default options for curl.
@@ -131,7 +134,7 @@ abstract class BaseFacebook
     CURLOPT_CONNECTTIMEOUT => 10,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT        => 60,
-    CURLOPT_USERAGENT      => 'facebook-php-3.1',
+    CURLOPT_USERAGENT      => 'facebook-php-3.2',
   );
 
   /**
@@ -148,12 +151,12 @@ abstract class BaseFacebook
    * Maps aliases to Facebook domains.
    */
   public static $DOMAIN_MAP = array(
-    'api'       => 'https://api.facebook.com/',
-    'api_video' => 'https://api-video.facebook.com/',
-    'api_read'  => 'https://api-read.facebook.com/',
-    'graph'     => 'https://graph.facebook.com/',
+    'api'         => 'https://api.facebook.com/',
+    'api_video'   => 'https://api-video.facebook.com/',
+    'api_read'    => 'https://api-read.facebook.com/',
+    'graph'       => 'https://graph.facebook.com/',
     'graph_video' => 'https://graph-video.facebook.com/',
-    'www'       => 'https://www.facebook.com/',
+    'www'         => 'https://www.facebook.com/',
   );
 
   /**
@@ -203,6 +206,13 @@ abstract class BaseFacebook
   protected $fileUploadSupport = false;
 
   /**
+   * Indicates if we trust HTTP_X_FORWARDED_* headers.
+   *
+   * @var boolean
+   */
+  protected $trustForwarded = false;
+
+  /**
    * Initialize a Facebook Application.
    *
    * The configuration:
@@ -218,10 +228,12 @@ abstract class BaseFacebook
     if (isset($config['fileUpload'])) {
       $this->setFileUploadSupport($config['fileUpload']);
     }
-
+    if (isset($config['trustForwarded']) && $config['trustForwarded']) {
+      $this->trustForwarded = true;
+    }
     $state = $this->getPersistentData('state');
     if (!empty($state)) {
-      $this->state = $this->getPersistentData('state');
+      $this->state = $state;
     }
   }
 
@@ -332,6 +344,49 @@ abstract class BaseFacebook
   }
 
   /**
+   * Extend an access token, while removing the short-lived token that might
+   * have been generated via client-side flow. Thanks to http://bit.ly/b0Pt0H
+   * for the workaround.
+   */
+  public function setExtendedAccessToken() {
+    try {
+      // need to circumvent json_decode by calling _oauthRequest
+      // directly, since response isn't JSON format.
+      $access_token_response = $this->_oauthRequest(
+        $this->getUrl('graph', '/oauth/access_token'),
+        $params = array(
+          'client_id' => $this->getAppId(),
+          'client_secret' => $this->getAppSecret(),
+          'grant_type' => 'fb_exchange_token',
+          'fb_exchange_token' => $this->getAccessToken(),
+        )
+      );
+    }
+    catch (FacebookApiException $e) {
+      // most likely that user very recently revoked authorization.
+      // In any event, we don't have an access token, so say so.
+      return false;
+    }
+
+    if (empty($access_token_response)) {
+      return false;
+    }
+
+    $response_params = array();
+    parse_str($access_token_response, $response_params);
+
+    if (!isset($response_params['access_token'])) {
+      return false;
+    }
+
+    $this->destroySession();
+
+    $this->setPersistentData(
+      'access_token', $response_params['access_token']
+    );
+  }
+
+  /**
    * Determines the access token that should be used for API calls.
    * The first time this is called, $this->accessToken is set equal
    * to either a valid user access token, or it's set to the application
@@ -384,6 +439,11 @@ abstract class BaseFacebook
       // the JS SDK puts a code in with the redirect_uri of ''
       if (array_key_exists('code', $signed_request)) {
         $code = $signed_request['code'];
+        if ($code && $code == $this->getPersistentData('code')) {
+          // short-circuit if the code we have is the same as the one presented
+          return $this->getPersistentData('access_token');
+        }
+
         $access_token = $this->getAccessTokenFromCode($code, '');
         if ($access_token) {
           $this->setPersistentData('code', $code);
@@ -546,7 +606,7 @@ abstract class BaseFacebook
       'logout.php',
       array_merge(array(
         'next' => $this->getCurrentUrl(),
-        'access_token' => $this->getAccessToken(),
+        'access_token' => $this->getUserAccessToken(),
       ), $params)
     );
   }
@@ -754,10 +814,13 @@ abstract class BaseFacebook
     // results are returned, errors are thrown
     if (is_array($result) && isset($result['error_code'])) {
       $this->throwAPIException($result);
+      // @codeCoverageIgnoreStart
     }
+    // @codeCoverageIgnoreEnd
 
-    if ($params['method'] === 'auth.expireSession' ||
-        $params['method'] === 'auth.revokeAuthorization') {
+    $method = strtolower($params['method']);
+    if ($method === 'auth.expiresession' ||
+        $method === 'auth.revokeauthorization') {
       $this->destroySession();
     }
 
@@ -810,7 +873,9 @@ abstract class BaseFacebook
     // results are returned, errors are thrown
     if (is_array($result) && isset($result['error'])) {
       $this->throwAPIException($result);
+      // @codeCoverageIgnoreStart
     }
+    // @codeCoverageIgnoreEnd
 
     return $result;
   }
@@ -884,6 +949,25 @@ abstract class BaseFacebook
       $result = curl_exec($ch);
     }
 
+    // With dual stacked DNS responses, it's possible for a server to
+    // have IPv6 enabled but not have IPv6 connectivity.  If this is
+    // the case, curl will try IPv4 first and if that fails, then it will
+    // fall back to IPv6 and the error EHOSTUNREACH is returned by the
+    // operating system.
+    if ($result === false && empty($opts[CURLOPT_IPRESOLVE])) {
+        $matches = array();
+        $regex = '/Failed to connect to ([^:].*): Network is unreachable/';
+        if (preg_match($regex, curl_error($ch), $matches)) {
+          if (strlen(@inet_pton($matches[1])) === 16) {
+            self::errorLog('Invalid IPv6 configuration on server, '.
+                           'Please disable or get native IPv6 on your server.');
+            self::$CURL_OPTS[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            $result = curl_exec($ch);
+          }
+        }
+    }
+
     if ($result === false) {
       $e = new FacebookApiException(array(
         'error_code' => curl_errno($ch),
@@ -912,8 +996,9 @@ abstract class BaseFacebook
     $sig = self::base64UrlDecode($encoded_sig);
     $data = json_decode(self::base64UrlDecode($payload), true);
 
-    if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
-      self::errorLog('Unknown algorithm. Expected HMAC-SHA256');
+    if (strtoupper($data['algorithm']) !== self::SIGNED_REQUEST_ALGORITHM) {
+      self::errorLog(
+        'Unknown algorithm. Expected ' . self::SIGNED_REQUEST_ALGORITHM);
       return null;
     }
 
@@ -926,6 +1011,26 @@ abstract class BaseFacebook
     }
 
     return $data;
+  }
+
+  /**
+   * Makes a signed_request blob using the given data.
+   *
+   * @param array The data array.
+   * @return string The signed request.
+   */
+  protected function makeSignedRequest($data) {
+    if (!is_array($data)) {
+      throw new InvalidArgumentException(
+        'makeSignedRequest expects an array. Got: ' . print_r($data, true));
+    }
+    $data['algorithm'] = self::SIGNED_REQUEST_ALGORITHM;
+    $data['issued_at'] = time();
+    $json = json_encode($data);
+    $b64 = self::base64UrlEncode($json);
+    $raw_sig = hash_hmac('sha256', $b64, $this->getAppSecret(), $raw = true);
+    $sig = self::base64UrlEncode($raw_sig);
+    return $sig.'.'.$b64;
   }
 
   /**
@@ -1029,6 +1134,43 @@ abstract class BaseFacebook
     return $url;
   }
 
+  protected function getHttpHost() {
+    if ($this->trustForwarded && isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+      return $_SERVER['HTTP_X_FORWARDED_HOST'];
+    }
+    return $_SERVER['HTTP_HOST'];
+  }
+
+  protected function getHttpProtocol() {
+    if ($this->trustForwarded && isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+      if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+        return 'https';
+      }
+      return 'http';
+    }
+    if (isset($_SERVER['HTTPS']) &&
+        ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) {
+      return 'https';
+    }
+    return 'http';
+  }
+
+  /**
+   * Get the base domain used for the cookie.
+   */
+  protected function getBaseDomain() {
+    // The base domain is stored in the metadata cookie if not we fallback
+    // to the current hostname
+    $metadata = $this->getMetadataCookie();
+    if (array_key_exists('base_domain', $metadata) &&
+        !empty($metadata['base_domain'])) {
+      return trim($metadata['base_domain'], '.');
+    }
+    return $this->getHttpHost();
+  }
+
+  /**
+
   /**
    * Returns the Current URL, stripping it of known FB parameters that should
    * not persist.
@@ -1036,16 +1178,9 @@ abstract class BaseFacebook
    * @return string The current URL
    */
   protected function getCurrentUrl() {
-    if (isset($_SERVER['HTTPS']) &&
-        ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
-        isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-        $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-      $protocol = 'https://';
-    }
-    else {
-      $protocol = 'http://';
-    }
-    $currentUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $protocol = $this->getHttpProtocol() . '://';
+    $host = $this->getHttpHost();
+    $currentUrl = $protocol.$host.$_SERVER['REQUEST_URI'];
     $parts = parse_url($currentUrl);
 
     $query = '';
@@ -1148,12 +1283,28 @@ abstract class BaseFacebook
    * Exactly the same as base64_encode except it uses
    *   - instead of +
    *   _ instead of /
+   *   No padded =
    *
    * @param string $input base64UrlEncoded string
    * @return string
    */
   protected static function base64UrlDecode($input) {
     return base64_decode(strtr($input, '-_', '+/'));
+  }
+
+  /**
+   * Base64 encoding that doesn't need to be urlencode()ed.
+   * Exactly the same as base64_encode except it uses
+   *   - instead of +
+   *   _ instead of /
+   *
+   * @param string $input string
+   * @return string base64Url encoded string
+   */
+  protected static function base64UrlEncode($input) {
+    $str = strtr(base64_encode($input), '+/', '-_');
+    $str = str_replace('=', '', $str);
+    return $str;
   }
 
   /**
@@ -1171,23 +1322,16 @@ abstract class BaseFacebook
     if (array_key_exists($cookie_name, $_COOKIE)) {
       unset($_COOKIE[$cookie_name]);
       if (!headers_sent()) {
-        // The base domain is stored in the metadata cookie if not we fallback
-        // to the current hostname
-        $base_domain = '.'. $_SERVER['HTTP_HOST'];
-
-        $metadata = $this->getMetadataCookie();
-        if (array_key_exists('base_domain', $metadata) &&
-            !empty($metadata['base_domain'])) {
-          $base_domain = $metadata['base_domain'];
-        }
-
-        setcookie($cookie_name, '', 0, '/', $base_domain);
+        $base_domain = $this->getBaseDomain();
+        setcookie($cookie_name, '', 1, '/', '.'.$base_domain);
       } else {
+        // @codeCoverageIgnoreStart
         self::errorLog(
           'There exists a cookie that we wanted to clear that we couldn\'t '.
           'clear because headers was already sent. Make sure to do the first '.
-          'API call before outputing anything'
+          'API call before outputing anything.'
         );
+        // @codeCoverageIgnoreEnd
       }
     }
   }
@@ -1221,6 +1365,21 @@ abstract class BaseFacebook
     }
 
     return $metadata;
+  }
+
+  protected static function isAllowedDomain($big, $small) {
+    if ($big === $small) {
+      return true;
+    }
+    return self::endsWith($big, '.'.$small);
+  }
+
+  protected static function endsWith($big, $small) {
+    $len = strlen($small);
+    if ($len === 0) {
+      return true;
+    }
+    return substr($big, -$len) === $small;
   }
 
   /**
@@ -1269,48 +1428,48 @@ abstract class BaseFacebook
    */
   abstract protected function clearAllPersistentData();
   
-
-	/**
-	* Extending access_token expiration time through fb new endpoint
-	*  returns an new access token which expires in 60 days
-	*
-	* http://developers.facebook.com/roadmap/offline-access-removal/#extend_token
-	* http://stackoverflow.com/a/9035036/1106794
-	*/
-	function extendedAccessToken( $old_access_token )
-	{
-		// Make a OAuth Request.
-		try {
-			$params = array(
-				'client_id'         => $this->getAppId(),
-				'client_secret'     => $this->getAppSecret(),
-				'grant_type'        => 'fb_exchange_token',
-				'fb_exchange_token' => $old_access_token,
-			);
-
-			$response = $this->_oauthRequest( $this->getUrl( 'graph', '/oauth/access_token' ), $params );
-			
-			// print_r( array( $this->getUrl( 'graph', '/oauth/access_token' ), $params, $response ) );
-		}
-		catch ( FacebookApiException $e ) {
-			// most likely that user very recently revoked authorization.
-			// In any event, we don't have an access token, so say so.
-			return false;
-		}
-
-		if (empty($response)) {
-			return false;
-		}
-
-		$response_params = array();
-
-		parse_str($response, $response_params);
-
-		if (!isset($response_params['access_token'])) {
-			return false;
-		}
-
-		return $response_params['access_token'];
-	}
-
+  /**
+   * Extending access_token expiration time through fb new endpoint
+   *  returns an new access token which expires in 60 days
+   *
+   * http://developers.facebook.com/roadmap/offline-access-removal/#extend_token
+   * http://stackoverflow.com/a/9035036/1106794
+   */
+  function extendedAccessToken( $old_access_token )
+  {
+  	// Make a OAuth Request.
+  	try {
+  		$params = array(
+  				'client_id'         => $this->getAppId(),
+  				'client_secret'     => $this->getAppSecret(),
+  				'grant_type'        => 'fb_exchange_token',
+  				'fb_exchange_token' => $old_access_token,
+  		);
+  
+  		$response = $this->_oauthRequest( $this->getUrl( 'graph', '/oauth/access_token' ), $params );
+  			
+  		// print_r( array( $this->getUrl( 'graph', '/oauth/access_token' ), $params, $response ) );
+  	}
+  	catch ( FacebookApiException $e ) {
+  		// most likely that user very recently revoked authorization.
+  		// In any event, we don't have an access token, so say so.
+  		return false;
+  	}
+  
+  	if (empty($response)) {
+  		return false;
+  	}
+  
+  	$response_params = array();
+  
+  	parse_str($response, $response_params);
+  
+  	if (!isset($response_params['access_token'])) {
+  		return false;
+  	}
+  
+  	return $response_params['access_token'];
+  }
+  
+  
 }
