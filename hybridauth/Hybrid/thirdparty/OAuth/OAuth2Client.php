@@ -87,7 +87,9 @@ class OAuth2Client
 		if( isset( $response->expires_in    ) ) $this->access_token_expires_in = $response->expires_in; 
 		
 		// calculate when the access token expire
-		$this->access_token_expires_at = time() + $response->expires_in; 
+		if( isset($response->expires_in)) {
+			$this->access_token_expires_at = time() + $response->expires_in;
+		}
 
 		return $response;  
 	}
