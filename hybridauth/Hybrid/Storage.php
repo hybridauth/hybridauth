@@ -26,6 +26,10 @@ class Hybrid_Storage
 	{
 		$key = strtolower( $key );  
 
+        if( !isset( $_SESSION["HA::CONFIG"] ) ){
+            $_SESSION["HA::CONFIG"] = ARRAY();
+        }
+
 		if( $value ){
 			$_SESSION["HA::CONFIG"][$key] = serialize( $value ); 
 		}
@@ -62,6 +66,10 @@ class Hybrid_Storage
 	function delete($key)
 	{
 		$key = strtolower( $key );  
+
+        if( !isset( $_SESSION["HA::STORE"] )) {
+            return;
+        }
 
 		if( isset( $_SESSION["HA::STORE"][$key] ) ){ 
 			unset( $_SESSION["HA::STORE"][$key] );
