@@ -33,8 +33,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		$this->api = new Facebook( ARRAY( 'appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"] ) ); 
 
-		if ( $this->token("access_token") ) { 
-			$access_token = $this->api->extendedAccessToken( $this->token("access_token") );
+		if ( $this->token("access_token") ) {
+			$this->api->setAccessToken( $this->token("access_token") );
+			$this->api->setExtendedAccessToken();
+			$access_token = $this->api->getAccessToken();
 
 			if( $access_token ){
 				$this->token("access_token", $access_token );
