@@ -33,7 +33,10 @@ class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 
 		// include LightOpenID lib
 		require_once Hybrid_Auth::$config["path_libraries"] . "OpenID/LightOpenID.php"; 
-
+		
+		// An error was occurring when proxy wasn't set. Not sure where proxy was meant to be set/initialized.
+		Hybrid_Auth::$config['proxy'] = isset(Hybrid_Auth::$config['proxy'])?Hybrid_Auth::$config['proxy']:'';
+		
 		$this->api = new LightOpenID( parse_url( Hybrid_Auth::$config["base_url"], PHP_URL_HOST), Hybrid_Auth::$config["proxy"] ); 
 	}
 
