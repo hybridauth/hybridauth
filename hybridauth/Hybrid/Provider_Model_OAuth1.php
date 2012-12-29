@@ -103,11 +103,11 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 		
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
 		}
 
 		if ( ! isset( $tokens["oauth_token"] ) ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid oauth token.", 5 );
 		}
 
 		$this->token( "request_token"       , $tokens["oauth_token"] ); 
@@ -128,7 +128,7 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 		$oauth_verifier = (array_key_exists('oauth_verifier',$_REQUEST))?$_REQUEST['oauth_verifier']:"";
 
 		if ( ! $oauth_token || ! $oauth_verifier ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth verifier.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid oauth verifier.", 5 );
 		}
 
 		// request an access token
@@ -139,12 +139,12 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
 		}
 
 		// we should have an access_token, or else, something has gone wrong
 		if ( ! isset( $tokens["oauth_token"] ) ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", 5 );
 		}
 
 		// we no more need to store requet tokens

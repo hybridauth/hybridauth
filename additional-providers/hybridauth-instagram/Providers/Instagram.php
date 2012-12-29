@@ -33,7 +33,7 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2
 		$data = $this->api->api("users/self/" ); 
 
 		if ( $data->meta->code != 200 ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$this->user->profile->identifier  = $data->data->id; 

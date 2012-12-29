@@ -34,13 +34,13 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
 	{
 		// in case we get authorize=0
 		if ( ! isset($_REQUEST['oauth_token']) || ( isset( $_REQUEST['authorize'] ) && $_REQUEST['authorize'] == "0" ) ){ 
-			throw new Exception( "Authentification failed! The user denied your request.", 5 );
+			throw new Exception( "Authentication failed! The user denied your request.", 5 );
 		}
 
 		$oauth_verifier = @ $_REQUEST['oauth_token'];
 
 		if ( !$oauth_verifier ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth verifier.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid oauth verifier.", 5 );
 		}
 
 		// request an access token
@@ -51,12 +51,12 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
 		}
 
 		// we should have an access_token, or else, something has gone wrong
 		if ( ! isset( $tokens["oauth_token"] ) ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", 5 );
 		}
 
 		// we no more need to store requet tokens

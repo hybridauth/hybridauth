@@ -36,7 +36,7 @@ class Hybrid_Providers_Disqus extends Hybrid_Provider_Model_OAuth2
 		$data = $this->api->get( "users/details" ); 
 		print_r($data);
 		if ( ! isset( $data->code ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		} else if ( $data->code != 0 ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned error code".$data->code.".", 6 );
 		}

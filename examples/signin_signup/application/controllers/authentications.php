@@ -34,7 +34,7 @@ class authentications extends controller {
 		# 3 - else, here lets check if the user email we got from the provider already exists in our database ( for this example the email is UNIQUE for each user )
 			// if authentication does not exist, but the email address returned  by the provider does exist in database, 
 			// then we tell the user that the email  is already in use 
-			// but, its up to you if you want to associate the authentification with the user having the adresse email in the database
+			// but, its up to you if you want to associate the authentication with the user having the adresse email in the database
 			if( $user_profile->email ){
 				$user_info = $user->find_by_email( $user_profile->email );
 
@@ -73,7 +73,7 @@ class authentications extends controller {
 				case 2 : $error = "Provider not properly configured."; break;
 				case 3 : $error = "Unknown or disabled provider."; break;
 				case 4 : $error = "Missing provider application credentials."; break;
-				case 5 : $error = "Authentification failed. The user has canceled the authentication or the provider refused the connection."; break;
+				case 5 : $error = "Authentication failed. The user has canceled the authentication or the provider refused the connection."; break;
 				case 6 : $error = "User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again."; 
 					     $adapter->logout(); 
 					     break;

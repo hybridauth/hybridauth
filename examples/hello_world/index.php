@@ -56,7 +56,7 @@
 			case 2 : echo "Provider not properly configured."; break;
 			case 3 : echo "Unknown or disabled provider."; break;
 			case 4 : echo "Missing provider application credentials."; break;
-			case 5 : echo "Authentification failed. " 
+			case 5 : echo "Authentication failed. " 
 					  . "The user has canceled the authentication or the provider refused the connection."; 
 				   break;
 			case 6 : echo "User profile request failed. Most likely the user is not connected "
