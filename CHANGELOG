@@ -11,6 +11,7 @@ Hybridauth Change log
 	Proper handling of LinkedIn user profiles with no telephone numbers (https://github.com/hybridauth/hybridauth/pull/53) 
 	Allow restricting google provider to specific domain (https://github.com/hybridauth/hybridauth/pull/64) 
 	Update Windows Live endpoint URLs (https://github.com/hybridauth/hybridauth/pull/64;http://msdn.microsoft.com/en-us/library/live/hh243647.aspx) 
+	Update lightopenid library
 	...
 
 
