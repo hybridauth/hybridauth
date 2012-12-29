@@ -1,4 +1,6 @@
-<html> 
+<?php
+	$HYBRIDAUTH_VERSION = "2.1.1-dev";
+?><html> 
 <head>
 <title>HybridAuth Installer</title>
 <meta name="robots" content="NOINDEX, NOFOLLOW">  
@@ -75,8 +77,7 @@ ul li label {
 </style> 
 </head>
 <body>
-<?php
-	$HYBRIDAUTH_VERSION             = "2.1.0-dev";
+<?php 
 	$CONFIG_TEMPLATE                = "";
 
    /**
@@ -143,6 +144,7 @@ ul li label {
 								ARRAY( 
 									"label"             => "Yahoo",
 									"provider_name"     => "Yahoo!", 
+									"require_client_id" => TRUE, 
 									"new_app_link"      => "https://developer.apps.yahoo.com/dashboard/createKey.html",
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Yahoo.html",
 								)

@@ -14,7 +14,7 @@
  */
 class Hybrid_Auth 
 {
-	public static $version = "2.1.0-dev";
+	public static $version = "2.1.1-dev";
 
 	public static $config  = array();
 
@@ -111,13 +111,7 @@ class Hybrid_Auth
 		if ( ! function_exists('json_decode') ) {
 			Hybrid_Logger::error('Hybridauth Library needs the JSON PHP extension.');
 			throw new Exception('Hybridauth Library needs the JSON PHP extension.');
-		}
-
-		// OAuth PECL extension is not compatible with this library
-		if( extension_loaded('oauth') ) {
-			Hybrid_Logger::error('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
-			throw new Exception('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
-		}
+		} 
 
 		// session.name
 		if( session_name() != "PHPSESSID" ){
@@ -389,7 +383,7 @@ class Hybrid_Auth
 			$protocol = 'http://';
 		}
 
-		$url = $protocol . $_SERVER['SERVER_NAME'];
+		$url = $protocol . $_SERVER['HTTP_HOST'];
 
 		// use port if non default
 		$url .= 

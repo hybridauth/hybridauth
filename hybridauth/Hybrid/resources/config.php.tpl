@@ -25,7 +25,7 @@ return
 
 			"Yahoo" => array ( 
 				"enabled" => #YAHOO_ADAPTER_STATUS#,
-				"keys"    => array ( "key" => "#YAHOO_APPLICATION_KEY#", "secret" => "#YAHOO_APPLICATION_SECRET#" )
+				"keys"    => array ( "id" => "#YAHOO_APPLICATION_APP_ID#", "secret" => "#YAHOO_APPLICATION_SECRET#" )
 			),
 
 			"Google" => array ( 

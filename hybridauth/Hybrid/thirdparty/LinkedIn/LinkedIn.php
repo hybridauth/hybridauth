@@ -2637,5 +2637,3 @@ class LinkedIn {
     return $return_data;
   }
 }
-
-?>

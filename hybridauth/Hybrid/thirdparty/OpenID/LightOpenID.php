@@ -1,10 +1,50 @@
 <?php
 // http://gitorious.org/lightopenid
-// 20/11/11
+// updated 29/12/2012
 
 /**
  * This class provides a simple interface for OpenID (1.1 and 2.0) authentication.
- * Supports Yadis discovery. 
+ * Supports Yadis discovery.
+ * The authentication process is stateless/dumb.
+ *
+ * Usage:
+ * Sign-on with OpenID is a two step process:
+ * Step one is authentication with the provider:
+ * <code>
+ * $openid = new LightOpenID('my-host.example.org');
+ * $openid->identity = 'ID supplied by user';
+ * header('Location: ' . $openid->authUrl());
+ * </code>
+ * The provider then sends various parameters via GET, one of them is openid_mode.
+ * Step two is verification:
+ * <code>
+ * $openid = new LightOpenID('my-host.example.org');
+ * if ($openid->mode) {
+ *     echo $openid->validate() ? 'Logged in.' : 'Failed';
+ * }
+ * </code>
+ *
+ * Change the 'my-host.example.org' to your domain name. Do NOT use $_SERVER['HTTP_HOST']
+ * for that, unless you know what you are doing.
+ *
+ * Optionally, you can set $returnUrl and $realm (or $trustRoot, which is an alias).
+ * The default values for those are:
+ * $openid->realm     = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+ * $openid->returnUrl = $openid->realm . $_SERVER['REQUEST_URI'];
+ * If you don't know their meaning, refer to any openid tutorial, or specification. Or just guess.
+ *
+ * AX and SREG extensions are supported.
+ * To use them, specify $openid->required and/or $openid->optional before calling $openid->authUrl().
+ * These are arrays, with values being AX schema paths (the 'path' part of the URL).
+ * For example:
+ *   $openid->required = array('namePerson/friendly', 'contact/email');
+ *   $openid->optional = array('namePerson/first');
+ * If the server supports only SREG or OpenID 1.1, these are automaticaly
+ * mapped to SREG names, so that user doesn't have to know anything about the server.
+ *
+ * To get the values, use $openid->getAttributes().
+ *
+ *
  * The library requires PHP >= 5.1.2 with curl or http/https stream wrappers enabled.
  * @author Mewp
  * @copyright Copyright (c) 2010, Mewp
@@ -21,7 +61,7 @@ class LightOpenID
          , $data;
     private $identity, $claimed_id;
     protected $server, $version, $trustRoot, $aliases, $identifier_select = false
-            , $ax = false, $sreg = false, $setup_url = null, $headers = array(), $proxy = null;
+            , $ax = false, $sreg = false, $setup_url = null, $headers = array();
     static protected $ax_to_sreg = array(
         'namePerson/friendly'     => 'nickname',
         'contact/email'           => 'email',
@@ -34,9 +74,8 @@ class LightOpenID
         'pref/timezone'           => 'timezone',
         );
 
-    function __construct($host, $proxy)
+    function __construct($host)
     {
-        $this->proxy = $proxy;
         $this->trustRoot = (strpos($host, '://') ? $host : 'http://' . $host);
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
             || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
@@ -127,9 +166,7 @@ class LightOpenID
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
-        if($this->proxy){
-            curl_setopt( $curl, CURLOPT_PROXY, $this->proxy);
-        }
+
         if($this->verify_peer !== null) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
             if($this->capath) {
@@ -247,9 +284,6 @@ class LightOpenID
                 ),
             );
             $url = $url . ($params ? '?' . $params : '');
-            if($this->proxy){
-                $opts['http']['proxy'] = 'http://' . $this->proxy;
-            }
             break;
         case 'POST':
             $opts = array(
@@ -262,9 +296,6 @@ class LightOpenID
                     'CN_match' => parse_url($url, PHP_URL_HOST),
                 ),
             );
-            if($this->proxy){
-                $opts['http']['proxy'] = 'http://' . $this->proxy;
-            }
             break;
         case 'HEAD':
             # We want to send a HEAD request,

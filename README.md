@@ -1,4 +1,4 @@
-# HybridAuth 2.1.0-dev
+# HybridAuth 2.1.1-dev
 
 HybridAuth enables developers to easily build social applications and tools 
 to engage websites vistors and customers on a social level by implementing 
