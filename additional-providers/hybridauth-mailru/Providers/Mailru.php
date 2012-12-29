@@ -35,7 +35,7 @@ class Hybrid_Providers_Mailru extends Hybrid_Provider_Model_OAuth2
     $sig = md5( "client_id=" . $this->api->client_id . "format=jsonmethod=users.getInfosecure=1session_key=". $this->api->access_token . $this->api->client_secret );
 		$response = $this->api->api( "?format=json&client_id=" . $this->api->client_id . "&method=users.getInfo&secure=1&sig=" .$sig); 
     if ( ! isset( $response[0]->uid ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
     
     $response = $response[0];

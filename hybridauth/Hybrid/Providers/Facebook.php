@@ -79,12 +79,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	{ 
 		// in case we get error_reason=user_denied&error=access_denied
 		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] == "access_denied" ){ 
-			throw new Exception( "Authentification failed! The user denied your request.", 5 );
+			throw new Exception( "Authentication failed! The user denied your request.", 5 );
 		}
 
 		// try to get the UID of the connected user from fb, should be > 0 
 		if ( ! $this->api->getUser() ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalide user id.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid user id.", 5 );
 		}
 
 		// set user as logged in

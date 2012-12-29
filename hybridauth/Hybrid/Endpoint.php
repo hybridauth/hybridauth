@@ -128,10 +128,10 @@ class Hybrid_Endpoint {
 
 		# if REQUESTed hauth_idprovider is wrong, session not created, etc. 
 		if( ! $hauth ) {
-			Hybrid_Logger::error( "Endpoint: Invalide parameter on hauth_start!" );
+			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_start!" );
 
 			header( "HTTP/1.0 404 Not Found" );
-			die( "Invalide parameter! Please return to the login page and try again." );
+			die( "Invalid parameter! Please return to the login page and try again." );
 		}
 
 		try {
@@ -161,12 +161,12 @@ class Hybrid_Endpoint {
 		$hauth = Hybrid_Auth::setup( $provider_id );
 
 		if( ! $hauth ) {
-			Hybrid_Logger::error( "Endpoint: Invalide parameter on hauth_done!" ); 
+			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_done!" ); 
 
 			$hauth->adapter->setUserUnconnected();
 
 			header("HTTP/1.0 404 Not Found"); 
-			die( "Invalide parameter! Please return to the login page and try again." );
+			die( "Invalid parameter! Please return to the login page and try again." );
 		}
 
 		try {

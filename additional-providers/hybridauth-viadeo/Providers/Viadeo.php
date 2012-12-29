@@ -48,7 +48,7 @@ class Hybrid_Providers_Viadeo extends Hybrid_Provider_Model
 			Hybrid_Auth::redirect( $url );
 		}
 		catch ( ViadeoException $e ){
-			throw new Exception( "Authentification failed! An error occured during {$this->providerId} authentication.", 5 );
+			throw new Exception( "Authentication failed! An error occured during {$this->providerId} authentication.", 5 );
 		}
 	}
  
@@ -63,12 +63,12 @@ class Hybrid_Providers_Viadeo extends Hybrid_Provider_Model
 			$this->api->setAccessTokenFromCode();
 		}
 		catch ( ViadeoException $e ){
-			throw new Exception( "Authentification failed! An error occured during {$this->providerId} authentication", 5 );
+			throw new Exception( "Authentication failed! An error occured during {$this->providerId} authentication", 5 );
 		}
 
 		if ( ! $this->api->isAuthenticated() )
 		{
-			throw new Exception( "Authentification failed! An error occured during {$this->providerId} authentication", 5 );
+			throw new Exception( "Authentication failed! An error occured during {$this->providerId} authentication", 5 );
 		} 
 
 		// Store tokens 

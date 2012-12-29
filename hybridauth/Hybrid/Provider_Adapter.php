@@ -90,7 +90,7 @@ class Hybrid_Provider_Adapter
 	// --------------------------------------------------------------------
 
 	/**
-	* Hybrid_Provider_Adapter::login(), prepare the user session and the authentification request
+	* Hybrid_Provider_Adapter::login(), prepare the user session and the authentication request
 	* for index.php
 	*/
 	function login()
