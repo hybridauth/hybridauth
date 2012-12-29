@@ -41,7 +41,7 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
 		$tokens = $this->api->requestToken( $this->endpoint ); 
 
 		if ( ! isset( $tokens ) ){
-			throw new Exception( 'Authentification failed! '.$this->providerId.' returned an invalid Request Token.', 5 );
+			throw new Exception( 'Authentication failed! '.$this->providerId.' returned an invalid Request Token.', 5 );
 		}
 
 		$this->token( 'request_token'       ,  $tokens['oauth_token'] ); 

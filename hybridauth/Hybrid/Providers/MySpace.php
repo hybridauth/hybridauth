@@ -34,7 +34,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		$response = $this->api->get( 'http://api.myspace.com/v1/user.json' );
 
 		if ( ! isset( $response->userId ) ){
-			throw new Exception( "User id request failed! {$this->providerId} returned an invalide response." );
+			throw new Exception( "User id request failed! {$this->providerId} returned an invalid response." );
 		}
 
 		return $response->userId;
@@ -50,7 +50,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		$data = $this->api->get( 'http://api.myspace.com/v1/users/' . $userId . '/profile.json' );
 
 		if ( ! is_object( $data ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$this->user->profile->identifier  = $userId;
@@ -78,7 +78,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		$response = $this->api->get( "http://api.myspace.com/v1/users/" . $userId . "/friends.json" );
 
 		if ( ! is_object( $response ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$contacts = ARRAY();
@@ -134,7 +134,7 @@ class Hybrid_Providers_MySpace extends Hybrid_Provider_Model_OAuth1
 		}
 
 		if ( ! is_object( $response ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$activities = ARRAY();

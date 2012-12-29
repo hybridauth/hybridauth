@@ -42,7 +42,7 @@
 				case 2 : $error = "Provider not properly configured."; break;
 				case 3 : $error = "Unknown or disabled provider."; break;
 				case 4 : $error = "Missing provider application credentials."; break;
-				case 5 : $error = "Authentification failed. The user has canceled the authentication or the provider refused the connection."; break;
+				case 5 : $error = "Authentication failed. The user has canceled the authentication or the provider refused the connection."; break;
 				case 6 : $error = "User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again."; 
 					     $adapter->logout(); 
 					     break;

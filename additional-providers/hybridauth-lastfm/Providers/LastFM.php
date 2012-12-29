@@ -48,14 +48,14 @@ class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 
 		if ( ! $token )
 		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid Token.", 5 );
 		}
 
 		try{
 			$response = $this->api->fetchSession( $token );
 		}
 		catch( LastFMException $e ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error while requesting and access token. $e.", 6 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an error while requesting and access token. $e.", 6 );
 		}
 
 		if( isset( $response['sk'] ) && isset( $response['name'] ) ){
@@ -68,7 +68,7 @@ class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 			$this->setUserConnected();
 		}
 		else{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid access Token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid access Token.", 5 );
 		}
 	}
 

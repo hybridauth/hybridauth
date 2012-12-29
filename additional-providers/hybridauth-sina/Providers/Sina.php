@@ -64,7 +64,7 @@ class Hybrid_Providers_Sina extends Hybrid_Provider_Model
 	{ 
 		if ( ! $_REQUEST['code'] )
 		{
-			throw new Exception( 'Authentification failed! ' . $this->providerId . ' returned an invalid OAuth Token and Verifier.', 5 );
+			throw new Exception( 'Authentication failed! ' . $this->providerId . ' returned an invalid OAuth Token and Verifier.', 5 );
 		}
 		
 
@@ -75,7 +75,7 @@ class Hybrid_Providers_Sina extends Hybrid_Provider_Model
 		try {
 			$tokz = $this->api->getAccessToken( 'code', $params ) ;
 		} catch (OAuthException $e) {
-			throw new Exception( 'Authentification failed! ' . $this->providerId . ' returned an invalid Access Token.', 5 );
+			throw new Exception( 'Authentication failed! ' . $this->providerId . ' returned an invalid Access Token.', 5 );
 		}
 
 		// Store tokens 

@@ -44,7 +44,7 @@ class Hybrid_Providers_Vimeo extends Hybrid_Provider_Model
 
 		if ( ! isset( $tokz["oauth_token"] ) )
 		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Request Token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid Request Token.", 5 );
 		}
 
 		$this->token( "request_token"        , $tokz['oauth_token'] ); 
@@ -64,7 +64,7 @@ class Hybrid_Providers_Vimeo extends Hybrid_Provider_Model
 
 		if ( ! $oauth_token || ! $oauth_verifier )
 		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid OAuth Token and Verifier.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid OAuth Token and Verifier.", 5 );
 		}
 
 		try{ 
@@ -76,12 +76,12 @@ class Hybrid_Providers_Vimeo extends Hybrid_Provider_Model
 			$tokz = $this->api->getAccessToken( $oauth_verifier );
 		}
 		catch( VimeoAPIException $e ){
-			throw new Exception( "Authentification failed! {$this->providerId} returned an error while requesting a request token. $e.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an error while requesting a request token. $e.", 5 );
 		}
 
 		if ( ! isset( $tokz["oauth_token"] ) )
 		{
-			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid Access Token.", 5 );
+			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid Access Token.", 5 );
 		}
 
 		// Store tokens 

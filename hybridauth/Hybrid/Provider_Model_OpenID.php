@@ -89,12 +89,12 @@ class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 	{
 		# if user don't garant acess of their data to your site, halt with an Exception
 		if( $this->api->mode == 'cancel'){
-			throw new Exception( "Authentification failed! User has canceled authentication!", 5 );
+			throw new Exception( "Authentication failed! User has canceled authentication!", 5 );
 		}
 
 		# if something goes wrong
 		if( ! $this->api->validate() ){
-			throw new Exception( "Authentification failed. Invalid request recived!", 5 );
+			throw new Exception( "Authentication failed. Invalid request recived!", 5 );
 		}
 
 		# fetch recived user data
