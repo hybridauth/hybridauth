@@ -24,5 +24,10 @@
         "psr-0": {
             "Hybrid": "hybridauth/"
         } 
-    }
+    },
+	"extra": {
+		"branch-alias": {
+			"dev-master": "2.1.0"
+		}
+	}
 }
