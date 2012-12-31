@@ -19,7 +19,13 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 
 		// Provider api end-points
 		$this->api->api_base_url      = "https://api.twitter.com/1/";
-		$this->api->authorize_url     = "https://api.twitter.com/oauth/authenticate";
+		
+		if ( isset($this->config['authorize']) && $this->config['authorize']){
+			$this->api->authorize_url     = "https://api.twitter.com/oauth/authorize";
+		}else{
+			$this->api->authorize_url     = "https://api.twitter.com/oauth/authenticate";
+		}
+
 		$this->api->request_token_url = "https://api.twitter.com/oauth/request_token";
 		$this->api->access_token_url  = "https://api.twitter.com/oauth/access_token";
 
@@ -53,6 +59,38 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		$this->user->profile->region      = (property_exists($response,'location'))?$response->location:"";
 
 		return $this->user->profile;
+ 	}
+ 	
+ 	/**
+ 	 * begin login step
+ 	 */
+ 	function loginBegin()
+ 	{
+ 		$tokens = $this->api->requestToken( $this->endpoint );
+ 	
+ 		// request tokens as recived from provider
+ 		$this->request_tokens_raw = $tokens;
+ 	
+ 		// check the last HTTP status code returned
+ 		if ( $this->api->http_code != 200 ){
+ 			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+ 		}
+ 	
+ 		if ( ! isset( $tokens["oauth_token"] ) ){
+ 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth token.", 5 );
+ 		}
+ 	
+ 		$this->token( "request_token"       , $tokens["oauth_token"] );
+ 		$this->token( "request_token_secret", $tokens["oauth_token_secret"] );
+ 	
+ 		if ( isset($this->config['force_login']) && $this->config['force_login']){
+ 			# redirect the user to the provider authentication url with force_login
+ 			Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens, array('force_login' => true) ) );
+ 		}else{
+ 			# redirect the user to the provider authentication url
+ 			Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens ) );
+ 		}
+ 		
  	}
 
 	/**
