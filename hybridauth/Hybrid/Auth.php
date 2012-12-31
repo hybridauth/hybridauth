@@ -388,7 +388,7 @@ class Hybrid_Auth
 		// use port if non default
 		$url .= 
 			isset( $_SERVER['SERVER_PORT'] ) 
-			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
+			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80 && !isset( $_SERVER['HTTP_X_FORWARDED_PROTO'])) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443 && !isset( $_SERVER['HTTP_X_FORWARDED_PROTO'])) )
 			? ':' . $_SERVER['SERVER_PORT'] 
 			: '';
 
