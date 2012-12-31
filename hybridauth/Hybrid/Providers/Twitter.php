@@ -22,7 +22,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 			$this->api->api_base_url  = "https://api.twitter.com/{$this->config['api_version']}/";
 		}
 		else{
-			$this->api->api_base_url  = "https://api.twitter.com/1/";
+			$this->api->api_base_url  = "https://api.twitter.com/1.1/";
 		}
  
 		if ( isset( $this->config['authorize'] ) && $this->config['authorize'] ){
