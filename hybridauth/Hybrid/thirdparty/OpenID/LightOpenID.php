@@ -1,54 +1,17 @@
 <?php
-// http://gitorious.org/lightopenid
-// updated 29/12/2012
+// https://github.com/iignatov/LightOpenID
 
 /**
- * This class provides a simple interface for OpenID (1.1 and 2.0) authentication.
- * Supports Yadis discovery.
- * The authentication process is stateless/dumb.
+ * This class provides a simple interface for OpenID 1.1/2.0 authentication.
+ * 
+ * It requires PHP >= 5.1.2 with cURL or HTTP/HTTPS stream wrappers enabled.
  *
- * Usage:
- * Sign-on with OpenID is a two step process:
- * Step one is authentication with the provider:
- * <code>
- * $openid = new LightOpenID('my-host.example.org');
- * $openid->identity = 'ID supplied by user';
- * header('Location: ' . $openid->authUrl());
- * </code>
- * The provider then sends various parameters via GET, one of them is openid_mode.
- * Step two is verification:
- * <code>
- * $openid = new LightOpenID('my-host.example.org');
- * if ($openid->mode) {
- *     echo $openid->validate() ? 'Logged in.' : 'Failed';
- * }
- * </code>
- *
- * Change the 'my-host.example.org' to your domain name. Do NOT use $_SERVER['HTTP_HOST']
- * for that, unless you know what you are doing.
- *
- * Optionally, you can set $returnUrl and $realm (or $trustRoot, which is an alias).
- * The default values for those are:
- * $openid->realm     = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
- * $openid->returnUrl = $openid->realm . $_SERVER['REQUEST_URI'];
- * If you don't know their meaning, refer to any openid tutorial, or specification. Or just guess.
- *
- * AX and SREG extensions are supported.
- * To use them, specify $openid->required and/or $openid->optional before calling $openid->authUrl().
- * These are arrays, with values being AX schema paths (the 'path' part of the URL).
- * For example:
- *   $openid->required = array('namePerson/friendly', 'contact/email');
- *   $openid->optional = array('namePerson/first');
- * If the server supports only SREG or OpenID 1.1, these are automaticaly
- * mapped to SREG names, so that user doesn't have to know anything about the server.
- *
- * To get the values, use $openid->getAttributes().
- *
- *
- * The library requires PHP >= 5.1.2 with curl or http/https stream wrappers enabled.
+ * @version v1.1.1 2012-12-21
+ * @link http://gitorious.org/lightopenid Official Repo
+ * @link http://github.com/iignatov/LightOpenID GitHub Clone
  * @author Mewp
  * @copyright Copyright (c) 2010, Mewp
- * @license http://www.opensource.org/licenses/mit-license.php MIT
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 class LightOpenID
 {
@@ -58,10 +21,12 @@ class LightOpenID
          , $verify_peer = null
          , $capath = null
          , $cainfo = null
-         , $data;
+         , $data
+         , $oauth = array();
     private $identity, $claimed_id;
     protected $server, $version, $trustRoot, $aliases, $identifier_select = false
-            , $ax = false, $sreg = false, $setup_url = null, $headers = array();
+            , $ax = false, $sreg = false, $setup_url = null, $headers = array(), $proxy = null
+            , $xrds_override_pattern = null, $xrds_override_replacement = null;
     static protected $ax_to_sreg = array(
         'namePerson/friendly'     => 'nickname',
         'contact/email'           => 'email',
@@ -74,7 +39,7 @@ class LightOpenID
         'pref/timezone'           => 'timezone',
         );
 
-    function __construct($host)
+    function __construct($host, $proxy = null)
     {
         $this->trustRoot = (strpos($host, '://') ? $host : 'http://' . $host);
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
@@ -87,6 +52,8 @@ class LightOpenID
         if(($host_end = strpos($this->trustRoot, '/', 8)) !== false) {
             $this->trustRoot = substr($this->trustRoot, 0, $host_end);
         }
+        
+        $this->set_proxy($proxy);
 
         $uri = rtrim(preg_replace('#((?<=\?)|&)openid\.[^&]+#', '', $_SERVER['REQUEST_URI']), '?');
         $this->returnUrl = $this->trustRoot . $uri;
@@ -117,6 +84,16 @@ class LightOpenID
         case 'trustRoot':
         case 'realm':
             $this->trustRoot = trim($value);
+            break;
+        case 'xrdsOverride':
+            if (is_array($value)) {
+                list($pattern, $replacement) = $value;
+                $this->xrds_override_pattern = $pattern;
+                $this->xrds_override_replacement = $replacement;
+            } else {
+                trigger_error('Invalid value specified for "xrdsOverride".', E_USER_ERROR);
+            }
+            break;
         }
     }
 
@@ -133,6 +110,32 @@ class LightOpenID
             return $this->trustRoot;
         case 'mode':
             return empty($this->data['openid_mode']) ? null : $this->data['openid_mode'];
+        }
+    }
+    
+    function set_proxy($proxy)
+    {
+        if (!empty($proxy)) {
+            // When the proxy is a string - try to parse it.
+            if (!is_array($proxy)) {
+                $proxy = parse_url($proxy);
+            }
+            
+            // Check if $proxy is valid after the parsing.
+            if ($proxy && !empty($proxy['host'])) {
+                // Make sure that a valid port number is specified.
+                if (array_key_exists('port', $proxy)) {
+                    if (!is_int($proxy['port'])) {
+                        $proxy['port'] = is_numeric($proxy['port']) ? intval($proxy['port']) : 0;
+                    }
+                    
+                    if ($port <= 0) {
+                        unset($proxy['port']);
+                    }
+                }
+                
+                $this->proxy = $proxy;
+            }
         }
     }
 
@@ -166,6 +169,18 @@ class LightOpenID
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
+        
+        if (!empty($this->proxy)) {
+            curl_setopt($curl, CURLOPT_PROXY, $this->proxy['host']);
+            
+            if (!empty($this->proxy['port'])) {
+                curl_setopt($curl, CURLOPT_PROXYPORT, $this->proxy['port']);
+            }
+            
+            if (!empty($this->proxy['user'])) {
+                curl_setopt($curl, CURLOPT_PROXYUSERPWD, $this->proxy['user'] . ':' . $this->proxy['pass']);            
+            }
+        }
 
         if($this->verify_peer !== null) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
@@ -284,6 +299,9 @@ class LightOpenID
                 ),
             );
             $url = $url . ($params ? '?' . $params : '');
+            if (!empty($this->proxy)) {
+                $opts['http']['proxy'] = $this->proxy_url();
+            }
             break;
         case 'POST':
             $opts = array(
@@ -296,51 +314,85 @@ class LightOpenID
                     'CN_match' => parse_url($url, PHP_URL_HOST),
                 ),
             );
+            if (!empty($this->proxy)) {
+                $opts['http']['proxy'] = $this->proxy_url();
+            }
             break;
         case 'HEAD':
-            # We want to send a HEAD request,
-            # but since get_headers doesn't accept $context parameter,
-            # we have to change the defaults.
+            // We want to send a HEAD request, but since get_headers() doesn't 
+            // accept $context parameter, we have to change the defaults.
             $default = stream_context_get_options(stream_context_get_default());
-            stream_context_get_default(
-                array(
-                    'http' => array(
-                        'method' => 'HEAD',
-                        'header' => 'Accept: application/xrds+xml, */*',
-                        'ignore_errors' => true,
-                    ), 'ssl' => array(
-                        'CN_match' => parse_url($url, PHP_URL_HOST),
-                    ),
+            
+            // PHP does not reset all options. Instead, it just sets the options
+            // available in the passed array, therefore set the defaults manually.
+            $default += array(
+                'http' => array(),
+                'ssl' => array()
+            );
+            $default['http'] += array(
+                'method' => 'GET',
+                'header' => '',
+                'ignore_errors' => false
+            );
+            $default['ssl'] += array(
+                'CN_match' => ''
+            );
+            
+            $opts = array(
+                'http' => array(
+                    'method' => 'HEAD',
+                    'header' => 'Accept: application/xrds+xml, */*',
+                    'ignore_errors' => true,
+                ),
+                'ssl' => array(
+                    'CN_match' => parse_url($url, PHP_URL_HOST)
                 )
             );
-
-            $url = $url . ($params ? '?' . $params : '');
-            $headers = get_headers ($url);
-            if(!$headers) {
-                return array();
+            
+            // Enable validation of the SSL certificates.
+            if ($this->verify_peer) {
+                $default['ssl'] += array(
+                    'verify_peer' => false,
+                    'capath' => '',
+                    'cafile' => ''
+                );
+                $opts['ssl'] += array(
+                    'verify_peer' => true,
+                    'capath' => $this->capath,
+                    'cafile' => $this->cainfo
+                );
             }
-
-            if(intval(substr($headers[0], strlen('HTTP/1.1 '))) == 405) {
-                # The server doesn't support HEAD, so let's emulate it with
-                # a GET.
-                $args = func_get_args();
-                $args[1] = 'GET';
-                call_user_func_array(array($this, 'request_streams'), $args);
-                return $this->headers;
-            }
-
-            $headers = $this->parse_header_array($headers, $update_claimed_id);
-
-            # And restore them.
+            
+            // Change the stream context options.
+            stream_context_get_default($opts);
+            
+            $headers = get_headers($url . ($params ? '?' . $params : ''));
+            
+            // Restore the stream context options.
             stream_context_get_default($default);
+            
+            if (!empty($headers)) {
+                if (intval(substr($headers[0], strlen('HTTP/1.1 '))) == 405) {
+                    // The server doesn't support HEAD - emulate it with a GET.
+                    $args = func_get_args();
+                    $args[1] = 'GET';
+                    call_user_func_array(array($this, 'request_streams'), $args);
+                    $headers = $this->headers;
+                } else {
+                    $headers = $this->parse_header_array($headers, $update_claimed_id);
+                }
+            } else {
+                $headers = array();
+            }
+            
             return $headers;
         }
 
-        if($this->verify_peer) {
+        if ($this->verify_peer) {
             $opts['ssl'] += array(
                 'verify_peer' => true,
                 'capath'      => $this->capath,
-                'cafile'      => $this->cainfo,
+                'cafile'      => $this->cainfo
             );
         }
 
@@ -363,6 +415,27 @@ class LightOpenID
             return $this->request_curl($url, $method, $params, $update_claimed_id);
         }
         return $this->request_streams($url, $method, $params, $update_claimed_id);
+    }
+    
+    protected function proxy_url()
+    {
+        $result = '';
+        
+        if (!empty($this->proxy)) {
+            $result = $this->proxy['host'];
+            
+            if (!empty($this->proxy['port'])) {
+                $result = $result . ':' . $this->proxy['port'];
+            }
+            
+            if (!empty($this->proxy['user'])) {
+                $result = $this->proxy['user'] . ':' . $this->proxy['pass'] . '@' . $result;
+            }
+            
+            $result = 'http://' . $result;
+        }
+        
+        return $result;
     }
 
     protected function build_url($url, $parts)
@@ -418,6 +491,12 @@ class LightOpenID
 
         # A flag to disable yadis discovery in case of failure in headers.
         $yadis = true;
+        
+        # Allows optional regex replacement of the URL, e.g. to use Google Apps
+        # as an OpenID provider without setting up XRDS on the domain hosting.
+        if (!is_null($this->xrds_override_pattern) && !is_null($this->xrds_override_replacement)) {
+            $url = preg_replace($this->xrds_override_pattern, $this->xrds_override_replacement, $url);
+        }
 
         # We'll jump a maximum of 5 times, to avoid endless redirections.
         for ($i = 0; $i < 5; $i ++) {
@@ -638,16 +717,25 @@ class LightOpenID
             'openid.return_to'   => $this->returnUrl,
             'openid.realm'       => $this->trustRoot,
         );
+        
         if ($this->ax) {
             $params += $this->axParams();
         }
+        
         if ($this->sreg) {
             $params += $this->sregParams();
         }
+        
         if (!$this->ax && !$this->sreg) {
             # If OP doesn't advertise either SREG, nor AX, let's send them both
             # in worst case we don't get anything in return.
             $params += $this->axParams() + $this->sregParams();
+        }
+
+        if (!empty($this->oauth) && is_array($this->oauth)) {
+            $params['openid.ns.oauth'] = 'http://specs.openid.net/extensions/oauth/1.0';
+            $params['openid.oauth.consumer'] = str_replace(array('http://', 'https://'), '', $this->trustRoot);
+            $params['openid.oauth.scope'] = implode(' ', $this->oauth);
         }
 
         if ($this->identifier_select) {
@@ -748,49 +836,48 @@ class LightOpenID
 
     protected function getAxAttributes()
     {
-        $alias = null;
-        if (isset($this->data['openid_ns_ax'])
-            && $this->data['openid_ns_ax'] != 'http://openid.net/srv/ax/1.0'
-        ) { # It's the most likely case, so we'll check it before
-            $alias = 'ax';
-        } else {
-            # 'ax' prefix is either undefined, or points to another extension,
-            # so we search for another prefix
-            foreach ($this->data as $key => $val) {
-                if (substr($key, 0, strlen('openid_ns_')) == 'openid_ns_'
-                    && $val == 'http://openid.net/srv/ax/1.0'
-                ) {
-                    $alias = substr($key, strlen('openid_ns_'));
-                    break;
+        $result = array();
+        
+        if ($alias = $this->getNamespaceAlias('http://openid.net/srv/ax/1.0', 'ax')) {
+            $prefix = 'openid_' . $alias;
+            $length = strlen('http://axschema.org/');
+            
+            foreach (explode(',', $this->data['openid_signed']) as $key) {
+                $keyMatch = $alias . '.type.';
+                
+                if (strncmp($key, $keyMatch, strlen($keyMatch)) !== 0) {
+                    continue;
+                }
+                
+                $key = substr($key, strlen($keyMatch));
+                $idv = $prefix . '_value_' . $key;
+                $idc = $prefix . '_count_' . $key;
+                $key = substr($this->getItem($prefix . '_type_' . $key), $length);
+                
+                if (!empty($key)) {
+                    if (($count = intval($this->getItem($idc))) > 0) {
+                        $value = array();
+                        
+                        for ($i = 1; $i <= $count; $i++) {
+                            $value[] = $this->getItem($idv . '_' . $i);
+                        }
+                        
+                        $value = ($count == 1) ? reset($value) : $value;
+                    } else {
+                        $value = $this->getItem($idv);
+                    }
+                    
+                    if (!is_null($value)) {
+                        $result[$key] = $value;
+                    }
                 }
             }
+        } else {
+            // No alias for the AX schema has been found,
+            // so there is no AX data in the OP's response.
         }
-        if (!$alias) {
-            # An alias for AX schema has not been found,
-            # so there is no AX data in the OP's response
-            return array();
-        }
-
-        $attributes = array();
-        foreach (explode(',', $this->data['openid_signed']) as $key) {
-            $keyMatch = $alias . '.value.';
-            if (substr($key, 0, strlen($keyMatch)) != $keyMatch) {
-                continue;
-            }
-            $key = substr($key, strlen($keyMatch));
-            if (!isset($this->data['openid_' . $alias . '_type_' . $key])) {
-                # OP is breaking the spec by returning a field without
-                # associated ns. This shouldn't happen, but it's better
-                # to check, than cause an E_NOTICE.
-                continue;
-            }
-            $value = $this->data['openid_' . $alias . '_value_' . $key];
-            $key = substr($this->data['openid_' . $alias . '_type_' . $key],
-                          strlen('http://axschema.org/'));
-
-            $attributes[$key] = $value;
-        }
-        return $attributes;
+        
+        return $result;
     }
 
     protected function getSregAttributes()
@@ -799,7 +886,7 @@ class LightOpenID
         $sreg_to_ax = array_flip(self::$ax_to_sreg);
         foreach (explode(',', $this->data['openid_signed']) as $key) {
             $keyMatch = 'sreg.';
-            if (substr($key, 0, strlen($keyMatch)) != $keyMatch) {
+            if (strncmp($key, $keyMatch, strlen($keyMatch)) !== 0) {
                 continue;
             }
             $key = substr($key, strlen($keyMatch));
@@ -830,5 +917,65 @@ class LightOpenID
             return $this->getAxAttributes() + $this->getSregAttributes();
         }
         return $this->getSregAttributes();
+    }
+
+    /**
+     * Gets an OAuth request token if the OpenID+OAuth hybrid protocol has been used.
+     *
+     * In order to use the OpenID+OAuth hybrid protocol, you need to add at least one
+     * scope to the $openid->oauth array before you get the call to getAuthUrl(), e.g.:
+     * $openid->oauth[] = 'https://www.googleapis.com/auth/plus.me';
+     * 
+     * Furthermore the registered consumer name must fit the OpenID realm. 
+     * To register an OpenID consumer at Google use: https://www.google.com/accounts/ManageDomains
+     * 
+     * @return string|bool OAuth request token on success, FALSE if no token was provided.
+     */
+    function getOAuthRequestToken()
+    {
+        $alias = $this->getNamespaceAlias('http://specs.openid.net/extensions/oauth/1.0');
+        
+        return !empty($alias) ? $this->data['openid_' . $alias . '_request_token'] : false;
+    }
+    
+    /**
+     * Gets the alias for the specified namespace, if it's present.
+     *
+     * @param string $namespace The namespace for which an alias is needed.
+     * @param string $hint Common alias of this namespace, used for optimization.
+     * @return string|null The namespace alias if found, otherwise - NULL.
+     */
+    private function getNamespaceAlias($namespace, $hint = null)
+    {
+        $result = null;
+        
+        if (empty($hint) || $this->getItem('openid_ns_' . $hint) != $namespace) {
+            // The common alias is either undefined or points to
+            // some other extension - search for another alias..
+            $prefix = 'openid_ns_';
+            $length = strlen($prefix);
+            
+            foreach ($this->data as $key => $val) {
+                if (strncmp($key, $prefix, $length) === 0 && $val === $namespace) {
+                    $result = trim(substr($key, $length));
+                    break;
+                }
+            }
+        } else {
+            $result = $hint;
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Gets an item from the $data array by the specified id.
+     *
+     * @param string $id The id of the desired item.
+     * @return string|null The item if found, otherwise - NULL.
+     */
+    private function getItem($id)
+    {
+        return isset($this->data[$id]) ? $this->data[$id] : null; 
     }
 }
