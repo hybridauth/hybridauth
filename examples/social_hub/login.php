@@ -134,7 +134,7 @@
 	<tr>  
 	<td>
 	<hr /> 
-	This exapmle show how users can login with providers using <b>HybridAuth</b>. It also show how to grab their profile, update their status or to grab their freinds list from services like facebook, twitter, myspace.
+	This example show how users can login with providers using <b>HybridAuth</b>. It also show how to grab their profile, update their status or to grab their freinds list from services like facebook, twitter, myspace.
 	<br />
 	<br />
 	If you want even more providers please goto to HybridAuth web site and download the <a href="http://hybridauth.sourceforge.net/download.html">Additional Providers Package</a>.
