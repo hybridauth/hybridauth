@@ -386,11 +386,12 @@ class Hybrid_Auth
 		$url = $protocol . $_SERVER['HTTP_HOST'];
 
 		// use port if non default
-		$url .= 
-			isset( $_SERVER['SERVER_PORT'] ) 
-			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80 && !isset( $_SERVER['HTTP_X_FORWARDED_PROTO'])) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443 && !isset( $_SERVER['HTTP_X_FORWARDED_PROTO'])) )
-			? ':' . $_SERVER['SERVER_PORT'] 
-			: '';
+		if( isset( $_SERVER['SERVER_PORT'] ) && strpos( $url, ':'.$_SERVER['SERVER_PORT'] ) === FALSE ) {
+			$url .= ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80 && !isset( $_SERVER['HTTP_X_FORWARDED_PROTO']))
+				|| ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443 && !isset( $_SERVER['HTTP_X_FORWARDED_PROTO']))
+				? ':' . $_SERVER['SERVER_PORT'] 
+				: '';
+		}
 
 		if( $request_uri ){
 			$url .= $_SERVER['REQUEST_URI'];
