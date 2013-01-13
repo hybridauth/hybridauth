@@ -58,17 +58,17 @@ class Hybridauth_Core_Authentication
 		}
 
 		// start session storage mng 
-        if ( $storage !== null ) {
-            $this->storage = $storage ;
-        }
+		if ( $storage !== null ) {
+			$this->storage = $storage ;
+		}
 		else{
 			$this->storage = new Hybridauth_Core_Storage_Session();
 		}
 
 		// start log mng 
-        if ( $logger !== null ) {
-            $this->logger = $logger ;
-        }
+		if ( $logger !== null ) {
+			$this->logger = $logger ;
+		}
 		else{
 			$this->logger = new Hybridauth_Core_Common_Logger( $config["debug_mode"], $config["debug_file"] );
 		}
