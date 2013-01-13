@@ -9,8 +9,8 @@
 
 	// config and includes
    	$config = dirname(__FILE__)     . "/config.php";
-    require_once( dirname(__FILE__) . "/../src/Hybridauth/Autoloader.php" );
-    require_once( dirname(__FILE__) . "/../src/Hybridauth/Hybridauth.php" );
+   	require_once( dirname(__FILE__) . "/../src/Hybridauth/Autoloader.php" );
+   	require_once( dirname(__FILE__) . "/../src/Hybridauth/Hybridauth.php" );
 
 	try{
 		// hybridauth EP
@@ -38,9 +38,6 @@
 		$adapter->logout(); 
 	}
 	catch( Hybridauth_Core_Exception $e ){
-		// In case we have errors 6 or 7, then we have to use Hybrid_Provider_Adapter::logout() to 
-		// let hybridauth forget all about the user so we can try to authenticate again.
-
 		// Display the recived error, 
 		// to know more please refer to Exceptions handling section on the userguide
 		switch( $e->getCode() ){ 
