@@ -6,7 +6,7 @@
 */
 
 /**
- * HybridAuthAutoloader
+ * HybridAuth_Autoloader
  */
 class HybridAuth_Autoloader
 {
@@ -16,22 +16,24 @@ class HybridAuth_Autoloader
      */
     public static function autoload($className)
     {
-        if ("Hybridauth" === substr($className, 0, strlen("Hybridauth"))&& "Hybridauth" != $className) {
-            $fileName = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
+        if ("Hybridauth" === substr($className, 0, strlen("Hybridauth")) && $className != "Hybridauth") {
+            $fileName  = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
             $namespace = '';
+
             if (false !== ($lastNsPos = strripos($className, '\\'))) {
                 $namespace = substr($className, 0, $lastNsPos);
                 $className = substr($className, $lastNsPos + 1);
                 $fileName .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
             }
+
             $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
             
-			if( file_exists($fileName) ){
-				require $fileName;
-			}
-			else{
-				throw new Exception( "HybridAuth_Autoloader($fileName) failed to open stream." );
-			}
+            if( file_exists($fileName) ){
+                require $fileName;
+            }
+            else{
+                throw new Exception( "HybridAuth_Autoloader($fileName) failed to open stream." );
+            }
         }
     }
 }
