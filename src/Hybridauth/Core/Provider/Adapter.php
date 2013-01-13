@@ -38,7 +38,7 @@ class Hybridauth_Core_Provider_Adapter
 
 	function __construct(Hybridauth_Core_Storage_Interface $storage, Hybridauth_Core_Common_LoggerInterface $logger)
 	{ 
-        $this->storage = $storage;
+		$this->storage = $storage;
 		$this->logger  = $logger;
 	}
 
