@@ -1,14 +1,14 @@
 # HybridAuth 3.0.0-dev branch
 
-This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
+This branch contains work in progress toward the next HybridAuth 3 release and subject to change at any time.
 
 Roadmap
 -------
-This roadmap outlines the planned strategy for HybridAuth 3.x, and it take into account a legit request by @EvanDotPro and many other ([#34](https://github.com/hybridauth/hybridauth/issues/34)) 
+This roadmap outlines the planned strategy for HybridAuth 3.x, and it take into account a legit request by @EvanDotPro and many other (https://github.com/hybridauth/hybridauth/issues/34) 
 
 * Try to keep HybridAuth PHP 5.2 compatible if possible
-* Make the migration process to HybridAuth 3.x easy and manageable
-* Upgrade to PSR-[123]? ([cf. accepted ones](https://github.com/php-fig/fig-standards/tree/master/accepted)
+* Make the migration process from HybridAuth 2.x easy and manageable
+* Upgrade to PSR-[123]? ([cf. accepted ones so far](https://github.com/php-fig/fig-standards/tree/master/accepted))
 * Implement some coding standards (HybridAuth is a learning experience. Comments and constructive criticism are welcome and appreciated)
 * Remove all the static usage in favor of real OOP practices
 * Add official composer/packagist support for the core, default and extra providers
@@ -24,8 +24,9 @@ Requirements
 Resources
 ---------
 * Documentation: http://hybridauth.sourceforge.net/userguide.html
-* Group: http://hybridauth.sourceforge.net/support.html
+* Support: http://hybridauth.sourceforge.net/support.html
 * Issues: https://github.com/hybridauth/hybridauth/issues
+* Email: hybridauth@gmail.com
 
 License
 -------
