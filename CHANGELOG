@@ -1,6 +1,11 @@
 Hybridauth Change log
 =====================
 
+3.0.0 - 13 jan 2013
+	...
+
+
+
 2.1.1 - 29 dec 2012 
 	Remove OAuth PECL conflict with OAuth PHP Library (https://github.com/hybridauth/hybridauth/issues/59)
 	Update Facebook PHP SDK (v.3.2.2) (https://github.com/hybridauth/hybridauth/pull/70)
@@ -11,8 +16,7 @@ Hybridauth Change log
 	Proper handling of LinkedIn user profiles with no telephone numbers (https://github.com/hybridauth/hybridauth/pull/53) 
 	Allow restricting google provider to specific domain (https://github.com/hybridauth/hybridauth/pull/64) 
 	Update Windows Live endpoint URLs (https://github.com/hybridauth/hybridauth/pull/64;http://msdn.microsoft.com/en-us/library/live/hh243647.aspx) 
-	Update lightopenid library
-	...
+	Update lightopenid library 
 
 
 
