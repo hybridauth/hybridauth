@@ -6,7 +6,7 @@
  * 
  * It requires PHP >= 5.1.2 with cURL or HTTP/HTTPS stream wrappers enabled.
  *
- * @version v1.1.1 2012-12-21
+ * @version v1.1.2 2013-01-15
  * @link http://gitorious.org/lightopenid Official Repo
  * @link http://github.com/iignatov/LightOpenID GitHub Clone
  * @author Mewp
@@ -129,8 +129,8 @@ class LightOpenID
                         $proxy['port'] = is_numeric($proxy['port']) ? intval($proxy['port']) : 0;
                     }
                     
-                    if ($port <= 0) {
-                        unset($proxy['port']);
+                    if ($proxy['port'] <= 0) {
+                        throw new ErrorException('The specified proxy port number is invalid.');
                     }
                 }
                 
