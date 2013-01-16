@@ -65,25 +65,7 @@ class Hybrid_Auth
 			$config["debug_mode"] = false;
 			$config["debug_file"] = null;
 		}
-
-		# load hybridauth required files, a autoload is on the way...
-		require_once $config["path_base"] . "Error.php";
-		require_once $config["path_base"] . "Logger.php";
-
-		require_once $config["path_base"] . "Storage.php";
-
-		require_once $config["path_base"] . "Provider_Adapter.php";
-
-		require_once $config["path_base"] . "Provider_Model.php";
-		require_once $config["path_base"] . "Provider_Model_OpenID.php";
-		require_once $config["path_base"] . "Provider_Model_OAuth1.php";
-		require_once $config["path_base"] . "Provider_Model_OAuth2.php";
-
-		require_once $config["path_base"] . "User.php";
-		require_once $config["path_base"] . "User_Profile.php";
-		require_once $config["path_base"] . "User_Contact.php";
-		require_once $config["path_base"] . "User_Activity.php";
-
+		
 		// hash given config
 		Hybrid_Auth::$config = $config;
 
@@ -403,4 +385,40 @@ class Hybrid_Auth
 		// return current url
 		return $url;
 	}
+	
+    /**
+     * autoload classes.
+     *
+     * @param string $className the name of the class to load
+     *
+     * @return void
+     */
+    public static function __autoload($className)
+    {
+        if ( 0 !== strpos($className, 'Hybrid_') ) {
+            return false;
+        }
+        
+        $className = substr($className, strlen('Hybrid_'));
+        $file = str_replace('_', '/', $className) . '.php';
+        $fileName = dirname(__FILE__) . DIRECTORY_SEPARATOR . $file;
+        if ( ! file_exists(realpath($fileName)) ) {
+            return false;
+        }
+        if (! @include_once $fileName) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Register this packages autoloader with the autoload-stack
+     *
+     * @return void
+     */
+    public static function registerAutoload()
+    {
+        return spl_autoload_register(array('Hybrid_Auth', '__autoload'));
+    }
 }
