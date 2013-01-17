@@ -57,11 +57,19 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	function loginBegin()
 	{
 		$parameters = array("scope" => $this->scope, "redirect_uri" => $this->endpoint, "display" => "page");
-		$optionals  = array("scope", "redirect_uri", "display");
+		$optionals  = array("scope", "redirect_uri", "display", "auth_type");
 
 		foreach ($optionals as $parameter){
 			if( isset( $this->config[$parameter] ) && ! empty( $this->config[$parameter] ) ){
 				$parameters[$parameter] = $this->config[$parameter];
+				
+				//If the auth_type parameter is used, we need to generate a nonce and include it as a parameter
+				if($parameter == "auth_type"){
+					$nonce = md5(uniqid(mt_rand(), true));
+					$parameters['auth_nonce'] = $nonce;
+					
+					Hybrid_Auth::storage()->set('fb_auth_nonce', $nonce);
+				}
 			}
 		}
 
@@ -80,6 +88,19 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		// in case we get error_reason=user_denied&error=access_denied
 		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] == "access_denied" ){ 
 			throw new Exception( "Authentication failed! The user denied your request.", 5 );
+		}
+		
+		// if auth_type is used, then an auth_nonce is passed back, and we need to check it.
+		if(isset($_REQUEST['auth_nonce'])){
+			
+			$nonce = Hybrid_Auth::storage()->get('fb_auth_nonce');
+			
+			//Delete the nonce
+			Hybrid_Auth::storage()->delete('fb_auth_nonce');
+			
+			if($_REQUEST['auth_nonce'] != $nonce){
+				throw new Exception( "Authentication failed! Invalid nonce used for reauthentication.", 5 );
+			}
 		}
 
 		// try to get the UID of the connected user from fb, should be > 0 
