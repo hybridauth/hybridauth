@@ -31,19 +31,11 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
-	{ 
-		$response = $this->api->get( 'http://www.tumblr.com/api/authenticate' );
-
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 )
-		{
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error: " . $this->errorMessageByStatus( $this->api->http_code ), 6 );
-		}
-
+	{
 		try{  
 			$profile = $this->api->get( 'user/info' );
 
-			foreach ( $profile->response->user->blogs as $blog ) {
+			foreach ( $profile->response->user->blogs as $blog ){
 				if( $blog->primary ){
 					$bloghostname = explode( '://', $blog->url );
 					$bloghostname = substr( $bloghostname[1], 0, -1);
@@ -55,6 +47,7 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 					$this->user->profile->displayName	= $profile->response->user->name;
 					$this->user->profile->profileURL	= $blog->url;
 					$this->user->profile->webSiteURL	= $blog->url;
+					$this->user->profile->description	= strip_tags( $blog->description );
 
 					$avatar = $this->api->get( 'blog/'. $this->token( "primary_blog" ) .'/avatar' );
 
