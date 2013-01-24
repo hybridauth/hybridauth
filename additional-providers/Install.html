@@ -95,8 +95,7 @@
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Github.html">Github</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Tumblr.html">Tumblr</a>,   
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Viadeo.html">Viadeo</a>,
-					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Vimeo.html">Vimeo</a>,
-					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Gowalla.html">Gowalla</a>,    
+					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Vimeo.html">Vimeo</a>, 
 					<a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_LastFM.html">LastFM</a>, 
 					
 					and more.
@@ -116,15 +115,15 @@
 		</p> 
 		
 		<p>
-			For example, lets say you want to add <b>Gwalla</b> to your authetication service:
+			For example, lets say you want to add <b>Instagram</b> to your authetication service:
 		</p>
 
 		<ol>
-			<li>First, goto <code>hybridauth-gowalla/</code>,</li>
-			<li>Copy <code>hybridauth-gowalla/Providers/</code> and  <code>hybridauth-gowalla/thirdparty/</code> folders,</li>
+			<li>First, goto <code>hybridauth-instagram/</code>,</li>
+			<li>Copy <code>hybridauth-instagram/Providers/</code> and <code>hybridauth-instagram/thirdparty/</code> (if exists) folders,</li>
 			<li>Then, past them into HybridAuth core library: <code>hybridauth-2.x.x/Hybrid/</code>,</li>
-			<li>Goto <a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Gowalla.html">Gowalla adapter specification</a> web page on the online user guide to find out how to setup an new application,</li> 
-			<li>Finally, add the created gowalla application credentials to your configuration :</li> 
+			<li>Goto <a href="http://hybridauth.sourceforge.net/userguide/IDProvider_info_Instagram.html">Instagram adapter specification</a> web page on the online user guide to find out how to setup an new application,</li> 
+			<li>Finally, add the created instagram application credentials to your configuration :</li> 
 		</ol>
 
 		<pre>
@@ -136,9 +135,9 @@
 					// ... others providers already setup ... // 
 
 					// gowalla application credentials
-					&quot;Gowalla&quot; =&gt;   array ( 
+					&quot;Instagram&quot; =&gt;   array ( 
 					   &quot;enabled&quot;   =&gt; true,
-					   &quot;keys&quot;   =&gt; array ( &quot;key&quot; =&gt; &quot;*****************&quot;, &quot;secret&quot; =&gt; &quot;*********************************&quot; )
+					   &quot;keys&quot;   =&gt; array ( &quot;id&quot; =&gt; &quot;*****************&quot;, &quot;secret&quot; =&gt; &quot;*********************************&quot; )
 					) 
 				),
 			); 
