@@ -119,3 +119,5 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 
 		return $this->user->profile;
 	}
+
+}
