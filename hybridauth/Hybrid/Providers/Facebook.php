@@ -30,6 +30,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/base_facebook.php";
 			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/facebook.php";
 		}
+		
+		if ( isset ( Hybrid_Auth::$config["proxy"] ) ) {
+			BaseFacebook::$CURL_OPTS[CURLOPT_PROXY] = Hybrid_Auth::$config["proxy"];
+		}
 
 		$this->api = new Facebook( ARRAY( 'appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"] ) ); 
 
