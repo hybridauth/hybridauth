@@ -16,6 +16,7 @@ This roadmap outlines the planned strategy for HybridAuth 3.x, and it take into 
 * Make it overall more friendly for integration with projects and frameworks (hopefully)
 * Rewrite the code documentation and user guide (God help us all)
 * ...
+* add hooks to getUserProfile, getUserContacts to chage the default behavior/result
 
 Requirements
 ------------
