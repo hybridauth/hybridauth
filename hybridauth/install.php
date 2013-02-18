@@ -196,7 +196,7 @@ ul li label {
 							);
 
 	if( count( $_POST ) ):
-		$CONFIG_TEMPLATE = file_get_contents( "Hybrid/resources/config.php.tpl" );
+		$CONFIG_TEMPLATE = file_get_contents( $GLOBAL_HYBRID_AUTH_PATH_BASE . "Hybrid/resources/config.php.tpl" );
  
 		foreach( $_POST AS $k => $v ):
 			$v = strip_tags( $v );
