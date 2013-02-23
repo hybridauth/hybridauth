@@ -176,7 +176,7 @@ class Endpoint
 		try { 
 			$adapter->providerInstance->loginBegin();
 		}
-		catch ( \Hybridauth\Exception $e ) {  
+		catch ( \Hybridauth\Exception $e ) {
 			$this->storage->set( "hauth_session.error.status"  , 1                      );
 			$this->storage->set( "hauth_session.error.message" , $e->getMessage()       );
 			$this->storage->set( "hauth_session.error.code"    , $e->getCode()          );

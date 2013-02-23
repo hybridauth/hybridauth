@@ -88,7 +88,7 @@ class OAuth2 extends \Hybridauth\Provider\Template\AbstractTemplate
 		// check for errors
 		if ( $error ){ 
 			throw new
-				\Hybridauth\Exception( "Authentication failed! {$this->providerId} returned an error: $error", 5 );
+				\Hybridauth\Exception( "Authentication failed! {$this->providerId} returned an error: $error", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
 		}
 
 		// try to authenicate user
@@ -99,7 +99,7 @@ class OAuth2 extends \Hybridauth\Provider\Template\AbstractTemplate
 		// check if authenticated
 		if ( ! $this->api->tokens->accessToken ){ 
 			throw new
-				\Hybridauth\Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, $this );
+				\Hybridauth\Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
 		}
 
 		// store tokens
