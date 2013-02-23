@@ -24,8 +24,8 @@ return
 		// tweak default Http client curl settings
 			// http://www.php.net/manual/fr/function.curl-setopt.php  
 		"curl_options" => array(
-			"CURLOPT_USERAGENT"      => null,
-			"CURLOPT_PROXY"          => null,
+			CURLOPT_USERAGENT      => null,
+			CURLOPT_PROXY          => null,
 			// etc..
 		),
 
