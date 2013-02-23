@@ -25,8 +25,7 @@
 		$adapter->logout(); 
 	}
 	catch( \Hybridauth\Exception $e ){
-		echo
-			$e->debug();
+		echo $e->debug();
 	}
 	catch( Exception $e ){
 		echo '<b>Caught an unknown exception:</b> '.  $e->getMessage() . "<br />";
