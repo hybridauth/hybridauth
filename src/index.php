@@ -9,8 +9,9 @@
 //	HybridAuth EndPoint (A.K.A internal callback)
 // ------------------------------------------------------------------------
 
-require_once( "HybridAuth/Autoloader.php" ); 
 require_once( "HybridAuth/Hybridauth.php" ); 
 
-$endpoint = new Hybridauth_Core_Endpoint();
+\Hybridauth\Hybridauth::registerAutoloader();
+
+$endpoint = new \Hybridauth\Endpoint();
 $endpoint->process();

@@ -6,19 +6,21 @@ Roadmap
 -------
 This roadmap outlines the planned strategy for HybridAuth 3.x, and it take into account a legit request by @EvanDotPro and many other (https://github.com/hybridauth/hybridauth/issues/34) 
 
-* Try to keep HybridAuth PHP 5.2 compatible if possible
+* <del>Try to keep HybridAuth PHP 5.2 compatible if possible</del>. => Well f. whoever decided "\" as namespaces separator..
 * Make the migration process from HybridAuth 2.x easy and manageable
 * Upgrade to PSR-[123]? ([cf. accepted ones so far](https://github.com/php-fig/fig-standards/tree/master/accepted))
-* Implement some coding standards (Comments and constructive criticism on this are welcome and appreciated)
-* Remove all the static usage in favor of real OOP practices
+* Implement some coding standards (Comments and constructive criticism on this are welcome and appreciated) 
 * Make Logger and Session injectable
-* Add official composer/packagist support for the core, default and extra providers
+* Add official composer/packagist support
 * Make it overall more friendly for integration with projects and frameworks (hopefully)
 * Rewrite the code documentation and user guide (God help us all)
 * ...
 * add hooks to getUserProfile, getUserContacts to chage the default behavior/result
 * provide custom certificates for SSL communication (https://github.com/hybridauth/hybridauth/issues/39)
 * move all requirements checks to install.php
+* allow the use of third-parties http clients libs
+* make curl options configurable
+* Hybridauth 3.x will come with 9 "major" providers by default -- and only them will be kept maintained on upstream. Additionals providers will be maintained independently.
 
 Requirements
 ------------
