@@ -23,12 +23,27 @@ class Request
 
 		curl_setopt( $ch, CURLOPT_URL            , $this->uri );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER ,  1 );
-		curl_setopt( $ch, CURLOPT_TIMEOUT        , 30 );
-		curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT , 30 );
-		curl_setopt( $ch, CURLOPT_USERAGENT      , "HybridAuth Client http://hybridauth.sourceforge.net/" );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER , false ); // fixme!!
 
-		if( isset( $request->headers ) && is_array( $request->headers ) && $request->headers ){
+		$curl_opts = array(
+			CURLOPT_TIMEOUT        => 30,
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => 0, // its your call now 
+			CURLOPT_USERAGENT      => "HybridAuth Library http://hybridauth.sourceforge.net/",
+		);
+
+		if( $this->curlOptions ){
+			foreach( $this->curlOptions as $opt => $val ){
+				$curl_opts[ $opt ] = $val;
+			}
+		}
+
+		foreach( $curl_opts as $opt => $val ){
+			curl_setopt( $ch, $opt, $val );
+			
+			$this->curlOptions[ $opt ] = $val;
+		}
+
+		if( isset( $this->headers ) && is_array( $this->headers ) && $this->headers ){
 			curl_setopt( $ch, CURLOPT_HTTPHEADER, $this->headers );
 		}
 
@@ -40,17 +55,10 @@ class Request
 			}
 		}
 
-		if( isset( $request->curlOptions ) && is_array( $request->curlOptions ) && $request->curlOptions ){
-			foreach( $request->curlOptions as $opt => $val ){
-				if( $val !== null ){
-					curl_setopt( $ch, $opt, $val );
-				}
-			}
-		}
-
 		$response->body = curl_exec($ch);
 
 		$response->statusCode   = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		$response->errorCode    = curl_errno($ch); // http://curl.haxx.se/libcurl/c/libcurl-errors.html
 		$response->curlHttpInfo = curl_getinfo( $ch );
 
 		curl_close ($ch);

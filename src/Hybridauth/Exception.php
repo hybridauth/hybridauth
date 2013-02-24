@@ -28,7 +28,7 @@ class Exception extends \Exception
 		$this->object = $object;
 
 		echo $this->debug( $this );
-		
+
 		die(); // fixme!
 	}
 

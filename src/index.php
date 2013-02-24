@@ -6,10 +6,10 @@
 */
 
 // ------------------------------------------------------------------------
-//	HybridAuth EndPoint (A.K.A internal callback)
+//	HybridAuth Default EndPoint (A.K.A internal callback); 
 // ------------------------------------------------------------------------
 
-require_once( "HybridAuth/Hybridauth.php" ); 
+require_once( "HybridAuth/Hybridauth.php" );
 
 \Hybridauth\Hybridauth::registerAutoloader();
 

@@ -19,9 +19,6 @@ class Session implements \Hybridauth\Storage\StorageInterface
 				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
 			}
 		}
-
-		$this->config( "php_session_id", session_id() );
-		$this->config( "version", \Hybridauth\Hybridauth::VERSION );
 	}
 
 	public function config($key, $value=null) 

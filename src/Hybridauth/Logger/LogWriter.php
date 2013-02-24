@@ -20,17 +20,6 @@ class LogWriter implements \Hybridauth\Logger\LoggerInterface
 
 	function __construct( $enabled = false, $file = null )
 	{
-		// if debug mode is set to true, then check for the writable log file
-		if ( $enabled ){
-			if ( ! file_exists( $file ) ){
-				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' does not exit.", 1 );
-			}
-
-			if ( ! is_writable( $file ) ){
-				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writable file.", 1 );
-			}
-		}
-
 		$this->enabled = $enabled;
 		$this->file    = $file;
 	}
@@ -64,6 +53,10 @@ class LogWriter implements \Hybridauth\Logger\LoggerInterface
 			return;
 		}
 
+		if( ! file_exists( $this->file ) || is_writable( $this->file ) ){
+			return;
+		}
+
 		if( count( $extra ) ){
 			$message .= " -- " . print_r($extra, true);
 		}
@@ -71,7 +64,7 @@ class LogWriter implements \Hybridauth\Logger\LoggerInterface
 		$datetime = new DateTime();
 		$datetime =  $datetime->format(DATE_ATOM);
 
-		file_put_contents( 
+		file_put_contents(
 			$this->file, 
 			$level . " -- " . $_SERVER['REMOTE_ADDR'] . " -- " . $datetime . " -- " . $message . "\n", 
 			FILE_APPEND

@@ -8,11 +8,11 @@
 namespace Hybridauth\Provider\Google;
 
 /**
- * Hybrid_Providers_Google provider adapter based on OAuth2 protocol
- * 
- * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
- */
-class Adapter extends \Hybridauth\Provider\Template\OAuth2
+* Google adapter
+* 
+* http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
+*/
+class Adapter extends \Hybridauth\Adapter\Template\OAuth2 
 {
 	// default permissions 
 	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/";
@@ -46,7 +46,7 @@ class Adapter extends \Hybridauth\Provider\Template\OAuth2
 
 		$url = $this->api->generateAuthorizeUri( $parameters );
 
-		\Hybridauth\Http\Utilities::redirect( $url ); 
+		\Hybridauth\Http\Util::redirect( $url ); 
 	}
 
 	/**
@@ -62,29 +62,37 @@ class Adapter extends \Hybridauth\Provider\Template\OAuth2
 
 		if ( ! isset( $response->id ) || isset( $response->error ) ){
 			throw new
-				\Hybridauth\Exception( "User profile request failed! {$this->providerId} returned an invalid response.", \Hybridauth\Exception::USER_PROFILE_REQUEST_FAILED, null, $this );
+				\Hybridauth\Exception( 
+					"User profile request failed! {$this->providerId} returned an invalid response.", 
+					\Hybridauth\Exception::USER_PROFILE_REQUEST_FAILED, 
+					null,
+					$this
+				);
 		}
 
 		$profile = new \Hybridauth\User\Profile();
 
-		$profile->provider      = $this->providerId;
-		$profile->identifier    = (property_exists($response,'id'))?$response->id:"";
-		$profile->firstName     = (property_exists($response,'given_name'))?$response->given_name:"";
-		$profile->lastName      = (property_exists($response,'family_name'))?$response->family_name:"";
-		$profile->displayName   = (property_exists($response,'name'))?$response->name:"";
-		$profile->photoURL      = (property_exists($response,'picture'))?$response->picture:"";
-		$profile->profileURL    = "https://profiles.google.com/" . $profile->identifier;
-		$profile->gender        = (property_exists($response,'gender'))?$response->gender:""; 
-		$profile->email         = (property_exists($response,'email'))?$response->email:"";
-		$profile->emailVerified = (property_exists($response,'email'))?$response->email:"";
-		$profile->language      = (property_exists($response,'locale'))?$response->locale:"";
+		$profile->provider    = $this->providerId;
+		$profile->identifier  = ( property_exists( $response, 'id'          ) ) ? $response->id          : "";
+		$profile->firstName   = ( property_exists( $response, 'given_name'  ) ) ? $response->given_name  : "";
+		$profile->lastName    = ( property_exists( $response, 'family_name' ) ) ? $response->family_name : "";
+		$profile->displayName = ( property_exists( $response, 'name'        ) ) ? $response->name        : "";
+		$profile->photoURL    = ( property_exists( $response, 'picture'     ) ) ? $response->picture     : "";
+		$profile->profileURL  = ( property_exists( $response, 'link'        ) ) ? $response->link        : "";
+		$profile->gender      = ( property_exists( $response, 'gender'      ) ) ? $response->gender      : ""; 
+		$profile->email       = ( property_exists( $response, 'email'       ) ) ? $response->email       : "";
+		$profile->language    = ( property_exists( $response, 'locale'      ) ) ? $response->locale      : "";
 
-		if( property_exists($response,'birthday') ){ 
+		if( property_exists( $response,'birthday' ) ){ 
 			list($birthday_year, $birthday_month, $birthday_day) = explode( '-', $response->birthday );
 
 			$profile->birthDay   = (int) $birthday_day;
 			$profile->birthMonth = (int) $birthday_month;
 			$profile->birthYear  = (int) $birthday_year;
+		}
+
+		if( property_exists( $response, 'verified_email' ) && $response->verified_email ){ 
+			$profile->emailVerified = $profile->email ;
 		}
 
 		return $profile;
