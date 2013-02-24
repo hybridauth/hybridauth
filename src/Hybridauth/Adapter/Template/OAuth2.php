@@ -53,10 +53,10 @@ class OAuth2 extends \Hybridauth\Adapter\Template\AdapterTemplate
 		$this->api->endpoints->redirectUri = $this->endpoint;
 
 		if ( isset( $this->hybridauthConfig["http_client"] ) && $this->hybridauthConfig["http_client"] ){
-			$this->api->client = new $this->hybridauthConfig["http_client"];
+			$this->api->httpClient = new $this->hybridauthConfig["http_client"];
 		}
 		else{
-			$this->api->client = new \Hybridauth\Http\Client( $this->hybridauthConfig["curl_options"] );
+			$this->api->httpClient = new \Hybridauth\Http\Client( $this->hybridauthConfig["curl_options"] );
 		}
 
 		// stored access tokens?

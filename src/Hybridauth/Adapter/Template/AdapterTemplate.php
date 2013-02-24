@@ -35,7 +35,6 @@ class AdapterTemplate
 	protected $api        = null;
 
 	protected $storage    = null;
-	protected $logger     = null; 
 
 	/**
 	* common providers adapter constructor
@@ -45,12 +44,10 @@ class AdapterTemplate
 		$hybridauthConfig,
 		$config,
 		$parameters = null,
-		\Hybridauth\Storage\StorageInterface $storage = null,
-		\Hybridauth\Logger\LoggerInterface $logger = null
+		\Hybridauth\Storage\StorageInterface $storage = null 
 	)
 	{
         $this->storage = $storage;
-		$this->logger  = $logger; 
 
 		# init the IDp adapter parameters, get them from the cache if possible
 		if( ! $parameters ){
