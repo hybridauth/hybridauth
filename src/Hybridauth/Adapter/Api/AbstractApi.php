@@ -12,4 +12,5 @@ abstract class AbstractApi
 	public $application = null;
 	public $endpoints   = null;
 	public $tokens      = null;
+	public $httpClient  = null;
 }

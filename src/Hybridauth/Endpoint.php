@@ -17,17 +17,13 @@ class Endpoint
 	protected $request  = null;
 	protected $initDone = false;
 	protected $storage  = null;
-	protected $logger   = null;
 
 	// --------------------------------------------------------------------
 
-	public function __construct( \Hybridauth\Storage\StorageInterface $storage = null, \Hybridauth\Logger\LoggerInterface $logger = null )
+	public function __construct( \Hybridauth\Storage\StorageInterface $storage = null )
 	{
 		// Storage
 		$this->storage = $storage ? $storage : new \Hybridauth\Storage\Session();
-
-		// LogWriter
-		$this->logger = $logger ? $logger: new \Hybridauth\Logger\LogWriter(); // fixme!
 	}
 
 	// --------------------------------------------------------------------
@@ -81,7 +77,7 @@ class Endpoint
 					die( "You cannot access this page directly." );
 				}
 
-				new Hybridauth( $this->storage->config( "CONFIG" ), $this->storage, $this->logger ); 
+				new Hybridauth( $this->storage->config( "CONFIG" ), $this->storage ); 
 			}
 			catch( \Hybridauth\Exception $e ){
 				header( "HTTP/1.0 404 Not Found" );
@@ -95,7 +91,7 @@ class Endpoint
 
 	private function _processAuthStart()
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage, $this->logger );
+		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
 
 		$this->_authInit();
 
@@ -134,7 +130,7 @@ class Endpoint
 
 	private function _processAuthDone()
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage, $this->logger ); 
+		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
 
 		$this->_authInit();
 

@@ -14,7 +14,7 @@ class Request
 		$response = new \Hybridauth\Http\Response();
 
 		if( $this->method == 'GET' ){
-			$this->uri = $this->uri . ( strpos( $this->uri, '?' ) ? '&' : '?' ) . http_build_query( $this->params );
+			$this->uri = $this->uri . ( strpos( $this->uri, '?' ) ? '&' : '?' ) . http_build_query( $this->args );
 		}
 
 		$response->curlHttpInfo = array();
@@ -50,8 +50,8 @@ class Request
 		if( $this->method == 'POST' ){
 			curl_setopt($ch, CURLOPT_POST, 1);
 
-			if( $this->params ){
-				curl_setopt( $ch, CURLOPT_POSTFIELDS, $this->params );
+			if( $this->args ){
+				curl_setopt( $ch, CURLOPT_POSTFIELDS, $this->args );
 			}
 		}
 

@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* This file is part of the HybridAuth PHP Library (hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
+*
+* This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
 namespace Hybridauth\Provider\Facebook;
@@ -17,10 +17,12 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 	// default permissions 
 	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, read_stream, offline_access, publish_stream, read_friendlists";
 
+	// --------------------------------------------------------------------
+
 	/**
 	* IDp wrappers initializer 
 	*/
-	function initialize() 
+	function initialize()
 	{
 		parent::initialize();
 
@@ -28,6 +30,8 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		$this->api->endpoints->authorizeUri    = "https://www.facebook.com/dialog/oauth";
 		$this->api->endpoints->requestTokenUri = "https://graph.facebook.com/oauth/access_token"; 
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	* begin login step 
@@ -48,11 +52,13 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		\Hybridauth\Http\Util::redirect( $url ); 
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	* load the user profile from the IDp api client
 	*/
 	function getUserProfile()
-	{ 
+	{
 		// ask google api for user infos
 		$response = $this->api->api( "https://graph.facebook.com/me" );
 
@@ -78,7 +84,7 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		$profile->gender        = ( property_exists( $response, 'gender'    ) ) ? $response->gender     : "";
 		$profile->description   = ( property_exists( $response, 'bio'       ) ) ? $response->bio        : "";
 		$profile->email         = ( property_exists( $response, 'email'     ) ) ? $response->email      : ""; 
-		$profile->region        = ( property_exists( $response, 'hometown'   ) && property_exists( $response->hometown, 'name' ) ) ? $response->hometown->name : "";
+		$profile->region        = ( property_exists( $response, 'hometown'    ) && property_exists( $response->hometown, 'name' ) ) ? $response->hometown->name : "";
 		$profile->photoURL      = "https://graph.facebook.com/" . $profile->identifier . "/picture?width=150&height=150";
 
 		if( property_exists($response,'birthday') ) {
@@ -95,4 +101,38 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 
 		return $profile;
 	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* Get users contacts
+	*/
+	function getUserContacts()
+	{
+		try{
+			$response = $this->api->api( 'https://graph.facebook.com/me/friends' ); 
+		}
+		catch( FacebookApiException $e ){
+			throw new Exception( "User contacts request failed! {$this->providerId} returned an error" );
+		}
+
+		if( ! $response || ! count( $response->data ) ){
+			return array();
+		}
+
+		$contacts = array();
+ 
+		foreach( $response->data as $item ){
+			$uc = new \Hybridauth\User\Contact();
+
+			$uc->identifier  = ( property_exists( $item, 'id' ) ) ? $item->id : ""; 
+			$uc->displayName = ( property_exists( $item, 'name' ) ) ? $item->name : ""; 
+			$uc->profileURL  = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
+			$uc->photoURL    = "https://graph.facebook.com/" . $uc->identifier . "/picture?width=150&height=150";
+
+			$contacts[] = $uc;
+		}
+
+		return $contacts;
+ 	}
 }

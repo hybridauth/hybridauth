@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* This file is part of the HybridAuth PHP Library (hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
+*
+* This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
 namespace Hybridauth\Provider\Google;
@@ -12,10 +12,12 @@ namespace Hybridauth\Provider\Google;
 * 
 * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
 */
-class Adapter extends \Hybridauth\Adapter\Template\OAuth2 
+class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 {
 	// default permissions 
 	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/";
+
+	// --------------------------------------------------------------------
 
 	/**
 	* IDp wrappers initializer 
@@ -29,6 +31,8 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		$this->api->endpoints->requestTokenUri = "https://accounts.google.com/o/oauth2/token";
 		$this->api->endpoints->tokenInfoUri    = "https://www.googleapis.com/oauth2/v1/tokeninfo";
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	* begin login step 
@@ -49,8 +53,10 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		\Hybridauth\Http\Util::redirect( $url ); 
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
-	* load the user profile from the IDp api client
+	* Get user profile 
 	*/
 	function getUserProfile()
 	{
@@ -62,7 +68,7 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 
 		if ( ! isset( $response->id ) || isset( $response->error ) ){
 			throw new
-				\Hybridauth\Exception( 
+				\Hybridauth\Exception(
 					"User profile request failed! {$this->providerId} returned an invalid response.", 
 					\Hybridauth\Exception::USER_PROFILE_REQUEST_FAILED, 
 					null,
@@ -97,4 +103,43 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 
 		return $profile;
 	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* Get gmail contacts 
+	*/
+	function getUserContacts()
+	{
+		// refresh tokens if needed 
+		$this->refreshToken();  
+
+		if( ! isset( $this->config['contacts_param'] ) ){
+			$this->config['contacts_param'] = array( "max-results" => 500 );
+		}
+
+		$response = $this->api->api(
+				"https://www.google.com/m8/feeds/contacts/default/full?" . 
+					http_build_query( array_merge( array( 'alt' => 'json' ), 
+					$this->config['contacts_param'] ) )
+			);
+
+		if( ! $response ){
+			return array();
+		}
+ 
+		$contacts = array(); 
+
+		foreach( $response->feed->entry as $idx => $entry ){
+			$uc = new \Hybridauth\User\Contact();
+
+			$uc->email        = isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : ''; 
+			$uc->displayName  = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';  
+			$uc->identifier   = $uc->email;
+
+			$contacts[] = $uc;
+		}  
+
+		return $contacts;
+ 	}
 }

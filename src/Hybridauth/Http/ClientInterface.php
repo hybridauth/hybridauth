@@ -9,21 +9,21 @@ namespace Hybridauth\Http;
 
 interface ClientInterface
 {
-    public function get($url, $params = array(), $headers = array(), $body = null);
+	public function get($url, $params = array(), $headers = array(), $body = null);
 
 	// --------------------------------------------------------------------
 
-    public function post($url, $params, $headers = array(), $body = null);
+	public function post($url, $params, $headers = array(), $body = null);
 
 	// --------------------------------------------------------------------
 
-    public function getResponseBody();
+	public function getResponseBody();
 
 	// --------------------------------------------------------------------
 
-    public function getResponseStatus();
+	public function getResponseStatus();
 
 	// --------------------------------------------------------------------
 
-    public function getResponseError();
+	public function getResponseError();
 }

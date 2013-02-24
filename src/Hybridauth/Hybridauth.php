@@ -16,13 +16,9 @@ namespace Hybridauth;
  */
 class Hybridauth
 {
-	protected $config     = array();
+	protected $config  = array();
 
-	protected $storage    = null;
-
-	protected $logger     = null;
-
-	protected $httpClient = null;
+	protected $storage = null;
 
 	// --------------------------------------------------------------------
 
@@ -31,7 +27,7 @@ class Hybridauth
 	*
 	* http://hybridauth.sourceforge.net/userguide/Configuration.html
 	*/
-	function __construct( $config, \Hybridauth\Storage\StorageInterface $storage = null, \Hybridauth\Logger\LoggerInterface $logger = null )
+	function __construct( $config, \Hybridauth\Storage\StorageInterface $storage = null )
 	{
 		// sotre given config
 		$this->config = $config;
@@ -56,9 +52,6 @@ class Hybridauth
 		// Storage 
 		$this->storage = $storage ? $storage : new \Hybridauth\Storage\Session();
 
-		// LogWriter
-		$this->logger = $logger ? $logger: new \Hybridauth\Logger\LogWriter( $this->config["debug_mode"], $this->config["debug_file"] );
-
 		// if an error was stored on endpoint
 		if( $this->storage->get( "hauth_session.error.status" ) ){
 			$m = $this->storage->get( "hauth_session.error.message" );
@@ -77,7 +70,7 @@ class Hybridauth
 	* Get hybridauth session data.
 	*/
 	public function getSessionData()
-	{ 
+	{
 		return $this->storage->getSessionData();
 	}
 
@@ -106,13 +99,13 @@ class Hybridauth
 	*/
 	public function authenticate( $providerId, $params = NULL )
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->config, $this->storage, $this->logger );
+		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->config, $this->storage );
 
-		$provider = $adapterFactory->setup( $providerId, $params );
+		$adapter = $adapterFactory->setup( $providerId, $params );
 
 		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
-		if( ! $this->storage->get( "hauth_session.$providerId.is_logged_in" ) ){   
-			$provider->authenticate();
+		if( ! $this->storage->get( "hauth_session.$providerId.is_logged_in" ) ){
+			$adapter->authenticate();
 		}
 
 		// else, then return the adapter instance for the given provider
@@ -128,7 +121,7 @@ class Hybridauth
 	*/ 
 	public function getAdapter( $providerId = NULL )
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->config, $this->storage, $this->logger );
+		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->config, $this->storage );
 
 		return $adapterFactory->setup( $providerId );
 	}
@@ -201,6 +194,13 @@ class Hybridauth
 
 	// --------------------------------------------------------------------
 
+	public static function registerAutoloader()
+	{
+		spl_autoload_register(__NAMESPACE__ . "\\Hybridauth::autoload");
+	}
+
+	// --------------------------------------------------------------------
+
 	public static function autoload($className)
 	{
 		$thisClass = str_replace(__NAMESPACE__.'\\', '', __CLASS__);
@@ -226,12 +226,5 @@ class Hybridauth
 		if (file_exists($fileName)) {
 			require $fileName;
 		}
-	}
-
-	// --------------------------------------------------------------------
-
-	public static function registerAutoloader()
-	{
-		spl_autoload_register(__NAMESPACE__ . "\\Hybridauth::autoload");
 	}
 }

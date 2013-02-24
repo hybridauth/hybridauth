@@ -33,7 +33,10 @@ class OAuth2 extends \Hybridauth\Adapter\Template\AdapterTemplate
 	{
 		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
 			throw new
-				\Hybridauth\Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", \Hybridauth\Exception::MISSING_APPLICATION_CREDENTIALS );
+				\Hybridauth\Exception(
+					"Application credentials are missing",
+					\Hybridauth\Exception::MISSING_APPLICATION_CREDENTIALS
+				);
 		}
 
  		// override requested scope
@@ -49,13 +52,11 @@ class OAuth2 extends \Hybridauth\Adapter\Template\AdapterTemplate
 
 		$this->api->endpoints->redirectUri = $this->endpoint;
 
-		if ( isset( $this->hybridauthConfig["http_client"] ) && is_object( $this->hybridauthConfig["http_client"] ) ){
-			$this->api->client = $this->hybridauthConfig["http_client"];
+		if ( isset( $this->hybridauthConfig["http_client"] ) && $this->hybridauthConfig["http_client"] ){
+			$this->api->client = new $this->hybridauthConfig["http_client"];
 		}
 		else{
-			$this->api->client = new \Hybridauth\Http\Client();
-
-			$this->api->client->curlOptions = $this->hybridauthConfig["curl_options"];
+			$this->api->client = new \Hybridauth\Http\Client( $this->hybridauthConfig["curl_options"] );
 		}
 
 		// stored access tokens?
@@ -89,9 +90,14 @@ class OAuth2 extends \Hybridauth\Adapter\Template\AdapterTemplate
 		$error = (array_key_exists('error',$_REQUEST))?$_REQUEST['error']:"";
 
 		// check for errors
-		if ( $error ){ 
+		if ( $error ){
 			throw new
-				\Hybridauth\Exception( "Authentication failed! {$this->providerId} returned an error: $error", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
+				\Hybridauth\Exception(
+					"Authentication failed! {$this->providerId} returned an error: $error",
+					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					null,
+					$this
+				);
 		}
 
 		// try to authenicate user
@@ -102,7 +108,12 @@ class OAuth2 extends \Hybridauth\Adapter\Template\AdapterTemplate
 		// check if authenticated
 		if ( ! $this->api->tokens->accessToken ){ 
 			throw new
-				\Hybridauth\Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
+				\Hybridauth\Exception(
+					"Authentication failed! {$this->providerId} returned an invalid access token",
+					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					null,
+					$this
+				);
 		}
 
 		// store tokens

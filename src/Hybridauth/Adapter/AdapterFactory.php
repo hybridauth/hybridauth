@@ -7,61 +7,27 @@
 
 namespace Hybridauth\Adapter;
 
-/**
- * Hybrid_Provider_Adapter is the basic class which HybridAuth will use
- * to connect users to a given provider. 
- * 
- * Basically Hybrid_Provider_Adapterwill create a bridge from your php 
- * application to the provider api.
- * 
- * HybridAuth will automatically load Hybrid_Provider_Adapter and create
- * an instance of it for each authenticated provider.
- */
 class AdapterFactory
 {
-	public $id = null;
+	public $id                 = null;
 
 	public $hybridauthConfig   = null;
 	public $providerConfig     = null;
 	public $providerParameters = null;
 	public $providerInstance   = null;
 
-	protected $storage = null;
-	protected $logger  = null;
+	protected $storage         = null;
 
 	// --------------------------------------------------------------------
 
-	function __construct( $config, \Hybridauth\Storage\StorageInterface $storage = null, \Hybridauth\Logger\LoggerInterface $logger = null )
+	function __construct( $config, \Hybridauth\Storage\StorageInterface $storage = null )
 	{
         $this->hybridauthConfig = $config;
 
-        $this->storage    = $storage;
-		$this->logger     = $logger;
+        $this->storage = $storage; 
 	}
 
 	// --------------------------------------------------------------------
-
-	/**
-	* Setup an adapter for a given provider
-	*/ 
-	public function setup( $providerId, $providerParameters = null )
-	{
-		if( ! $providerParameters ){
-			$providerParameters = $this->storage->get( "hauth_session.$providerId.id_provider_params" );
-		}
-
-		if( ! $providerParameters ){
-			$providerParameters = array();
-		}
-
-		if( ! isset( $providerParameters["hauth_return_to"] ) ){
-			$providerParameters["hauth_return_to"] = \Hybridauth\Http\Util::getCurrentUrl(); 
-		}
-
-		$this->factory( $providerId, $providerParameters );
-
-		return $this;
-	} 
 
 	/**
 	* create a new adapter switch IDp name or ID
@@ -72,22 +38,14 @@ class AdapterFactory
 	function factory( $id, $providerParameters = null )
 	{
 		# init the adapter config and params
-		$this->id                 = $id;
-		$this->providerParameters = $providerParameters; 
-		$this->providerConfig     = $this->getConfigById( $this->id );
-
-		# check the IDp id
-		if( ! $this->id ){
-			throw new
-				\Hybridauth\Exception( "No provider ID specified", \Hybridauth\Exception::PROVIDER_NOT_PROPERLY_CONFIGURED ); 
-		}
-
-		$this->id = $this->getProviderCiId( $this->id );
+		$this->providerParameters = $providerParameters;
+		$this->providerConfig     = $this->getConfigById( $id );
+		$this->id                 = $this->getProviderCiId( $id );
 
 		# check the IDp config
 		if( ! $this->providerConfig ){
 			throw new
-				\Hybridauth\Exception( "Unknown Provider", \Hybridauth\Exception::UNKNOWN_OR_DISABLED_PROVIDER ); 
+				\Hybridauth\Exception( "Unknown Provider", \Hybridauth\Exception::UNKNOWN_OR_DISABLED_PROVIDER );
 		}
 
 		# check the IDp adapter is enabled
@@ -99,26 +57,42 @@ class AdapterFactory
 		# include the adapter wrapper
 		$providerClassName = "\\Hybridauth\\Provider\\" . $this->id . "\\Adapter";
 
-		if( isset( $this->providerConfig["wrapper"] ) && is_array( $this->providerConfig["wrapper"] ) ){
-			require_once $this->providerConfig["wrapper"]["path"];
+		if( isset( $this->providerConfig["wrapper"] ) && $this->providerConfig["wrapper"] ){
+			if( isset( $this->providerConfig["wrapper"]["path"] ) && $this->providerConfig["wrapper"]["path"] ){
+				require_once $this->providerConfig["wrapper"]["path"];
+			}
 
 			$providerClassName = $this->providerConfig["wrapper"]["class"];
 		}
 
-		if( ! class_exists( $providerClassName ) ){
-			throw new 	
-				\Hybridauth\Exception( "Unable to load the adapter class: $providerClassName", \Hybridauth\Exception::UNKNOWN_OR_DISABLED_PROVIDER );
-		}
-
 		# create the adapter instance, and pass the current params and config
-		$this->providerInstance = new $providerClassName( 
+		$this->providerInstance = new $providerClassName(
 				$this->id                 ,
 				$this->hybridauthConfig   ,
 				$this->providerConfig     ,
 				$this->providerParameters ,
-				$this->storage            ,
-				$this->logger
+				$this->storage
 			);
+
+		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* Setup an adapter for a given provider
+	*/
+	public function setup( $providerId, $providerParameters = array() )
+	{
+		if( ! $providerParameters ){
+			$providerParameters = $this->storage->get( "hauth_session.$providerId.id_provider_params" );
+		}
+
+		if( ! isset( $providerParameters["hauth_return_to"] ) ){
+			$providerParameters["hauth_return_to"] = \Hybridauth\Http\Util::getCurrentUrl(); 
+		}
+
+		$this->factory( $providerId, $providerParameters );
 
 		return $this;
 	}
@@ -139,7 +113,7 @@ class AdapterFactory
 		}
 
 		// make a fresh start
-		$this->providerInstance->logout();
+		$this->logout();
 
 		# get hybridauth base url
 		$base_url = $this->hybridauthConfig["base_url"];
@@ -151,20 +125,17 @@ class AdapterFactory
 		# set request timestamp
 		$this->providerParameters["hauth_time"]  = time();
 
-		# for default HybridAuth endpoint url hauth_login_start_url
-		# 	auth.start  required  the IDp ID
-		# 	auth.time   optional  login request timestamp
+		# hauth.start
 		$this->providerParameters["login_start"] = $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.start={$this->id}&hauth.time={$this->providerParameters["hauth_time"]}";
 
-		# for default HybridAuth endpoint url hauth_login_done_url
-		# 	auth.done   required  the IDp ID
+		# hauth.done
 		$this->providerParameters["login_done"]  = $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.done={$this->id}";
 
 		$this->storage->set( "hauth_session.{$this->id}.hauth_return_to"    , $this->providerParameters["hauth_return_to"] );
 		$this->storage->set( "hauth_session.{$this->id}.hauth_endpoint"     , $this->providerParameters["login_done"] ); 
 		$this->storage->set( "hauth_session.{$this->id}.id_provider_params" , $this->providerParameters );
 
-		// store config to be used by the end point 
+		// store config to be used by the end point.
 		$this->storage->config( "CONFIG", $this->hybridauthConfig );
 
 		// move on
@@ -204,12 +175,12 @@ class AdapterFactory
 	{
 		if ( ! $this->isUserConnected() ){
 			throw new
-				\Hybridauth\Exception( "User not connected to the provider {$this->id}.", 7 );
-		} 
+				\Hybridauth\Exception( "User not connected to the provider {$this->id}.", \Hybridauth\Exception::USER_NOT_CONNECTED );
+		}
 
 		if ( ! method_exists( $this->providerInstance, $name ) ){
 			throw new
-				\Hybridauth\Exception( "Call to undefined function Hybrid_Providers_{$this->id}::$name()." );
+				\Hybridauth\Exception( "Call to undefined function Hybridauth\\Provider\\{$this->id}\\Adapter::$name()" );
 		}
 
 		if( count( $arguments ) ){
@@ -230,7 +201,7 @@ class AdapterFactory
 	{
 		if( ! $this->providerInstance->isUserConnected() ){
 			throw new
-				\Hybridauth\Exception( "User not connected to the provider.", 7 );
+				\Hybridauth\Exception( "User not connected to the provider.", \Hybridauth\Exception::USER_NOT_CONNECTED );
 		}
 
 		return
@@ -263,7 +234,7 @@ class AdapterFactory
 	{
 		if( ! $this->providerInstance->isUserConnected() ){
 			throw new
-				\Hybridauth\Exception( "User not connected to the provider.", 7 );
+				\Hybridauth\Exception( "User not connected to the provider.", \Hybridauth\Exception::USER_NOT_CONNECTED );
 		}
 
 		return $this->providerInstance->api;

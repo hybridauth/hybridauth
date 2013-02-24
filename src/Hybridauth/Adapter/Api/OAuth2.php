@@ -14,8 +14,7 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 		$this->application = new \Hybridauth\Adapter\Api\Application();
 		$this->endpoints   = new \Hybridauth\Adapter\Api\Endpoints();
 		$this->tokens      = new \Hybridauth\Adapter\Api\Tokens();
-
-		$this->client      = new \Hybridauth\Http\Client();
+		$this->httpClient  = new \Hybridauth\Http\Client();
 
 		$this->tokens->accessToken          = null;
 		$this->tokens->refreshToken         = null;
@@ -54,25 +53,25 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 			"code"          => $code
 		);
 
-		$this->client->post( $this->endpoints->requestTokenUri, $args );
+		$this->httpClient->post( $this->endpoints->requestTokenUri, $args );
 
 		// default ha client uses curl
-		if( $this->client->getResponseError() ){
+		if( $this->httpClient->getResponseError() ){
 			throw new
 				\Hybridauth\Exception(
-					"Error CURL (" . $this->client->getResponseError() . "). For more information refer to http://curl.haxx.se/libcurl/c/libcurl-errors.html",
+					"Error CURL (" . $this->httpClient->getResponseError() . "). For more information refer to http://curl.haxx.se/libcurl/c/libcurl-errors.html",
 					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
 		}
 
-		if( $this->client->getResponseStatus() != 200 ){
+		if( $this->httpClient->getResponseStatus() != 200 ){
 			throw new
 				\Hybridauth\Exception( "The Authorization Service has return and error", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
 		}
 
-		$response = $this->_parseRequestResult( $this->client->getResponseBody() );
+		$response = $this->_parseRequestResult( $this->httpClient->getResponseBody() );
 
 		if( isset( $response->access_token  ) ) $this->tokens->accessToken          = $response->access_token;
 		if( isset( $response->refresh_token ) ) $this->tokens->refreshToken         = $response->refresh_token;
@@ -97,14 +96,14 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 			$uri = $this->endpoints->baseUri . $uri;
 		}
 
-		$params['access_token'] = $this->tokens->accessToken; 
+		$params['access_token'] = $this->tokens->accessToken;
 
 		switch( $method ){
-			case 'GET'  : $this->client->get ( $uri, $params ); break;
-			case 'POST' : $this->client->post( $uri, $params ); break;
+			case 'GET'  : $this->httpClient->get ( $uri, $params ); break;
+			case 'POST' : $this->httpClient->post( $uri, $params ); break;
 		}
 
-		$response = json_decode( $this->client->getResponseBody() );
+		$response = json_decode( $this->httpClient->getResponseBody() );
 
 		return $response;
 	}
