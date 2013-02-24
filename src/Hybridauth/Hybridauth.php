@@ -36,19 +36,6 @@ class Hybridauth
 			$this->config = include $this->config;
 		}
 
-		// reset debug mode
-		if( ! isset( $config["debug_mode"] ) ){
-			$this->config["debug_mode"] = false;
-			$this->config["debug_file"] = null;
-		}
-
-		// remove unused idps
-		foreach( $this->config["providers"] as $idpid => $params ){
-			if( ! $params['enabled'] ){
-				unset( $this->config["providers"][$idpid] );
-			}
-		}
-
 		// Storage 
 		$this->storage = $storage ? $storage : new \Hybridauth\Storage\Session();
 

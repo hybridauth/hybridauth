@@ -20,10 +20,8 @@ return
 			),
 		),
 
-		// if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
+		// dev mode
 		"debug_mode" => true,
-
-		"debug_file" => "", // prob will be removed
 
 		// tweak default Http client curl settings
 		// http://www.php.net/manual/fr/function.curl-setopt.php  
@@ -44,6 +42,6 @@ return
 
 		// allows the use of a third party client 
 		// eg. Zend\Http, Wtf\HttpFoundation
-		// should be and instance of an object implementing Hybridauth\Http\ClientInterface
+		// should be a class implementing Hybridauth\Http\ClientInterface
 		"http_client" => null
 	);

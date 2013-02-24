@@ -19,9 +19,10 @@ try{
 	echo "As: <b>{$user_profile->displayName}</b><br />";
 	echo "And your provider user identifier is: <b>{$user_profile->identifier}</b><br />";  
 
-	// or even inspect it
+	// inspect user profile
 	echo "<pre>" . print_r( $user_profile, true ) . "</pre><br />";
 
+	// adapter profiling
 	echo $adapter->debug();
 
 	echo "Logging out.."; 
