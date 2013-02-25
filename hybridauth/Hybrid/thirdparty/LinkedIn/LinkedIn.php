@@ -696,6 +696,9 @@ class LinkedIn {
       
       // gather the response
       $return_data['linkedin']        = curl_exec($handle);
+      if( $return_data['linkedin'] === FALSE ) {
+          Hybrid_Logger::error( "LinkedIn::fetch(). curl_exec error: ", curl_error($ch) );
+      }
       $return_data['info']            = curl_getinfo($handle);
       $return_data['oauth']['header'] = $oauth_req->to_header(self::_API_OAUTH_REALM);
       $return_data['oauth']['string'] = $oauth_req->base_string;
