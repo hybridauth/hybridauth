@@ -47,8 +47,7 @@ return
 			// etc..
 		),
 
-		// allows the use of a third party client 
-		// eg. Zend\Http, Wtf\HttpFoundation
+		// allows the use of a third party client (eg. Zend\Http)
 		// should be a class implementing Hybridauth\Http\ClientInterface
 		"http_client" => null
 	);
