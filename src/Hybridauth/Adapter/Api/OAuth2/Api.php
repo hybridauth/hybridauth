@@ -5,21 +5,24 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-namespace Hybridauth\Adapter\Api;
+namespace Hybridauth\Adapter\Api\OAuth2;
 
-class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
+class Api implements \Hybridauth\Adapter\Api\ApiInterface
 {
+	public $application = null;
+	public $endpoints   = null;
+	public $scope       = null;
+	public $tokens      = null;
+	public $httpClient  = null;
+
+	// --------------------------------------------------------------------
+
 	public function __construct()
 	{
 		$this->application = new \Hybridauth\Adapter\Api\Application();
 		$this->endpoints   = new \Hybridauth\Adapter\Api\Endpoints();
-		$this->tokens      = new \Hybridauth\Adapter\Api\Tokens();
+		$this->tokens      = new \Hybridauth\Adapter\Api\OAuth2\Tokens(); 
 		$this->httpClient  = new \Hybridauth\Http\Client();
-
-		$this->tokens->accessToken          = null;
-		$this->tokens->refreshToken         = null;
-		$this->tokens->accessTokenExpiresIn = null;
-		$this->tokens->accessTokenExpiresAt = null;
 	}
 
 	// --------------------------------------------------------------------
@@ -29,6 +32,7 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 		$args = array(
 			"client_id"     => $this->application->id,
 			"redirect_uri"  => $this->endpoints->redirectUri,
+			"scope"         => $this->scope,
 			"response_type" => "code"
 		);
 
@@ -55,11 +59,12 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 
 		$this->httpClient->post( $this->endpoints->requestTokenUri, $args );
 
+		// fixme!
 		// default ha client uses curl
 		if( $this->httpClient->getResponseError() ){
 			throw new
 				\Hybridauth\Exception(
-					"Error CURL (" . $this->httpClient->getResponseError() . "). For more information refer to http://curl.haxx.se/libcurl/c/libcurl-errors.html",
+					"Provider returned and error. CURL Error (" . $this->httpClient->getResponseError() . "). For more information refer to http://curl.haxx.se/libcurl/c/libcurl-errors.html",
 					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
@@ -68,7 +73,7 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 
 		if( $this->httpClient->getResponseStatus() != 200 ){
 			throw new
-				\Hybridauth\Exception( "The Authorization Service has return and error", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
+				\Hybridauth\Exception( "Provider returned and error. HTTP Error (" . $this->httpClient->getResponseStatus() . ")", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
 		}
 
 		$response = $this->_parseRequestResult( $this->httpClient->getResponseBody() );
@@ -87,25 +92,71 @@ class OAuth2 extends \Hybridauth\Adapter\Api\AbstractApi
 
 	// --------------------------------------------------------------------
 
-	/** 
+	public function get( $uri, $args = array() ) 
+	{
+		return $this->_signedRequest( $uri, 'GET', $args );
+	}
+
+	// --------------------------------------------------------------------
+
+	public function post( $uri, $args = array() ) 
+	{
+		return $this->_signedRequest( $uri, 'POST', $args );
+	}
+
+	// --------------------------------------------------------------------
+
+	public function refreshAccessToken( $extras = array() )
+	{
+		// have an access token?
+		if( ! $this->tokens->accessToken ){
+			return false;
+		}
+
+		// have to refresh?
+		if( ! ( $this->tokens->refreshToken && $this->api->tokens->accessTokenExpiresIn ) ){
+			return false;
+		}
+
+		// expired?
+		if( $this->tokens->accessTokenExpiresIn > time() ){
+			return false;
+		}
+
+		$args = array(
+			"client_id"     => $this->application->id,
+			"client_secret" => $this->application->secret,
+			"grant_type"    => "refresh_token"
+		);
+
+		foreach( $extras as $k=>$v ){
+			$args[$k] = $v; 
+		}
+
+		$this->httpClient->post( $this->endpoints->requestTokenUri, $args );
+
+		return $this->_parseRequestResult( $this->httpClient->getResponseBody() );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	* Format and sign an oauth for provider api 
 	*/
-	public function api( $uri, $method = 'GET', $params = array() ) 
+	private function _signedRequest( $uri, $method = 'GET', $args = array() )
 	{
 		if ( strrpos($uri, 'http://') !== 0 && strrpos($uri, 'https://') !== 0 ){
 			$uri = $this->endpoints->baseUri . $uri;
 		}
 
-		$params['access_token'] = $this->tokens->accessToken;
+		$args[ 'access_token' ] = $this->tokens->accessToken;
 
 		switch( $method ){
-			case 'GET'  : $this->httpClient->get ( $uri, $params ); break;
-			case 'POST' : $this->httpClient->post( $uri, $params ); break;
+			case 'GET'  : $this->httpClient->get ( $uri, $args ); break;
+			case 'POST' : $this->httpClient->post( $uri, $args ); break;
 		}
 
-		$response = json_decode( $this->httpClient->getResponseBody() );
-
-		return $response;
+		return $this->httpClient->getResponseBody();
 	}
 
 	// --------------------------------------------------------------------

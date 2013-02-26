@@ -14,11 +14,6 @@ namespace Hybridauth\Provider\Google;
 */
 class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 {
-	// default permissions 
-	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/";
-
-	// --------------------------------------------------------------------
-
 	/**
 	* IDp wrappers initializer 
 	*/
@@ -30,27 +25,14 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		$this->api->endpoints->authorizeUri    = "https://accounts.google.com/o/oauth2/auth";
 		$this->api->endpoints->requestTokenUri = "https://accounts.google.com/o/oauth2/token";
 		$this->api->endpoints->tokenInfoUri    = "https://www.googleapis.com/oauth2/v1/tokeninfo";
-	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	* begin login step 
-	*/
-	function loginBegin()
-	{
-		$parameters = array( "scope" => $this->scope, "access_type" => "offline" );
-		$optionals  = array( "scope", "access_type", "redirect_uri", "approval_prompt" );
-
-		foreach ($optionals as $parameter){
-			if( isset( $this->config[$parameter] ) && ! empty( $this->config[$parameter] ) ){
-				$parameters[$parameter] = $this->config[$parameter];
-			}
+		if( $this->api->scope === null ){
+			$this->api->scope  = "https://www.googleapis.com/auth/userinfo.profile ";
+			$this->api->scope .= "https://www.googleapis.com/auth/userinfo.email ";
+			$this->api->scope .= "https://www.google.com/m8/feeds/";
 		}
 
-		$url = $this->api->generateAuthorizeUri( $parameters );
-
-		\Hybridauth\Http\Util::redirect( $url ); 
+		$this->api->endpoints->authorizeUriParameters = array( "access_type" => "offline" );
 	}
 
 	// --------------------------------------------------------------------
@@ -60,13 +42,14 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 	*/
 	function getUserProfile()
 	{
-		// refresh tokens if needed 
-		$this->refreshToken();
+		// refresh tokens
+		$this->refreshAccessToken();
 
-		// ask google api for user infos
-		$response = $this->api->api( "https://www.googleapis.com/oauth2/v1/userinfo" );
+		// request user infos
+		$response = $this->api->get( "https://www.googleapis.com/oauth2/v1/userinfo" );
+		$response = json_decode( $response );
 
-		if ( ! isset( $response->id ) || isset( $response->error ) ){
+		if ( ! $response || ! isset( $response->id ) || isset( $response->error ) ){
 			throw new
 				\Hybridauth\Exception(
 					"User profile request failed! {$this->providerId} returned an invalid response.", 
@@ -78,7 +61,7 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 
 		$profile = new \Hybridauth\User\Profile();
 
-		$profile->provider    = $this->providerId;
+		$profile->providerId  = $this->providerId;
 		$profile->identifier  = ( property_exists( $response, 'id'          ) ) ? $response->id          : "";
 		$profile->firstName   = ( property_exists( $response, 'given_name'  ) ) ? $response->given_name  : "";
 		$profile->lastName    = ( property_exists( $response, 'family_name' ) ) ? $response->family_name : "";
@@ -111,31 +94,39 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 	*/
 	function getUserContacts()
 	{
-		// refresh tokens if needed 
-		$this->refreshToken();  
+		// refresh tokens
+		$this->refreshAccessToken();
 
 		if( ! isset( $this->config['contacts_param'] ) ){
 			$this->config['contacts_param'] = array( "max-results" => 500 );
 		}
 
-		$response = $this->api->api(
-				"https://www.google.com/m8/feeds/contacts/default/full?" . 
-					http_build_query( array_merge( array( 'alt' => 'json' ), 
-					$this->config['contacts_param'] ) )
-			);
+		$response = $this->api->get(
+						"https://www.google.com/m8/feeds/contacts/default/full?" . 
+							http_build_query( array_merge( array( 'alt' => 'json' ), 
+							$this->config['contacts_param'] ) )
+					);
+
+		$response = json_decode( $response );
 
 		if( ! $response ){
+			throw new
+				\Hybridauth\Exception( "User contacts request failed! {$this->providerId} returned an error" );
+		}
+
+		if( ! isset( $response->feed ) || ! $response->feed ){
 			return array();
 		}
- 
+
 		$contacts = array(); 
 
 		foreach( $response->feed->entry as $idx => $entry ){
 			$uc = new \Hybridauth\User\Contact();
 
-			$uc->email        = isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : ''; 
-			$uc->displayName  = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';  
-			$uc->identifier   = $uc->email;
+			$uc->providerId  = $this->providerId;
+			$uc->email       = isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : ''; 
+			$uc->displayName = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';  
+			$uc->identifier  = $uc->email;
 
 			$contacts[] = $uc;
 		}  

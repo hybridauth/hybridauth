@@ -16,6 +16,9 @@ namespace Hybridauth\User;
  */
 class Activity
 {
+	/* The ID (name) of the connected provider */
+	public $providerId = NULL;
+
 	/* activity id on the provider side, usually given as integer */
 	public $id = NULL;
 

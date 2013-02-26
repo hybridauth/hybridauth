@@ -16,6 +16,9 @@ namespace Hybridauth\User;
  */
 class Contact
 {
+	/* The ID (name) of the connected provider */
+	public $providerId = NULL;
+
 	/* The Unique contact user ID */
 	public $identifier = NULL;
 

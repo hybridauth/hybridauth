@@ -5,40 +5,29 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-namespace Hybridauth\Storage;
+namespace Hybridauth\Adapter;
 
-/**
- * HybridAuth storage manager
- */
-interface StorageInterface
+interface AdapterInterface
 {
-	public function config($key, $value=null);
+	function initialize();
 
 	// --------------------------------------------------------------------
 
-	public function get($key);
+	function loginBegin();
 
 	// --------------------------------------------------------------------
 
-	public function set( $key, $value );
+	function loginFinish();
 
 	// --------------------------------------------------------------------
 
-	function clear();
+	function isUserConnected();
 
 	// --------------------------------------------------------------------
 
-	function delete($key);
+	function setUserConnected();
 
 	// --------------------------------------------------------------------
 
-	function deleteMatch($key);
-
-	// --------------------------------------------------------------------
-
-	function getSessionData();
-
-	// --------------------------------------------------------------------
-
-	function restoreSessionData( $sessiondata = NULL );
+	function logout();
 }

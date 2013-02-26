@@ -5,36 +5,20 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-namespace Hybridauth\Adapter\Template;
+namespace Hybridauth\Adapter;
 
-/**
- * Hybrid_Provider_Model provide a common interface for supported IDps on HybridAuth.
- *
- * Basically, each provider adapter has to define at least 4 methods:
- *   Hybrid_Providers_{provider_name}::initialize()
- *   Hybrid_Providers_{provider_name}::loginBegin()
- *   Hybrid_Providers_{provider_name}::loginFinish()
- *   Hybrid_Providers_{provider_name}::getUserProfile()
- *
- * HybridAuth also come with three others models
- *   Class Hybrid_Provider_Model_OpenID for providers that uses the OpenID 1 and 2 protocol.
- *   Class Hybrid_Provider_Model_OAuth1 for providers that uses the OAuth 1 protocol.
- *   Class Hybrid_Provider_Model_OAuth2 for providers that uses the OAuth 2 protocol.
- */
 class AdapterTemplate
 {
 	/* IDp ID (or unique name) */
-	public $providerId = null;
+	public $providerId            = null;
 
-	public $hybridauthConfig   = null;
-	public $config             = null;
-	public $parameters         = null;
+	public $hybridauthConfig      = null;
+	public $config                = null;
+	public $parameters            = null;
 
-	public $endpoint      = null;
-
-	protected $api        = null;
-
-	protected $storage    = null;
+	protected $hybridauthEndpoint = null;
+	protected $api                = null;
+	protected $storage            = null;
 
 	/**
 	* common providers adapter constructor
@@ -64,41 +48,11 @@ class AdapterTemplate
 		$this->config = $config;
 
 		// set HybridAuth endpoint for this provider
-		$this->endpoint = $this->storage->get( "hauth_session.$providerId.hauth_endpoint" );
+		$this->hybridauthEndpoint = $this->storage->get( "hauth_session.$providerId.hauth_endpoint" );
 
 		// initialize the current provider adapter
 		$this->initialize();
 	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	* IDp wrappers initializer
-	*
-	* The main job of wrappers initializer is to performs (depend on the IDp api client it self): 
-	*     - include some libs nedded by this provider,
-	*     - check IDp key and secret,
-	*     - set some needed parameters (stored in $this->params) by this IDp api client
-	*     - create and setup an instance of the IDp api client on $this->api 
-	*/
-	public function initialize()
-	{}
-
-	// --------------------------------------------------------------------
-
-	/**
-	* begin login
-	*/
-	public function loginBegin()
-	{}
-
-	// --------------------------------------------------------------------
-
-	/**
-	* finish login
-	*/
-	public function loginFinish()
-	{}
 
 	// --------------------------------------------------------------------
 
@@ -107,7 +61,9 @@ class AdapterTemplate
 	*/
 	function logout()
 	{
-		$this->clearTokens();
+		$this->storage->delete( "hauth_session.{$this->providerId}.tokens" );
+
+		$this->setUserUnconnected();
 
 		return TRUE;
 	}
@@ -188,37 +144,16 @@ class AdapterTemplate
 
 	// --------------------------------------------------------------------
 
-	/**
-	* get or set a token 
-	*/ 
-	public function token( $token, $value = null )
+	public function getStoredTokens()
 	{
-		if( $value === null ){
-			return $this->storage->get( "hauth_session.{$this->providerId}.token.$token" );
-		}
-		else{
-			$this->storage->set( "hauth_session.{$this->providerId}.token.$token", $value );
-		}
+		return $this->storage->get( "hauth_session.{$this->providerId}.tokens" );
 	}
 
 	// --------------------------------------------------------------------
 
-	/**
-	* delete a stored token 
-	*/ 
-	public function deleteToken( $token )
+	public function storeTokens( \Hybridauth\Adapter\Api\TokensInterface $tokens )
 	{
-		$this->storage->delete( "hauth_session.{$this->providerId}.token.$token" );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	* clear all existen tokens for this provider
-	*/ 
-	public function clearTokens()
-	{
-		$this->storage->deleteMatch( "hauth_session.{$this->providerId}." );
+		$this->storage->set( "hauth_session.{$this->providerId}.tokens", $tokens );
 	}
 
 	// --------------------------------------------------------------------
@@ -230,6 +165,8 @@ class AdapterTemplate
 
 		$html = sprintf('<h1>%s</h1>', $title);
 		$html .= sprintf('<pre>%s</pre>', print_r( $this, 1 ) );
+		$html .= '<h2>Session</h2>';
+		$html .= sprintf('<pre>%s</pre>', print_r( $_SESSION, 1 ) );
 		$html .= '<h2>Backtrace</h2>';
 		$html .= sprintf('<pre>%s</pre>', print_r( debug_backtrace(), 1 ) );
 

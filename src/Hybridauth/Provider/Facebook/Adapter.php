@@ -15,7 +15,7 @@ namespace Hybridauth\Provider\Facebook;
 class Adapter extends \Hybridauth\Adapter\Template\OAuth2 
 {
 	// default permissions 
-	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, read_stream, offline_access, publish_stream, read_friendlists";
+	public $scope = "";
 
 	// --------------------------------------------------------------------
 
@@ -29,38 +29,24 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		// Provider api end-points
 		$this->api->endpoints->authorizeUri    = "https://www.facebook.com/dialog/oauth";
 		$this->api->endpoints->requestTokenUri = "https://graph.facebook.com/oauth/access_token"; 
-	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	* begin login step 
-	*/
-	function loginBegin()
-	{
-		$parameters = array("scope" => $this->scope, "redirect_uri" => $this->endpoint, "display" => "page");
-		$optionals  = array("scope", "redirect_uri", "display");
-
-		foreach ($optionals as $parameter){
-			if( isset( $this->config[$parameter] ) && ! empty( $this->config[$parameter] ) ){
-				$parameters[$parameter] = $this->config[$parameter];
-			}
+		if( $this->api->scope === null ){
+			$this->api->scope  = "email,user_about_me,user_birthday,user_hometown,user_website,read_stream,offline_access,publish_stream,read_friendlists";
 		}
 
-		$url = $this->api->generateAuthorizeUri( $parameters );
-
-		\Hybridauth\Http\Util::redirect( $url ); 
+		$this->api->endpoints->authorizeUriParameters = array( "display" => "page" );
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	* load the user profile from the IDp api client
+	* Get user profile 
 	*/
 	function getUserProfile()
 	{
-		// ask google api for user infos
-		$response = $this->api->api( "https://graph.facebook.com/me" );
+		// request user infos
+		$response = $this->api->get( "https://graph.facebook.com/me" );
+		$response = json_decode( $response );
 
 		if ( ! isset( $response->id ) || isset( $response->error ) ){
 			throw new
@@ -74,7 +60,7 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 
 		$profile = new \Hybridauth\User\Profile();
 
-		$profile->provider      = $this->providerId;
+		$profile->providerId    = $this->providerId;
 		$profile->identifier    = ( property_exists( $response, 'id'        ) ) ? $response->id         : "";
 		$profile->displayName   = ( property_exists( $response, 'name'      ) ) ? $response->name       : "";
 		$profile->firstName     = ( property_exists( $response, 'first_name') ) ? $response->first_name : "";
@@ -109,14 +95,15 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 	*/
 	function getUserContacts()
 	{
-		try{
-			$response = $this->api->api( 'https://graph.facebook.com/me/friends' ); 
-		}
-		catch( FacebookApiException $e ){
-			throw new Exception( "User contacts request failed! {$this->providerId} returned an error" );
+		$response = $this->api->get( 'https://graph.facebook.com/me/friends' ); 
+		$response = json_decode( $response );
+
+		if( ! $response ){
+			throw new
+				\Hybridauth\Exception( "User contacts request failed! {$this->providerId} returned an error" );
 		}
 
-		if( ! $response || ! count( $response->data ) ){
+		if( ! isset( $response->data ) || ! $response->data ){
 			return array();
 		}
 
@@ -125,7 +112,8 @@ class Adapter extends \Hybridauth\Adapter\Template\OAuth2
 		foreach( $response->data as $item ){
 			$uc = new \Hybridauth\User\Contact();
 
-			$uc->identifier  = ( property_exists( $item, 'id' ) ) ? $item->id : ""; 
+			$uc->providerId  = $this->providerId;
+			$uc->identifier  = ( property_exists( $item, 'id'   ) ) ? $item->id   : ""; 
 			$uc->displayName = ( property_exists( $item, 'name' ) ) ? $item->name : ""; 
 			$uc->profileURL  = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
 			$uc->photoURL    = "https://graph.facebook.com/" . $uc->identifier . "/picture?width=150&height=150";

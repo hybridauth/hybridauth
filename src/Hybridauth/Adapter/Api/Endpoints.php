@@ -9,4 +9,6 @@ namespace Hybridauth\Adapter\Api;
 
 class Endpoints
 {
+	public $authorizeUriParameters = array();
+	public $baseUri = null;
 }

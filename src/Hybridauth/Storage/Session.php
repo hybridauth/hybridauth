@@ -21,9 +21,11 @@ class Session implements \Hybridauth\Storage\StorageInterface
 		}
 	}
 
+	// --------------------------------------------------------------------
+
 	public function config($key, $value=null) 
 	{
-		$key = strtolower( $key );  
+		$key = strtolower( $key );
 
 		if( $value ){
 			$_SESSION["HA::CONFIG"][$key] = serialize( $value ); 
@@ -34,6 +36,8 @@ class Session implements \Hybridauth\Storage\StorageInterface
 
 		return NULL; 
 	}
+
+	// --------------------------------------------------------------------
 
 	public function get($key) 
 	{
@@ -46,17 +50,23 @@ class Session implements \Hybridauth\Storage\StorageInterface
 		return NULL; 
 	}
 
+	// --------------------------------------------------------------------
+
 	public function set( $key, $value )
 	{
 		$key = strtolower( $key ); 
 
-		$_SESSION["HA::STORE"][$key] = serialize( $value ); 
+		$_SESSION["HA::STORE"][$key] = serialize( $value );
 	}
+
+	// --------------------------------------------------------------------
 
 	function clear()
 	{ 
 		$_SESSION["HA::STORE"] = ARRAY(); 
 	} 
+
+	// --------------------------------------------------------------------
 
 	function delete($key)
 	{
@@ -66,6 +76,8 @@ class Session implements \Hybridauth\Storage\StorageInterface
 			unset( $_SESSION["HA::STORE"][$key] );
 		} 
 	}
+
+	// --------------------------------------------------------------------
 
 	function deleteMatch($key)
 	{
@@ -80,6 +92,8 @@ class Session implements \Hybridauth\Storage\StorageInterface
 		}
 	}
 
+	// --------------------------------------------------------------------
+
 	function getSessionData()
 	{
 		if( isset( $_SESSION["HA::STORE"] ) ){ 
@@ -88,6 +102,8 @@ class Session implements \Hybridauth\Storage\StorageInterface
 
 		return NULL; 
 	}
+
+	// --------------------------------------------------------------------
 
 	function restoreSessionData( $sessiondata = NULL )
 	{ 

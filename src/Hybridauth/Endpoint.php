@@ -91,8 +91,6 @@ class Endpoint
 
 	private function _processAuthStart()
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
-
 		$this->_authInit();
 
 		$provider_id = trim( strip_tags( $this->request["hauth_start"] ) );
@@ -104,7 +102,7 @@ class Endpoint
 			die( "You cannot access this page directly." );
 		}
 
-		# define:hybrid.endpoint.php step 2.
+		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
 		$adapter = $adapterFactory->setup( $provider_id );
 
 		# if REQUESTed hauth_idprovider is wrong, session not created, etc.
@@ -115,14 +113,14 @@ class Endpoint
 		}
 
 		try { 
-			$adapter->providerInstance->loginBegin();
+			$adapter->loginBegin();
 		}
 		catch ( \Hybridauth\Exception $e ){
 			$this->storage->set( "hauth_session.error.status"  , 1 );
 			$this->storage->set( "hauth_session.error.message" , $e->getMessage() );
 			$this->storage->set( "hauth_session.error.code"    , $e->getCode() );
 
-			$adapter->returnToCallbackUrl();
+			$this->_returnToCallbackUrl( $provider_id );
 		}
 	}
 
@@ -130,32 +128,47 @@ class Endpoint
 
 	private function _processAuthDone()
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
-
 		$this->_authInit();
 
 		$provider_id = trim( strip_tags( $this->request["hauth_done"] ) );
 
+		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
 		$adapter = $adapterFactory->setup( $provider_id );
 
-		if( ! $adapter ) { 
-			$adapter->providerInstance->setUserUnconnected();
+		if( ! $adapter ) {
+			header("HTTP/1.0 404 Not Found");
 
-			header("HTTP/1.0 404 Not Found"); 
 			die( "Invalid parameter! Please return to the login page and try again." );
 		}
 
 		try {
-			$adapter->providerInstance->loginFinish();
+			$adapter->loginFinish();
 		}
 		catch( \Hybridauth\Exception $e ){
 			$this->storage->set( "hauth_session.error.status"  , 1 );
 			$this->storage->set( "hauth_session.error.message" , $e->getMessage() );
 			$this->storage->set( "hauth_session.error.code"    , $e->getCode() );
-
-			$adapter->providerInstance->setUserUnconnected();
 		}
 
-		$adapter->returnToCallbackUrl();
+		$this->_returnToCallbackUrl( $provider_id );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* redirect the user to hauth_return_to (the callback url)
+	*/
+	private function _returnToCallbackUrl( $providerId )
+	{
+		// get the stored callback url
+		$callback_url = $this->storage->get( "hauth_session.{$providerId}.hauth_return_to" );
+
+		// remove some unneed'd stored data 
+		$this->storage->delete( "hauth_session.{$providerId}.hauth_return_to"    );
+		$this->storage->delete( "hauth_session.{$providerId}.hauth_endpoint"     );
+		$this->storage->delete( "hauth_session.{$providerId}.id_provider_params" );
+
+		// back to home
+		\Hybridauth\Http\Util::redirect( $callback_url );
 	}
 }
