@@ -10,6 +10,8 @@ try{
 
 	$adapter = $hybridauth->authenticate( "Google" );
 	// $adapter = $hybridauth->authenticate( "Facebook" );
+	// $adapter = $hybridauth->authenticate( "Windows" );
+	// $adapter = $hybridauth->authenticate( "OpenID", array( "openid_identifier" => "https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds" ) );
 
 	// get the user profile 
 	$user_profile = $adapter->getUserProfile();

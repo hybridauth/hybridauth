@@ -10,11 +10,18 @@ return
 		"base_url" => "http://localhost/hybridauth-git/hybridauth/",  
 
 		"providers" => array(
+			"OpenID" => array(
+				"enabled" => true
+			),
 			"Google" => array(
 				"enabled" => true,
 				"keys"    => array( "id" => "", "secret" => "" ), 
 			),
 			"Facebook" => array(
+				"enabled" => true,
+				"keys"    => array( "id" => "", "secret" => "" ), 
+			),
+			"Windows" => array(
 				"enabled" => true,
 				"keys"    => array( "id" => "", "secret" => "" ), 
 			),
