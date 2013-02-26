@@ -156,6 +156,28 @@ class Api implements \Hybridauth\Adapter\Api\ApiInterface
 			case 'POST' : $this->httpClient->post( $uri, $args ); break;
 		}
 
+		// fixme!
+		// default ha client uses curl
+		if( $this->httpClient->getResponseError() ){
+			throw new
+				\Hybridauth\Exception(
+					"Provider returned and error. CURL Error (" . $this->httpClient->getResponseError() . "). For more information refer to http://curl.haxx.se/libcurl/c/libcurl-errors.html",
+					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					null,
+					$this
+				);
+		}
+
+		if( $this->httpClient->getResponseStatus() != 200 ){
+			throw new
+				\Hybridauth\Exception(
+					"Provider returned and error. HTTP Error (" . $this->httpClient->getResponseStatus() . ")",
+					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					null,
+					$this
+				);
+		}
+
 		return $this->httpClient->getResponseBody();
 	}
 

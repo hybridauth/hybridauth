@@ -7,14 +7,14 @@
 
 namespace Hybridauth\Adapter\Template;
 
-class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\Adapter\AdapterInterface
+class OAuth1 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\Adapter\AdapterInterface
 {
 	/**
 	* adapter initializer 
 	*/
 	function initialize()
 	{
-		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
+		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] ){
 			throw new
 				\Hybridauth\Exception(
 					"Application credentials are missing",
@@ -22,10 +22,10 @@ class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 				);
 		}
 
-		// create a new OAuth2 client instance
-		$this->api = new \Hybridauth\Adapter\Api\OAuth2\Api();
+		// OAuth1 API
+		$this->api = new \Hybridauth\Adapter\Api\OAuth1\Api();
 
-		$this->api->application->id     = $this->config["keys"]["id"];
+		$this->api->application->key    = $this->config["keys"]["key"];
 		$this->api->application->secret = $this->config["keys"]["secret"];
 
 		$this->api->endpoints->redirectUri = $this->hybridauthEndpoint;
@@ -39,17 +39,14 @@ class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 			$this->api->httpClient = new \Hybridauth\Http\Client( $curl_options );
 		}
 
- 		// override requested scope
-		if( isset( $this->config["scope"] ) ){
-			$this->api->scope = $this->config["scope"];
-		}
-
 		// stored access tokens?
 		$tokens = $this->getStoredTokens( $this->api->tokens );
 
 		if( $tokens ){
 			$this->api->tokens = $tokens;
 		}
+
+		$this->api->initialize();
 	}
 
 	// --------------------------------------------------------------------
@@ -59,6 +56,18 @@ class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 	*/
 	function loginBegin()
 	{
+		$this->api->requestAuthToken();
+
+		if ( ! $this->api->tokens || ! $this->api->tokens->requestToken ){
+			throw new
+				\Hybridauth\Exception(
+					"Authentication failed! {$this->providerId} returned invalid oauth_token",
+					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					null,
+					$this
+				);
+		}
+
 		$parameters = $this->api->endpoints->authorizeUriParameters;
 		$optionals  = isset( $this->config["authorize_uri_options"] ) ? $this->config["authorize_uri_options"] : array();
 
@@ -67,6 +76,9 @@ class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 				$parameters[ $k ] = $v;
 			}
 		}
+
+		// store tokens
+		$this->storeTokens( $this->api->tokens );
 
 		$url = $this->api->generateAuthorizeUri( $parameters );
 
@@ -80,25 +92,28 @@ class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 	*/
 	function loginFinish()
 	{
-		$error = ( array_key_exists( 'error', $_REQUEST ) ) ? $_REQUEST['error'] : "";
+		$oauth_token    = ( array_key_exists( 'oauth_token'   , $_REQUEST ) ) ? $_REQUEST['oauth_token']    : "";
+		$oauth_verifier = ( array_key_exists( 'oauth_verifier', $_REQUEST ) ) ? $_REQUEST['oauth_verifier'] : "";
 
-		if ( $error ){
+		if ( ! $oauth_token || ! $oauth_verifier ){
 			throw new
 				\Hybridauth\Exception(
-					"Authentication failed! {$this->providerId} returned an error: $error",
+					"Authentication failed! {$this->providerId} returned an invalid oauth verifier",
 					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
 		}
 
-		// try to authenicate user
-		$code = (array_key_exists('code',$_REQUEST))?$_REQUEST['code']:"";
+		// 1.0a
+		if ( $oauth_verifier ){
+			$this->api->tokens->oauthVerifier = $oauth_verifier;
+		}
 
-		$this->api->authenticate( $code );
+		$this->api->requestAccessToken();
 
 		// check if authenticated
-		if ( ! $this->api->tokens->accessToken ){
+		if ( ! $this->api->tokens || ! $this->api->tokens->accessToken ){
 			throw new
 				\Hybridauth\Exception(
 					"Authentication failed! {$this->providerId} returned an invalid access token",
@@ -113,47 +128,5 @@ class OAuth2 extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 
 		// set user connected locally
 		$this->setUserConnected();
-	}
-
-	// --------------------------------------------------------------------
-
-	function refreshAccessToken()
-	{
-		$response = $this->api->refreshAccessToken( array( "refresh_token" => $this->api->tokens->refreshToken ) );
-
-		if( $response === false ){
-			return;
-		}
-
-		// error?
-		if( ! isset( $response->access_token ) || ! $response->access_token ){
-			// set the user as disconnected at this point and throw an exception
-			$this->setUserUnconnected();
-
-			throw new
-				\Hybridauth\Exception(
-					"Authentication failed! {$this->providerId} returned an invalid access/refresh token",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
-					null,
-					$this
-				);
-		}
-
-		// set new access_token
-		$this->api->accessToken = $response->access_token;
-
-		if( isset( $response->refresh_token ) ){
-			$this->api->refreshToken = $response->refresh_token;
-		}
-
-		if( isset( $response->expires_in ) && (int) $response->expires_in ){
-			$this->api->accessTokenExpiresIn = $response->expires_in;
-
-			// even given by some idp, we should calculate this
-			$this->api->accessTokenExpiresAt = time() + (int) $response->expires_in;
-		}
-
-		// overwrite stored tokens
-		$this->storeTokens( $this->api->tokens );
 	}
 }

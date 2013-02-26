@@ -33,7 +33,7 @@ class OpenID extends \Hybridauth\Adapter\AdapterTemplate implements \Hybridauth\
 				? $this->hybridauthConfig['curl_options'][ CURLOPT_PROXY ]
 				: '' ;
 
-		$this->api = new \Hybridauth\Adapter\Template\LightOpenID( parse_url( $this->hybridauthConfig["base_url"], PHP_URL_HOST), $proxy );
+		$this->api = new \Hybridauth\Adapter\Api\OpenID\Api( parse_url( $this->hybridauthConfig["base_url"], PHP_URL_HOST), $proxy );
 	}
 
 	// --------------------------------------------------------------------

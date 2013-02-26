@@ -1,5 +1,5 @@
 <?php
-namespace Hybridauth\Adapter\Template;
+namespace Hybridauth\Adapter\Api\OpenID;
 
 /**
  * This class provides a simple interface for OpenID 1.1/2.0 authentication.

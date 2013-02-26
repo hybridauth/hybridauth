@@ -32,8 +32,8 @@ class AdapterFactory
 	{
 		# init the adapter config and params
 		$providerParameters = $providerParameters;
-		$providerConfig     = $this->_getConfigById( $id );
 		$id                 = $this->_getProviderCiId( $id );
+		$providerConfig     = $this->_getConfigById( $id );
 
 		# check the IDp config
 		if( ! $providerConfig ){

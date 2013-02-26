@@ -5,11 +5,7 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-namespace Hybridauth\Adapter\Api;
+namespace Hybridauth\Adapter\Api\OpenID;
 
-class Endpoints
-{
-	public $authorizeUriParameters = array();
-	public $baseUri                = null;
-	public $redirectUri            = null;
-}
+class Api extends \Hybridauth\Adapter\Api\OpenID\LightOpenID
+{}
