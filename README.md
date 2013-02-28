@@ -16,9 +16,9 @@ This roadmap outlines the planned strategy for HybridAuth 3.x, and it take into 
 * ...
 * Make the migration process from HybridAuth 2.x easy and manageable
 * add hooks to getUserProfile, getUserContacts to chage the default behavior/result
-* Rewrite the code documentation and user guide (God help us all)
 * Implement some coding standards (Comments and constructive criticism on this are welcome and appreciated) 
 * Hybridauth 3.x will come bundled only 6 "major" providers + OpenID by default -- and only them will be kept maintained on upstream. Additionals providers will be maintained independently.
+* Write the code documentation and user guide (God help us all)
 
 Bundled Providers
 -----------------
@@ -28,11 +28,11 @@ Bundled Providers
 * Yahoo
 * Windows
 * LinkedIn
-* OpenID
+* OpenID(s)
 
 Requirements
 ------------
-* PHP 5.2
+* PHP 5.3
 * PHP/libcurl enabled
 
 Resources

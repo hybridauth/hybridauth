@@ -31,7 +31,6 @@ class AdapterFactory
 	function factory( $id, $providerParameters = null )
 	{
 		# init the adapter config and params
-		$providerParameters = $providerParameters;
 		$id                 = $this->_getProviderCiId( $id );
 		$providerConfig     = $this->_getConfigById( $id );
 
@@ -48,7 +47,7 @@ class AdapterFactory
 		}
 
 		# include the adapter wrapper
-		$providerClassName = "\\Hybridauth\\Provider\\" . $id . "\\Adapter";
+		$providerClassName = "\\Hybridauth\\Provider\\" . $id . "\\" . $id . "Adapter";
 
 		if( isset( $providerConfig["wrapper"] ) && $providerConfig["wrapper"] ){
 			if( isset( $providerConfig["wrapper"]["path"] ) && $providerConfig["wrapper"]["path"] ){

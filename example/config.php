@@ -7,29 +7,37 @@
 
 return 
 	array(
-		"base_url" => "http://localhost/hybridauth-git/hybridauth/",  
+	// required
+		"base_url" => "http://localhost/hybridauth-git/hybridauth/",
 
+	// required
 		"providers" => array(
 			"OpenID" => array(
 				"enabled" => true
 			),
 			"Google" => array(
 				"enabled" => true,
-				"keys"    => array( "id" => "", "secret" => "" ), 
+				"keys"    => array( "id" => '', "secret" => '' ),
 			),
 			"Facebook" => array(
 				"enabled" => true,
-				"keys"    => array( "id" => "", "secret" => "" ), 
+				"keys"    => array( "id" => '', "secret" => '' ),
 			),
 			"Windows" => array(
 				"enabled" => true,
-				"keys"    => array( "id" => "", "secret" => "" ), 
+				"keys"    => array( "id" => '', "secret" => '' ),
+			),
+			"Twitter" => array(
+				"enabled" => true,
+				"keys"    => array( "key" => '', "secret" => '' ),
 			),
 		),
 
+	// optional
 		// dev mode
 		"debug_mode" => true,
 
+	// optional
 		// tweak default Http client curl settings
 		// http://www.php.net/manual/fr/function.curl-setopt.php  
 		"curl_options" => array(
@@ -47,7 +55,9 @@ return
 			// etc..
 		),
 
-		// allows the use of a third party client (eg. Zend\Http)
+	// optional
+		// allows the use of a third party client 
+		// eg. Zend\Http, Wtf\HttpFoundation
 		// should be a class implementing Hybridauth\Http\ClientInterface
 		"http_client" => null
 	);

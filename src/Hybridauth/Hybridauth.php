@@ -54,26 +54,6 @@ class Hybridauth
 	// --------------------------------------------------------------------
 
 	/**
-	* Get hybridauth session data.
-	*/
-	public function getSessionData()
-	{
-		return $this->storage->getSessionData();
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	* restore hybridauth session data.
-	*/
-	public function restoreSessionData( $sessiondata = NULL )
-	{
-		$this->storage->restoreSessionData( $sessiondata );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	* Try to authenticate the user with a given provider. 
 	*
 	* If the user is already connected we just return and instance of provider adapter,
@@ -84,46 +64,36 @@ class Hybridauth
 	*          hauth_return_to: URL to call back after authentication is done
 	*        openid_identifier: The OpenID identity provider identifier
 	*/
-	public function authenticate( $providerId, $providerParameters = array() )
+	public function authenticate( $providerId, $parameters = array() )
 	{
 		$adapter = $this->getAdapter( $providerId );
 
 		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
-		if( ! $this->storage->get( "hauth_session.$providerId.is_logged_in" ) ){
-
-			// clear all unneeded params
-			$this->storage->delete( "hauth_session.{$providerId}.hauth_return_to"    );
-			$this->storage->delete( "hauth_session.{$providerId}.hauth_endpoint"     );
-			$this->storage->delete( "hauth_session.{$providerId}.id_provider_params" );
-
-			// make a fresh start
-			$adapter->logout();
+		// if( ! $this->storage->get( "hauth_session.$providerId.is_logged_in" ) ){
+		if( ! $adapter->isAuthorized() ){
+			// clear all $providerId stored data
+			$this->storage->deleteMatch( "hauth_session.{$providerId}." );
 
 			# hybridauth base url
 			$base_url = $this->config["base_url"];
 
-			# request timestamp
-			$providerParameters["hauth_time"]  = time();
+			$defaults = array(
+				'hauth_return_to' => \Hybridauth\Http\Util::getCurrentUrl(),
+				'login_start'     => $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.start={$providerId}&hauth.time=" . microtime(),
+				'login_done'      => $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.done={$providerId}",
+			);
 
-			# hauth.start
-			$providerParameters["login_start"] = $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.start={$providerId}&hauth.time={$providerParameters["hauth_time"]}";
+			$parameters = array_merge( $defaults, (array) $parameters );
 
-			# hauth.done
-			$providerParameters["login_done"]  = $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.done={$providerId}";
-
-			if( ! isset( $providerParameters["hauth_return_to"] ) ){
-				$providerParameters["hauth_return_to"] = \Hybridauth\Http\Util::getCurrentUrl(); 
-			}
-
-			$this->storage->set( "hauth_session.{$providerId}.hauth_return_to"    , $providerParameters["hauth_return_to"] );
-			$this->storage->set( "hauth_session.{$providerId}.hauth_endpoint"     , $providerParameters["login_done"] ); 
-			$this->storage->set( "hauth_session.{$providerId}.id_provider_params" , $providerParameters );
+			$this->storage->set( "hauth_session.{$providerId}.hauth_return_to"    , $parameters["hauth_return_to"] );
+			$this->storage->set( "hauth_session.{$providerId}.hauth_endpoint"     , $parameters["login_done"] ); 
+			$this->storage->set( "hauth_session.{$providerId}.id_provider_params" , $parameters );
 
 			// store config to be used by the end point.
 			$this->storage->config( "CONFIG", $this->config );
 
 			// move on
-			\Hybridauth\Http\Util::redirect( $providerParameters["login_start"] );
+			\Hybridauth\Http\Util::redirect( $parameters["login_start"] );
 		}
 
 		// else, then return the adapter instance for the given provider
@@ -233,7 +203,9 @@ class Hybridauth
 		$fileName  = $baseDir;
 		$namespace = '';
 
-		if ($lastNsPos = strripos($className, '\\')) {
+		$lastNsPos = strripos($className, '\\');
+
+		if ( $lastNsPos ){
 			$namespace = substr($className, 0, $lastNsPos);
 			$className = substr($className, $lastNsPos + 1);
 			$fileName .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;

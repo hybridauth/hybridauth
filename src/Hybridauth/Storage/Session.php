@@ -16,7 +16,7 @@ class Session implements \Hybridauth\Storage\StorageInterface
 	{ 
 		if ( ! session_id() ){
 			if( ! session_start() ){
-				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
+				throw new \Hybridauth\Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
 			}
 		}
 	}
@@ -61,13 +61,6 @@ class Session implements \Hybridauth\Storage\StorageInterface
 
 	// --------------------------------------------------------------------
 
-	function clear()
-	{ 
-		$_SESSION["HA::STORE"] = ARRAY(); 
-	} 
-
-	// --------------------------------------------------------------------
-
 	function delete($key)
 	{
 		$key = strtolower( $key );  
@@ -91,22 +84,4 @@ class Session implements \Hybridauth\Storage\StorageInterface
 			}
 		}
 	}
-
-	// --------------------------------------------------------------------
-
-	function getSessionData()
-	{
-		if( isset( $_SESSION["HA::STORE"] ) ){ 
-			return serialize( $_SESSION["HA::STORE"] ); 
-		}
-
-		return NULL; 
-	}
-
-	// --------------------------------------------------------------------
-
-	function restoreSessionData( $sessiondata = NULL )
-	{ 
-		$_SESSION["HA::STORE"] = unserialize( $sessiondata );
-	} 
 }

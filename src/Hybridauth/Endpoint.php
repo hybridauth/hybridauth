@@ -103,6 +103,7 @@ class Endpoint
 		}
 
 		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
+
 		$adapter = $adapterFactory->setup( $provider_id );
 
 		# if REQUESTed hauth_idprovider is wrong, session not created, etc.
@@ -113,7 +114,7 @@ class Endpoint
 		}
 
 		try { 
-			$adapter->loginBegin();
+			$adapter->getAuthenticationService()->loginBegin();
 		}
 		catch ( \Hybridauth\Exception $e ){
 			$this->storage->set( "hauth_session.error.status"  , 1 );
@@ -133,6 +134,7 @@ class Endpoint
 		$provider_id = trim( strip_tags( $this->request["hauth_done"] ) );
 
 		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->storage->config( "CONFIG" ), $this->storage );
+
 		$adapter = $adapterFactory->setup( $provider_id );
 
 		if( ! $adapter ) {
@@ -142,7 +144,7 @@ class Endpoint
 		}
 
 		try {
-			$adapter->loginFinish();
+			$adapter->getAuthenticationService()->loginFinish();
 		}
 		catch( \Hybridauth\Exception $e ){
 			$this->storage->set( "hauth_session.error.status"  , 1 );
