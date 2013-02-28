@@ -69,7 +69,6 @@ class Hybridauth
 		$adapter = $this->getAdapter( $providerId );
 
 		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
-		// if( ! $this->storage->get( "hauth_session.$providerId.is_logged_in" ) ){
 		if( ! $adapter->isAuthorized() ){
 			// clear all $providerId stored data
 			$this->storage->deleteMatch( "hauth_session.{$providerId}." );
@@ -121,7 +120,7 @@ class Hybridauth
 	*/
 	public function isConnectedWith( $providerId )
 	{
-		return (bool) $this->storage->get( "hauth_session.{$providerId}.is_logged_in" );
+		return $this->getAdapter( $providerId )->isAuthorized();
 	}
 
 	// --------------------------------------------------------------------
