@@ -7,21 +7,29 @@
 
 namespace Hybridauth\Http;
 
+use Hybridauth\Http\Response;
+
 class Request
 {
-	public function send()
-	{
-		$response = new \Hybridauth\Http\Response();
+	protected $curlOptions = null;
 
-		if( $this->method == 'GET' ){
-			$this->uri = $this->uri . ( strpos( $this->uri, '?' ) ? '&' : '?' ) . http_build_query( $this->args );
+	// --------------------------------------------------------------------
+
+	function send( $uri, $method, $args, $headers = array(), $body = null )
+	{
+		if( empty( $uri ) ){
+			return false;
 		}
 
-		$response->curlHttpInfo = array();
+		$response = new Response();
+
+		if( $method == 'GET' ){
+			$uri = $uri . ( strpos( $uri, '?' ) ? '&' : '?' ) . http_build_query( $args );
+		}
 
 		$ch = curl_init();
 
-		curl_setopt( $ch, CURLOPT_URL            , $this->uri );
+		curl_setopt( $ch, CURLOPT_URL            , $uri );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER ,  1 );
 
 		$curl_opts = array(
@@ -43,26 +51,33 @@ class Request
 			$this->curlOptions[ $opt ] = $val;
 		}
 
-		if( isset( $this->headers ) && is_array( $this->headers ) && $this->headers ){
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, $this->headers );
+		if( isset( $headers ) && is_array( $headers ) && $headers ){
+			curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 		}
 
-		if( $this->method == 'POST' ){
+		if( $method == 'POST' ){
 			curl_setopt($ch, CURLOPT_POST, 1);
 
-			if( $this->args ){
-				curl_setopt( $ch, CURLOPT_POSTFIELDS, $this->args );
+			if( $args ){
+				curl_setopt( $ch, CURLOPT_POSTFIELDS, $args );
 			}
 		}
 
-		$response->body = curl_exec($ch);
+		$response->setBody       ( curl_exec($ch)  );
+		$response->setStatusCode ( curl_getinfo( $ch, CURLINFO_HTTP_CODE ) );
+		$response->setErrorCode  ( curl_errno($ch) ); // http://curl.haxx.se/libcurl/c/libcurl-errors.html
 
-		$response->statusCode   = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		$response->errorCode    = curl_errno($ch); // http://curl.haxx.se/libcurl/c/libcurl-errors.html
-		$response->curlHttpInfo = curl_getinfo( $ch );
+		$response->setCurlHttpInfo( curl_getinfo( $ch ) );
 
 		curl_close ($ch);
 
 		return $response; 
+	}
+
+	// --------------------------------------------------------------------
+
+	function setCurlOptions( $curlOptions )
+	{
+		$this->curlOptions = $curlOptions;
 	}
 }

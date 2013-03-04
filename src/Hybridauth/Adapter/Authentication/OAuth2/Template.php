@@ -7,39 +7,44 @@
 
 namespace Hybridauth\Adapter\Authentication\OAuth2;
 
-class Template implements \Hybridauth\Adapter\AuthenticationInterface
+use Hybridauth\Exception;
+use Hybridauth\Http\Util;
+use Hybridauth\Http\Client;
+use Hybridauth\Adapter\Authentication\AuthenticationInterface;
+use Hybridauth\Adapter\Authentication\AuthenticationTemplate;
+use Hybridauth\Adapter\Authentication\OAuth2\Application;
+use Hybridauth\Adapter\Authentication\OAuth2\Endpoints;
+use Hybridauth\Adapter\Authentication\OAuth2\Tokens;
+
+class Template extends AuthenticationTemplate implements AuthenticationInterface
 {
-	public $application = null;
-	public $endpoints   = null;
-	public $scope       = null;
-	public $tokens      = null;
-	public $httpClient  = null;
+	protected $application = null;
+	protected $endpoints   = null;
+	protected $tokens      = null;
+	protected $httpClient  = null;
 
 	// --------------------------------------------------------------------
 
-	public function __construct()
+	function __construct()
 	{
-		$this->application = new \Hybridauth\Adapter\Authentication\OAuth2\Application();
-		$this->endpoints   = new \Hybridauth\Adapter\Authentication\OAuth2\Endpoints();
-		$this->tokens      = new \Hybridauth\Adapter\Authentication\OAuth2\Tokens();
-		$this->httpClient  = new \Hybridauth\Http\Client();
+		$this->application = new Application();
+		$this->endpoints   = new Endpoints();
+		$this->tokens      = new Tokens();
+		$this->httpClient  = new Client();
 	}
 
 	// --------------------------------------------------------------------
 
-	function initialize( $options = array() )
+	function initialize()
 	{
 		// app credentials
-		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
+		if ( ! $this->getApplicationId() || !$this->getApplicationSecret() ){
 			throw new
-				\Hybridauth\Exception(
+				Exception(
 					"Application credentials are missing",
-					\Hybridauth\Exception::MISSING_APPLICATION_CREDENTIALS
+					Exception::MISSING_APPLICATION_CREDENTIALS
 				);
 		}
-
-		$this->application->id     = $this->config["keys"]["id"];
-		$this->application->secret = $this->config["keys"]["secret"];
 
 		// http client
 		if ( isset( $this->hybridauthConfig["http_client"] ) && $this->hybridauthConfig["http_client"] ){
@@ -52,22 +57,11 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 		}
 
 		// tokens
-		$tokens = $this->getStoredTokens( $this->tokens );
+		$tokens = $this->getStoredTokens( $this->getTokens() );
 
 		if( $tokens ){
-			$this->tokens = $tokens;
+			$this->setTokens( $tokens );
 		}
-
-		// end-points
-		$this->endpoints->redirectUri     = $this->hybridauthEndpoint;
-		$this->endpoints->baseUri         = isset( $options['api_base_uri']      ) ? $options['api_base_uri']      : '';
-		$this->endpoints->authorizeUri    = isset( $options['authorize_uri']     ) ? $options['authorize_uri']     : '';
-		$this->endpoints->requestTokenUri = isset( $options['request_token_uri'] ) ? $options['request_token_uri'] : '';
-		$this->endpoints->tokenInfoUri    = isset( $options['token_info_uri']    ) ? $options['token_info_uri']    : '';
-
-		$this->endpoints->authorizeUriParameters = isset( $options['authorize_uri_args'] ) ? $options['authorize_uri_args'] : array();
-
-		$this->scope = isset( $options['scope'] ) ? $options['scope'] : '';
 	}
 
 	// --------------------------------------------------------------------
@@ -77,14 +71,11 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 	*/
 	function loginBegin()
 	{
-		$parameters = $this->endpoints->authorizeUriParameters;
-		$optionals  = isset( $this->config["authorize_uri_args"] ) ? $this->config["authorize_uri_args"] : array();
-
-		$parameters = array_merge( $parameters, (array) $optionals );
+		$parameters = $this->getEndpointAuthorizeUriAdditionalParameters();
 
 		$url = $this->generateAuthorizeUri( $parameters );
 
-		\Hybridauth\Http\Util::redirect( $url );
+		Util::redirect( $url );
 	}
 
 	// --------------------------------------------------------------------
@@ -100,9 +91,9 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 
 			if ( $error ){
 				throw new
-					\Hybridauth\Exception(
-						"Authentication failed! {$this->providerId} returned an error: $error",
-						\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					Exception(
+						"Authentication failed! Provider returned an error: $error",
+						Exception::AUTHENTIFICATION_FAILED,
 						null,
 						$this
 					);
@@ -112,28 +103,28 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 		$this->requestAccessToken( $code, $parameters, $method );
 
 		// check if authenticated
-		if ( ! $this->tokens->accessToken ){
+		if ( ! $this->getTokens()->accessToken ){
 			throw new
-				\Hybridauth\Exception(
-					"Authentication failed! {$this->providerId} returned an invalid access token",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+				Exception(
+					"Authentication failed! Provider returned an invalid access token",
+					Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
 		}
 
 		// store tokens
-		$this->storeTokens( $this->tokens );
+		$this->storeTokens( $this->getTokens() );
 	}
 
 	// --------------------------------------------------------------------
 
-	public function generateAuthorizeUri( $parameters = array() )
+	function generateAuthorizeUri( $parameters = array() )
 	{
 		$defaults = array(
-			"client_id"     => $this->application->id,
+			"client_id"     => $this->getApplicationId(),
 			"redirect_uri"  => $this->endpoints->redirectUri,
-			"scope"         => $this->scope,
+			"scope"         => $this->getApplicationScope(),
 			"response_type" => "code"
 		);
 
@@ -144,23 +135,50 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 
 	// --------------------------------------------------------------------
 
-	public function getStoredTokens()
+	/**
+	* Exchanges authorization code for an access grant.
+	*/
+	function requestAccessToken( $code, $parameters = array(), $method = 'POST' )
 	{
-		return $this->storage->get( "hauth_session.{$this->providerId}.tokens" );
-	}
+		$defaults = array(
+			"client_id"     => $this->getApplicationId(),
+			"client_secret" => $this->getApplicationSecret(),
+			"grant_type"    => "authorization_code",
+			"redirect_uri"  => $this->endpoints->redirectUri,
+			"code"          => $code
+		);
 
-	// --------------------------------------------------------------------
+		$parameters = array_merge( $defaults, (array) $parameters );
 
-	public function storeTokens( \Hybridauth\Adapter\Authentication\OAuth2\TokensInterface $tokens )
-	{
-		$this->storage->set( "hauth_session.{$this->providerId}.tokens", $tokens );
-	}
+		if( $method == 'POST' ){
+			$this->httpClient->post( $this->endpoints->requestTokenUri, $parameters );
+		}
+		else{
+			$this->httpClient->get( $this->endpoints->requestTokenUri, $parameters );
+		}
 
-	// --------------------------------------------------------------------
+		if( $this->httpClient->getResponseStatus() != 200 ){
+			throw new
+				Exception(
+					"Provider returned and error. HTTP Error (" . $this->httpClient->getResponseStatus() . ")",
+					Exception::AUTHENTIFICATION_FAILED,
+					null,
+					$this
+				);
+		}
 
-	public function isAuthorized()
-	{
-		return $this->tokens->accessToken != null;
+		$response = $this->parseRequestResult( $this->httpClient->getResponseBody() );
+
+		if( isset( $response->access_token  ) ) $this->getTokens()->accessToken          = $response->access_token;
+		if( isset( $response->refresh_token ) ) $this->getTokens()->refreshToken         = $response->refresh_token;
+		if( isset( $response->expires_in    ) ) $this->getTokens()->accessTokenExpiresIn = $response->expires_in;
+
+		// calculate when the access token expire
+		if( isset($response->expires_in) ){
+			$this->getTokens()->accessTokenExpiresAt = time() + $response->expires_in;
+		}
+
+		return $response;
 	}
 
 	// --------------------------------------------------------------------
@@ -168,23 +186,23 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 	function refreshAccessToken( $parameters = array(), $method = 'POST', $force = false )
 	{
 		// have an access token?
-		if( ! $force && ! $this->tokens->accessToken ){
+		if( ! $force && ! $this->getTokens()->accessToken ){
 			return false;
 		}
 
 		// have to refresh?
-		if( ! $force && ! ( $this->tokens->refreshToken && $this->api->tokens->accessTokenExpiresIn ) ){
+		if( ! $force && ! ( $this->getTokens()->refreshToken && $this->getTokens()->accessTokenExpiresIn ) ){
 			return false;
 		}
 
 		// expired?
-		if( ! $force && $this->tokens->accessTokenExpiresIn > time() ){
+		if( ! $force && $this->getTokens()->accessTokenExpiresIn > time() ){
 			return false;
 		}
 
 		$defaults = array(
-			"client_id"     => $this->application->id,
-			"client_secret" => $this->application->secret,
+			"client_id"     => $this->getApplicationId(),
+			"client_secret" => $this->getApplicationSecret(),
 			"grant_type"    => "refresh_token"
 		);
 
@@ -197,7 +215,7 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 			$this->httpClient->get( $this->endpoints->requestTokenUri, $parameters );
 		}
 
-		$response = $this->_parseRequestResult( $this->httpClient->getResponseBody() ); 
+		$response = $this->parseRequestResult( $this->httpClient->getResponseBody() );
 
 		if( $response === false ){
 			return;
@@ -205,13 +223,10 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 
 		// error?
 		if( ! isset( $response->access_token ) || ! $response->access_token ){
-			// set the user as disconnected at this point and throw an exception
-			$this->setUserUnconnected();
-
 			throw new
-				\Hybridauth\Exception(
-					"Authentication failed! {$this->providerId} returned an invalid access/refresh token",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+				Exception(
+					"Authentication failed! Provider returned an invalid access/refresh token",
+					Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
@@ -232,87 +247,39 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 		}
 
 		// overwrite stored tokens
-		$this->storeTokens( $this->tokens );
+		$this->storeTokens( $this->getTokens() );
 	}
 
 	// --------------------------------------------------------------------
 
-	/**
-	* Exchanges authorization code for an access grant.
-	*/
-	public function requestAccessToken( $code, $parameters = array(), $method = 'POST' )
+	function getStoredTokens()
 	{
-		$defaults = array(
-			"client_id"     => $this->application->id,
-			"client_secret" => $this->application->secret,
-			"grant_type"    => "authorization_code",
-			"redirect_uri"  => $this->endpoints->redirectUri,
-			"code"          => $code
-		);
-
-		$parameters = array_merge( $defaults, (array) $parameters );
-
-		if( $method == 'POST' ){
-			$this->httpClient->post( $this->endpoints->requestTokenUri, $parameters );
-		}
-		else{
-			$this->httpClient->get( $this->endpoints->requestTokenUri, $parameters );
-		}
-
-		// fixme!
-		// default ha client uses curl
-		if( $this->httpClient->getResponseError() ){
-			throw new
-				\Hybridauth\Exception(
-					"Provider returned and error. CURL Error (" . $this->httpClient->getResponseError() . "). For more information refer to http://curl.haxx.se/libcurl/c/libcurl-errors.html",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
-					null,
-					$this
-				);
-		}
-
-		if( $this->httpClient->getResponseStatus() != 200 ){
-			throw new
-				\Hybridauth\Exception( "Provider returned and error. HTTP Error (" . $this->httpClient->getResponseStatus() . ")", \Hybridauth\Exception::AUTHENTIFICATION_FAILED, null, $this );
-		}
-
-		$response = $this->_parseRequestResult( $this->httpClient->getResponseBody() );
-
-		if( isset( $response->access_token  ) ) $this->tokens->accessToken          = $response->access_token;
-		if( isset( $response->refresh_token ) ) $this->tokens->refreshToken         = $response->refresh_token;
-		if( isset( $response->expires_in    ) ) $this->tokens->accessTokenExpiresIn = $response->expires_in; 
-
-		// calculate when the access token expire
-		if( isset($response->expires_in) ){
-			$this->tokens->accessTokenExpiresAt = time() + $response->expires_in;
-		}
-
-		return $response;
+		return $this->storage->get( "{$this->providerId}.tokens" );
 	}
- 
+
 	// --------------------------------------------------------------------
 
-	public function get( $uri, $parameters = array() ) 
+	function storeTokens( \Hybridauth\Adapter\Authentication\OAuth2\TokensInterface $tokens )
 	{
-		return $this->_signedRequest( $uri, 'GET', $parameters );
+		$this->storage->set( "{$this->providerId}.tokens", $tokens );
 	}
 
 	// --------------------------------------------------------------------
 
-	public function post( $uri, $parameters = array() ) 
+	function isAuthorized()
 	{
-		return $this->_signedRequest( $uri, 'POST', $parameters );
+		return $this->getTokens()->accessToken != null;
 	}
 
 	// --------------------------------------------------------------------
 
-	private function _signedRequest( $uri, $method = 'GET', $parameters = array() )
+	function signedRequest( $uri, $method = 'GET', $parameters = array() )
 	{
 		if ( strrpos($uri, 'http://') !== 0 && strrpos($uri, 'https://') !== 0 ){
 			$uri = $this->endpoints->baseUri . $uri;
 		}
 
-		$parameters[ 'access_token' ] = $this->tokens->accessToken;
+		$parameters[ 'access_token' ] = $this->getTokens()->accessToken;
 
 		switch( $method ){
 			case 'GET'  : $this->httpClient->get ( $uri, $parameters ); break;
@@ -320,24 +287,5 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface
 		}
 
 		return $this->httpClient->getResponseBody();
-	}
-
-	// --------------------------------------------------------------------
-
-	private function _parseRequestResult( $result )
-	{
-		if( json_decode( $result ) ){
-			return json_decode( $result );
-		}
-
-		parse_str( $result, $ouput );
-
-		$result = new \StdClass();
-
-		foreach( $ouput as $k => $v ){
-			$result->$k = $v;
-		}
-
-		return $result;
 	}
 }

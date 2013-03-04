@@ -12,7 +12,7 @@ use Hybridauth\Adapter\AdapterInterface;
 
 /**
 * OpenID adapter
-* 
+*
 * http://hybridauth.sourceforge.net/userguide/IDProvider_info_OpenID.html
 */
 class OpenIDAdapter extends AbstractAdapter implements AdapterInterface

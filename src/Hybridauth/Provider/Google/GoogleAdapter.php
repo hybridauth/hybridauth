@@ -12,7 +12,7 @@ use Hybridauth\Adapter\AdapterInterface;
 
 /**
 * Google adapter
-* 
+*
 * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
 */
 class GoogleAdapter extends AbstractAdapter implements AdapterInterface

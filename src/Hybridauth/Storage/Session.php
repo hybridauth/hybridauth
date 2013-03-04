@@ -7,81 +7,92 @@
 
 namespace Hybridauth\Storage;
 
+use Hybridauth\Exception;
+use Hybridauth\Storage\StorageInterface;
+
 /**
- * HybridAuth storage manager
- */
-class Session implements \Hybridauth\Storage\StorageInterface
+* HybridAuth storage manager
+*/
+class Session implements StorageInterface 
 {
 	function __construct()
-	{ 
+	{
 		if ( ! session_id() ){
-			if( ! session_start() ){
-				throw new \Hybridauth\Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled.", 1 );
+			if ( ! session_start() ){
+				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled." );
 			}
 		}
 	}
 
 	// --------------------------------------------------------------------
 
-	public function config($key, $value=null) 
+	function config( $key, $value = null )
 	{
-		$key = strtolower( $key );
+		$key = strtolower ( $key );
 
-		if( $value ){
-			$_SESSION["HA::CONFIG"][$key] = serialize( $value ); 
+		if ( $value ){
+			$_SESSION['HA::CONFIG'][$key] = serialize( $value );
 		}
-		elseif( isset( $_SESSION["HA::CONFIG"][$key] ) ){ 
-			return unserialize( $_SESSION["HA::CONFIG"][$key] );  
-		}
-
-		return NULL; 
-	}
-
-	// --------------------------------------------------------------------
-
-	public function get($key) 
-	{
-		$key = strtolower( $key );  
-
-		if( isset( $_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key] ) ){ 
-			return unserialize( $_SESSION["HA::STORE"][$key] );  
+		elseif( isset( $_SESSION ['HA::CONFIG'][$key] ) ){
+			return unserialize( $_SESSION ['HA::CONFIG'][$key] );
 		}
 
-		return NULL; 
+		return null;
 	}
 
 	// --------------------------------------------------------------------
 
-	public function set( $key, $value )
+	function get( $key )
 	{
-		$key = strtolower( $key ); 
+		$key = 'hauth_session.' . strtolower( $key );
 
-		$_SESSION["HA::STORE"][$key] = serialize( $value );
+		if ( isset( $_SESSION['HA::STORE'], $_SESSION ['HA::STORE'] [$key] ) ){
+			return unserialize( $_SESSION['HA::STORE'][$key] );
+		}
+
+		return null;
 	}
 
 	// --------------------------------------------------------------------
 
-	function delete($key)
+	function set( $key, $value )
 	{
-		$key = strtolower( $key );  
+		$key = 'hauth_session.' . strtolower ( $key );
 
-		if( isset( $_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key] ) ){
-			unset( $_SESSION["HA::STORE"][$key] );
-		} 
+		$_SESSION['HA::STORE'][$key] = serialize ( $value );
 	}
 
 	// --------------------------------------------------------------------
 
-	function deleteMatch($key)
+	function delete( $key )
 	{
-		$key = strtolower( $key ); 
+		$key = 'hauth_session.' . strtolower( $key );
 
-		if( isset( $_SESSION["HA::STORE"] ) && count( $_SESSION["HA::STORE"] ) ) {
-			foreach( $_SESSION["HA::STORE"] as $k => $v ){ 
-				if( strstr( $k, $key ) ){
-					unset( $_SESSION["HA::STORE"][ $k ] ); 
+		if ( isset( $_SESSION ['HA::STORE'], $_SESSION['HA::STORE'][$key] ) ){
+			$f = $_SESSION ['HA::STORE'];
+
+			unset( $f [$key] );
+
+			$_SESSION['HA::STORE'] = $f;
+		}
+	}
+
+	// --------------------------------------------------------------------
+
+	function deleteMatch( $key )
+	{
+		$key = 'hauth_session.' . strtolower( $key );
+
+		if ( isset( $_SESSION['HA::STORE'] ) && count( $_SESSION ['HA::STORE'] ) ){
+			$f = $_SESSION['HA::STORE'];
+
+			foreach ( $f as $k => $v ) {
+				if ( strstr( $k, $key ) ) {
+					unset( $f[$k] );
 				}
 			}
+
+			$_SESSION['HA::STORE'] = $f;
 		}
 	}
 }

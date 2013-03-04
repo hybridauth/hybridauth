@@ -7,6 +7,10 @@
 
 namespace Hybridauth\Adapter;
 
+use Hybridauth\Http\Util;
+use Hybridauth\Adapter\Api\ApiBinding;
+use Hybridauth\Storage\StorageInterface;
+
 abstract class AbstractAdapter
 {
 	/* IDp ID (or unique name) */
@@ -32,14 +36,14 @@ abstract class AbstractAdapter
 		$hybridauthConfig,
 		$config,
 		$parameters = null,
-		\Hybridauth\Storage\StorageInterface $storage = null 
+		StorageInterface $storage = null 
 	)
 	{
-        $this->storage = $storage;
+		$this->storage = $storage;
 
 		# init the IDp adapter parameters, get them from the cache if possible
 		if( ! $parameters ){
-			$this->parameters = $this->storage->get( "hauth_session.$providerId.id_provider_params" );
+			$this->parameters = $this->storage->get( "$providerId.id_provider_params" );
 		}
 		else{
 			$this->parameters = $parameters;
@@ -52,7 +56,7 @@ abstract class AbstractAdapter
 		$this->config = $config;
 
 		// set HybridAuth endpoint for this provider
-		$this->hybridauthEndpoint = $this->storage->get( "hauth_session.$providerId.hauth_endpoint" );
+		$this->hybridauthEndpoint = $this->storage->get( $providerId . '.hauth_endpoint' );
 
 		// initialize the current provider adapter
 		$this->initialize();
@@ -60,7 +64,7 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
-	final public function registerAuthenticationService( $service, $options = array() )
+	public final function registerAuthenticationService( $service, $options = array() )
 	{
 		$this->_authService = new $service;
 
@@ -76,27 +80,25 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
-	final public function registerApiBinding( $bind, $class )
+	public final function registerApiBinding( $bind, $class )
 	{
 		if( ! $this->_apiBinding ){
-			$this->_apiBinding  = new \Hybridauth\Adapter\ApiBinding();
+			$this->_apiBinding  = new ApiBinding();
 		}
 
-		$this->_apiBinding->bind( $bind, $class );
-
-		// $this->_apiBinding[ $bind ] = $class;
+		$this->_apiBinding->bindMethod( $bind, $class );
 	}
 
 	// --------------------------------------------------------------------
 
-	final public function getAuthenticationService()
+	public final function getAuthService()
 	{
 		return $this->_authService;
 	}
 
 	// --------------------------------------------------------------------
 
-	final public function getApi( $tokensOrAccessToken = null, $accessSecretToken = null )
+	public final function getApi( $tokensOrAccessToken = null, $accessSecretToken = null )
 	{
 		if( is_object( $tokensOrAccessToken ) ){
 			$this->_authService->tokens = $tokensOrAccessToken;
@@ -110,14 +112,14 @@ abstract class AbstractAdapter
 			$this->_authService->storeTokens( $this->_authService->tokens );
 		}
 
-		$this->_apiBinding->api = $this->_authService;
+		$this->_apiBinding->setAuthService( $this->_authService );
 
 		return $this->_apiBinding;
 	}
 
 	// --------------------------------------------------------------------
 
-	public function isAuthorized()
+	function isAuthorized()
 	{
 		return $this->_authService->isAuthorized();
 	}
@@ -125,19 +127,52 @@ abstract class AbstractAdapter
 	// --------------------------------------------------------------------
 
    	/**
-	* generic logout, just erase current provider adapter stored data to let HybridAuth all forget about it
+	* Erase adapter stored data
 	*/
 	function disconnect()
 	{
-		$this->storage->deleteMatch( "hauth_session.{$this->providerId}." );
-
-		return TRUE;
+		$this->storage->deleteMatch( "{$this->providerId}." );
 	}
 
 	// --------------------------------------------------------------------
 
-	// Shamelessly Borrowered from Slimframework, but to be removed/moved
-	public function debug()
+	function authenticate( $parameters = array() )
+	{
+		if( ! $this->isAuthorized() ){
+			$this->storage->deleteMatch( "{$this->providerId}." );
+
+			$base_url = $this->hybridauthConfig["base_url"];
+
+			$defaults = array(
+				'hauth_return_to' => Util::getCurrentUrl(),
+				'hauth_endpoint'  => $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.done={$this->providerId}",
+				'hauth_start_url' => $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.start={$this->providerId}&hauth.time=" . time(),
+			);
+
+			$parameters = array_merge( $defaults, (array) $parameters );
+
+			$this->storage->set( $this->providerId . ".hauth_return_to"    , $parameters["hauth_return_to"] );
+			$this->storage->set( $this->providerId . ".hauth_endpoint"     , $parameters["hauth_endpoint"]  ); 
+			$this->storage->set( $this->providerId . ".id_provider_params" , $parameters );
+
+			// store config
+			$this->storage->config( "CONFIG", $this->hybridauthConfig );
+
+			// redirect user to start url
+			Util::redirect( $parameters["hauth_start_url"] );
+		}
+
+		else{
+			return $this;
+		}
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* Shamelessly Borrowered from Slimframework, but to be removed/moved
+	*/
+	function debug()
 	{
 		$title   = 'Hybridauth Adapter Debug';
 

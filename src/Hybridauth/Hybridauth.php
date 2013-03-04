@@ -5,110 +5,123 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
+/*
+*****************************************************************************************************
+*   THIS SECTION WILL BE KEPT DURING THE ALPHA-BETA STAGE OF HYBRIDAUTH 3.0 AND WILL BE REMOVED.
+*****************************************************************************************************
+*
+* Why working on Hybridauth 3:
+*
+*	Hybridauth 2 is small piece of software that works and get the job done, however, it's core is
+*	hard to understand and to extend. In short, it had a bad design.
+*
+*	Hybridauth 3 is an attempt to address these issues along other non-functional requirements such
+*	as usability, maintainability, compatibility, stability, reliability, etc.
+*
+*
+* Please, don't hesitate to:
+*
+*	- Report bugs and issues.
+*	- Contribute: Code, Reviews, Ideas and Design.
+*	- Point out stupidity, smells and inconsistencies in the code.
+*	- Criticize.
+*
+*
+* If you want to contribute, please consider these general guide lines:
+*
+*	- Don't hesitate to delete code that doesn't make sense or looks redundant.
+*	- Feel free to create new classes when needed.
+*	- Use 'if' and 'foreach' as little as possible.
+*	- No 'switch'. No 'for'.
+*	- Avoid over-commenting.
+*	- Avoid naive getters and setters when possible.
+*		why 'naive'? well Venkat Subramaniam sums things up quite well:
+*		http://youtu.be/LH75sJAR0hc?t=9m00s
+*		.. let us keep PHP concise and to-the-point.
+*
+*
+* Coding Style :
+*
+*	- Redable code.
+*	- Use tabs(8 chars): 
+*		as devlopers we read and look at code 1/3 of the day and using clear indentations could make
+*		life a bit easier.
+*	- ..
+*
+*****************************************************************************************************/
+
 namespace Hybridauth;
 
+use Hybridauth\Exception;
+use Hybridauth\Storage\Session;
+use Hybridauth\Storage\StorageInterface;
+use Hybridauth\Adapter\AdapterFactory;
+
 /**
- * Hybrid_Auth class
- * 
- * Hybrid_Auth class provide a simple way to authenticate users via OpenID and OAuth.
- * 
- * Generally, Hybrid_Auth is the only class you should instanciate and use throughout your application.
- */
-class Hybridauth
+* Hybridauth class provide a simple way to authenticate users via OpenID and OAuth.
+*
+* Generally, Hybridauth is the only class you should instanciate and use throughout your application.
+*/
+final class Hybridauth
 {
 	protected $config  = array();
-
 	protected $storage = null;
 
 	// --------------------------------------------------------------------
 
 	/**
-	* Initialize HybridAuth
-	*
-	* http://hybridauth.sourceforge.net/userguide/Configuration.html
+	* Initialize HybridAuth. ...
 	*/
-	function __construct( $config, \Hybridauth\Storage\StorageInterface $storage = null )
+	function __construct( $config = null, StorageInterface $storage = null )
 	{
-		// sotre given config
+		// set config
 		$this->config = $config;
 
-		if( ! is_array( $this->config ) ){
+		if( $this->config && ! is_array( $this->config ) ){
 			$this->config = include $this->config;
 		}
 
-		// Storage 
-		$this->storage = $storage ? $storage : new \Hybridauth\Storage\Session();
+		// setup storage manager
+		$this->storage = $storage ? $storage : new Session();
+		
+		// checks for errors
+		if( $this->storage->get( "error.status" ) ){
+			$m = $this->storage->get( "error.message" );
+			$c = $this->storage->get( "error.code" );
 
-		// if an error was stored on endpoint
-		if( $this->storage->get( "hauth_session.error.status" ) ){
-			$m = $this->storage->get( "hauth_session.error.message" );
-			$c = $this->storage->get( "hauth_session.error.code"    );
+			$this->storage->deleteMatch( "error." );
 
-			// clear errors
-			$this->storage->deleteMatch( "hauth_session.error." );
-
-			throw new \Hybridauth\Exception( $m, $c );
+			throw new Exception( $m, $c );
 		}
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	* Try to authenticate the user with a given provider. 
+	* Try to authenticate the user with a given provider.
+	*
 	*
 	* If the user is already connected we just return and instance of provider adapter,
-	* ELSE, try to authenticate and authorize the user with the provider. 
+	* ELSE, try to authenticate and authorize the user with the provider.
 	*
 	* $params is generally an array with required info in order for this provider and HybridAuth to work,
-	*  like :
-	*          hauth_return_to: URL to call back after authentication is done
-	*        openid_identifier: The OpenID identity provider identifier
+	* like :
+	*		hauth_return_to: URL to call back after authentication is done
+	*		openid_identifier: The OpenID identity provider identifier
 	*/
-	public function authenticate( $providerId, $parameters = array() )
+	function authenticate( $providerId, $parameters = array() )
 	{
-		$adapter = $this->getAdapter( $providerId );
-
-		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
-		if( ! $adapter->isAuthorized() ){
-			// clear all $providerId stored data
-			$this->storage->deleteMatch( "hauth_session.{$providerId}." );
-
-			# hybridauth base url
-			$base_url = $this->config["base_url"];
-
-			$defaults = array(
-				'hauth_return_to' => \Hybridauth\Http\Util::getCurrentUrl(),
-				'login_start'     => $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.start={$providerId}&hauth.time=" . microtime(),
-				'login_done'      => $base_url . ( strpos( $base_url, '?' ) ? '&' : '?' ) . "hauth.done={$providerId}",
-			);
-
-			$parameters = array_merge( $defaults, (array) $parameters );
-
-			$this->storage->set( "hauth_session.{$providerId}.hauth_return_to"    , $parameters["hauth_return_to"] );
-			$this->storage->set( "hauth_session.{$providerId}.hauth_endpoint"     , $parameters["login_done"] ); 
-			$this->storage->set( "hauth_session.{$providerId}.id_provider_params" , $parameters );
-
-			// store config to be used by the end point.
-			$this->storage->config( "CONFIG", $this->config );
-
-			// move on
-			\Hybridauth\Http\Util::redirect( $parameters["login_start"] );
-		}
-
-		// else, then return the adapter instance for the given provider
-		else{
-			return $adapter;
-		}
+		return $this->getAdapter( $providerId )->authenticate( $parameters );
 	}
-
+	
 	// --------------------------------------------------------------------
-
+	
 	/**
 	* Return the adapter instance for an authenticated provider
-	*/ 
-	public function getAdapter( $providerId = NULL )
+	*/
+	function getAdapter( $providerId = null )
 	{
-		$adapterFactory = new \Hybridauth\Adapter\AdapterFactory( $this->config, $this->storage );
+		$adapterFactory = new AdapterFactory( $this->config, $this->storage );
 
 		return $adapterFactory->setup( $providerId );
 	}
@@ -116,9 +129,9 @@ class Hybridauth
 	// --------------------------------------------------------------------
 
 	/**
-	* Check if the current user is connected to a given provider
+	* Return true if current user is connected with a given provider
 	*/
-	public function isConnectedWith( $providerId )
+	function isConnectedWith( $providerId )
 	{
 		return $this->getAdapter( $providerId )->isAuthorized();
 	}
@@ -126,13 +139,13 @@ class Hybridauth
 	// --------------------------------------------------------------------
 
 	/**
-	* Return array listing all authenticated providers
+	* Return a list of authenticated providers
 	*/
-	public function getConnectedProviders()
+	function getConnectedProviders()
 	{
 		$idps = array();
 
-		foreach( $this->config["providers"] as $idpid => $params ){
+		foreach( $this->config ["providers"] as $idpid => $params ){
 			if( $this->isConnectedWith( $idpid ) ){
 				$idps[] = $idpid;
 			}
@@ -144,17 +157,17 @@ class Hybridauth
 	// --------------------------------------------------------------------
 
 	/**
-	* Return array listing all enabled providers as well as a flag if you are connected.
-	*/ 
-	public function getEnabledProviders()
+	* Return a list of enabled providers as well as a flag if you are connected.
+	*/
+	function getEnabledProviders()
 	{
 		$idps = array();
 
-		foreach( $this->config["providers"] as $idpid => $params ){
-			if($params['enabled']) {
+		foreach( $this->config ["providers"] as $idpid => $params ){
+			if( $params['enabled'] ){
 				$idps[$idpid] = array( 'connected' => false );
 
-				if( $this->isConnectedWith( $idpid ) ){
+				if($this->isConnectedWith( $idpid ) ){
 					$idps[$idpid]['connected'] = true;
 				}
 			}
@@ -166,9 +179,9 @@ class Hybridauth
 	// --------------------------------------------------------------------
 
 	/**
-	* A generic function to logout all connected provider at once 
-	*/ 
-	public function logoutAllProviders()
+	* A generic function to logout all connected provider at once
+	*/
+	function logoutAllProviders()
 	{
 		$idps = $this->getConnectedProviders();
 
@@ -183,36 +196,34 @@ class Hybridauth
 
 	public static function registerAutoloader()
 	{
-		spl_autoload_register(__NAMESPACE__ . "\\Hybridauth::autoload");
+		spl_autoload_register( __NAMESPACE__ . "\\Hybridauth::autoload" );
 	}
 
 	// --------------------------------------------------------------------
 
-	public static function autoload($className)
+	public static function autoload( $className )
 	{
-		$thisClass = str_replace(__NAMESPACE__.'\\', '', __CLASS__);
+		$thisClass = str_replace( __NAMESPACE__ . '\\', '', __CLASS__ );
+		$baseDir   = __DIR__;
 
-		$baseDir = __DIR__;
-
-		if (substr($baseDir, -strlen($thisClass)) === $thisClass) {
-			$baseDir = substr($baseDir, 0, -strlen($thisClass));
+		if( substr( $baseDir, -strlen( $thisClass ) ) === $thisClass ){
+			$baseDir = substr( $baseDir, 0, -strlen( $thisClass ) );
 		}
 
-		$className = ltrim($className, '\\');
+		$className = ltrim( $className, '\\' );
 		$fileName  = $baseDir;
 		$namespace = '';
+		$lastNsPos = strripos( $className, '\\' );
 
-		$lastNsPos = strripos($className, '\\');
-
-		if ( $lastNsPos ){
-			$namespace = substr($className, 0, $lastNsPos);
-			$className = substr($className, $lastNsPos + 1);
-			$fileName .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+		if( $lastNsPos ){
+			$namespace = substr( $className, 0, $lastNsPos );
+			$className = substr( $className, $lastNsPos + 1 );
+			$fileName .= str_replace( '\\', DIRECTORY_SEPARATOR, $namespace ) . DIRECTORY_SEPARATOR;
 		}
 
-		$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+		$fileName .= str_replace( '_', DIRECTORY_SEPARATOR, $className ) . '.php';
 
-		if (file_exists($fileName)) {
+		if( file_exists( $fileName ) ){
 			require $fileName;
 		}
 	}

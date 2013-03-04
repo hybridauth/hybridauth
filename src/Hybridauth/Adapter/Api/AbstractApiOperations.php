@@ -5,28 +5,37 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-namespace Hybridauth\Storage;
+namespace Hybridauth\Adapter\Api;
 
-/**
- * HybridAuth storage manager
- */
-interface StorageInterface
+class AbstractApiOperations
 {
-	function config( $key, $value = null );
+	private $_authService = null;
 
 	// --------------------------------------------------------------------
 
-	function get( $key );
+	function setAuthService( $service )
+	{
+		$this->_authService = $service;
+	}
 
 	// --------------------------------------------------------------------
 
-	function set( $key, $value );
+	function getAuthService()
+	{
+		return $this->_authService;
+	}
 
 	// --------------------------------------------------------------------
 
-	function delete( $key );
+	function get( $uri, $parameters = array() )
+	{
+		return $this->getAuthService()->signedRequest ( $uri, 'GET', $parameters );
+	}
 
 	// --------------------------------------------------------------------
 
-	function deleteMatch( $key );
+	function post( $uri, $parameters = array() )
+	{
+		return $this->getAuthService()->signedRequest ( $uri, 'POST', $parameters );
+	}
 }

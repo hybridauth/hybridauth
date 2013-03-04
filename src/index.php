@@ -5,11 +5,13 @@
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-// ------------------------------------------------------------------------
-//	HybridAuth Default EndPoint (A.K.A internal callback); 
-// ------------------------------------------------------------------------
+/**
+* HybridAuth Default EndPoint (A.K.A internal callback)
+*
+* http://hybridauth.sourceforge.net/userguide/tuts/change-hybridauth-endpoint-url.html
+*/
 
-require_once( "HybridAuth/Hybridauth.php" );
+require_once( 'HybridAuth/Hybridauth.php' );
 
 \Hybridauth\Hybridauth::registerAutoloader();
 

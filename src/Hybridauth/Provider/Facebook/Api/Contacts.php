@@ -1,40 +1,47 @@
 <?php
 /*!
-* This file is part of the HybridAuth PHP Library (hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
+* This file is part of the HybridAuth PHP Library(hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
 *
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
 
-namespace Hybridauth\Provider\Google\Api;
+namespace Hybridauth\Provider\Facebook\Api;
 
-class Contacts
+use Hybridauth\Exception;
+use Hybridauth\Adapter\AbstractApiOperations;
+use Hybridauth\Entity\Profile;
+
+class Contacts extends AbstractApiOperations
 {
-	function getUserContacts( $options = array() )
+	function getUserContacts()
 	{
-		$response = $this->api->get( 'https://graph.facebook.com/me/friends' ); 
+		$response = $this->api->get( 'https://graph.facebook.com/me/friends' );
 		$response = json_decode( $response );
 
 		if( ! $response ){
-			throw new
-				\Hybridauth\Exception( "User contacts request failed! {$this->providerId} returned an error" );
+			throw new Exception( "User contacts request failed! Provider returned an error" );
 		}
 
 		if( ! isset( $response->data ) || ! $response->data ){
 			return array();
 		}
 
+		$parser = function($property) use($response)
+		{
+			return property_exists( $response, $property ) ? $response->$property : null;
+		};
+
 		$contacts = array();
- 
+
 		foreach( $response->data as $item ){
-			$uc = new \Hybridauth\Entity\Profile();
+			$uc = new Profile();
 
-			$uc->providerId  = $this->api->providerId;
-			$uc->identifier  = ( property_exists( $item, 'id'   ) ) ? $item->id   : ""; 
-			$uc->displayName = ( property_exists( $item, 'name' ) ) ? $item->name : ""; 
-			$uc->profileURL  = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
-			$uc->photoURL    = "https://graph.facebook.com/" . $uc->identifier . "/picture?width=150&height=150";
+			$profile->setIdentifier( $parser( 'id' ) );
+			$profile->setDisplayName( $parser( 'name' ) ); 
+			$profile->setProfileURL( 'https://www.facebook.com/profile.php?id=' . $profile->getIdentifier() );
+			$profile->setPhotoURL( 'https://graph.facebook.com/' . $profile->getIdentifier() . '/picture?width=150&height=150' );
 
-			$contacts[] = $uc;
+			$contacts [] = $uc;
 		}
 
 		return $contacts;

@@ -4,7 +4,7 @@
 *
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
-
+ 
 namespace Hybridauth;
 
 class Exception extends \Exception
@@ -21,56 +21,64 @@ class Exception extends \Exception
 
 	// --------------------------------------------------------------------
 
-	public function __construct( $message = null, $code = 0, Exception $previous = null, $object = null )
+	function __construct( $message = null, $code = 0, Exception $previous = null, $object = null )
 	{
-		parent::__construct($message, $code, $previous);
+		parent::__construct( $message, $code, $previous );
 
 		$this->object = $object;
 
-		echo $this->debug( $this );
-
-		die(); // fixme!
+		// fixme!
+		echo $this->debug ( $this );die ();
 	}
 
 	// --------------------------------------------------------------------
 
-	// Shamelessly Borrowered from Slimframework, but to be removed/moved
+	/**
+	* Shamelessly Borrowered from Slimframework, but to be removed/moved
+	*/
 	protected function debug()
 	{
 		$title   = 'Hybridauth Exception';
-		$code    = $this->getCode();
-		$message = $this->getMessage();
-		$file    = $this->getFile();
-		$line    = $this->getLine();
-		$trace   = $this->getTraceAsString();
-
-		$html = sprintf('<h1>%s</h1>', $title);
+		$code    = $this->getCode ();
+		$message = $this->getMessage ();
+		$file    = $this->getFile ();
+		$line    = $this->getLine ();
+		$trace   = $this->getTraceAsString ();
+		
+		$html  = sprintf ( '<h1>%s</h1>', $title );
 		$html .= '<p>Hybridauth could not run because of the following error:</p>';
 		$html .= '<h2>Details</h2>';
-		$html .= sprintf('<div><strong>Type:</strong> %s</div>', get_class($this));
-		if ($code) {
-			$html .= sprintf('<div><strong>Code:</strong> %s</div>', $code);
-		}
-		if ($message) {
-			$html .= sprintf('<div><strong>Message:</strong> %s</div>', $message);
-		}
-		if ($file) {
-			$html .= sprintf('<div><strong>File:</strong> %s</div>', $file);
-		}
-		if ($line) {
-			$html .= sprintf('<div><strong>Line:</strong> %s</div>', $line);
-		}
-		if ($trace) {
-			$html .= '<h2>Trace</h2>';
-			$html .= sprintf('<pre>%s</pre>', $trace);
-		}
-		if ( isset( $this->object ) ) {
-			$html .= '<h2>Object</h2>';
-			$html .= sprintf('<pre>%s</pre>', print_r( $this->object, 1 ) );
-		}
-		$html .= '<h2>Session</h2>';
-		$html .= sprintf('<pre>%s</pre>', print_r( $_SESSION, 1 ) );
+		$html .= sprintf ( '<div><strong>Type:</strong> %s</div>', get_class( $this ) );
 
-		return sprintf("<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:65px;}</style></head><body>%s</body></html>", $title, $html);
+		if ( $code ){
+			$html .= sprintf ( '<div><strong>Code:</strong> %s</div>', $code );
+		}
+
+		if ( $message ){
+			$html .= sprintf ( '<div><strong>Message:</strong> %s</div>', $message );
+		}
+
+		if ( $file ){
+			$html .= sprintf ( '<div><strong>File:</strong> %s</div>', $file );
+		}
+
+		if ( $line ){
+			$html .= sprintf ( '<div><strong>Line:</strong> %s</div>', $line );
+		}
+
+		if ( $trace ){
+			$html .= '<h2>Trace</h2>';
+			$html .= sprintf ( '<pre>%s</pre>', $trace );
+		}
+
+		if ( isset( $this->object ) ){
+			$html .= '<h2>Object</h2>';
+			$html .= sprintf ( '<pre>%s</pre>', print_r ( $this->object, true ) );
+		}
+
+		$html .= '<h2>Session</h2>';
+		$html .= sprintf ( '<pre>%s</pre>', print_r ( $_SESSION, true ) );
+		
+		return sprintf ( "<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:65px;}</style></head><body>%s</body></html>", $title, $html );
 	}
 }

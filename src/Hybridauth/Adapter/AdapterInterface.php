@@ -9,17 +9,5 @@ namespace Hybridauth\Adapter;
 
 interface AdapterInterface
 {
-	// function initialize();
-
-	// --------------------------------------------------------------------
-
-	// function loginBegin();
-
-	// --------------------------------------------------------------------
-
-	// function loginFinish();
-
-	// --------------------------------------------------------------------
-
-	// function logout();
+	function initialize();
 }

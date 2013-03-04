@@ -7,7 +7,10 @@
 
 namespace Hybridauth\Adapter\Authentication\OpenID;
 
-use Hybridauth\Adapter\AuthenticationInterface;
+use Hybridauth\Exception;
+use Hybridauth\Http\Util;
+use Hybridauth\Adapter\Authentication\AuthenticationInterface;
+use Hybridauth\Adapter\Authentication\AuthenticationTemplate;
 use Hybridauth\Adapter\Authentication\OpenID\LightOpenID;
 
 /**
@@ -15,27 +18,18 @@ use Hybridauth\Adapter\Authentication\OpenID\LightOpenID;
 * 
 * http://hybridauth.sourceforge.net/userguide/IDProvider_info_OpenID.html
 */
-class Template implements AuthenticationInterface
+class Template extends AuthenticationTemplate implements AuthenticationInterface
 {
 	/* Openid provider identifier */
-	public $openidIdentifier = ""; 
+	protected $openidIdentifier = null;
 
 	// --------------------------------------------------------------------
 
 	/**
 	* adapter initializer 
 	*/
-	function initialize( $options = array() )
+	function initialize()
 	{
-		if( isset( $options["openid_identifier"] ) ){
-			$this->openidIdentifier = $options["openid_identifier"];
-		}
-
-		elseif( isset( $this->parameters["openid_identifier"] ) ){
-			$this->openidIdentifier = $this->parameters["openid_identifier"];
-		}
-
-		// An error was occurring when proxy wasn't set. Not sure where proxy was meant to be set/initialized.
 		$proxy = isset( $this->hybridauthConfig['curl_options'] ) && isset( $this->hybridauthConfig['curl_options'][ CURLOPT_PROXY ] )
 				? $this->hybridauthConfig['curl_options'][ CURLOPT_PROXY ]
 				: '' ;
@@ -52,9 +46,9 @@ class Template implements AuthenticationInterface
 	{
 		if( empty( $this->openidIdentifier ) ){
 			throw new
-				\Hybridauth\Exception(
+				Exception(
 					"Missing 'openid_identifier'",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
@@ -86,7 +80,7 @@ class Template implements AuthenticationInterface
 		);
 
 		# redirect the user to the provider authentication url
-		\Hybridauth\Http\Util::redirect( $this->api->authUrl() );
+		Util::redirect( $this->api->authUrl() );
 	}
 
 	// --------------------------------------------------------------------
@@ -96,85 +90,118 @@ class Template implements AuthenticationInterface
 	*/
 	function loginFinish()
 	{
-		# if user don't garant acess of their data to your site, halt with an Exception
+		# user canceled?
 		if( $this->api->mode == 'cancel'){
 			throw new
-				\Hybridauth\Exception(
+				Exception(
 					"Authentication failed! User has canceled authentication",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
 		}
 
-		# if something goes wrong
+		# something wrong?
 		if( ! $this->api->validate() ){
 			throw new
-				\Hybridauth\Exception(
+				Exception(
 					"Authentication failed. Invalid request recived",
-					\Hybridauth\Exception::AUTHENTIFICATION_FAILED,
+					Exception::AUTHENTIFICATION_FAILED,
 					null,
 					$this
 				);
 		}
 
-		# fetch recived user data
+		# fetch data
 		$response = $this->api->getAttributes();
+
+		$parser = function( $property ) use ( $response )
+		{
+			return array_key_exists( $property, $response ) ? $response[ $property ] : null;
+		};
 
 		$profile = new \Hybridauth\Entity\Profile();
 
-		# sotre the user profile
-		$profile->providerId  = $this->providerId;
-		$profile->identifier  = $this->api->identity;
-		$profile->firstName   = ( array_key_exists( "namePerson/first"        ,$response ) )?$response["namePerson/first"]        : "";
-		$profile->lastName    = ( array_key_exists( "namePerson/last"         ,$response ) )?$response["namePerson/last"]         : "";
-		$profile->displayName = ( array_key_exists( "namePerson"              ,$response ) )?$response["namePerson"]              : "";
-		$profile->email       = ( array_key_exists( "contact/email"           ,$response ) )?$response["contact/email"]           : "";
-		$profile->language    = ( array_key_exists( "pref/language"           ,$response ) )?$response["pref/language"]           : "";
-		$profile->country     = ( array_key_exists( "contact/country/home"    ,$response ) )?$response["contact/country/home"]    : "";
-		$profile->zip         = ( array_key_exists( "contact/postalCode/home" ,$response ) )?$response["contact/postalCode/home"] : "";
-		$profile->gender      = ( array_key_exists( "person/gender"           ,$response ) )?$response["person/gender"]           : "";
-		$profile->photoURL    = ( array_key_exists( "media/image/default"     ,$response ) )?$response["media/image/default"]     : "";
-		$profile->birthDay    = ( array_key_exists( "birthDate/birthDay"      ,$response ) )?$response["birthDate/birthDay"]      : "";
-		$profile->birthMonth  = ( array_key_exists( "birthDate/birthMonth"    ,$response ) )?$response["birthDate/birthMonth"]    : "";
-		$profile->birthYear   = ( array_key_exists( "birthDate/birthDate"     ,$response ) )?$response["birthDate/birthDate"]     : "";
+		$profile->setIdentifier ( $this->api->identity );
 
-		if( ! $profile->displayName ) {
-			$profile->displayName = trim( $profile->lastName . " " . $profile->firstName ); 
+		$profile->setFirstName  ( $parser( 'namePerson/first'        ) );
+		$profile->setLastName   ( $parser( 'namePerson/last'         ) );
+		$profile->setDisplayName( $parser( 'namePerson'              ) );
+		$profile->setPhotoURL   ( $parser( 'media/image/default'     ) );
+
+		$profile->setEmail      ( $parser( 'contact/email'           ) );
+		$profile->setLanguage   ( $parser( 'pref/language'           ) );
+
+		$profile->setBirthDay   ( $parser( 'birthDate/birthDay'      ) );
+		$profile->setBirthMonth ( $parser( 'birthDate/birthMonth'    ) );
+		$profile->setBirthYear  ( $parser( 'birthDate/birthDate'     ) );
+
+		$profile->setCountry    ( $parser( 'contact/country/home'    ) );
+		$profile->setZip        ( $parser( 'contact/postalCode/home' ) );
+
+		$gender = $parser( 'gender' );
+
+		if( strtolower( $gender ) == "f" ){
+			$gender = 'female';
 		}
 
-		if( isset( $response['namePerson/friendly'] ) && ! empty( $response['namePerson/friendly'] ) && ! $profile->displayName ) { 
-			$profile->displayName = ( array_key_exists( "namePerson/friendly", $response ) ) ? $response["namePerson/friendly"] : "" ; 
-		}
-
-		if( isset( $response['birthDate'] ) && ! empty( $response['birthDate'] ) && ! $profile->birthDay ){
-			list( $birthday_year, $birthday_month, $birthday_day ) = ( array_key_exists( 'birthDate', $response ) ) ? $response['birthDate'] : "";
-
-			$profile->birthDay   = (int) $birthday_day;
-			$profile->birthMonth = (int) $birthday_month;
-			$profile->birthYear  = (int) $birthday_year;
-		}
-
-		if( ! $profile->displayName ){
-			$profile->displayName = trim( $profile->firstName . " " . $profile->lastName );
-		}
-
-		if( strtolower( $profile->gender ) == "f" ){
-			$profile->gender = "female";
-		}
-
-		if( strtolower( $profile->gender ) == "m" ){
-			$profile->gender = "male";
+		if( strtolower( $gender ) == "m" ){
+			$gender = 'male';
 		} 
 
+		$profile->setGender( $gender );
+
+		if( ! $profile->getDisplayName() ){
+			$profile->setDisplayName(  $profile->setLastName() . " " . $profile->setFirstName() );
+
+			if( $parser( 'namePerson/friendly' ) ){
+				$profile->setDisplayName(  $profile->setLastName() . " " . $profile->setFirstName() );
+			}
+		}
+
+		if( ! $profile->getBirthDay() ){
+			if( $dob = $parser( 'birthDate' ) ){
+				list( $y, $m, $d ) = $dob;
+
+				$profile->setBirthDay   ( $d );
+				$profile->setBirthMonth ( $m );
+				$profile->setBirthYear  ( $d );
+			}
+		}
+
 		// with openid providers we get the user profile only once, so store it 
-		$this->storage->set( "hauth_session.{$this->providerId}.user", $profile );
+		$this->storage->set( "{$this->providerId}.user", $profile );
 	}
 
 	// --------------------------------------------------------------------
 
-	public function isAuthorized()
+	function isAuthorized()
 	{
-		return $this->storage->get( "hauth_session.{$this->providerId}.user" ) != null;
+		return $this->storage->get( "{$this->providerId}.user" ) != null;
+	}
+
+	// ====================================================================
+
+	function getOpenidIdentifier()
+	{
+		return $this->openidIdentifier;
+	}
+
+	// --------------------------------------------------------------------
+
+	function setOpenidIdentifier( $openidIdentifier )
+	{
+		$this->openidIdentifier = $openidIdentifier;
+	}
+
+	// --------------------------------------------------------------------
+
+	function letOpenidIdentifier( $openidIdentifier )
+	{
+		if( $this->getOpenidIdentifier() ){
+			return;
+		}
+
+		$this->setOpenidIdentifier( $openidIdentifier );
 	}
 }

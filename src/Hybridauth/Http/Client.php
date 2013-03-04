@@ -7,79 +7,62 @@
 
 namespace Hybridauth\Http;
 
+use Hybridauth\Http\ClientInterface;
+use Hybridauth\Http\Request;
+
 class Client implements ClientInterface
 {
-	public function __construct( $curl_opts = array() )
-	{
-		$this->request = new \Hybridauth\Http\Request();
+	protected $request  = null;
+	protected $response = null;
 
-		$this->request->curlOptions = $curl_opts;
+	// --------------------------------------------------------------------
+
+	function __construct( $curl_opts = array() )
+	{
+		$this->request = new Request();
+
+		$this->request->setCurlOptions( $curl_opts );
 	}
 
 	// --------------------------------------------------------------------
 
-	public function get($uri, $args = array(), $headers = array(), $body = null)
+	function get($uri, $args = array(), $headers = array(), $body = null)
 	{
-		if( empty( $uri ) ){
-			return false;
-		}
-
-		$this->request->uri    = $uri;
-		$this->request->method = 'GET';
-		$this->request->args   = $args;
-
-		if ( ! empty( $headers ) && is_array( $headers ) ){
-			$this->request->headers = $headers;
-		}
-
-		if ( ! empty( $body ) ){
-			$this->request->body = $body;
-		}
-
-		return $this->response = $this->request->send();
+		return $this->response = $this->request->send( $uri, 'GET', $args, $headers, $body );
 	}
 
 	// --------------------------------------------------------------------
 
-	public function post($uri, $args, $headers = array(), $body = null)
+	function post($uri, $args, $headers = array(), $body = null)
 	{
-		if( empty( $uri ) ){
-			return false;
-		}
-
-		$this->request->uri    = $uri;
-		$this->request->method = 'POST';
-		$this->request->args   = $args;
-
-		if ( ! empty( $headers ) && is_array( $headers ) ){
-			$this->request->headers = $headers;
-		}
-
-		if ( ! empty( $body ) ){
-			$this->request->body = $body;
-		}
-
-		return $this->response = $this->request->send();
+		return $this->response = $this->request->send( $uri, 'POST', $args, $headers, $body );
 	}
 
 	// --------------------------------------------------------------------
 
-	public function getResponseBody()
+	function getResponse()
 	{
-		return $this->response->body;
+		return $this->response;
 	}
 
 	// --------------------------------------------------------------------
 
-	public function getResponseStatus()
+	function getResponseBody()
 	{
-		return $this->response->statusCode;
+		return $this->response->getBody();
 	}
 
 	// --------------------------------------------------------------------
 
-	public function getResponseError()
+	function getResponseStatus()
 	{
-		return $this->response->errorCode;
+		return $this->response->getStatusCode();
+	}
+
+	// --------------------------------------------------------------------
+
+	function getResponseError()
+	{
+		return $this->response->getErrorCode();
 	}
 }

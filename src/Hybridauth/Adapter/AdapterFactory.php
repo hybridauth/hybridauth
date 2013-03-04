@@ -7,64 +7,62 @@
 
 namespace Hybridauth\Adapter;
 
+use Hybridauth\Exception;
+use Hybridauth\Storage\StorageInterface;
+
 class AdapterFactory
 {
-	protected $hybridauthConfig = null; 
-	protected $storage          = null;
+	protected $hybridauthConfig = null;
+	protected $storage = null;
 
 	// --------------------------------------------------------------------
 
-	function __construct( $config, \Hybridauth\Storage\StorageInterface $storage = null )
+	function __construct( $config, StorageInterface $storage = null )
 	{
 		$this->hybridauthConfig = $config;
-		$this->storage = $storage;
+		$this->storage          = $storage;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	* create a new adapter switch IDp name or ID
-	*
-	* @param string  $id      The id or name of the IDp
-	* @param array   $params  (optional) required parameters by the adapter 
 	*/
-	function factory( $id, $providerParameters = null )
+	function factory($id, $parameters = null)
 	{
-		# init the adapter config and params
-		$id                 = $this->_getProviderCiId( $id );
-		$providerConfig     = $this->_getConfigById( $id );
+		// provider config
+		$id     = $this->_getProviderCiId ( $id );
+		$config = $this->_getConfigById ( $id );
 
-		# check the IDp config
-		if( ! $providerConfig ){
-			throw new
-				\Hybridauth\Exception( "Unknown Provider", \Hybridauth\Exception::UNKNOWN_OR_DISABLED_PROVIDER );
+		if ( ! $config ){
+			throw new Exception( "Unknown Provider", Exception::UNKNOWN_OR_DISABLED_PROVIDER );
+		}
+		
+		// check the IDp adapter is enabled
+		if ( ! ( bool ) $config["enabled"] ){
+			throw new Exception ( "Provider Disabled", Exception::UNKNOWN_OR_DISABLED_PROVIDER );
 		}
 
-		# check the IDp adapter is enabled
-		if( ! (bool) $providerConfig["enabled"] ){
-			throw new
-				\Hybridauth\Exception( "Provider Disabled",  \Hybridauth\Exception::UNKNOWN_OR_DISABLED_PROVIDER );
-		}
-
-		# include the adapter wrapper
+		// adapter wrapper
 		$providerClassName = "\\Hybridauth\\Provider\\" . $id . "\\" . $id . "Adapter";
 
-		if( isset( $providerConfig["wrapper"] ) && $providerConfig["wrapper"] ){
-			if( isset( $providerConfig["wrapper"]["path"] ) && $providerConfig["wrapper"]["path"] ){
-				require_once $providerConfig["wrapper"]["path"];
+		// definded wrapper?
+		if ( isset( $config ["wrapper"] ) && $config["wrapper"] ) {
+			if ( isset( $config["wrapper"]["path"] ) && $config["wrapper"]["path"] ){
+				require_once $config["wrapper"]["path"];
 			}
 
-			$providerClassName = $providerConfig["wrapper"]["class"];
+			$providerClassName = $config ["wrapper"] ["class"];
 		}
 
-		# create the adapter instance, and pass the current params and config
+		// create the adapter instance
 		$providerInstance = new $providerClassName(
-								$id,
-								$this->hybridauthConfig,
-								$providerConfig,
-								$providerParameters ,
-								$this->storage
-							);
+			$id, 
+			$this->hybridauthConfig, 
+			$config, 
+			$parameters, 
+			$this->storage
+		);
 
 		return $providerInstance;
 	}
@@ -74,13 +72,13 @@ class AdapterFactory
 	/**
 	* Setup an adapter for a given provider
 	*/
-	public function setup( $providerId, $providerParameters = array() )
+	function setup( $providerId, $parameters = array() )
 	{
-		if( ! $providerParameters ){
-			$providerParameters = $this->storage->get( "hauth_session.$providerId.id_provider_params" );
+		if ( ! $parameters ){
+			$parameters = $this->storage->get( $providerId . '.id_provider_params' );
 		}
 
-		return $this->factory( $providerId, $providerParameters );
+		return $this->factory( $providerId, $parameters );
 	}
 
 	// --------------------------------------------------------------------
@@ -89,9 +87,9 @@ class AdapterFactory
 	* return the provider config by id
 	*/
 	private function _getConfigById( $id )
-	{ 
-		if( isset( $this->hybridauthConfig["providers"][$id] ) ){
-			return $this->hybridauthConfig["providers"][$id];
+	{
+		if ( isset( $this->hybridauthConfig['providers'][$id] ) ) {
+			return $this->hybridauthConfig['providers'][$id];
 		}
 
 		return null;
@@ -104,8 +102,8 @@ class AdapterFactory
 	*/
 	private function _getProviderCiId( $id )
 	{
-		foreach( $this->hybridauthConfig["providers"] as $idpid => $params ){
-			if( strtolower( $idpid ) == strtolower( $id ) ){
+		foreach( $this->hybridauthConfig['providers'] as $idpid => $params ){
+			if( strtolower( $idpid ) == strtolower( $id ) ) {
 				return $idpid;
 			}
 		}

@@ -1,6 +1,6 @@
 <?php
 /*!
-* This file is part of the HybridAuth PHP Library (hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
+* This file is part of the HybridAuth PHP Library(hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
 *
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
@@ -11,19 +11,23 @@ use Hybridauth\Adapter\Authentication\OAuth2\Template;
 
 class Authentication extends Template
 {
-	function initialize( $options = array() )
+	function initialize()
 	{
-		$defaults = array(
-			'scope' => 'email,user_about_me,user_birthday,user_hometown,user_website,read_stream,offline_access,publish_stream,read_friendlists',
+		$this->letApplicationId( $this->getAdapterConfig( 'keys', 'id' ) );
+		$this->letApplicationSecret( $this->getAdapterConfig( 'keys', 'secret' ) );
 
-			'authorize_uri'     => 'https://www.facebook.com/dialog/oauth',
-			'request_token_uri' => 'https://graph.facebook.com/oauth/access_token',
+		$scope = $this->getAdapterConfig( 'scope' ) 
+			? $this->getAdapterConfig( 'scope' ) 
+			: 'email,user_about_me,user_birthday,user_hometown,user_website,read_stream,offline_access,publish_stream,read_friendlists';
 
-			'authorize_uri_args' => array( 'display' => 'page' ),
-		);
+		$this->letApplicationScope( $scope );
 
-		$options = array_merge( $defaults, (array) $options );
+		$this->letEndpointRedirectUri( $this->getHybridauthEndpointUri() );
+		$this->letEndpointAuthorizeUri( 'https://www.facebook.com/dialog/oauth' );
+		$this->letEndpointRequestTokenUri( 'https://graph.facebook.com/oauth/access_token' );
 
-		parent::initialize( $options );
+		$this->letEndpointAuthorizeUriAdditionalParameters( array( 'display' => 'page' ) );
+
+		parent::initialize();
 	}
 }
