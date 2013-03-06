@@ -270,21 +270,21 @@ class Profile
 
 	function getProfileURL()
 	{
-		return $this->identifier;
+		return $this->profileURL;
 	}
 
 	// --------------------------------------------------------------------
 
 	function getPhotoURL()
 	{
-		return $this->identifier;
+		return $this->photoURL;
 	}
 
 	// --------------------------------------------------------------------
 
 	function getDisplayName()
 	{
-		return $this->identifier;
+		return $this->displayName;
 	}
 
 	// --------------------------------------------------------------------
