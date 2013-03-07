@@ -19,7 +19,7 @@ use Hybridauth\Adapter\Authentication\OAuth1\OAuthLib\OAuthSignatureMethodHMACSH
 use Hybridauth\Adapter\Authentication\OAuth1\OAuthLib\OAuthToken;
 use Hybridauth\Adapter\Authentication\OAuth1\OAuthLib\OAuthUtil;
 
-class Template implements \Hybridauth\Adapter\AuthenticationInterface {
+class Template implements \Hybridauth\Adapter\Authentication\AuthenticationInterface {
 	public $application = null;
 	public $endpoints = null;
 	public $tokens = null;
@@ -151,7 +151,7 @@ class Template implements \Hybridauth\Adapter\AuthenticationInterface {
 	}
 	
 	// --------------------------------------------------------------------
-	function storeTokens(Hybridauth\Adapter\Authentication\OAuth1\TokensInterface $tokens) {
+	function storeTokens(\Hybridauth\Adapter\Authentication\OAuth1\TokensInterface $tokens) {
 		$this->storage->set ( "{$this->providerId}.tokens", $tokens );
 	}
 	
