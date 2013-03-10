@@ -4,7 +4,7 @@
 *
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
- 
+
 namespace Hybridauth;
 
 class Exception extends \Exception
@@ -18,6 +18,8 @@ class Exception extends \Exception
 	const USER_PROFILE_REQUEST_FAILED      = 6;
 	const USER_NOT_CONNECTED               = 7;
 	const UNSUPPORTED_FEATURE              = 8;
+	const USER_CONTACTS_REQUEST_FAILED     = 9;
+	const USER_UPDATE_STATUS_FAILED        = 10;
 
 	// --------------------------------------------------------------------
 
@@ -28,7 +30,7 @@ class Exception extends \Exception
 		$this->object = $object;
 
 		// fixme!
-		echo $this->debug ( $this );die ();
+		echo $this->debug ( $this ); die();
 	}
 
 	// --------------------------------------------------------------------

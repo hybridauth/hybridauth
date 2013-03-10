@@ -58,7 +58,7 @@ class Profile
 
 	/* User email. Note: not all of IDp garant access to the user email */
 	protected $email = null;
-	
+
 	/* Verified user email. Note: not all of IDp garant access to verified user email */
 	protected $emailVerified = null;
 
@@ -91,7 +91,23 @@ class Profile
 	}
 
 	// --------------------------------------------------------------------
-	// A bunch of naive getters and setters for the fun of it
+
+	/**
+	* Backward compatiliblity with Hybridauth 2.x
+	*/
+	public function __get( $name )
+	{
+		if( property_exists( __CLASS__, $name) ){
+			trigger_error( 'Accessing ' . __CLASS__ . ' members directly will be deprecated in Hybridauth 3.1.0', E_USER_NOTICE );
+
+			return $this->$name;
+		}
+
+		trigger_error( 'Undefined property: ' . __CLASS__ . '::' . $name .' in ' . __FILE__ . ' on line ' . __LINE__, E_USER_NOTICE );
+	}
+
+	// --------------------------------------------------------------------
+	// A bunch of naive getters and setters for the fun of it: bitly.com/10oQqJH
 	// --------------------------------------------------------------------
 
 	function setIdentifier( $identifier )

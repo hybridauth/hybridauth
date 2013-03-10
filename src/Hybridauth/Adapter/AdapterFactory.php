@@ -44,7 +44,7 @@ class AdapterFactory
 		}
 
 		// adapter wrapper
-		$providerClassName = "\\Hybridauth\\Provider\\" . $id . "\\" . $id . "Adapter";
+		$providerClassName = "\\Hybridauth\\Provider\\" . $id;
 
 		// definded wrapper?
 		if ( isset( $config ["wrapper"] ) && $config["wrapper"] ) {
@@ -59,8 +59,8 @@ class AdapterFactory
 		$providerInstance = new $providerClassName(
 			$id, 
 			$this->hybridauthConfig, 
-			$config, 
-			$parameters, 
+			$config,
+			$parameters,
 			$this->storage
 		);
 

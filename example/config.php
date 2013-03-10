@@ -31,6 +31,14 @@ return
 				"enabled" => true,
 				"keys"    => array( "key" => '', "secret" => '' ),
 			),
+			"Yahoo" => array(
+				"enabled" => true,
+				"keys"    => array( "key" => '', "secret" => '' ),
+			),
+			"LinkedIn" => array(
+				"enabled" => true,
+				"keys"    => array( "key" => '', "secret" => '' ),
+			),
 		),
 
 	// optional

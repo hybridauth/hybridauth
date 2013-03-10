@@ -14,9 +14,41 @@ use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Adapter\AdapterFactory;
 
 /**
-* Endpoint 
+* HybridAuth EndPoint
 *
 * http://hybridauth.sourceforge.net/userguide/HybridAuth_endpoint_URL.html
+* http://hybridauth.sourceforge.net/userguide/tuts/change-hybridauth-endpoint-url.html
+*
+* Examples
+*
+*	1. Basic
+*
+* 		require_once( 'Hybridauth.php' );
+*
+*		( new \Hybridauth\Endpoint() )->process();
+*
+*
+*	2. Using a custom sotrage
+*
+* 		require_once( 'Hybridauth.php' );
+*
+*		( new \Hybridauth\Endpoint( $myCustomeStorageClassInstanceImplementingStorageInterface ) )
+*			->process();
+*
+*
+*	3. Overwrite \Hybridauth\Endpoint::process()
+*
+* 		require_once( 'Hybridauth.php' );
+*
+*		$ep = new \Hybridauth\Endpoint()
+*
+*		if( isset( $_GET["hauth_start"] ) ){
+*			$ep->processAdapterLoginBegin();
+*		}
+*
+*		elseif( isset( $_GET["hauth_done"] ) ){
+*			$ep->processAdapterLoginFinish();
+*		}
 */
 final class Endpoint
 {
@@ -52,17 +84,17 @@ final class Endpoint
 		}
 
 		if( isset( $this->request["hauth_start"] ) ){
-			$this->_processAuthStart();
+			$this->processAdapterLoginBegin();
 		}
 
 		elseif( isset( $this->request["hauth_done"] ) ){
-			$this->_processAuthDone();
+			$this->processAdapterLoginFinish();
 		}
 	}
 
 	// --------------------------------------------------------------------
 
-	private function _processAuthStart()
+	function processAdapterLoginBegin()
 	{
 		$this->_authInit();
 
@@ -79,7 +111,7 @@ final class Endpoint
 		}
 
 		try{ 
-			$adapter->getAuthService()->loginBegin();
+			$adapter->loginBegin();
 		}
 		catch( Exception $e ){
 			$this->storage->set( "error.status"  , 1 );
@@ -92,7 +124,7 @@ final class Endpoint
 
 	// --------------------------------------------------------------------
 
-	private function _processAuthDone()
+	function processAdapterLoginFinish()
 	{
 		$this->_authInit();
 
@@ -109,7 +141,7 @@ final class Endpoint
 		}
 
 		try{
-			$adapter->getAuthService()->loginFinish();
+			$adapter->loginFinish();
 		}
 		catch( Exception $e ){
 			$this->storage->set( "error.status"  , 1                );

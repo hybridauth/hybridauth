@@ -10,19 +10,19 @@ try {
 
 	$adapter = $hybridauth->getAdapter( "Google" );
 
-	$adapter->getAuthService()->setApplicationId( '***.apps.googleusercontent.com' );
-	$adapter->getAuthService()->setApplicationSecret( '***' );
-	$adapter->getAuthService()->setApplicationScope( 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email' );
+	$adapter->setApplicationId( '**.apps.googleusercontent.com' );
+	$adapter->setApplicationSecret( '**' );
+	$adapter->setApplicationScope( 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email' );
 
-	$adapter->getAuthService()->setEndpointAuthorizeUri( 'https://accounts.google.com/o/oauth2/auth' );
-	$adapter->getAuthService()->setEndpointRequestTokenUri( 'https://accounts.google.com/o/oauth2/token' );
-	$adapter->getAuthService()->setEndpointTokenInfoUri( 'https://www.googleapis.com/oauth2/v1/tokeninfo' );
+	$adapter->setEndpointAuthorizeUri( 'https://accounts.google.com/o/oauth2/auth' );
+	$adapter->setEndpointRequestTokenUri( 'https://accounts.google.com/o/oauth2/token' );
+	$adapter->setEndpointTokenInfoUri( 'https://www.googleapis.com/oauth2/v1/tokeninfo' );
 
-	$adapter->getAuthService()->setEndpointAuthorizeUriAdditionalParameters( array( 'access_type' => 'offline' ) );
+	$adapter->setEndpointAuthorizeUriAdditionalParameters( array( 'access_type' => 'offline' ) );
 
 	$adapter->authenticate();
 
-	$user_profile = $adapter->getApi()->getUserProfile();
+	$user_profile = $adapter->getUserProfile();
 
 	echo "<pre>" . print_r( $user_profile, true ) . "</pre>";
 
