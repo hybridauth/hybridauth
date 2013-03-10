@@ -301,6 +301,20 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* Set Application Key if not Null
+	*/
+	public final function letApplicationId( $id )
+	{
+		if( $this->getApplicationId() ){
+			return;
+		}
+
+		$this->setApplicationId( $id );
+	}
+
+	// --------------------------------------------------------------------
+
 	public final function letApplicationSecret( $secret )
 	{
 		if( $this->getApplicationSecret() ){
