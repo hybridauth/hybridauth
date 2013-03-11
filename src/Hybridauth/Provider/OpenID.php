@@ -42,7 +42,7 @@ class OpenID extends OpenIDTemplate
 	*
 	* Examples:
 	*
-	*	$data = $hybridauth->authenticate( "OpenID" )->getUserProfile();
+	*	$data = $hybridauth->authenticate( 'OpenID', 'https://yahoo.com' )->getUserProfile();
 	*/
 	function getUserProfile()
 	{

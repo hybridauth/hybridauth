@@ -47,9 +47,9 @@ class OpenIDTemplate extends AbstractAdapter implements AdapterInterface
 		if( empty( $this->openidIdentifier ) ){
 			throw new
 				Exception(
-					"Missing 'openid_identifier'",
-					Exception::AUTHENTIFICATION_FAILED,
-					null,
+					"Missing 'openid_identifier'. " .
+					'For more information refer to http://hybridauth.sourceforge.net/userguide/IDProvider_info_OpenID.html',
+					Exception::PROVIDER_NOT_PROPERLY_CONFIGURED,
 					$this
 				);
 		}
@@ -94,9 +94,8 @@ class OpenIDTemplate extends AbstractAdapter implements AdapterInterface
 		if( $this->api->mode == 'cancel'){
 			throw new
 				Exception(
-					"Authentication failed! User has canceled authentication",
+					"Authentication failed! User has canceled authentication.",
 					Exception::AUTHENTIFICATION_FAILED,
-					null,
 					$this
 				);
 		}
@@ -105,9 +104,8 @@ class OpenIDTemplate extends AbstractAdapter implements AdapterInterface
 		if( ! $this->api->validate() ){
 			throw new
 				Exception(
-					"Authentication failed. Invalid request recived",
+					"Authentication failed. Invalid request recived.",
 					Exception::AUTHENTIFICATION_FAILED,
-					null,
 					$this
 				);
 		}
@@ -178,30 +176,5 @@ class OpenIDTemplate extends AbstractAdapter implements AdapterInterface
 	function isAuthorized()
 	{
 		return $this->storage->get( "{$this->providerId}.user" ) != null;
-	}
-
-	// ====================================================================
-
-	function getOpenidIdentifier()
-	{
-		return $this->openidIdentifier;
-	}
-
-	// --------------------------------------------------------------------
-
-	function setOpenidIdentifier( $openidIdentifier )
-	{
-		$this->openidIdentifier = $openidIdentifier;
-	}
-
-	// --------------------------------------------------------------------
-
-	function letOpenidIdentifier( $openidIdentifier )
-	{
-		if( $this->getOpenidIdentifier() ){
-			return;
-		}
-
-		$this->setOpenidIdentifier( $openidIdentifier );
 	}
 }

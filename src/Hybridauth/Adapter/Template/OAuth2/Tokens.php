@@ -11,11 +11,11 @@ use Hybridauth\Adapter\Template\OAuth2\TokensInterface;
 
 class Tokens implements TokensInterface
 {
-	function __construct()
+	function __construct( $accessToken = null, $refreshToken = null , $accessTokenExpiresIn = null , $accessTokenExpiresAt = null )
 	{
-		$this->accessToken          = null;
-		$this->refreshToken         = null;
-		$this->accessTokenExpiresIn = null;
-		$this->accessTokenExpiresAt = null;
+		$this->accessToken          = $accessToken;
+		$this->refreshToken         = $refreshToken;
+		$this->accessTokenExpiresIn = $accessTokenExpiresIn;
+		$this->accessTokenExpiresAt = $accessTokenExpiresAt;
 	}
 }

@@ -60,7 +60,13 @@ class Windows extends OAuth2Template
 		$response = json_decode ( $response );
 
 		if ( ! isset( $response->id ) || isset ( $response->error ) ){
-			throw new Exception( "User profile request failed!", Exception::USER_PROFILE_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User profile request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
 		}
 
 		$parser = function($property) use($response)
@@ -103,7 +109,13 @@ class Windows extends OAuth2Template
 
 		// Provider Errors shall not pass silently
 		if( ! $response || ! isset( $response->data ) ){
-			throw new Exception( "User contacts request failed!", Exception::USER_CONTACTS_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User contacts request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_CONTACTS_REQUEST_FAILED,
+					$this
+				);
 		}
 
 		$parser = function($property) use($response)

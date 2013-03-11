@@ -61,7 +61,13 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	{
 		// app credentials
 		if ( ! $this->getApplicationId() || ! $this->getApplicationSecret() ){
-			throw new Exception( "Application credentials are missing", Exception::MISSING_APPLICATION_CREDENTIALS );
+			throw new
+				Exception(
+					'Application credentials are missing. Check your hybridauth configuration file. ' .
+					'For more information refer to http://hybridauth.sourceforge.net/userguide/Configuration.html',
+					Exception::MISSING_APPLICATION_CREDENTIALS,
+					$this
+				);
 		}
 
 		$parameters = $this->getEndpointAuthorizeUriAdditionalParameters();
@@ -79,15 +85,15 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	function loginFinish( $code = null, $parameters = array(), $method = 'POST' )
 	{
 		if( ! $code ){
-			$code  = ( array_key_exists( 'code', $_REQUEST  ) ) ? $_REQUEST['code']  : "";
+			$code  = ( array_key_exists( 'code' , $_REQUEST ) ) ? $_REQUEST['code']  : "";
 			$error = ( array_key_exists( 'error', $_REQUEST ) ) ? $_REQUEST['error'] : "";
 
 			if ( $error ){
 				throw new
 					Exception(
-						"Authentication failed! Provider returned an error: $error",
+						'Authentication failed: Provider returned an invalid authorization code. ' .
+						'Recived error: ' . $error. '. ',
 						Exception::AUTHENTIFICATION_FAILED,
-						null,
 						$this
 					);
 			}
@@ -144,9 +150,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 		if( ! isset( $response->access_token ) || ! $response->access_token ){
 			throw new
 				Exception(
-					"Provider returned and error (" . $this->httpClient->getResponseError() . ", " . $this->httpClient->getResponseStatus() . ")",
+					'Authentication failed: Provider returned an invalid access token. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
 					Exception::AUTHENTIFICATION_FAILED,
-					null,
 					$this
 				);
 		}
@@ -209,9 +215,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 		if( ! isset( $response->access_token ) || ! $response->access_token ){
 			throw new
 				Exception(
-					"Authentication failed! Provider returned an invalid access/refresh token (" . $this->httpClient->getResponseError() . ", " . $this->httpClient->getResponseStatus() . ")",
+					'Authentication failed: Provider returned an invalid refresh token. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
 					Exception::AUTHENTIFICATION_FAILED,
-					null,
 					$this
 				);
 		}

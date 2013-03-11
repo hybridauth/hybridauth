@@ -114,9 +114,10 @@ final class Endpoint
 			$adapter->loginBegin();
 		}
 		catch( Exception $e ){
-			$this->storage->set( "error.status"  , 1 );
-			$this->storage->set( "error.message" , $e->getMessage() );
-			$this->storage->set( "error.code"    , $e->getCode() );
+			$this->storage->set( "error.status"   , 1 );
+			$this->storage->set( "error.message"  , $e->getMessage() );
+			$this->storage->set( "error.code"     , $e->getCode() );
+			$this->storage->set( "error.exception", $e );
 
 			$this->_returnToCallbackUrl( $provider_id );
 		}
@@ -144,9 +145,10 @@ final class Endpoint
 			$adapter->loginFinish();
 		}
 		catch( Exception $e ){
-			$this->storage->set( "error.status"  , 1                );
-			$this->storage->set( "error.message" , $e->getMessage() );
-			$this->storage->set( "error.code"    , $e->getCode()    );
+			$this->storage->set( "error.status"   , 1 );
+			$this->storage->set( "error.message"  , $e->getMessage() );
+			$this->storage->set( "error.code"     , $e->getCode() );
+			$this->storage->set( "error.exception", $e );
 		}
 
 		$this->_returnToCallbackUrl( $provider_id );

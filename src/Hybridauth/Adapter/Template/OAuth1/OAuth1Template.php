@@ -74,7 +74,12 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	{
 		// app credentials
 		if ( ! $this->getApplicationKey() || ! $this->getApplicationSecret() ){
-			throw new Exception( "Application credentials are missing", Exception::MISSING_APPLICATION_CREDENTIALS );
+			Exception(
+				'Application credentials are missing. Check your hybridauth configuration file. ' .
+				'For more information refer to http://hybridauth.sourceforge.net/userguide/Configuration.html',
+				Exception::MISSING_APPLICATION_CREDENTIALS,
+				$this
+			);
 		}
 
 		$this->requestAuthToken();
@@ -93,17 +98,22 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	*/
 	function loginFinish($code = null, $parameters = array(), $method = 'POST')
 	{
-		$oauth_token    = ( array_key_exists( 'oauth_token'   , $_REQUEST ) ) ? $_REQUEST ['oauth_token']    : "";
-		$oauth_verifier = ( array_key_exists( 'oauth_verifier', $_REQUEST ) ) ? $_REQUEST ['oauth_verifier'] : "";
-		
+		$oauth_token    = ( array_key_exists( 'oauth_token'   , $_REQUEST ) ) ? $_REQUEST['oauth_token']    : "";
+		$oauth_verifier = ( array_key_exists( 'oauth_verifier', $_REQUEST ) ) ? $_REQUEST['oauth_verifier'] : "";
+
 		if( ! $oauth_token || ! $oauth_verifier ) {
-			throw new Exception( "Authentication failed! Provider returned an invalid oauth verifier", Exception::AUTHENTIFICATION_FAILED, null, $this );
+			throw new
+				Exception(
+					'Authentication failed: Provider returned an invalid token.',
+					Exception::AUTHENTIFICATION_FAILED,
+					$this
+				);
 		}
-		
-		if($oauth_verifier) {
+
+		if( $oauth_verifier ) {
 			$this->tokens->oauthVerifier = $oauth_verifier;
 		}
-		
+
 		$this->requestAccessToken();
 
 		// store tokens
@@ -147,9 +157,9 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 		if( ! isset( $tokens['oauth_token'] ) ){
 			throw new
 				Exception(
-					"Provider returned and error (" . $this->httpClient->getResponseError() . ", " . $this->httpClient->getResponseStatus() . ")",
+					'Authentication failed: Provider returned an invalid auth token. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
 					Exception::AUTHENTIFICATION_FAILED,
-					null,
 					$this
 				);
 		}
@@ -179,9 +189,9 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 		if( ! isset( $tokens['oauth_token'] ) ){
 			throw new
 				Exception(
-					"Provider returned and error (" . $this->httpClient->getResponseError() . ", " . $this->httpClient->getResponseStatus() . ")",
+					'Authentication failed: Provider returned an invalid access token. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
 					Exception::AUTHENTIFICATION_FAILED,
-					null,
 					$this
 				);
 		}

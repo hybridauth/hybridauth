@@ -66,6 +66,12 @@ abstract class AbstractAdapter
 			return $this;
 		}
 
+		foreach( $this->hybridauthConfig["providers"] as $idpid => $params ){
+			$this->storage->delete( "{$idpid}.hauth_return_to"    );
+			$this->storage->delete( "{$idpid}.hauth_endpoint"     );
+			$this->storage->delete( "{$idpid}.id_provider_params" );
+		}
+
 		$this->storage->deleteMatch( "{$this->providerId}." );
 
 		$base_url = $this->hybridauthConfig["base_url"];
@@ -463,6 +469,31 @@ abstract class AbstractAdapter
 		}
 
 		return null;
+	}
+
+	// --------------------------------------------------------------------
+
+	function getOpenidIdentifier()
+	{
+		return $this->openidIdentifier;
+	}
+
+	// --------------------------------------------------------------------
+
+	function setOpenidIdentifier( $openidIdentifier )
+	{
+		$this->openidIdentifier = $openidIdentifier;
+	}
+
+	// --------------------------------------------------------------------
+
+	function letOpenidIdentifier( $openidIdentifier )
+	{
+		if( $this->getOpenidIdentifier() ){
+			return;
+		}
+
+		$this->setOpenidIdentifier( $openidIdentifier );
 	}
 
 	// --------------------------------------------------------------------

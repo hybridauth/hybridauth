@@ -63,7 +63,13 @@ class Google extends OAuth2Template
 
 		// Provider Errors shall not pass silently
 		if( ! $response || ! isset( $response->id ) ){
-			throw new Exception( "User profile request failed!", Exception::USER_PROFILE_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User profile request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::AUTHENTIFICATION_FAILED,
+					$this
+				);
 		}
 
 		$parser = function( $property ) use( $response )
@@ -118,9 +124,14 @@ class Google extends OAuth2Template
 		$response = $this->signedRequest( $url );
 		$response = json_decode( $response );
 
-		// Provider Errors shall not pass silently
 		if( ! $response || isset( $response->error ) ){
-			throw new Exception( "User contacts request failed!", Exception::USER_CONTACTS_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User contacts request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
 		}
 
 		$contacts = array();

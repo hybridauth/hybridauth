@@ -23,14 +23,13 @@ class Exception extends \Exception
 
 	// --------------------------------------------------------------------
 
-	function __construct( $message = null, $code = 0, Exception $previous = null, $object = null )
+	function __construct( $message = null, $code = 0, $object = null )
 	{
-		parent::__construct( $message, $code, $previous );
+		$message = strip_tags( preg_replace( '/\s+/', ' ', $message ) );
+
+		parent::__construct( $message, $code );
 
 		$this->object = $object;
-
-		// fixme!
-		echo $this->debug ( $this ); die();
 	}
 
 	// --------------------------------------------------------------------
@@ -38,7 +37,7 @@ class Exception extends \Exception
 	/**
 	* Shamelessly Borrowered from Slimframework, but to be removed/moved
 	*/
-	protected function debug()
+	function __toString()
 	{
 		$title   = 'Hybridauth Exception';
 		$code    = $this->getCode ();
@@ -50,7 +49,10 @@ class Exception extends \Exception
 		$html  = sprintf ( '<h1>%s</h1>', $title );
 		$html .= '<p>Hybridauth could not run because of the following error:</p>';
 		$html .= '<h2>Details</h2>';
-		$html .= sprintf ( '<div><strong>Type:</strong> %s</div>', get_class( $this ) );
+
+		if ( $this->object ){
+			$html .= sprintf ( '<div><strong>Origin:</strong> %s</div>', get_class( $this->object ) . ' extends ' . get_parent_class( $this->object ) ) ;
+		}
 
 		if ( $code ){
 			$html .= sprintf ( '<div><strong>Code:</strong> %s</div>', $code );

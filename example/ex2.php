@@ -5,21 +5,18 @@ require_once(dirname( __FILE__ ) . "/../src/Hybridauth/Hybridauth.php");
 
 \Hybridauth\Hybridauth::registerAutoloader();
 
-$access_token = 'ya29.AHES6ZQFdAM6TMYcue4Vcy1AneMNovwovwi_dAgJ9Mn8j77T'; // < set yours
-
-/*
-	or:
-		$tokens = new \Hybridauth\Adapter\Authentication\OAuth2\Tokens(); 
-		$tokens->accessToken = 'ya29.AHES6ZQFdAM6TMYcue4Vcy1AneMNovwovwi_dAgJ9Mn8j77T'; 
-		$hybridauth->getAdapter( "Google" )->getApi( $tokens )->getUserProfile();
- */
+$access_token = 'ya29.**'; // < set yours
 
 try {
 	$hybridauth = new \Hybridauth\Hybridauth( $config );
 
 	$adapter = $hybridauth->getAdapter( "Google" );
 
-	$user_profile = $adapter->getApi( $access_token )->getUserProfile();
+	$tokens = new \Hybridauth\Adapter\Template\OAuth2\Tokens( $access_token );  
+
+	$adapter->storeTokens( $tokens );
+
+	$user_profile = $adapter->getUserProfile();
 
 	echo "<pre>" . print_r( $user_profile, true ) . "</pre>";
 
@@ -28,5 +25,5 @@ try {
 	$adapter->disconnect();
 }
 catch( \Hybridauth\Exception $e ){
-	echo $e->debug();
+	echo $e;
 }

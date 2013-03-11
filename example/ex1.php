@@ -30,6 +30,6 @@ try {
 	// echo "Logging out..";
 	$adapter->disconnect();
 }
-catch( \Hybridauth\Exception $e ){
-	echo $e->debug();
+catch( Exception $e ){
+	echo $e ;
 }

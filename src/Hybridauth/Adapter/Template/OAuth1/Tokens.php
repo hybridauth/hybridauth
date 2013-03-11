@@ -9,12 +9,13 @@ namespace Hybridauth\Adapter\Template\OAuth1;
 
 use Hybridauth\Adapter\Template\OAuth1\TokensInterface;
 
-class Tokens implements TokensInterface {
-	function __construct()
+class Tokens implements TokensInterface
+{
+	function __construct( $accessToken = null, $accessSecretToken = null , $requestToken = null , $requestSecretToken = null )
 	{
-		$this->accessToken        = null;
-		$this->accessSecretToken  = null;
-		$this->requestToken       = null;
-		$this->requestSecretToken = null;
+		$this->accessToken        = $accessToken;
+		$this->accessSecretToken  = $accessSecretToken;
+		$this->requestToken       = $requestToken;
+		$this->requestSecretToken = $requestSecretToken;
 	}
 }

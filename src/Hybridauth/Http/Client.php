@@ -15,6 +15,8 @@ class Client implements ClientInterface
 	protected $request  = null;
 	protected $response = null;
 
+	protected $parameters = null;
+
 	// --------------------------------------------------------------------
 
 	function __construct( $curl_opts = array() )
@@ -28,6 +30,8 @@ class Client implements ClientInterface
 
 	function get($uri, $args = array(), $headers = array(), $body = null)
 	{
+		$this->parameters = array( 'uri' => $uri, 'method' => 'GET', 'args' => $args, 'headers' => $headers, 'body' => $body );
+
 		return $this->response = $this->request->send( $uri, 'GET', $args, $headers, $body );
 	}
 
@@ -35,7 +39,22 @@ class Client implements ClientInterface
 
 	function post($uri, $args, $headers = array(), $body = null)
 	{
+		$this->parameters = array( 'uri' => $uri, 'method' => 'GET', 'args' => $args, 'headers' => $headers, 'body' => $body );
+
 		return $this->response = $this->request->send( $uri, 'POST', $args, $headers, $body );
+	}
+
+	// --------------------------------------------------------------------
+
+	function getState()
+	{
+		return 
+			'Uri: ' . $this->parameters['uri'] .
+			'. Method: ' . $this->parameters['method'] . 
+			'. Error: ' . $this->getResponseError() .
+			'. Status: ' . $this->getResponseStatus() .
+			'. Response: ' . $this->getResponseBody() 
+		;
 	}
 
 	// --------------------------------------------------------------------

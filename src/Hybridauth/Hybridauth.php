@@ -86,10 +86,15 @@ final class Hybridauth
 		
 		// checks for errors
 		if( $this->storage->get( "error.status" ) ){
-			$m = $this->storage->get( "error.message" );
-			$c = $this->storage->get( "error.code" );
+			$e = $this->storage->get( "error.exception" );
+			$m = $this->storage->get( "error.message"   );
+			$c = $this->storage->get( "error.code"      );
 
 			$this->storage->deleteMatch( "error." );
+
+			if( $e ){
+				throw $e;
+			}
 
 			throw new Exception( $m, $c );
 		}

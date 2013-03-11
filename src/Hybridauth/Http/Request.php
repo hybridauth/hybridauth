@@ -13,14 +13,10 @@ class Request
 {
 	protected $curlOptions = null;
 
-	protected $parameters = null;
-
 	// --------------------------------------------------------------------
 
 	function send( $uri, $method, $args, $headers = array(), $body = null )
 	{
-		$this->parameters = array( 'uri' => $uri, 'method' => $method, 'args' => $args, 'headers' => $headers, 'body' => $body );
-
 		if( empty( $uri ) ){
 			return false;
 		}

@@ -31,5 +31,5 @@ try {
 	$adapter->disconnect();
 }
 catch( \Hybridauth\Exception $e ){
-	echo $e->debug();
+	echo $e;
 }

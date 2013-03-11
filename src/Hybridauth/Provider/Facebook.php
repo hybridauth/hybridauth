@@ -62,7 +62,13 @@ class Facebook extends OAuth2Template
 		$response = json_decode ( $response );
 
 		if ( ! isset( $response->id ) || isset ( $response->error ) ){
-			throw new Exception( "User profile request failed!", Exception::USER_PROFILE_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User profile request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
 		}
 
 		$parser = function($property) use($response)
@@ -115,7 +121,13 @@ class Facebook extends OAuth2Template
 
 		// Provider Errors shall not pass silently
 		if( ! $response || isset( $response->error ) ){
-			throw new Exception( "User contacts request failed!", Exception::USER_CONTACTS_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User contacts request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_CONTACTS_REQUEST_FAILED,
+					$this
+				);
 		}
 
 		$parser = function($property) use($response)
@@ -149,23 +161,11 @@ class Facebook extends OAuth2Template
 	* Examples:
 	*
 	*	$data = $hybridauth->authenticate( "Facebook" )->setUserStatus( _STATUS_ );
+	*
+	*	$data = $hybridauth->authenticate( "Facebook" )->setUserStatus( _PARAMS_ );
 	*/
 	function setUserStatus( $status )
 	{
-		$parameters = array();
-
-		if( is_array( $status ) ){
-			$parameters = $status;
-		}
-		else{
-			$parameters["message"] = $status; 
-		}
-
-		try{ 
-			$response = $this->signedRequest( '/me/feed', 'POST', $parameters );
-		}
-		catch( FacebookApiException $e ){
-			throw new Exception( "Update user status failed!", Exception::USER_UPDATE_STATUS_FAILED, null, $this );
-		}
+		throw new Exception( "Unsupported", Exception::UNSUPPORTED_FEATURE, null, $this );
  	}
 }

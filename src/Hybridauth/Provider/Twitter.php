@@ -54,7 +54,13 @@ class Twitter extends OAuth1Template
 		$response = json_decode ( $response );
 
 		if ( ! isset( $response->id ) || isset ( $response->error ) ){
-			throw new Exception( "User profile request failed!", Exception::USER_PROFILE_REQUEST_FAILED, null, $this );
+			throw new
+				Exception(
+					'User profile request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
 		}
 
 		$parser = function($property) use($response)
