@@ -27,10 +27,14 @@ class Request
 			$uri = $uri . ( strpos( $uri, '?' ) ? '&' : '?' ) . http_build_query( $args );
 		}
 
+		if( $method == 'POST' && ! isset( $headers['Content-type'] ) ) {
+			$headers['Content-type'] = 'Content-type: application/x-www-form-urlencoded';
+		}
+
 		$ch = curl_init();
 
 		curl_setopt( $ch, CURLOPT_URL            , $uri );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER ,  1 );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER ,    1 );
 
 		$curl_opts = array(
 			CURLOPT_TIMEOUT        => 30,
@@ -47,25 +51,23 @@ class Request
 
 		foreach( $curl_opts as $opt => $val ){
 			curl_setopt( $ch, $opt, $val );
-			
+
 			$this->curlOptions[ $opt ] = $val;
 		}
 
-		if( isset( $headers ) && is_array( $headers ) && $headers ){
+		if( isset( $headers ) && $headers ){
 			curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 		}
 
 		if( $method == 'POST' ){
-			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt( $ch, CURLOPT_POST, 1);
 
-			if( $args ){
-				curl_setopt( $ch, CURLOPT_POSTFIELDS, $args );
-			}
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $args ) );
 		}
 
-		$response->setBody       ( curl_exec($ch)  );
+		$response->setBody       ( curl_exec( $ch ) );
 		$response->setStatusCode ( curl_getinfo( $ch, CURLINFO_HTTP_CODE ) );
-		$response->setErrorCode  ( curl_errno($ch) ); // http://curl.haxx.se/libcurl/c/libcurl-errors.html
+		$response->setErrorCode  ( curl_errno( $ch ) ); // http://curl.haxx.se/libcurl/c/libcurl-errors.html
 
 		$response->setCurlHttpInfo( curl_getinfo( $ch ) );
 

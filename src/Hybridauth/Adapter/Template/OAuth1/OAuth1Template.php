@@ -47,11 +47,11 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 		$this->httpClient  = new Client();
 
 		// http client
-		if( isset( $this->hybridauthConfig["http_client"] ) && $this->hybridauthConfig["http_client"] ){
-			$this->httpClient = new $this->hybridauthConfig["http_client"];
+		if( $this->getHybridauthConfig( 'http_client' ) ){
+			$this->httpClient = new $this->getHybridauthConfig( 'http_client' );
 		}
 		else{
-			$curl_options = isset( $this->hybridauthConfig["curl_options"] ) ? $this->hybridauthConfig["curl_options"] : array();
+			$curl_options = $this->getHybridauthConfig( 'curl_options' ) ? $this->getHybridauthConfig( 'curl_options' ) : array();
 
 			$this->httpClient = new Client( $curl_options );
 		}
@@ -96,7 +96,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	/**
 	* finish login step
 	*/
-	function loginFinish($code = null, $parameters = array(), $method = 'POST')
+	function loginFinish( $parameters = array(), $method = 'GET' )
 	{
 		$oauth_token    = ( array_key_exists( 'oauth_token'   , $_REQUEST ) ) ? $_REQUEST['oauth_token']    : "";
 		$oauth_verifier = ( array_key_exists( 'oauth_verifier', $_REQUEST ) ) ? $_REQUEST['oauth_verifier'] : "";
@@ -114,7 +114,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 			$this->tokens->oauthVerifier = $oauth_verifier;
 		}
 
-		$this->requestAccessToken();
+		$this->requestAccessToken( $parameters, $method );
 
 		// store tokens
 		$this->storeTokens( $this->tokens );
@@ -145,7 +145,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	function requestAuthToken( $parameters = array(), $method = 'GET' )
 	{
 		$defaults = array(
-			'oauth_callback' => $this->endpoints->redirectUri 
+			'oauth_callback' => $this->getEndpointRedirectUri()
 		);
 
 		$parameters = array_merge( $defaults,( array ) $parameters );
@@ -172,7 +172,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	
 	// --------------------------------------------------------------------
 
-	function requestAccessToken($parameters = array(), $method = 'GET')
+	function requestAccessToken( $parameters = array(), $method = 'GET' )
 	{
 		$defaults = array();
 
@@ -180,9 +180,9 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 			$defaults['oauth_verifier'] = $this->tokens->oauthVerifier;
 		}
 
-		$parameters = array_merge( $defaults,( array ) $parameters );
+		$parameters = array_merge( $defaults, (array)$parameters );
 
-		$request = $this->signedRequest( $this->endpoints->accessTokenUri, $method, $parameters );
+		$request = $this->signedRequest( $this->getEndpointAccessTokenUri(), $method, $parameters );
 
 		$tokens = OAuthUtil::parse_parameters( $request );
 
@@ -196,8 +196,8 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 				);
 		}
 
-		$this->tokens->accessToken       = $tokens ['oauth_token'];
-		$this->tokens->accessSecretToken = $tokens ['oauth_token_secret'];
+		$this->tokens->accessToken       = $tokens['oauth_token'];
+		$this->tokens->accessSecretToken = $tokens['oauth_token_secret'];
 
 		$this->storeTokens( $this->tokens );
 	}

@@ -36,7 +36,7 @@ class Twitter extends OAuth1Template
 		$this->letEndpointBaseUri( 'https://api.twitter.com/1.1/' );
 		$this->letEndpointAuthorizeUri( 'https://api.twitter.com/oauth/authenticate' );
 		$this->letEndpointRequestTokenUri( 'https://api.twitter.com/oauth/request_token' );
-		$this->letEndpointAccessTokenUri( 'https://api.twitter.com/oauth/access_token' ); 
+		$this->letEndpointAccessTokenUri( 'https://api.twitter.com/oauth/access_token' );
 	}
 
 	// --------------------------------------------------------------------

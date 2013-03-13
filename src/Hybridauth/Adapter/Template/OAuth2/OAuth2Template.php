@@ -27,6 +27,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function initialize()
 	{
 		$this->application = new Application();
@@ -82,24 +85,24 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	/**
 	* finish login step 
 	*/
-	function loginFinish( $code = null, $parameters = array(), $method = 'POST' )
+	function loginFinish( $requestAccessTokenParameters = array(), $requestAccessTokenMethod = 'POST' )
 	{
-		if( ! $code ){
-			$code  = ( array_key_exists( 'code' , $_REQUEST ) ) ? $_REQUEST['code']  : "";
-			$error = ( array_key_exists( 'error', $_REQUEST ) ) ? $_REQUEST['error'] : "";
+		$code  = ( array_key_exists( 'code' , $_REQUEST ) ) ? $_REQUEST['code']  : "";
+		$error = ( array_key_exists( 'error', $_REQUEST ) ) ? $_REQUEST['error'] : "";
 
-			if ( $error ){
-				throw new
-					Exception(
-						'Authentication failed: Provider returned an invalid authorization code. ' .
-						'Recived error: ' . $error. '. ',
-						Exception::AUTHENTIFICATION_FAILED,
-						$this
-					);
-			}
+		if ( $error ){
+			throw new
+				Exception(
+					'Authentication failed: Provider returned an invalid authorization code. ' .
+					'Recived error: ' . $error. '. ',
+					Exception::AUTHENTIFICATION_FAILED,
+					$this
+				);
 		}
 
-		$this->requestAccessToken( $code, $parameters, $method );
+		$requestAccessTokenParameters['code'] = $code;
+
+		$this->requestAccessToken( $requestAccessTokenParameters, $requestAccessTokenMethod );
 
 		// store tokens
 		$this->storeTokens( $this->tokens );
@@ -107,12 +110,15 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function generateAuthorizeUri( $parameters = array() )
 	{
 		$defaults = array(
 			"client_id"     => $this->getApplicationId(),
-			"redirect_uri"  => $this->endpoints->redirectUri,
 			"scope"         => $this->getApplicationScope(),
+			"redirect_uri"  => $this->getEndpointRedirectUri(),
 			"response_type" => "code"
 		);
 
@@ -126,14 +132,13 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	/**
 	* Exchanges authorization code for an access grant.
 	*/
-	function requestAccessToken( $code, $parameters = array(), $method = 'POST' )
+	function requestAccessToken( $parameters = array(), $method = 'POST' )
 	{
 		$defaults = array(
 			"client_id"     => $this->getApplicationId(),
 			"client_secret" => $this->getApplicationSecret(),
-			"grant_type"    => "authorization_code",
-			"redirect_uri"  => $this->endpoints->redirectUri,
-			"code"          => $code
+			"redirect_uri"  => $this->getEndpointRedirectUri(),
+			"grant_type"    => "authorization_code"
 		);
 
 		$parameters = array_merge( $defaults, (array) $parameters );
@@ -173,6 +178,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function refreshAccessToken( $parameters = array(), $method = 'POST', $force = false )
 	{
 		// have an access token?
@@ -242,6 +250,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function isAuthorized()
 	{
 		return $this->getTokens()->accessToken != null;
@@ -249,6 +260,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function signedRequest( $uri, $method = 'GET', $parameters = array() )
 	{
 		if ( strrpos($uri, 'http://') !== 0 && strrpos($uri, 'https://') !== 0 ){

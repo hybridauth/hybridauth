@@ -1,6 +1,6 @@
 <?php
 /*!
-* This file is part of the HybridAuth PHP Library (hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
+* This file is part of the HybridAuth PHP Library(hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
 *
 * This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
 */
@@ -46,6 +46,13 @@ class Windows extends OAuth2Template
 
 	// --------------------------------------------------------------------
 
+	function loginFinish()
+	{
+		parent::loginFinish( array(), 'POST' );
+	}
+
+	// --------------------------------------------------------------------
+
 	/**
 	* Returns user profile
 	*
@@ -55,15 +62,14 @@ class Windows extends OAuth2Template
 	*/
 	function getUserProfile()
 	{
-		// request user infos
-		$response = $this->get ( "me" );
-		$response = json_decode ( $response );
+		$response = $this->signedRequest( "me" );
+		$response = json_decode( $response );
 
-		if ( ! isset( $response->id ) || isset ( $response->error ) ){
+		if( ! isset( $response->id ) || isset( $response->error ) ){
 			throw new
 				Exception(
 					'User profile request failed: Provider returned an invalid response. ' .
-					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					'HTTP client state:(' . $this->httpClient->getState() . ')',
 					Exception::USER_PROFILE_REQUEST_FAILED,
 					$this
 				);
@@ -83,12 +89,13 @@ class Windows extends OAuth2Template
 		$profile->setProfileURL ( $parser( 'link'       ) );
 		$profile->setWebSiteURL ( $parser( 'website'    ) );
 		$profile->setGender     ( $parser( 'gender'     ) ); 
+		$profile->setLanguage   ( $parser( 'locale'     ) );
 
 		$profile->setEmail      ( $response->emails->account ); //< this 
 
-		$profile->setBirthDay  ( $parser( 'birth_day'   ) );
-		$profile->setBirthMonth( $parser( 'birth_month' ) );
-		$profile->setBirthYear ( $parser( 'birth_year'  ) );
+		$profile->setBirthDay   ( $parser( 'birth_day'   ) );
+		$profile->setBirthMonth ( $parser( 'birth_month' ) );
+		$profile->setBirthYear  ( $parser( 'birth_year'  ) );
 
 		return $profile;
 	}
@@ -112,7 +119,7 @@ class Windows extends OAuth2Template
 			throw new
 				Exception(
 					'User contacts request failed: Provider returned an invalid response. ' .
-					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					'HTTP client state:(' . $this->httpClient->getState() . ')',
 					Exception::USER_CONTACTS_REQUEST_FAILED,
 					$this
 				);

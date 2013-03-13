@@ -39,6 +39,7 @@ class Client implements ClientInterface
 
 	function post($uri, $args, $headers = array(), $body = null)
 	{
+
 		$this->parameters = array( 'uri' => $uri, 'method' => 'GET', 'args' => $args, 'headers' => $headers, 'body' => $body );
 
 		return $this->response = $this->request->send( $uri, 'POST', $args, $headers, $body );

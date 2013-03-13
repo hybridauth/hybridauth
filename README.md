@@ -5,12 +5,12 @@ This branch contains work in progress toward the next HybridAuth 3 release and s
 Bundled Providers
 -----------------
 * Google (done)
-* Facebook (partly done)
-* Twitter (partly done)
-* Yahoo
-* Windows (partly done)
-* LinkedIn
-* OpenID(s) (partly done)
+* Facebook (done)
+* Twitter (done)
+* Yahoo (partly done)
+* Windows (done)
+* LinkedIn (partly done)
+* OpenID(s) (done)
 
 Requirements
 ------------

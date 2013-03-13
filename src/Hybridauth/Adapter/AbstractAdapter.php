@@ -8,7 +8,6 @@
 namespace Hybridauth\Adapter;
 
 use Hybridauth\Http\Util;
-use Hybridauth\Adapter\Api\ApiBinding;
 use Hybridauth\Storage\StorageInterface;
 
 abstract class AbstractAdapter
@@ -37,36 +36,36 @@ abstract class AbstractAdapter
 	{
 		$this->storage = $storage;
 
-		# init the IDp adapter parameters, get them from the cache if possible
-		if( ! $parameters ){
-			$this->parameters = $this->storage->get( $providerId . '.id_provider_params' );
-		}
-		else{
-			$this->parameters = $parameters;
-		}
-
 		$this->providerId = $providerId;
 
-		$this->hybridauthConfig = $hybridauthConfig;
+		# init the IDp adapter parameters, get them from the cache if possible
+		if( ! $parameters ){
+			$parameters = $this->storage->get( $providerId . '.id_provider_params' );
+		}
 
-		$this->config = $config;
+		$this->setHybridauthConfig( $hybridauthConfig );
 
-		// set HybridAuth endpoint for this provider
-		$this->hybridauthEndpoint = $this->storage->get( $providerId . '.hauth_endpoint' );
+		$this->setAdapterParameters( $parameters ); 
 
-		// initialize the current provider adapter
+		$this->setAdapterConfig( $config );
+
+		$this->setHybridauthEndpointUri( $this->storage->get( $providerId . '.hauth_endpoint' ) );
+
 		$this->initialize();
 	}
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function authenticate( $parameters = array() )
 	{
 		if( $this->isAuthorized() ){
 			return $this;
 		}
 
-		foreach( $this->hybridauthConfig["providers"] as $idpid => $params ){
+		foreach( $this->getHybridauthConfig( 'providers' ) as $idpid => $params ){
 			$this->storage->delete( "{$idpid}.hauth_return_to"    );
 			$this->storage->delete( "{$idpid}.hauth_endpoint"     );
 			$this->storage->delete( "{$idpid}.id_provider_params" );
@@ -74,7 +73,7 @@ abstract class AbstractAdapter
 
 		$this->storage->deleteMatch( "{$this->providerId}." );
 
-		$base_url = $this->hybridauthConfig["base_url"];
+		$base_url = $this->getHybridauthConfig( 'base_url' );
 
 		$defaults = array(
 			'hauth_return_to' => Util::getCurrentUrl(),
@@ -89,7 +88,7 @@ abstract class AbstractAdapter
 		$this->storage->set( $this->providerId . ".id_provider_params" , $parameters );
 
 		// store config
-		$this->storage->config( "CONFIG", $this->hybridauthConfig );
+		$this->storage->config( "CONFIG", $this->getHybridauthConfig() );
 
 		// redirect user to start url
 		Util::redirect( $parameters["hauth_start_url"] );
@@ -97,9 +96,12 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	function isAuthorized()
 	{
-		return $this->_authService->isAuthorized();
+		return false;
 	}
 
 	// --------------------------------------------------------------------
@@ -112,101 +114,39 @@ abstract class AbstractAdapter
 		$this->storage->deleteMatch( "{$this->providerId}." );
 	}
 
-	// --------------------------------------------------------------------
-	// --------------------------------------------------------------------
-	// --------------------------------------------------------------------
+	// ====================================================================
 
+	/**
+	* ...
+	*/
 	public final function getHybridauthEndpointUri()
 	{
 		return $this->hybridauthEndpoint;
 	}
 
-	// --------------------------------------------------------------------
-
-	public final function getTokens()
+	/**
+	* ...
+	*/
+	public final function setHybridauthEndpointUri( $uri )
 	{
-		return $this->storage->get( $this->providerId . '.tokens' ) ? $this->storage->get( $this->providerId . '.tokens' ) : $this->tokens ;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getApplicationId()
-	{
-		return $this->application->id;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getApplicationKey()
-	{
-		return $this->application->key;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getApplicationSecret()
-	{
-		return $this->application->secret;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getApplicationScope()
-	{
-		return $this->application->scope;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointBaseUri()
-	{
-		return $this->endpoints->baseUri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointRedirectUri()
-	{
-		return $this->endpoints->redirectUri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointAuthorizeUri()
-	{
-		return $this->endpoints->authorizeUri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointRequestTokenUri()
-	{
-		return $this->endpoints->requestTokenUri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointAccessTokenUri()
-	{
-		return $this->endpoints->accessTokenUri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointTokenInfoUri()
-	{
-		return $this->endpoints->tokenInfoUri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function getEndpointAuthorizeUriAdditionalParameters()
-	{
-		return $this->endpoints->authorizeUriParameters;
+		$this->hybridauthEndpoint = $uri;
 	}
 
 	// ====================================================================
 
+	/**
+	* ...
+	*/
+	public final function getTokens()
+	{
+		return $this->storage->get( $this->providerId . '.tokens' ) ? $this->storage->get( $this->providerId . '.tokens' ) : $this->tokens;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function storeTokens( $tokens )
 	{
 		$this->tokens = $tokens;
@@ -214,84 +154,49 @@ abstract class AbstractAdapter
 		$this->storage->set( $this->providerId . '.tokens', $this->tokens );
 	}
 
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getApplicationId()
+	{
+		return $this->application->id;
+	}
+
+	/**
+	* Set Application Key if not Null
+	*/
+	public final function letApplicationId( $id )
+	{
+		if( $this->getApplicationId() ){
+			return;
+		}
+
+		$this->setApplicationId( $id );
+	}
+
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	public final function setApplicationId( $id )
 	{
 		$this->application->id = $id;
 	}
 
-	// --------------------------------------------------------------------
-
-	public final function setApplicationKey( $key )
-	{
-		$this->application->key = $key;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setApplicationSecret( $secret )
-	{
-		$this->application->secret = $secret;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setApplicationScope( $scope )
-	{
-		$this->application->scope = $scope;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointBaseUri( $uri )
-	{
-		$this->endpoints->baseUri = $uri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointRedirectUri( $uri )
-	{
-		$this->endpoints->redirectUri = $uri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointAuthorizeUri( $uri )
-	{
-		$this->endpoints->authorizeUri = $uri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointRequestTokenUri( $uri )
-	{
-		$this->endpoints->requestTokenUri = $uri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointAccessTokenUri( $uri )
-	{
-		$this->endpoints->accessTokenUri = $uri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointTokenInfoUri( $uri )
-	{
-		$this->endpoints->tokenInfoUri = $uri;
-	}
-
-	// --------------------------------------------------------------------
-
-	public final function setEndpointAuthorizeUriAdditionalParameters( $parameters = array() )
-	{
-		$this->endpoints->authorizeUriParameters = $parameters;
-	}
-
 	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getApplicationKey()
+	{
+		return $this->application->key;
+	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	* Set Application Key if not Null
@@ -308,19 +213,28 @@ abstract class AbstractAdapter
 	// --------------------------------------------------------------------
 
 	/**
-	* Set Application Key if not Null
+	* ...
 	*/
-	public final function letApplicationId( $id )
+	public final function setApplicationKey( $key )
 	{
-		if( $this->getApplicationId() ){
-			return;
-		}
+		$this->application->key = $key;
+	}
 
-		$this->setApplicationId( $id );
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getApplicationSecret()
+	{
+		return $this->application->secret;
 	}
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
 	public final function letApplicationSecret( $secret )
 	{
 		if( $this->getApplicationSecret() ){
@@ -332,6 +246,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setApplicationSecret( $secret )
+	{
+		$this->application->secret = $secret;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getApplicationScope()
+	{
+		return $this->application->scope;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letApplicationScope( $scope )
 	{
 		if( $this->getApplicationScope() ){
@@ -343,6 +280,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setApplicationScope( $scope )
+	{
+		$this->application->scope = $scope;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointBaseUri()
+	{
+		return $this->endpoints->baseUri;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointBaseUri( $uri )
 	{
 		if( $this->getEndpointBaseUri() ){
@@ -354,6 +314,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setEndpointBaseUri( $uri )
+	{
+		$this->endpoints->baseUri = $uri;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointRedirectUri()
+	{
+		return $this->endpoints->redirectUri;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointRedirectUri( $uri )
 	{
 		if( $this->getEndpointRedirectUri() ){
@@ -365,6 +348,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setEndpointRedirectUri( $uri )
+	{
+		$this->endpoints->redirectUri = $uri;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointAuthorizeUri()
+	{
+		return $this->endpoints->authorizeUri;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointAuthorizeUri( $uri )
 	{
 		if( $this->getEndpointAuthorizeUri() ){
@@ -376,6 +382,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setEndpointAuthorizeUri( $uri )
+	{
+		$this->endpoints->authorizeUri = $uri;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointRequestTokenUri()
+	{
+		return $this->endpoints->requestTokenUri;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointRequestTokenUri( $uri )
 	{
 		if( $this->getEndpointRequestTokenUri() ){
@@ -387,6 +416,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setEndpointRequestTokenUri( $uri )
+	{
+		$this->endpoints->requestTokenUri = $uri;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointAccessTokenUri()
+	{
+		return $this->endpoints->accessTokenUri;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointAccessTokenUri( $uri )
 	{
 		if( $this->getEndpointAccessTokenUri() ){
@@ -398,6 +450,29 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setEndpointAccessTokenUri( $uri )
+	{
+		$this->endpoints->accessTokenUri = $uri;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointTokenInfoUri()
+	{
+		return $this->endpoints->tokenInfoUri;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointTokenInfoUri( $uri )
 	{
 		if( $this->getEndpointTokenInfoUri() ){
@@ -409,6 +484,39 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	public final function setEndpointTokenInfoUri( $uri )
+	{
+		$this->endpoints->tokenInfoUri = $uri;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	public final function getEndpointAuthorizeUriAdditionalParameters()
+	{
+		return $this->endpoints->authorizeUriParameters;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
+	public final function setEndpointAuthorizeUriAdditionalParameters( $parameters = array() )
+	{
+		$this->endpoints->authorizeUriParameters = $parameters;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
 	public final function letEndpointAuthorizeUriAdditionalParameters( $parameters = array() )
 	{
 		if( $this->getEndpointAuthorizeUriAdditionalParameters() ){
@@ -420,25 +528,43 @@ abstract class AbstractAdapter
 
 	// ====================================================================
 
-	protected function parseRequestResult( $result )
+	/**
+	* ...
+	*/
+	function getOpenidIdentifier()
 	{
-		if( json_decode( $result ) ){
-			return json_decode( $result );
-		}
-
-		parse_str( $result, $ouput );
-
-		$result = new \StdClass();
-
-		foreach( $ouput as $k => $v ){
-			$result->$k = $v;
-		}
-
-		return $result;
+		return $this->openidIdentifier;
 	}
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	function letOpenidIdentifier( $openidIdentifier )
+	{
+		if( $this->getOpenidIdentifier() ){
+			return;
+		}
+
+		$this->setOpenidIdentifier( $openidIdentifier );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
+	function setOpenidIdentifier( $openidIdentifier )
+	{
+		$this->openidIdentifier = $openidIdentifier;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
 	protected function getAdapterConfig( $key = null, $subkey = null )
 	{
 		if( ! $key ){
@@ -458,6 +584,51 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
+	/**
+	* ...
+	*/
+	protected function setAdapterConfig( $config = array() )
+	{
+		$this->config = $config;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
+	protected function getHybridauthConfig( $key = null, $subkey = null )
+	{
+		if( ! $key ){
+			return $this->hybridauthConfig;
+		}
+
+		if( ! $subkey && isset( $this->hybridauthConfig[ $key ] ) ){
+			return $this->hybridauthConfig[ $key ];
+		}
+
+		if( isset( $this->hybridauthConfig[ $key ] ) && isset( $this->config[ $key ][ $subkey ] ) ){
+			return $this->hybridauthConfig[ $key ][ $subkey ];
+		}
+
+		return null;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* ...
+	*/
+	protected function setHybridauthConfig( $config = array() )
+	{
+		$this->hybridauthConfig = $config;
+	}
+
+	// ====================================================================
+
+	/**
+	* ...
+	*/
 	protected function getAdapterParameters( $key = null )
 	{
 		if( ! $key ){
@@ -473,27 +644,34 @@ abstract class AbstractAdapter
 
 	// --------------------------------------------------------------------
 
-	function getOpenidIdentifier()
+	/**
+	* ...
+	*/
+	protected function setAdapterParameters( $parameters = array() )
 	{
-		return $this->openidIdentifier;
+		$this->parameters = $parameters;
 	}
 
-	// --------------------------------------------------------------------
+	// ====================================================================
 
-	function setOpenidIdentifier( $openidIdentifier )
+	/**
+	* ...
+	*/
+	protected function parseRequestResult( $result, $parser = 'json_decode' )
 	{
-		$this->openidIdentifier = $openidIdentifier;
-	}
-
-	// --------------------------------------------------------------------
-
-	function letOpenidIdentifier( $openidIdentifier )
-	{
-		if( $this->getOpenidIdentifier() ){
-			return;
+		if( json_decode( $result ) ){
+			return json_decode( $result );
 		}
 
-		$this->setOpenidIdentifier( $openidIdentifier );
+		parse_str( $result, $ouput );
+
+		$result = new \StdClass();
+
+		foreach( $ouput as $k => $v ){
+			$result->$k = $v;
+		}
+
+		return $result;
 	}
 
 	// --------------------------------------------------------------------

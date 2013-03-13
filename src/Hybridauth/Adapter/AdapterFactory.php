@@ -37,7 +37,7 @@ class AdapterFactory
 		if ( ! $config ){
 			throw new Exception( "Unknown Provider", Exception::UNKNOWN_OR_DISABLED_PROVIDER );
 		}
-		
+
 		// check the IDp adapter is enabled
 		if ( ! ( bool ) $config["enabled"] ){
 			throw new Exception ( "Provider Disabled", Exception::UNKNOWN_OR_DISABLED_PROVIDER );

@@ -83,7 +83,7 @@ final class Hybridauth
 
 		// setup storage manager
 		$this->storage = $storage ? $storage : new Session();
-		
+
 		// checks for errors
 		if( $this->storage->get( "error.status" ) ){
 			$e = $this->storage->get( "error.exception" );
