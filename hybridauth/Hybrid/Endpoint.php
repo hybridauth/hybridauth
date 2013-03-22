@@ -200,6 +200,7 @@ class Hybrid_Endpoint {
 
 				// Check if Hybrid_Auth session already exist
 				if ( ! $storage->config( "CONFIG" ) ) { 
+                    Hybrid_Logger::error( "Endpoint: Config storage not found when trying to init Hyrid_Auth. " );
 					header( "HTTP/1.0 404 Not Found" );
 					die( "You cannot access this page directly." );
 				}
@@ -207,7 +208,7 @@ class Hybrid_Endpoint {
 				Hybrid_Auth::initialize( $storage->config( "CONFIG" ) ); 
 			}
 			catch ( Exception $e ){
-				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth" ); 
+				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth: " . $e->getMessage() ); 
 
 				header( "HTTP/1.0 404 Not Found" );
 				die( "Oophs. Error!" );
