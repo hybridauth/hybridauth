@@ -10,8 +10,17 @@
  */
 class Hybrid_Logger
 {
+    const ERROR   = 1;
+    const INFO    = 2;
+    const DEBUG   = 3;
+
 	function __construct()
 	{
+        // Ensure that a value is set, default to debug
+        Hybrid_Auth::$config["debug_level"] = isset(Hybrid_Auth::$config["debug_level"])
+            ? Hybrid_Auth::$config["debug_level"]
+            : static::DEBUG;
+
 		// if debug mode is set to true, then check for the writable log file
 		if ( Hybrid_Auth::$config["debug_mode"] ){
 			if ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) ){
@@ -24,45 +33,52 @@ class Hybrid_Logger
 		} 
 	}
 
-	public static function debug( $message, $object = NULL )
-	{
-		if( Hybrid_Auth::$config["debug_mode"] ){
+    /**
+     * Log a message.
+     *
+     * @param string $message The message to log.
+     * @param int    $level   The log level (DEBUG, INFO, ERROR)
+     * @param object $object  An option object to display.
+     *
+     * @return void
+     */
+    public static function log( $message, $level, $object = NULL )
+    {
+		if( Hybrid_Auth::$config["debug_mode"] && $level <= Hybrid_Auth::$config["debug_level"] ){
 			$datetime = new DateTime();
-			$datetime =  $datetime->format(DATE_ATOM);
+			$datetime = $datetime->format(DATE_ATOM);
 
-			file_put_contents( 
-				Hybrid_Auth::$config["debug_file"], 
-				"DEBUG -- " . $_SERVER['REMOTE_ADDR'] . " -- " . $datetime . " -- " . $message . " -- " . print_r($object, true) . "\n", 
-				FILE_APPEND
-			);
-		}
-	}
+            $message = $_SERVER['REMOTE_ADDR'] . " -- " . $datetime . " -- " . $message;
+            if ($object) {
+                $message .=  " -- " . print_r($object, true);
+            }
+            $message = $message . "\n";
 
-	public static function info( $message )
-	{ 
-		if( Hybrid_Auth::$config["debug_mode"] ){
-			$datetime = new DateTime();
-			$datetime =  $datetime->format(DATE_ATOM);
+			file_put_contents( Hybrid_Auth::$config["debug_file"], $message, FILE_APPEND );
+        }
+    }
 
-			file_put_contents( 
-				Hybrid_Auth::$config["debug_file"], 
-				"INFO -- " . $_SERVER['REMOTE_ADDR'] . " -- " . $datetime . " -- " . $message . "\n", 
-				FILE_APPEND
-			);
-		}
-	}
+    /**
+     * Emulates debug(), error() and info() messages.
+     *
+     * @param string $name The name of the function called.
+     * @param array  $args The other arguments (a string message and optional
+     *                     object to display).
+     *
+     * @return void
+     */
+    public static function __callStatic( $name, $args )
+    {
+        $priority = strtoupper($name);
+        $level    = constant('static::' . $priority);
 
-	public static function error($message, $object = NULL)
-	{ 
-		if( Hybrid_Auth::$config["debug_mode"] ){
-			$datetime = new DateTime();
-			$datetime =  $datetime->format(DATE_ATOM);
+        if (empty($level)) {
+            throw new Exception( 'Unknown log level "' . $name . '"' );
+        }
 
-			file_put_contents( 
-				Hybrid_Auth::$config["debug_file"], 
-				"ERROR -- " . $_SERVER['REMOTE_ADDR'] . " -- " . $datetime . " -- " . $message . " -- " . print_r($object, true) . "\n", 
-				FILE_APPEND
-			);
-		}
-	}
+        $message  = array_shift($args);
+        $object   = array_shift($args);
+
+        static::log( $priority . ' -- ' . $message, $level, $object );
+    }
 }

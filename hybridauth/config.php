@@ -69,4 +69,7 @@ return
 		"debug_mode" => false,
 
 		"debug_file" => "",
+
+        // Debug levels are error (1), info (2) and debug (3)
+        "debug_level" => 1,
 	);

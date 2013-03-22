@@ -68,5 +68,8 @@ return
 		// if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
 		"debug_mode" => false,
 
-		"debug_file" => ""
+		"debug_file" => "",
+
+        // Debug levels are error (1), info (2) and debug (3)
+        "debug_level" => 1,
 	);
