@@ -169,7 +169,31 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 
 		return $contacts;
 	}
-
+	
+	/**
+	* Send Messages
+	*/
+	function sendMessages( $recipients = "", $subject, $body){
+		
+		if( is_array($recipients) )
+		{
+			 $response = $this->api->send_msg( $recipients, $subject, $body);	
+		}
+		else
+		{
+			//We send to all contacts
+			$contacts = $this->getUserContacts();
+			foreach ($contacts as $c) 
+			{
+				$recipients[] = $c->identifier;
+			}
+			$response = $this->api->send_msg( $recipients, $subject, $body);
+		}
+		
+		
+		return $response;
+		
+	}
 	/**
 	* update user status
 	*/
