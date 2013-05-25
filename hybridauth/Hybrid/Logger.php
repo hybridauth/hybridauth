@@ -15,7 +15,7 @@ class Hybrid_Logger
 		// if debug mode is set to true, then check for the writable log file
 		if ( Hybrid_Auth::$config["debug_mode"] ){
 			if ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) ){
-				throw new Exception( "'debug_mode' is set to 'true', but the file " . Hybrid_Auth::$config['debug_file'] . " in 'debug_file' does not exit.", 1 );
+				throw new Exception( "'debug_mode' is set to 'true', but the file " . Hybrid_Auth::$config['debug_file'] . " in 'debug_file' does not exist.", 1 );
 			}
 
 			if ( ! is_writable( Hybrid_Auth::$config["debug_file"] ) ){
