@@ -112,7 +112,16 @@ class Hybrid_Provider_Adapter
 		$this->logout();
 
 		# get hybridauth base url
-		$HYBRID_AUTH_URL_BASE = Hybrid_Auth::$config["base_url"];
+		if (empty(Hybrid_Auth::$config["base_url"])) {
+	        // the base url wasn't provide, so we must use the current
+	        // url (which makes sense actually)
+			$url  = empty($_SERVER['HTTPS']) ? 'http' : 'https';
+			$url .= '://' . $_SERVER['HTTP_HOST'];
+			$url .= $_SERVER['REQUEST_URI'];
+			$HYBRID_AUTH_URL_BASE = $url;
+		} else {
+			$HYBRID_AUTH_URL_BASE = Hybrid_Auth::$config["base_url"];
+		}
 
 		# we make use of session_id() as storage hash to identify the current user
 		# using session_regenerate_id() will be a problem, but ..
