@@ -128,10 +128,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		# store the user profile.
 		$this->user->profile->identifier    = (array_key_exists('id',$data))?$data['id']:"";
+		$this->user->profile->username      = (array_key_exists('username',$data))?$data['username']:"";
 		$this->user->profile->displayName   = (array_key_exists('name',$data))?$data['name']:"";
 		$this->user->profile->firstName     = (array_key_exists('first_name',$data))?$data['first_name']:"";
 		$this->user->profile->lastName      = (array_key_exists('last_name',$data))?$data['last_name']:"";
 		$this->user->profile->photoURL      = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?width=150&height=150";
+		$this->user->profile->coverUrl      = $this->get_cover_url("https://graph.facebook.com/" . $this->user->profile->identifier . "?fields=cover");
 		$this->user->profile->profileURL    = (array_key_exists('link',$data))?$data['link']:""; 
 		$this->user->profile->webSiteURL    = (array_key_exists('website',$data))?$data['website']:""; 
 		$this->user->profile->gender        = (array_key_exists('gender',$data))?$data['gender']:"";
@@ -151,6 +153,38 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		return $this->user->profile;
  	}
 
+	/**
+	* Return URL response code
+	*
+	* @param  string $url   url to check
+	* @retval string        http response code
+	*/
+	function get_http_response_code($url) 
+	{
+		$headers = get_headers($url);
+		return substr($headers[0], 9, 3);
+	}
+
+	/**
+	* Attempt to retrieve the url to the cover image
+	*
+	* @param  string $url   url to the JSON string reprenting the cover
+	* @retval string        url to the cover image OR blank string
+	*/
+	function get_cover_url($url) 
+	{
+		try {
+			if($this->get_http_response_code($url) != "404") {
+				$cover_url_xml = json_decode(file_get_contents($url));
+				if(array_key_exists('cover', $cover_url_xml)) {
+					return $cover_url_xml->cover->source;                  
+				}
+			}
+		} catch (Exception $e) { }
+
+		return "";
+	}
+	
 	/**
 	* load the user contacts
 	*/
