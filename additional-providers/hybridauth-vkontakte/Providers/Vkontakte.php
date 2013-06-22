@@ -102,13 +102,15 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 			}
 		}
 
-		if( property_exists($response,'bdate') ){
-			list($birthday_year, $birthday_month, $birthday_day) = explode( '.', $response->bdate );
+        if (property_exists($response, 'bdate')) {
+            $bdateData = explode('.', $response->bdate);
 
-			$this->user->profile->birthDay   = (int) $birthday_day;
-			$this->user->profile->birthMonth = (int) $birthday_month;
-			$this->user->profile->birthYear  = (int) $birthday_year;
-		}
+            $this->user->profile->birthDay   = (int)$bdateData[0];
+            $this->user->profile->birthMonth = (int)$bdateData[1];
+            if (count($bdateData) > 2) {
+                $this->user->profile->birthYear = (int)$bdateData[2];
+            }
+        }
 
 		return $this->user->profile;
 	}
