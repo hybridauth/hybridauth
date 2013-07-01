@@ -100,7 +100,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 	function getUserContacts()
 	{
 		$parameters = array( 'cursor' => '-1' ); 
-		$response  = $this->api->get( 'friends/ids.json', $parameters ); 
+		$response  = $this->api->get( 'followers/ids.json', $parameters ); 
 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
@@ -151,6 +151,19 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		$parameters = array( 'status' => $status ); 
 		$response  = $this->api->post( 'statuses/update.json', $parameters ); 
 
+		// check the last HTTP status code returned
+		if ( $this->api->http_code != 200 ){
+			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+		}
+ 	}
+
+	/**
+	* update user status
+	*/ 
+	function sendDM( $args )
+	{
+		$parameters = array( 'user_id' => $args['uid'], 'text' => $args['msg']); 
+		$response  = $this->api->post( 'direct_messages/new.json', $parameters ); 
 		// check the last HTTP status code returned
 		if ( $this->api->http_code != 200 ){
 			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
