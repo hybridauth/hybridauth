@@ -173,8 +173,10 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 	/**
 	* Send Messages
 	*/
-	function sendMessages( $recipients = "", $subject, $body){
-		
+	function sendMessages($args){
+	
+		extract($args);
+
 		if( is_array($recipients) )
 		{
 			 $response = $this->api->send_msg( $recipients, $subject, $body);	
@@ -189,15 +191,48 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 			}
 			$response = $this->api->send_msg( $recipients, $subject, $body);
 		}
-		
-		
+
+
 		return $response;
-		
+
 	}
+
 	/**
 	* update user status
 	*/
 	function setUserStatus( $status )
+	{
+		$parameters = array();
+		$private    = true; // share with your connections only
+
+		if( is_array( $status ) ){
+			if( isset( $status[0] ) && ! empty( $status[0] ) ) $parameters["title"]               = $status[0]; // post title
+			if( isset( $status[1] ) && ! empty( $status[1] ) ) $parameters["comment"]             = $status[1]; // post comment
+			if( isset( $status[2] ) && ! empty( $status[2] ) ) $parameters["submitted-url"]       = $status[2]; // post url
+			if( isset( $status[3] ) && ! empty( $status[3] ) ) $parameters["submitted-image-url"] = $status[3]; // post picture url
+			if( isset( $status[4] ) && ! empty( $status[4] ) ) $private                           = $status[4]; // true or false
+		}
+		else{
+			$parameters["comment"] = $status;
+		}
+
+		try{
+			$response  = $this->api->share( 'new', $parameters, $private );
+		}
+		catch( LinkedInException $e ){
+			throw new Exception( "Update user status update failed!  {$this->providerId} returned an error: $e" );
+		}
+
+		if ( ! $response || ! $response['success'] )
+		{
+			throw new Exception( "Update user status update failed! {$this->providerId} returned an error." );
+		}
+	}
+
+	/**
+	* SEND MESSAGE
+	*/
+	function sendMessage( $status )
 	{
 		$parameters = array();
 		$private    = true; // share with your connections only
