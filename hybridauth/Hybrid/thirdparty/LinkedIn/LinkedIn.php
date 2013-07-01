@@ -1101,7 +1101,10 @@ class LinkedIn {
 	   */
 		return $this->checkResponse(200, $response);
 	}
-
+	
+	
+	
+	
 	/**
 	 * Send Messages.
 	 *     
@@ -1168,9 +1171,9 @@ class LinkedIn {
 		   */ 
 	    return $this->checkResponse(201, $response);
 
-      }	
-	/**
-	 * Send connection invitations.
+      }
+              
+	 /* Send connection invitations.
 	 *     
 	 * Send an invitation to connect to your network, either by email address or 
 	 * by LinkedIn ID. Details on the API here: 
