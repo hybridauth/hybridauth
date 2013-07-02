@@ -53,4 +53,48 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 
 		return $this->user->profile;
 	}
+	
+	/**
+	* Get Foursquare friends list
+	* 
+	*/
+	function getUserContacts()
+	{ 
+		 
+		//We need our id to retrieve contacts
+		if ( ! isset( $this->user->profile->identifier  ) ){
+			$this->getUserProfile();
+		}
+		
+		$response = $this->api->api( "users/" .$this->user->profile->identifier. "/friends" ); 
+
+		if ( $this->api->http_code != 200 )
+		{
+			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
+		}
+
+		if ( !$response->friends->items && ( $response->errcode != 0 ) )
+		{
+			return array();
+		}
+
+		$contacts = array();
+
+
+		foreach( $response->response->friends->items as $item ) {
+
+			$uc = new Hybrid_User_Contact();
+
+			$uc->identifier   = $item->id;
+			$uc->email        = $item->contact->email;
+			$uc->displayName  = $item->firstName . " " . $item->lastName;
+			$uc->photoURL     = $item->photo;
+			$uc->gender		  = $this->gender;
+
+			$contacts[] = $uc;
+		}
+		
+		return $contacts;
+		
+	}
 }
