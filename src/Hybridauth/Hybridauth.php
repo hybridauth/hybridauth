@@ -43,7 +43,7 @@
 * Coding Style :
 *
 *	- Redable code.
-*	- Use tabs(8 chars): 
+*	- Use tabs(8 chars):
 *		as devlopers we read and look at code 1/3 of the day and using clear indentations could make
 *		life a bit easier.
 *	- ..
@@ -118,9 +118,9 @@ final class Hybridauth
 	{
 		return $this->getAdapter( $providerId )->authenticate( $parameters );
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	* Return the adapter instance for an authenticated provider
 	*/
