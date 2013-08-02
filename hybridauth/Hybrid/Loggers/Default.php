@@ -28,7 +28,7 @@ class Hybrid_Loggers_Default implements Hybrid_Loggers_iLogger
 		}
 	}
 
-	public static function debug( $message, $object = NULL )
+	public function debug( $message, $object = NULL )
 	{
 		if( $this->enabled ){
 			$datetime = new DateTime();
@@ -42,7 +42,7 @@ class Hybrid_Loggers_Default implements Hybrid_Loggers_iLogger
 		}
 	}
 
-	public static function info( $message )
+	public function info( $message )
 	{
 		if( $this->enabled ){
 			$datetime = new DateTime();
@@ -56,7 +56,7 @@ class Hybrid_Loggers_Default implements Hybrid_Loggers_iLogger
 		}
 	}
 
-	public static function error($message, $object = NULL)
+	public function error($message, $object = NULL)
 	{
 		if( $this->enabled ){
 			$datetime = new DateTime();
