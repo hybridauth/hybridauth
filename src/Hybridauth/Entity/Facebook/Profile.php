@@ -1,5 +1,5 @@
 <?php
-namespace \Hybrid\Entity\Facebook;
+namespace Hybridauth\Entity\Facebook;
 
 class Profile extends \Hybrid\Entity\Profile {
     function getPhotoUrl($width = 150, $height = 150) {

@@ -1,5 +1,5 @@
 <?php
-namespace \Hybrid\Entity\Facebook;
+namespace Hybridauth\Entity\Facebook;
 
 class Page extends Profile {
     protected $accessToken = null;
