@@ -1,7 +1,7 @@
 <?php
 namespace Hybridauth\Entity\Facebook;
 
-class Profile extends \Hybrid\Entity\Profile {
+class Profile extends \Hybridauth\Entity\Profile {
     function getPhotoUrl($width = 150, $height = 150) {
         return isset($this->photoURL) ?
                 $this->photoURL :
