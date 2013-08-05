@@ -202,6 +202,7 @@ class OAuth2Client
 
 		curl_setopt($ch, CURLOPT_URL            , $url );
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER , 1 );
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION , 1 );
 		curl_setopt($ch, CURLOPT_TIMEOUT        , $this->curl_time_out );
 		curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
