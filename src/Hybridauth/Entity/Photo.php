@@ -7,7 +7,7 @@
 
 namespace Hybridauth\Entity;
 
-class Photo
+class Photo extends Entity
 {
 	protected $providerId  = null;
 	protected $identifier  = null; // Entity ID

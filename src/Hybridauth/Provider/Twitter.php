@@ -68,12 +68,12 @@ class Twitter extends OAuth1Template
 			return property_exists( $response, $property ) ? $response->$property : null;
 		};
 
-		$profile = new Profile();
+		$profile = new Profile($this);
 
 		$profile->setIdentifier ( $parser( 'id'                ) );
-		$profile->setFirstName  ( $parser( 'name'              ) ); 
-		$profile->setDisplayName( $parser( 'screen_name'       ) );  
-		$profile->setDescription( $parser( 'description'       ) );  
+		$profile->setFirstName  ( $parser( 'name'              ) );
+		$profile->setDisplayName( $parser( 'screen_name'       ) );
+		$profile->setDescription( $parser( 'description'       ) );
 		$profile->setPhotoURL   ( $parser( 'profile_image_url' ) );
 		$profile->setWebSiteURL ( $parser( 'url'               ) );
 		$profile->setRegion     ( $parser( 'location'          ) );
@@ -86,7 +86,7 @@ class Twitter extends OAuth1Template
 	// --------------------------------------------------------------------
 
 	/**
-	* Returns user contacts list 
+	* Returns user contacts list
 	*/
 	function getUserContacts()
 	{
@@ -98,7 +98,7 @@ class Twitter extends OAuth1Template
 	// --------------------------------------------------------------------
 
 	/**
-	* Updates user status 
+	* Updates user status
 	*/
 	function setUserStatus( $status )
 	{

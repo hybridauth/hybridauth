@@ -56,10 +56,10 @@ class Facebook extends OAuth2Template
 	*
 	*	$data = $hybridauth->authenticate( "Facebook" )->getUserProfile();
 	*/
-	function getUserProfile($user)
+	function getUserProfile($user = null)
 	{
 		// request user infos
-		$response = $this->signedRequest( "me" );
+		$response = $this->signedRequest( isset($user) ? $user->getIdentifier() : 'me' );
 		$response = json_decode ( $response );
 
 		if ( ! isset( $response->id ) || isset ( $response->error ) ){
@@ -77,7 +77,7 @@ class Facebook extends OAuth2Template
 			return property_exists( $response, $property ) ? $response->$property : null;
 		};
 
-		$profile = new Profile();
+		$profile = new Profile($this);
 
 		$profile->setIdentifier ( $parser( 'id'         ) );
 		$profile->setFirstName  ( $parser( 'first_name' ) );
@@ -139,7 +139,7 @@ class Facebook extends OAuth2Template
 				{
 					return property_exists( $item, $property ) ? $item->$property : null;
 				};
-				$uc = new Profile();
+				$uc = new Profile($this);
 
 				$uc->setIdentifier ( $parser( 'id'   ) );
 				$uc->setDisplayName( $parser( 'name' ) );
@@ -161,7 +161,7 @@ class Facebook extends OAuth2Template
 	*
 	*	$data = $hybridauth->authenticate( "Facebook" )->getUserPages();
 	*/
-	function getUserPages($user)
+	function getUserPages($user = null)
 	{
 		// request user infos
 		$id = isset($user) ? $user->getIdentifier() : 'me';
@@ -186,7 +186,7 @@ class Facebook extends OAuth2Template
 			{
 				return property_exists( $pageData, $property ) ? $pageData->$property : null;
 			};
-			$page = new Page();
+			$page = new Page($this);
 
 			$page->setIdentifier ( $parser( 'id'   		   ) );
 			$page->setDisplayName( $parser( 'name' 		   ) );

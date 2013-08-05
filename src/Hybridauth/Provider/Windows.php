@@ -32,8 +32,8 @@ class Windows extends OAuth2Template
 		$this->letApplicationId( $this->getAdapterConfig( 'keys', 'id' ) );
 		$this->letApplicationSecret( $this->getAdapterConfig( 'keys', 'secret' ) );
 
-		$scope = $this->getAdapterConfig( 'scope' ) 
-			? $this->getAdapterConfig( 'scope' ) 
+		$scope = $this->getAdapterConfig( 'scope' )
+			? $this->getAdapterConfig( 'scope' )
 			: 'wl.basic wl.emails wl.signin wl.share wl.birthday';
 
 		$this->letApplicationScope( $scope );
@@ -80,18 +80,18 @@ class Windows extends OAuth2Template
 			return property_exists( $response, $property ) ? $response->$property : null;
 		};
 
-		$profile = new Profile();
+		$profile = new Profile($this);
 
 		$profile->setIdentifier ( $parser( 'id'         ) );
 		$profile->setFirstName  ( $parser( 'first_name' ) );
 		$profile->setLastName   ( $parser( 'last_name'  ) );
-		$profile->setDisplayName( $parser( 'name'       ) ); 
+		$profile->setDisplayName( $parser( 'name'       ) );
 		$profile->setProfileURL ( $parser( 'link'       ) );
 		$profile->setWebSiteURL ( $parser( 'website'    ) );
-		$profile->setGender     ( $parser( 'gender'     ) ); 
+		$profile->setGender     ( $parser( 'gender'     ) );
 		$profile->setLanguage   ( $parser( 'locale'     ) );
 
-		$profile->setEmail      ( $response->emails->account ); //< this 
+		$profile->setEmail      ( $response->emails->account ); //< this
 
 		$profile->setBirthDay   ( $parser( 'birth_day'   ) );
 		$profile->setBirthMonth ( $parser( 'birth_month' ) );
@@ -134,7 +134,7 @@ class Windows extends OAuth2Template
 
 		if( isset( $response->data ) && is_array( $response->data ) ){
 			foreach( $response->data as $item ){
-				$uc = new Profile();
+				$uc = new Profile($this);
 
 				$profile->setIdentifier ( $parser( 'id'   ) );
 				$profile->setDisplayName( $parser( 'name' ) );

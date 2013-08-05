@@ -32,15 +32,15 @@ class Yahoo extends OAuth1Template
 		$this->letApplicationKey( $this->getAdapterConfig( 'keys', 'key' ) );
 		$this->letApplicationSecret( $this->getAdapterConfig( 'keys', 'secret' ) );
 
-		$scope = $this->getAdapterConfig( 'scope' ) 
-			? $this->getAdapterConfig( 'scope' ) 
+		$scope = $this->getAdapterConfig( 'scope' )
+			? $this->getAdapterConfig( 'scope' )
 			: 'r_basicprofile+r_emailaddress+rw_nus';
 
 		$this->letEndpointRedirectUri( $this->getHybridauthEndpointUri() );
 		$this->letEndpointBaseUri( 'http://social.yahooapis.com/v1/' );
 		$this->letEndpointAuthorizeUri( 'https://api.login.yahoo.com/oauth/v2/request_auth' );
 		$this->letEndpointRequestTokenUri( 'https://api.login.yahoo.com/oauth/v2/get_request_token' );
-		$this->letEndpointAccessTokenUri( 'https://api.login.yahoo.com/oauth/v2/get_token' ); 
+		$this->letEndpointAccessTokenUri( 'https://api.login.yahoo.com/oauth/v2/get_token' );
 	}
 
 	// --------------------------------------------------------------------
@@ -62,7 +62,7 @@ class Yahoo extends OAuth1Template
 	// --------------------------------------------------------------------
 
 	/**
-	* Returns user contacts list 
+	* Returns user contacts list
 	*/
 	function getUserContacts()
 	{
@@ -74,7 +74,7 @@ class Yahoo extends OAuth1Template
 	// --------------------------------------------------------------------
 
 	/**
-	* Updates user status 
+	* Updates user status
 	*/
 	function setUserStatus( $status )
 	{
