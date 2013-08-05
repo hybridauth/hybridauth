@@ -58,7 +58,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	// --------------------------------------------------------------------
 
 	/**
-	* begin login step 
+	* begin login step
 	*/
 	function loginBegin()
 	{
@@ -83,7 +83,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	// --------------------------------------------------------------------
 
 	/**
-	* finish login step 
+	* finish login step
 	*/
 	function loginFinish( $requestAccessTokenParameters = array(), $requestAccessTokenMethod = 'POST' )
 	{
@@ -269,7 +269,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 			$uri = $this->endpoints->baseUri . $uri;
 		}
 
-		$parameters[ 'access_token' ] = $this->getTokens()->accessToken;
+		if( ! isset($parameters[ 'access_token' ] ) ) {
+			$parameters[ 'access_token' ] = $this->getTokens()->accessToken;
+		}
 
 		switch( $method ){
 			case 'GET'  : $this->httpClient->get ( $uri, $parameters ); break;

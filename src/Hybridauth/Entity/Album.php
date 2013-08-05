@@ -7,7 +7,7 @@
 
 namespace Hybridauth\Entity;
 
-class Album
+class Album extends Entity
 {
 	protected $providerId  = null;
 	protected $identifier  = null; // Entity ID

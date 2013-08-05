@@ -7,7 +7,7 @@
 
 namespace Hybridauth\Entity;
 
-class Comment
+class Comment extends Entity
 {
 	protected $providerId = null;
 	protected $identifier = null; // Entity ID
