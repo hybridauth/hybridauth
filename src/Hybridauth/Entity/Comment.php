@@ -10,7 +10,6 @@ namespace Hybridauth\Entity;
 class Comment extends Entity
 {
 	protected $providerId = null;
-	protected $identifier = null; // Entity ID
 	protected $from       = null; // Owner UID
 	protected $message    = null;
 	protected $link       = null; // perma link

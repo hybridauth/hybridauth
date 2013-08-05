@@ -10,7 +10,6 @@ namespace Hybridauth\Entity;
 class Group extends Entity
 {
 	protected $providerId  = null;
-	protected $identifier  = null; // Entity ID
 	protected $owner       = null; // Owner UID
 	protected $name        = null;
 	protected $description = null;

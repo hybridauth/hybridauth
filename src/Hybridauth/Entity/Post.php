@@ -10,7 +10,6 @@ namespace Hybridauth\Entity;
 class Post extends Entity
 {
 	protected $providerId = null;
-	protected $identifier = null; // Entity ID
 	protected $from       = null; // Owner UID
 	protected $to         = null;
 	protected $message    = null;

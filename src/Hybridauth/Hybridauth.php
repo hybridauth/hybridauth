@@ -197,6 +197,18 @@ final class Hybridauth
 		}
 	}
 
+	function getStorageData() {
+		return $this->storage->dump();
+	}
+
+	function restoreStorageData($data) {
+		return $this->storage->load($data);
+	}
+
+	function storage() {
+		return $this->storage;
+	}
+
 	// --------------------------------------------------------------------
 
 	public static function registerAutoloader()

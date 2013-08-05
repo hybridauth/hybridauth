@@ -13,15 +13,20 @@ use Hybridauth\Storage\StorageInterface;
 /**
 * HybridAuth storage manager
 */
-class Session implements StorageInterface 
+class Session implements StorageInterface
 {
-	function __construct()
+	private $store_var = null;
+	private $config_var = null;
+
+	function __construct($store_var = 'HA::STORE', $config_var = 'HA::CONFIG')
 	{
 		if ( ! session_id() ){
 			if ( ! session_start() ){
 				throw new Exception( "Hybridauth requires the use of 'session_start()' at the start of your script, which appears to be disabled." );
 			}
 		}
+		$this->store_var = $store_var;
+		$this->config_var = $config_var;
 	}
 
 	// --------------------------------------------------------------------
@@ -31,10 +36,10 @@ class Session implements StorageInterface
 		$key = strtolower ( $key );
 
 		if ( $value ){
-			$_SESSION['HA::CONFIG'][$key] = serialize( $value );
+			$_SESSION[$this->config_var][$key] = serialize( $value );
 		}
-		elseif( isset( $_SESSION ['HA::CONFIG'][$key] ) ){
-			return unserialize( $_SESSION ['HA::CONFIG'][$key] );
+		elseif( isset( $_SESSION [$this->config_var][$key] ) ){
+			return unserialize( $_SESSION [$this->config_var][$key] );
 		}
 
 		return null;
@@ -44,10 +49,10 @@ class Session implements StorageInterface
 
 	function get( $key )
 	{
-		$key = 'hauth_session.' . strtolower( $key );
+		$key = static::key($key); ;
 
-		if ( isset( $_SESSION['HA::STORE'], $_SESSION ['HA::STORE'] [$key] ) ){
-			return unserialize( $_SESSION['HA::STORE'][$key] );
+		if ( isset( $_SESSION[$this->store_var], $_SESSION[$this->store_var][$key] ) ){
+			return unserialize( $_SESSION[$this->store_var][$key] );
 		}
 
 		return null;
@@ -57,42 +62,80 @@ class Session implements StorageInterface
 
 	function set( $key, $value )
 	{
-		$key = 'hauth_session.' . strtolower ( $key );
+		$key = static::key($key);
+		if( ! isset($_SESSION[$this->store_var]) ) {
+			$_SESSION[$this->store_var] = array();
+		}
 
-		$_SESSION['HA::STORE'][$key] = serialize ( $value );
+		$_SESSION[$this->store_var][$key] = serialize ( $value );
 	}
 
 	// --------------------------------------------------------------------
 
 	function delete( $key )
 	{
-		$key = 'hauth_session.' . strtolower( $key );
-
-		if ( isset( $_SESSION ['HA::STORE'], $_SESSION['HA::STORE'][$key] ) ){
-			$f = $_SESSION ['HA::STORE'];
-
-			unset( $f [$key] );
-
-			$_SESSION['HA::STORE'] = $f;
-		}
+		$this->deleteMatch($key . '$');
 	}
 
 	// --------------------------------------------------------------------
 
 	function deleteMatch( $key )
 	{
-		$key = 'hauth_session.' . strtolower( $key );
+		$key = static::key($key);
 
-		if ( isset( $_SESSION['HA::STORE'] ) && count( $_SESSION ['HA::STORE'] ) ){
-			$f = $_SESSION['HA::STORE'];
+		if ( isset( $_SESSION[$this->store_var] ) && count( $_SESSION [$this->store_var] ) ){
+			$f = $_SESSION[$this->store_var];
 
 			foreach ( $f as $k => $v ) {
-				if ( strstr( $k, $key ) ) {
+				if ( preg_match( '/^' . $key . '/', $k ) ) {
 					unset( $f[$k] );
 				}
 			}
 
-			$_SESSION['HA::STORE'] = $f;
+			$_SESSION[$this->store_var] = $f;
 		}
+	}
+
+    // --------------------------------------------------------------------
+
+    function dump() {
+    	return $this->dumpMatch('.*');
+    }
+
+    // --------------------------------------------------------------------
+
+    function dumpMatch( $key ) {
+    	$key = static::key($key);
+    	$return = array();
+		if ( isset( $_SESSION[$this->store_var] ) && count( $_SESSION [$this->store_var] ) ){
+			foreach ( $_SESSION[$this->store_var] as $k => $v ) {
+				if ( preg_match( '/^' . $key . '/', $k ) ) {
+					$return[$k] = $v;
+				}
+			}
+		}
+
+		return serialize($return);
+    }
+
+    // --------------------------------------------------------------------
+
+    function load( $data ) {
+    	$unserialized = unserialize($data);
+    	$falseCheck = 'b:0;'; //serialize(false);
+    	if ( is_array($unserialized) ) {
+	    	foreach ( $unserialized as $k => $v ) {
+		    		$this->set(static::stripKeyPrefix($k), ($v == $falseCheck || unserialize($v) !== false) ? unserialize($v) : $v);
+	    	}
+    	}
+    }
+
+	protected static function key($key) {
+		return 'hauth_session.' . strtolower( $key );
+	}
+
+	protected static function stripKeyPrefix($key) {
+		$pos = strpos($key, 'hauth_session.');
+		return $pos === false ? $key : substr($key,$pos+14/*strlen('hauth_session.')*/);
 	}
 }
