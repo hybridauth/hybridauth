@@ -77,7 +77,7 @@ class Facebook extends OAuth2Template
 			return property_exists( $response, $property ) ? $response->$property : null;
 		};
 
-		$profile = new FacebookProfile();
+		$profile = new Profile();
 
 		$profile->setIdentifier ( $parser( 'id'         ) );
 		$profile->setFirstName  ( $parser( 'first_name' ) );
