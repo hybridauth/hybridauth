@@ -8,7 +8,7 @@
 namespace Hybridauth\Entity;
 
 /**
-* Model class representing a user profile. 
+* Model class representing a user profile.
 *
 * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Profile.html
 */
