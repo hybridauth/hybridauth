@@ -32,8 +32,8 @@ class Google extends OAuth2Template
 		$this->letApplicationId( $this->getAdapterConfig( 'keys', 'id' ) );
 		$this->letApplicationSecret( $this->getAdapterConfig( 'keys', 'secret' ) );
 
-		$scope = $this->getAdapterConfig( 'scope' ) 
-			? $this->getAdapterConfig( 'scope' ) 
+		$scope = $this->getAdapterConfig( 'scope' )
+			? $this->getAdapterConfig( 'scope' )
 			: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/';
 
 		$this->letApplicationScope( $scope );
@@ -77,7 +77,7 @@ class Google extends OAuth2Template
 			return property_exists( $response, $property ) ? $response->$property : null;
 		};
 
-		$profile = new Profile();
+		$profile = new Profile($this);
 
 		$profile->setIdentifier ( $parser( 'id'          ) );
 		$profile->setFirstName  ( $parser( 'given_name'  ) );
@@ -118,7 +118,7 @@ class Google extends OAuth2Template
 		// refresh tokens if needed
 		$this->refreshToken();
 
-		$url = "https://www.google.com/m8/feeds/contacts/default/full?" 
+		$url = "https://www.google.com/m8/feeds/contacts/default/full?"
 				. http_build_query( array_merge( array('alt' => 'json'), $args ) );
 
 		$response = $this->signedRequest( $url );
@@ -138,7 +138,7 @@ class Google extends OAuth2Template
 
 		if( isset( $response->feed ) && is_array( $response->feed ) ){
 			foreach( $response->feed->entry as $idx => $entry ){
-				$profile = new Profile();
+				$profile = new Profile($this);
 
 				$email       = isset( $entry->{'gd$email'} [0]->address ) ? (string) $entry->{'gd$email'} [0]->address : '';
 				$displayName = isset( $entry->title->{'$t'} ) ? (string) $entry->title->{'$t'} : '';

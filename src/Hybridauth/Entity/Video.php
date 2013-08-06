@@ -7,7 +7,7 @@
 
 namespace Hybridauth\Entity;
 
-class Video
+class Video extends Entity
 {
 	protected $providerId  = null;
 	protected $identifier  = null; // Entity ID
