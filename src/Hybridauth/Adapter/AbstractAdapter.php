@@ -694,6 +694,7 @@ abstract class AbstractAdapter
 	}
 
 	function logout() {
-		return false;
+		$this->disconnect();
+		return true;
 	}
 }
