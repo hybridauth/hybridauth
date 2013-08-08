@@ -30,9 +30,9 @@ class Client implements ClientInterface
 
 	function get($uri, $args = array(), $headers = array(), $body = null)
 	{
-		$this->parameters = array( 'uri' => $uri, 'method' => 'GET', 'args' => $args, 'headers' => $headers, 'body' => $body );
+		$this->parameters = array( 'uri' => $uri, 'method' => Request::GET, 'args' => $args, 'headers' => $headers, 'body' => $body );
 
-		return $this->response = $this->request->send( $uri, 'GET', $args, $headers, $body );
+		return $this->response = $this->request->send( $uri, Request::GET, $args, $headers, $body );
 	}
 
 	// --------------------------------------------------------------------
@@ -40,21 +40,41 @@ class Client implements ClientInterface
 	function post($uri, $args, $headers = array(), $body = null)
 	{
 
-		$this->parameters = array( 'uri' => $uri, 'method' => 'GET', 'args' => $args, 'headers' => $headers, 'body' => $body );
+		$this->parameters = array( 'uri' => $uri, 'method' => Request::POST, 'args' => $args, 'headers' => $headers, 'body' => $body );
 
-		return $this->response = $this->request->send( $uri, 'POST', $args, $headers, $body );
+		return $this->response = $this->request->send( $uri, Request::POST, $args, $headers, $body );
+	}
+
+	// --------------------------------------------------------------------
+
+	function put($uri, $args, $headers = array(), $body = null)
+	{
+
+		$this->parameters = array( 'uri' => $uri, 'method' => Request::PUT, 'args' => $args, 'headers' => $headers, 'body' => $body );
+
+		return $this->response = $this->request->send( $uri, Request::PUT, $args, $headers, $body );
+	}
+
+	// --------------------------------------------------------------------
+
+	function delete($uri, $args, $headers = array(), $body = null)
+	{
+
+		$this->parameters = array( 'uri' => $uri, 'method' => Request::DELETE, 'args' => $args, 'headers' => $headers, 'body' => $body );
+
+		return $this->response = $this->request->send( $uri, Request::DELETE, $args, $headers, $body );
 	}
 
 	// --------------------------------------------------------------------
 
 	function getState()
 	{
-		return 
+		return
 			'Uri: ' . $this->parameters['uri'] .
-			'. Method: ' . $this->parameters['method'] . 
+			'. Method: ' . $this->parameters['method'] .
 			'. Error: ' . $this->getResponseError() .
 			'. Status: ' . $this->getResponseStatus() .
-			'. Response: ' . $this->getResponseBody() 
+			'. Response: ' . $this->getResponseBody()
 		;
 	}
 

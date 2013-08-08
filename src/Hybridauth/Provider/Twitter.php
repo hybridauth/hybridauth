@@ -10,6 +10,7 @@ namespace Hybridauth\Provider;
 use Hybridauth\Exception;
 use Hybridauth\Adapter\Template\OAuth1\OAuth1Template;
 use Hybridauth\Entity\Profile;
+use Hybridauth\Entity\Post;
 
 /**
 * Twitter adapter extending OAuth1 Template
@@ -70,7 +71,7 @@ class Twitter extends OAuth1Template
 
 		$profile = new Profile($this);
 
-		$profile->setIdentifier ( $parser( 'id'                ) );
+		$profile->setIdentifier ( $parser( 'id_str'            ) );
 		$profile->setFirstName  ( $parser( 'name'              ) );
 		$profile->setDisplayName( $parser( 'screen_name'       ) );
 		$profile->setDescription( $parser( 'description'       ) );
@@ -100,10 +101,21 @@ class Twitter extends OAuth1Template
 	/**
 	* Updates user status
 	*/
-	function setUserStatus( $status )
+	function setUserStatus( &$post )
 	{
-		/// ToDo
-
-		throw new Exception( "Unsupported", Exception::UNSUPPORTED_FEATURE, null, $this );
- 	}
+		$uri = 'statuses/update.json';
+		if(is_string($post)) {
+			$p = new Post($this);
+			$p->setMessage($post);
+			$post = $p;
+		}
+		$parameters = array();
+		if(!is_null($x = $post->getMessage())) $parameters['status'] = substr($x,0,140);
+		$response = $this->signedRequest($uri,Request::POST, $parameters);
+		$response = json_decode( $response );
+		if( !isset($response->id_str) ) return false;
+		$post->setIdentifier($response->id_str);
+		$post->setOwner($response->user->id_str);
+		return true;
+	}
 }

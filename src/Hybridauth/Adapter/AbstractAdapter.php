@@ -139,7 +139,7 @@ abstract class AbstractAdapter
 	*/
 	public final function getTokens()
 	{
-		return $this->storage->get( $this->providerId . '.tokens' ) ? $this->storage->get( $this->providerId . '.tokens' ) : $this->tokens;
+		return $this->storage->get( $this->providerId . '.tokens' ) ?: $this->tokens;
 	}
 
 	// --------------------------------------------------------------------

@@ -45,4 +45,9 @@ class Entity
 
         trigger_error( 'Undefined property: ' . get_class($this) . '::' . $name .' in ' . __FILE__ . ' on line ' . __LINE__, E_USER_NOTICE );
     }
+
+    public static function parser($property,$reponse)
+    {
+        return property_exists( $response, $property ) ? $response->$property : null;
+    }
 }

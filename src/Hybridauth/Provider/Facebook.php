@@ -8,9 +8,11 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Exception;
+use Hybridauth\Http\Request;
 use Hybridauth\Adapter\Template\OAuth2\OAuth2Template;
 use Hybridauth\Entity\Facebook\Profile;
 use Hybridauth\Entity\Facebook\Page;
+use Hybridauth\Entity\Facebook\Event;
 
 /**
 * Facebook adapter extending OAuth2 Template
@@ -19,6 +21,25 @@ use Hybridauth\Entity\Facebook\Page;
 */
 class Facebook extends OAuth2Template
 {
+	//Using this so we can access things like pages. Not in love with it.
+	private $use_access_token = null;
+	function setFacebookAccessToken($use_access_token) {
+		$this->use_access_token = $use_access_token;
+	}
+
+	function getFacebookAccessToken() {
+		return $this->use_access_token;
+	}
+
+	function signedRequest( $uri, $method = Request::GET, $parameters = array() )
+	{
+		if(!isset($parameters[ 'access_token' ]) && !empty($this->use_access_token))
+		{
+			$parameters[ 'access_token' ] = $this->use_access_token;
+		}
+		return parent::signedRequest($uri,$method,$parameters);
+	}
+
 	/**
 	* Internal: Initialize Facebook adapter. This method isn't intended for public consumption.
 	*
@@ -198,6 +219,50 @@ class Facebook extends OAuth2Template
 		}
 
 		return $pages;
+	}
+
+	function getEvent($eventIdentifier)
+	{
+		$response = $this->signedRequest($eventIdentifier );
+		$response = json_decode ( $response );
+
+		if ( ! isset( $response->id ) || isset ( $response->error ) ){
+			throw new
+				Exception(
+					'Event listing request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
+		}
+
+		$event = new Event($this);
+
+		$parser = function($property) use($response)
+		{
+			return property_exists( $response, $property ) ? $response->$property : null;
+		};
+
+		$event->setIdentifier  ( $parser( 'id' )		  );
+		$event->setName 	   ( $parser( 'name' )		  );
+		$event->setDescription ( $parser( 'description' ) );
+		$event->setStartTime   ( $parser( 'start_time'  ) );
+		$event->setEndTime     ( $parser( 'end_time' )	  );
+		$event->setLocation    ( $parser( 'location' ) 	  );
+		$event->setTicketURI   ( $parser( 'ticket_uri' )  );
+		if(property_exists($response, 'venue')) {
+			$venue = $response->venue;
+			$venue_parser = function($property) use($venue)
+			{
+				return property_exists( $venue, $property ) ? $venue->$property : null;
+			};
+			$event->setStreet 	 ( $venue_parser( 'street' )	);
+			$event->setZip 		 ( $venue_parser( 'zip' )	    );
+			$event->setCountry 	 ( $venue_parser( 'country' )   );
+			$event->setLatitude	 ( $venue_parser( 'latitude' )  );
+			$event->setLongitude ( $venue_parser( 'longitude' ) );
+		}
+		return $event;
 	}
 
 	// --------------------------------------------------------------------
