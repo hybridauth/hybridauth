@@ -110,7 +110,7 @@ class Session implements StorageInterface
 		if ( isset( $_SESSION[$this->store_var] ) && count( $_SESSION [$this->store_var] ) ){
 			foreach ( $_SESSION[$this->store_var] as $k => $v ) {
 				if ( preg_match( '/^' . $key . '/', $k ) ) {
-					$return[$k] = $v;
+					$return[static::stripKeyPrefix($k)] = $v;
 				}
 			}
 		}
@@ -125,7 +125,7 @@ class Session implements StorageInterface
     	$falseCheck = 'b:0;'; //serialize(false);
     	if ( is_array($unserialized) ) {
 	    	foreach ( $unserialized as $k => $v ) {
-		    		$this->set(static::stripKeyPrefix($k), ($v == $falseCheck || unserialize($v) !== false) ? unserialize($v) : $v);
+	    		$this->set(static::stripKeyPrefix($k), ($v == $falseCheck || unserialize($v) !== false) ? unserialize($v) : $v);
 	    	}
     	}
     }
