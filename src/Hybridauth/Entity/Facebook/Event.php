@@ -3,7 +3,7 @@ namespace Hybridauth\Entity\Facebook;
 
 use \Hybridauth\Http\Request;
 
-class Event extends \Hybridauth\Entity\Profile
+class Event extends \Hybridauth\Entity\Entity
 {
     protected $date = null;
     protected $name = null;
@@ -131,5 +131,25 @@ class Event extends \Hybridauth\Entity\Profile
             $date = strtotime($date);
         }
         return date(\DateTime::ISO8601, $date);
+    }
+
+    public static function generateFromResponse($response,$adapter) {
+        $event = parent::generateFromResponse($response,$adapter);
+        $event->setIdentifier  ( static::parser( 'id',$response )          );
+        $event->setName        ( static::parser( 'name',$response )        );
+        $event->setDescription ( static::parser( 'description',$response ) );
+        $event->setStartTime   ( static::parser( 'start_time',$response  ) );
+        $event->setEndTime     ( static::parser( 'end_time',$response )    );
+        $event->setLocation    ( static::parser( 'location',$response )    );
+        $event->setTicketURI   ( static::parser( 'ticket_uri',$response )  );
+        if(property_exists($response, 'venue')) {
+            $venue = $response->venue;
+            $event->setStreet    ( static::parser( 'street',$venue )    );
+            $event->setZip       ( static::parser( 'zip',$venue )       );
+            $event->setCountry   ( static::parser( 'country',$venue )   );
+            $event->setLatitude  ( static::parser( 'latitude',$venue )  );
+            $event->setLongitude ( static::parser( 'longitude',$venue ) );
+        }
+        return $event;
     }
 }

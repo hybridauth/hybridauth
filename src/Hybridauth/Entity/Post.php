@@ -40,27 +40,27 @@ class Post extends Entity
         $this->inResponseTo = $inResponseTo;
     }
 
-    function getFrom($from) {
+    function getFrom() {
         return $this->from;
     }
 
-    function getTo($to) {
+    function getTo() {
         return $this->to;
     }
 
-    function getMessage($message) {
+    function getMessage() {
         return $this->message;
     }
 
-    function getLink($link) {
+    function getLink() {
         return $this->link;
     }
 
-    function getTime($time) {
+    function getTime() {
         return $this->time;
     }
 
-    function getInResponseTo($inResponseTo) {
+    function getInResponseTo() {
         return $this->inResponseTo;
     }
 }

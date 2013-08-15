@@ -9,8 +9,10 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Exception;
 use Hybridauth\Adapter\Template\OAuth1\OAuth1Template;
-use Hybridauth\Entity\Profile;
-use Hybridauth\Entity\Post;
+use Hybridauth\Entity\Twitter\Profile;
+use Hybridauth\Entity\Twitter\Post;
+use Hybridauth\Http\Request;
+
 
 /**
 * Twitter adapter extending OAuth1 Template
@@ -64,24 +66,7 @@ class Twitter extends OAuth1Template
 				);
 		}
 
-		$parser = function($property) use($response)
-		{
-			return property_exists( $response, $property ) ? $response->$property : null;
-		};
-
-		$profile = new Profile($this);
-
-		$profile->setIdentifier ( $parser( 'id_str'            ) );
-		$profile->setFirstName  ( $parser( 'name'              ) );
-		$profile->setDisplayName( $parser( 'screen_name'       ) );
-		$profile->setDescription( $parser( 'description'       ) );
-		$profile->setPhotoURL   ( $parser( 'profile_image_url' ) );
-		$profile->setWebSiteURL ( $parser( 'url'               ) );
-		$profile->setRegion     ( $parser( 'location'          ) );
-
-		$profile->setProfileURL ( 'http://twitter.com/' . $profile->getDisplayName() );
-
-		return $profile;
+		return Profile::generateFromResponse($response,$this);
 	}
 
 	// --------------------------------------------------------------------

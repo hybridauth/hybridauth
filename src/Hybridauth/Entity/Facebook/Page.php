@@ -1,6 +1,9 @@
 <?php
 namespace Hybridauth\Entity\Facebook;
 
+use Hybridauth\Exception;
+use \Hybridauth\Http\Request;
+
 class Page extends Profile
 {
     protected $permissions = null;
@@ -36,7 +39,7 @@ class Page extends Profile
     function installApplication($app_id) {
         $uri = 'me/tabs';
         $parameters = array();
-        $parameters['app_id'] = is_object($x) ? $x->getIdentifier() : $x;
+        $parameters['app_id'] = is_object($app_id) ? $x->getIdentifier() : $app_id;
         $response = $this->getAdapter()->signedRequest($uri,Request::POST, $parameters);
         $response = json_decode( $response );
         if( isset($response->error) ) return false; //throw exception?
@@ -44,22 +47,22 @@ class Page extends Profile
     }
 
     function getTab($tab_id) {
-        $tab = $this->getTabs($tab_id);
-        if($tab && count($tab)) return reset($tab);
+        $result = $this->getTabs($tab_id);
+        if($result && count($result)) return reset($result);
         return false;
     }
 
     function getTabs($tab_id = null) {
         $return = array();
 
-        $uri = 'me/tabs' . isset($tab_id) ? '/'.(is_object($tab_id) ? $tab_id->getIdentifier() : $tab_id) : '';
-        $response = $this->getAdapter()->signedRequest($uri);
-        $response = json_decode( $response );
+        $uri = 'me/tabs' . (is_null($tab_id) ? '' : ('/' . (is_numeric($tab_id) ? $tab_id : $tab_id->getIdentifier())));
+        $orig_response = $this->getAdapter()->signedRequest($uri);
+        $response = json_decode( $orig_response );
         if ( ! isset( $response->data ) || isset ( $response->error ) ){
             throw new
                 Exception(
                     'Tab listing failed: Provider returned an invalid response. ' .
-                    'HTTP client state: (' . $this->httpClient->getState() . ')',
+                    'HTTP client state: (' . $orig_response . ')',
                     Exception::USER_PROFILE_REQUEST_FAILED,
                     $this
                 );
@@ -70,5 +73,13 @@ class Page extends Profile
         }
 
         return $return;
+    }
+
+    public static function generateFromResponse($response,$adapter) {
+        $page = parent::generateFromResponse($response,$adapter);
+        $page->setPermissions( static::parser( 'perms',$response        ) );
+        $page->setAccessToken( static::parser( 'access_token',$response ) );
+        $page->setCategory   ( static::parser( 'category',$response     ) );
+        return $page;
     }
 }

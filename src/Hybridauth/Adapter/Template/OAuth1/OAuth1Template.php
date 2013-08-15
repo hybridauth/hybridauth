@@ -66,7 +66,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
 	* begin login step
 	*/
@@ -90,7 +90,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 
 		Util::redirect( $url );
 	}
-	
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -125,7 +125,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	function generateAuthorizeUri( $parameters = array() )
 	{
 		$defaults = array(
-			"oauth_token" => $this->getTokens()->requestToken 
+			"oauth_token" => $this->getTokens()->requestToken
 		);
 
 		$parameters = array_merge( $defaults, (array) $parameters );
@@ -169,7 +169,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 
 		$this->storeTokens( $this->tokens );
 	}
-	
+
 	// --------------------------------------------------------------------
 
 	function requestAccessToken( $parameters = array(), $method = 'GET' )
@@ -227,7 +227,7 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 
 		switch ($method) {
 			case   'GET': $this->httpClient->get ( $request->to_url() ); break;
-			case 'POST' : $this->httpClient->post( $request->get_normalized_http_url(), $method, $request->to_postdata(), $request->to_header() ) ; break;
+			case 'POST' : $this->httpClient->post( $request->get_normalized_http_url(), $request->get_postdata(), $request->to_header() ) ; break;
 		}
 
 		return $this->httpClient->getResponseBody();

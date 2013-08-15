@@ -54,6 +54,7 @@ class Facebook extends OAuth2Template
 		$this->letApplicationId( $this->getAdapterConfig( 'keys', 'id' ) );
 		$this->letApplicationSecret( $this->getAdapterConfig( 'keys', 'secret' ) );
 
+		// @ todo create a way to track scope & request addtl scope as needed
 		$scope = $this->getAdapterConfig( 'scope' )
 			? $this->getAdapterConfig( 'scope' )
 			: 'email,user_about_me,user_birthday,user_hometown,user_website,read_stream,offline_access,publish_stream,read_friendlists';
@@ -93,37 +94,7 @@ class Facebook extends OAuth2Template
 				);
 		}
 
-		$parser = function($property) use($response)
-		{
-			return property_exists( $response, $property ) ? $response->$property : null;
-		};
-
-		$profile = new Profile($this);
-
-		$profile->setIdentifier ( $parser( 'id'         ) );
-		$profile->setFirstName  ( $parser( 'first_name' ) );
-		$profile->setLastName   ( $parser( 'last_name'  ) );
-		$profile->setDisplayName( $parser( 'name'       ) );
-		$profile->setProfileURL ( $parser( 'link'       ) );
-		$profile->setWebSiteURL ( $parser( 'website'    ) );
-		$profile->setGender     ( $parser( 'gender'     ) );
-		$profile->setDescription( $parser( 'bio'        ) );
-		$profile->setEmail      ( $parser( 'email'      ) );
-		$profile->setLanguage   ( $parser( 'locale'     ) );
-
-		if( $parser( 'birthday' ) ){
-			list ( $m, $d, $y ) = explode ( "/", $parser( 'birthday' ) );
-
-			$profile->setBirthDay  ( $d );
-			$profile->setBirthMonth( $m );
-			$profile->setBirthYear ( $y );
-		}
-
-		if( $parser( 'verified' ) ){
-			$profile->setEmailVerified( $profile->getEmail() );
-		}
-
-		return $profile;
+		return Profile::generateFromResponse($response,$this);
 	}
 
 	// --------------------------------------------------------------------
@@ -156,17 +127,7 @@ class Facebook extends OAuth2Template
 
 		if( isset( $response->data ) && is_array( $response->data ) ){
 			foreach( $response->data as $item ){
-				$parser = function($property) use($item)
-				{
-					return property_exists( $item, $property ) ? $item->$property : null;
-				};
-				$uc = new Profile($this);
-
-				$uc->setIdentifier ( $parser( 'id'   ) );
-				$uc->setDisplayName( $parser( 'name' ) );
-				$uc->setProfileURL ( 'https://www.facebook.com/profile.php?id=' . $uc->getIdentifier() );
-
-				$contacts[] = $uc;
+				$contacts[] = Profile::generateFromResponse($item,$this);
 			}
 		}
 
@@ -203,22 +164,29 @@ class Facebook extends OAuth2Template
 		$pages = array();
 
 		foreach($response->data as $pageData) {
-			$parser = function($property) use($pageData)
-			{
-				return property_exists( $pageData, $property ) ? $pageData->$property : null;
-			};
-			$page = new Page($this);
-
-			$page->setIdentifier ( $parser( 'id'   		   ) );
-			$page->setDisplayName( $parser( 'name' 		   ) );
-			$page->setPermissions( $parser( 'perms'		   ) );
-			$page->setAccessToken( $parser( 'access_token' ) );
-			$page->setCategory   ( $parser( 'category'	   ) );
-
-			$pages[] = $page;
+			$pages[] = Page::generateFromResponse($pageData,$this);
 		}
 
 		return $pages;
+	}
+
+	function getPage($page_id)
+	{
+		// request user infos
+		$response = $this->signedRequest( $page_id);
+		$response = json_decode ( $response );
+
+		if ( ! isset( $response->id ) || isset ( $response->error ) ){
+			throw new
+				Exception(
+					'User page listing request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
+		}
+
+		return Page::generateFromResponse($response,$this);
 	}
 
 	function getEvent($eventIdentifier)
@@ -235,34 +203,7 @@ class Facebook extends OAuth2Template
 					$this
 				);
 		}
-
-		$event = new Event($this);
-
-		$parser = function($property) use($response)
-		{
-			return property_exists( $response, $property ) ? $response->$property : null;
-		};
-
-		$event->setIdentifier  ( $parser( 'id' )		  );
-		$event->setName 	   ( $parser( 'name' )		  );
-		$event->setDescription ( $parser( 'description' ) );
-		$event->setStartTime   ( $parser( 'start_time'  ) );
-		$event->setEndTime     ( $parser( 'end_time' )	  );
-		$event->setLocation    ( $parser( 'location' ) 	  );
-		$event->setTicketURI   ( $parser( 'ticket_uri' )  );
-		if(property_exists($response, 'venue')) {
-			$venue = $response->venue;
-			$venue_parser = function($property) use($venue)
-			{
-				return property_exists( $venue, $property ) ? $venue->$property : null;
-			};
-			$event->setStreet 	 ( $venue_parser( 'street' )	);
-			$event->setZip 		 ( $venue_parser( 'zip' )	    );
-			$event->setCountry 	 ( $venue_parser( 'country' )   );
-			$event->setLatitude	 ( $venue_parser( 'latitude' )  );
-			$event->setLongitude ( $venue_parser( 'longitude' ) );
-		}
-		return $event;
+		return Event::generateFromResponse($response);
 	}
 
 	// --------------------------------------------------------------------
