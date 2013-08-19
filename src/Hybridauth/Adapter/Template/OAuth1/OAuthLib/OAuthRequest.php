@@ -206,7 +206,7 @@ class OAuthRequest {
 			$out .= OAuthUtil::urlencode_rfc3986 ( $k ) . '="' . OAuthUtil::urlencode_rfc3986 ( $v ) . '"';
 			$first = false;
 		}
-		return $out;
+		return array($out);
 	}
 	public function __toString() {
 		return $this->to_url ();

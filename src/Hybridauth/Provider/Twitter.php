@@ -100,7 +100,7 @@ class Twitter extends OAuth1Template
 		$response = json_decode( $response );
 		if( !isset($response->id_str) ) return false;
 		$post->setIdentifier($response->id_str);
-		$post->setOwner($response->user->id_str);
+		$post->setFrom($response->user->id_str);
 		return true;
 	}
 }
