@@ -102,7 +102,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 			}
 		}
 
-        if (property_exists($response, 'bdate')) {
+        if (property_exists($response, 'bdate') && !empty($response->bdate)) {
             $bdateData = explode('.', $response->bdate);
 
             $this->user->profile->birthDay   = (int)$bdateData[0];
@@ -112,6 +112,6 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
             }
         }
 
-		return $this->user->profile;
+        return $this->user->profile;
 	}
 }
