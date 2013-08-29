@@ -50,13 +50,15 @@ class Hybrid_Providers_Mailru extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->email         = (property_exists($response,'email'))?$response->email:"";
 		$this->user->profile->emailVerified = (property_exists($response,'email'))?$response->email:"";
 
-		if( property_exists($response,'birthday') ){ 
-			list($birthday_day, $birthday_month, $birthday_year) = explode( '.', $response->birthday );
+        if (property_exists($response, 'birthday') && !empty($response->birthday)) {
+            $bdateData = explode('.', $response->birthday);
 
-			$this->user->profile->birthDay   = (int) $birthday_day;
-			$this->user->profile->birthMonth = (int) $birthday_month;
-			$this->user->profile->birthYear  = (int) $birthday_year;
-		}
+            $this->user->profile->birthDay   = (int)$bdateData[0];
+            $this->user->profile->birthMonth = (int)$bdateData[1];
+            if (count($bdateData) > 2) {
+                $this->user->profile->birthYear = (int)$bdateData[2];
+            }
+        }
 
 		return $this->user->profile;
 	}
