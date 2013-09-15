@@ -13,8 +13,7 @@ MySpace and Google.
 
 HybridAuth repository is made up of several projects:
 
-- **HybridAuth Core library** includes OpenID, Facebook, Twitter, LinkedIn,
-  MySpace, Google, Yahoo, Windows Live, Foursquare and AOL.
+- **HybridAuth Core library** includes OpenID, Facebook, Twitter, LinkedIn, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** contains many others services
   which you may want to use,
 - **Examples and demos** contains five working examples for you to test, 
