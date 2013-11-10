@@ -34,4 +34,12 @@ class Hybrid_User_Contact
 
 	/* User email. Not all of IDp garant access to the user email */
 	public $email = NULL;
+
+	// Add by MJM3D
+	/* Other Email from yahoo api (e.g. @hotmail.com) */
+	public $hotMail = NULL;
+
+	// Add by MJM3D
+	/* yahoo id messager */
+	public $yahooMessenger = NULL;
 }
