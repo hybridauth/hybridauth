@@ -75,8 +75,12 @@ class Hybrid_Provider_Adapter
 
 			$this->wrapper = $this->config["wrapper"]["class"];
 		}
-		else{ 
-			require_once Hybrid_Auth::$config["path_providers"] . $this->id . ".php" ;
+		else{
+			if (isset(Hybrid_Auth::$config["providers"][$this->id]["provider_path"])) {
+				require_once Hybrid_Auth::$config["providers"][$this->id]["provider_path"] . ".php" ;
+			} else {
+				require_once Hybrid_Auth::$config["path_providers"] . $this->id . ".php" ;
+			}
 
 			$this->wrapper = "Hybrid_Providers_" . $this->id; 
 		}
@@ -281,3 +285,4 @@ class Hybrid_Provider_Adapter
 		return NULL;
 	}
 }
+
