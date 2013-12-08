@@ -128,6 +128,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		# store the user profile.
 		$this->user->profile->identifier    = (array_key_exists('id',$data))?$data['id']:"";
+		$this->user->profile->username      = (array_key_exists('username',$data))?$data['username']:"";
 		$this->user->profile->displayName   = (array_key_exists('name',$data))?$data['name']:"";
 		$this->user->profile->firstName     = (array_key_exists('first_name',$data))?$data['first_name']:"";
 		$this->user->profile->lastName      = (array_key_exists('last_name',$data))?$data['last_name']:"";
