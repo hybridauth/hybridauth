@@ -9,8 +9,8 @@
  * Yammer OAuth Class
  *
  * @package             HybridAuth additional providers package
- * @author              Johnny Cao ( @l8cao ) at HitSend Inc.
- * @version             0.1
+ * @author              Johnny Cao ( @l8cao ) at SoapBox Innovation Inc.
+ * @version             1.0
  * @license             BSD License
  */
 
