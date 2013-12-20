@@ -112,4 +112,32 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		return $this->user->profile;
 	}
+		
+	/**
+	* load the user contacts
+	*/
+	function getUserContacts() 
+	{
+		$params=array(
+			'fields' => 'nickname, domain, sex, bdate, city, country, timezone, photo_200_orig'
+		);
+		
+		$response = $this->api->api('https://api.vk.com/method/friends.get','GET',$params);
+		
+		if(!$response || !count($response->response)){
+			return array();
+		}
+		
+		$contacts = array();
+		foreach( $response->response as $item ){
+			$uc = new Hybrid_User_Contact();
+			$uc->identifier  = $item->uid;
+			$uc->displayName = $item->first_name.' '.$item->last_name;
+			$uc->profileURL  = 'http://vk.com/'.$item->domain;
+			$uc->photoURL    = $item->photo_200_orig;
+			$contacts[] = $uc;
+		}
+		
+		return $contacts;
+	}
 }
