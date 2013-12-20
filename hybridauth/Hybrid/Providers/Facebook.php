@@ -157,7 +157,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	function getUserContacts()
 	{
 		try{ 
-			$response = $this->api->api('/me/friends'); 
+			$response = $this->api->api('/me/friends?fields=link'); 
 		}
 		catch( FacebookApiException $e ){
 			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: $e" );
@@ -174,7 +174,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 			$uc->identifier  = (array_key_exists("id",$item))?$item["id"]:"";
 			$uc->displayName = (array_key_exists("name",$item))?$item["name"]:"";
-			$uc->profileURL  = "https://www.facebook.com/profile.php?id=" . $uc->identifier;
+			$uc->profileURL  = (array_key_exists("link",$item))?$item["link"]:"https://www.facebook.com/profile.php?id=" . $uc->identifier;
 			$uc->photoURL    = "https://graph.facebook.com/" . $uc->identifier . "/picture?width=150&height=150";
 
 			$contacts[] = $uc;
