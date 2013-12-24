@@ -118,12 +118,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			$data = $this->api->api('/me'); 
 		}
 		catch( FacebookApiException $e ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
+			throw new Hybrid_Auth_Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
 		} 
 
 		// if the provider identifier is not recived, we assume the auth has failed
 		if ( ! isset( $data["id"] ) ){ 
-			throw new Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
+			throw new Hybrid_Auth_Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
 		}
 
 		# store the user profile.
@@ -140,6 +140,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$this->user->profile->email         = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->emailVerified = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->region        = (array_key_exists("hometown",$data)&&array_key_exists("name",$data['hometown']))?$data['hometown']["name"]:"";
+		$this->user->profile->language        = (array_key_exists("locale",$data))?$data['locale']:"";
 		if( array_key_exists('birthday',$data) ) {		
 			$parts = explode( "/", $data['birthday']); // mm/dd/yyyy
 			if (count($parts) == 3) {
