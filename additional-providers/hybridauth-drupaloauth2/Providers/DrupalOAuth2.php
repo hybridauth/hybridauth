@@ -13,6 +13,10 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
   // default permissions
   public $scope = 'user_profile';
 
+  // The 'state' variable helps to prevent CSRF attacks,
+  // and can also be used to identify the authentication request.
+  protected $state = NULL;
+
   /**
    * IDp wrappers initializer
    */
@@ -25,8 +29,15 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
     $this->api->authorize_url  = $base_url . '/oauth2/authorize';
     $this->api->token_url      = $base_url . '/oauth2/token';
 
+    if (isset($this->config['redirect_uri'])) {
+      $this->api->redirect_uri = $this->config['redirect_uri'];
+    }
+
     if (isset($this->config['scope'])) {
       $this->scope = $this->config['scope'];
+    }
+    if (isset($this->config['state'])) {
+      $this->state = $this->config['state'];
     }
 
     if ($this->config['skip_ssl']) {
@@ -43,10 +54,12 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
    */
   function loginBegin()
   {
-    $state = md5(uniqid(rand(), TRUE));
+    if (!isset($this->state)) {
+      $this->state = md5(uniqid(rand(), TRUE));
+    }
     $session_var_name = 'state_' . $this->api->client_id;
-    $_SESSION[$session_var_name] = $state;
-    $extra_params['state'] = $state;
+    $_SESSION[$session_var_name] = $this->state;
+    $extra_params['state'] = $this->state;
 
     if (isset($this->scope)) {
       $extra_params['scope'] = $this->scope;
