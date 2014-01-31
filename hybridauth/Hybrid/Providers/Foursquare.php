@@ -32,7 +32,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-		$data = $this->api->api( "users/self" ); 
+		$data = $this->api->api( "users/self", "GET", "20140131" ); 
 
 		if ( ! isset( $data->response->user->id ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
