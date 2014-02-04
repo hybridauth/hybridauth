@@ -39,13 +39,13 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 
 		curl_setopt($ch, CURLOPT_URL            , $url );
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER , 1 );
-		curl_setopt($ch, CURLOPT_TIMEOUT        , $this->curl_time_out );
-		curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
-		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
-                if($this->curl_proxy){
-                    curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
+		curl_setopt($ch, CURLOPT_TIMEOUT        , $this->api->curl_time_out );
+		curl_setopt($ch, CURLOPT_USERAGENT      , $this->api->curl_useragent );
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->api->curl_connect_time_out );
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->api->curl_ssl_verifypeer );
+		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->api->curl_header );
+                if($this->api->curl_proxy){
+                    curl_setopt( $ch, CURLOPT_PROXY        , $this->api->curl_proxy);
                 }
 		if( $type == "POST" ){
 			curl_setopt($ch, CURLOPT_POST, 1); 
@@ -100,7 +100,14 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		if( isset( $response->expires_in    ) ) $this->api->access_token_expires_in = $response->expires_in; 
 		
 		// calculate when the access token expire
+		// At this moment Odnoklassniki does not return expire time in response.
+		// 30 minutes expire time staten in dev docs http://apiok.ru/wiki/pages/viewpage.action?pageId=42476652
+		if( isset( $response->expires_in    ) ) {
 		$this->api->access_token_expires_at = time() + $response->expires_in; 
+		}
+		else {
+		    $this->api->access_token_expires_at = time() + 1800; 
+		}
 
 		return $response;  
 	}
