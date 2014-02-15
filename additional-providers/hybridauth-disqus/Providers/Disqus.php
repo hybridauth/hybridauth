@@ -21,9 +21,9 @@ class Hybrid_Providers_Disqus extends Hybrid_Provider_Model_OAuth2
 	{
 		parent::initialize();
 		// Provider api end-points
-		$this->api->api_base_url  = "https://disqus.com/api/3.0/";
-		$this->api->authorize_url = "https://disqus.com/api/3.0/oauth/2.0/authorize";	   
-		$this->api->token_url     = "https://disqus.com/api/3.0/oauth/2.0/access_token";
+		$this->api->api_base_url  = "https://disqus.com/api/";
+		$this->api->authorize_url = "https://disqus.com/api/oauth/2.0/authorize";	   
+		$this->api->token_url     = "https://disqus.com/api/oauth/2.0/access_token";
 		
 		$this->api->curl_header = array( 'client_id: ' . $this->config["keys"]["id"], 'Accept: application/json' );
 	}
