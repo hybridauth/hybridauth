@@ -30,6 +30,7 @@ class OAuth2Client
 	public $curl_time_out            = 30;
 	public $curl_connect_time_out    = 30;
 	public $curl_ssl_verifypeer      = false;
+	public $curl_ssl_verifyhost      = false;
 	public $curl_header              = array();
 	public $curl_useragent           = "OAuth/2 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
 	public $curl_authenticate_method = "POST";
@@ -206,6 +207,7 @@ class OAuth2Client
 		curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , $this->curl_ssl_verifyhost );
 		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
 
 		if($this->curl_proxy){
