@@ -220,6 +220,9 @@ class OAuth2Client
 		}
 
 		$response = curl_exec($ch);
+		if( $response === FALSE ) {
+				Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
+		}
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
 

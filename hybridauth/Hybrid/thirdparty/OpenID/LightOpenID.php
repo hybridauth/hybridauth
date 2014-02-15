@@ -204,6 +204,9 @@ class LightOpenID
             curl_setopt($curl, CURLOPT_HTTPGET, true);
         }
         $response = curl_exec($curl);
+        if( $response === FALSE ) {
+            Hybrid_Logger::error( "LightOpenID::request_curl(). curl_exec error: ", curl_error($ch) );
+        }
 
         if($method == 'HEAD' && curl_getinfo($curl, CURLINFO_HTTP_CODE) == 405) {
             curl_setopt($curl, CURLOPT_HTTPGET, true);
