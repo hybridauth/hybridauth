@@ -39,7 +39,7 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
 			$realname = (string) $data->{'realname'}; 
 
 			if( $realname ){
-				$this->user->profile->displayName = $realname;
+				$this->user->profile->firstName = $realname;
 			}
 			
 			$customURL = (string) $data->{'customURL'};
