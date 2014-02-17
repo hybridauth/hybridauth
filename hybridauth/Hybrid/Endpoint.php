@@ -141,7 +141,7 @@ class Hybrid_Endpoint {
 		}
 		catch ( Exception $e ) {
 			Hybrid_Logger::error( "Exception:" . $e->getMessage(), $e );
-			Hybrid_Error::setError( $e->getMessage(), $e->getCode(), $e->getTraceAsString(), $e );
+			Hybrid_Error::setError( $e->getMessage(), $e->getCode(), $e->getTraceAsString(), $e->getPrevious() );
 
 			$hauth->returnToCallbackUrl();
 		}
