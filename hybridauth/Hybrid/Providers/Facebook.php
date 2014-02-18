@@ -128,10 +128,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		# store the user profile.
 		$this->user->profile->identifier    = (array_key_exists('id',$data))?$data['id']:"";
+		$this->user->profile->username      = (array_key_exists('username',$data))?$data['username']:"";
 		$this->user->profile->displayName   = (array_key_exists('name',$data))?$data['name']:"";
 		$this->user->profile->firstName     = (array_key_exists('first_name',$data))?$data['first_name']:"";
 		$this->user->profile->lastName      = (array_key_exists('last_name',$data))?$data['last_name']:"";
 		$this->user->profile->photoURL      = "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?width=150&height=150";
+		$this->user->profile->coverInfoURL  = "https://graph.facebook.com/" . $this->user->profile->identifier . "?fields=cover";
 		$this->user->profile->profileURL    = (array_key_exists('link',$data))?$data['link']:""; 
 		$this->user->profile->webSiteURL    = (array_key_exists('website',$data))?$data['website']:""; 
 		$this->user->profile->gender        = (array_key_exists('gender',$data))?$data['gender']:"";
@@ -151,6 +153,27 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		return $this->user->profile;
  	}
 
+	/**
+	* Attempt to retrieve the url to the cover image given the coverInfoURL
+	*
+	* @param  string $coverInfoURL   coverInfoURL variable
+	* @retval string                 url to the cover image OR blank string
+	*/
+	function getCoverURL($coverInfoURL)
+	{
+		try {
+			$headers = get_headers($coverInfoURL);
+			if(substr($headers[0], 9, 3) != "404") {
+				$coverOBJ = json_decode(file_get_contents($coverInfoURL));
+				if(array_key_exists('cover', $coverOBJ)) {
+					return $coverOBJ->cover->source;
+				}
+			}
+		} catch (Exception $e) { }
+
+		return "";
+	}
+	
 	/**
 	* load the user contacts
 	*/
