@@ -57,8 +57,7 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
     if (!isset($this->state)) {
       $this->state = md5(uniqid(rand(), TRUE));
     }
-    $session_var_name = 'state_' . $this->api->client_id;
-    $_SESSION[$session_var_name] = $this->state;
+    $this->saveState($this->state);
     $extra_params['state'] = $this->state;
 
     if (isset($this->scope)) {
@@ -74,18 +73,41 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
   function loginFinish()
   {
     // check that the CSRF state token is the same as the one provided
-    $session_var_name = 'state_' . $this->api->client_id;
-    if (isset($_SESSION[$session_var_name])) {
-      $state = $_SESSION[$session_var_name];
-    }
-    if (!isset($state) || !isset($_REQUEST['state'])
-	|| $state !== $_REQUEST['state']) {
-      throw new Exception('Authentication failed! CSRF state token does not match the one provided.');
-    }
-    unset($_SESSION[$session_var_name]);
+    $this->checkState();
 
     // call the parent function
     parent::loginFinish();
+  }
+
+  /**
+   * Save the given $state in session.
+   */
+  protected function saveState($state) {
+    $session_var_name = 'state_' . $this->api->client_id;
+    $_SESSION['HybridAuth']['DrupalOAuth2'][$session_var_name] = $state;
+  }
+
+  /**
+   * Read the state from session.
+   */
+  protected function readState() {
+    $session_var_name = 'state_' . $this->api->client_id;
+    $state = ( isset($_SESSION['HybridAuth']['DrupalOAuth2'][$session_var_name])
+	      ? $_SESSION['HybridAuth']['DrupalOAuth2'][$session_var_name]
+	      : NULL );
+    unset($_SESSION['HybridAuth']['DrupalOAuth2'][$session_var_name]);
+    return $state;
+  }
+
+  /**
+   * Check the state in the request against the one saved in session.
+   */
+  protected function checkState() {
+    $state = $this->readState();
+    if (!$state || !isset($_REQUEST['state']) || $state != $_REQUEST['state'])
+      {
+	throw new Exception('Authentication failed! CSRF state token does not match the one provided.');
+      }
   }
 
   /**
