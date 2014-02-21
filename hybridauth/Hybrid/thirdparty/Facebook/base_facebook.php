@@ -206,13 +206,6 @@ abstract class BaseFacebook
   protected $fileUploadSupport = false;
 
   /**
-   * Indicates if we trust HTTP_X_FORWARDED_* headers.
-   *
-   * @var boolean
-   */
-  protected $trustForwarded = false;
-
-  /**
    * Initialize a Facebook Application.
    *
    * The configuration:
@@ -228,9 +221,7 @@ abstract class BaseFacebook
     if (isset($config['fileUpload'])) {
       $this->setFileUploadSupport($config['fileUpload']);
     }
-    if (isset($config['trustForwarded']) && $config['trustForwarded']) {
-      $this->trustForwarded = true;
-    }
+
     $state = $this->getPersistentData('state');
     if (!empty($state)) {
       $this->state = $state;
@@ -1138,14 +1129,14 @@ abstract class BaseFacebook
   }
 
   protected function getHttpHost() {
-    if ($this->trustForwarded && isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+    if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
       return $_SERVER['HTTP_X_FORWARDED_HOST'];
     }
     return $_SERVER['HTTP_HOST'];
   }
 
   protected function getHttpProtocol() {
-    if ($this->trustForwarded && isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
       if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
         return 'https';
       }
