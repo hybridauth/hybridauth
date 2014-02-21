@@ -199,10 +199,11 @@ class OAuth1Client{
 		}
 
 		curl_setopt($ci, CURLOPT_URL, $url);
-		if( $response === FALSE ) {
-				Hybrid_Logger::error( "OAuth1Client::request(). curl_exec error: ", curl_error($ch) );
-		}
 		$response = curl_exec($ci);
+		if( $response === FALSE ) {
+				Hybrid_Logger::error( "OAuth1Client::request(). curl_exec error: ", curl_error($ci) );
+		}
+
 
 		Hybrid_Logger::debug( "OAuth1Client::request(). dump request info: ", serialize( curl_getinfo($ci) ) );
 		Hybrid_Logger::debug( "OAuth1Client::request(). dump request result: ", serialize( $response ) );
