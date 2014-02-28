@@ -49,7 +49,7 @@ class LightOpenID
             $this->trustRoot = (strpos($host, '://') ? $host : 'https://' . $host);
         }
 
-        if(($host_end = strpos($this->trustRoot, '/', 8)) !== false) {
+        if(strlen($this->trustRoot >= 8) && ($host_end = strpos($this->trustRoot, '/', 8)) !== false) {
             $this->trustRoot = substr($this->trustRoot, 0, $host_end);
         }
         
