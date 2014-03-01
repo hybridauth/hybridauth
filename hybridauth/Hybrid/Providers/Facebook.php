@@ -35,7 +35,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			BaseFacebook::$CURL_OPTS[CURLOPT_PROXY] = Hybrid_Auth::$config["proxy"];
 		}
 
-		$this->api = new Facebook( ARRAY( 'appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"] ) ); 
+		$this->api = new Facebook( ARRAY( 'appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"], 'trustForwarded' => $this->config['trustForwarded'] ) );
 
 		if ( $this->token("access_token") ) {
 			$this->api->setAccessToken( $this->token("access_token") );

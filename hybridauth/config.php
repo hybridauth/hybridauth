@@ -35,7 +35,8 @@ return
 
 			"Facebook" => array ( 
 				"enabled" => true,
-				"keys"    => array ( "id" => "", "secret" => "" ), 
+				"keys"    => array ( "id" => "", "secret" => "" ),
+				"trustForwarded" => false
 			),
 
 			"Twitter" => array ( 
