@@ -208,9 +208,7 @@ class Hybrid_Endpoint {
 			}
 			catch ( Exception $e ){
 				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth" ); 
-
-				header( "HTTP/1.0 404 Not Found" );
-				die( "Oophs. Error!" );
+				throw $e;
 			}
 		}
 	}

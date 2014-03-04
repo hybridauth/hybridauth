@@ -118,12 +118,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			$data = $this->api->api('/me'); 
 		}
 		catch( FacebookApiException $e ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
+			throw new Hybrid_Auth_Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
 		} 
 
 		// if the provider identifier is not recived, we assume the auth has failed
 		if ( ! isset( $data["id"] ) ){ 
-			throw new Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
+			throw new Hybrid_Auth_Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
 		}
 
 		# store the user profile.
@@ -141,13 +141,15 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$this->user->profile->email         = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->emailVerified = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->region        = (array_key_exists("hometown",$data)&&array_key_exists("name",$data['hometown']))?$data['hometown']["name"]:"";
-
-		if( array_key_exists('birthday',$data) ) {
-			list($birthday_month, $birthday_day, $birthday_year) = explode( "/", $data['birthday'] );
-
-			$this->user->profile->birthDay   = (int) $birthday_day;
-			$this->user->profile->birthMonth = (int) $birthday_month;
-			$this->user->profile->birthYear  = (int) $birthday_year;
+		$this->user->profile->language        = (array_key_exists("locale",$data))?$data['locale']:"";
+		if( array_key_exists('birthday',$data) ) {		
+			$parts = explode( "/", $data['birthday']); // mm/dd/yyyy
+			if (count($parts) == 3) {
+				$this->user->profile->birthDay   = $parts[1];
+				$this->user->profile->birthMonth = $parts[0];
+				$this->user->profile->birthYear  = $parts[2];
+				$this->user->profile->birthDate  = $parts[2] . '-' . $parts[0] . '-' . $parts[1];
+			}
 		}
 
 		return $this->user->profile;

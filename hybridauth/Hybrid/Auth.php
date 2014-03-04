@@ -83,6 +83,7 @@ class Hybrid_Auth
 		require_once $config["path_base"] . "User_Profile.php";
 		require_once $config["path_base"] . "User_Contact.php";
 		require_once $config["path_base"] . "User_Activity.php";
+		require_once $config["path_base"] . "Auth_Exception.php";
 
 		// hash given config
 		Hybrid_Auth::$config = $config;
@@ -211,18 +212,28 @@ class Hybrid_Auth
 		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
 		if( ! Hybrid_Auth::storage()->get( "hauth_session.$providerId.is_logged_in" ) ){ 
 			Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), User not connected to the provider. Try to authenticate.." );
-
 			$provider_adapter = Hybrid_Auth::setup( $providerId, $params );
-
 			$provider_adapter->login();
 		}
 
 		// else, then return the adapter instance for the given provider
 		else{
 			Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), User is already connected to this provider. Return the adapter instance." );
-
-			return Hybrid_Auth::getAdapter( $providerId );
+			try {
+				return Hybrid_Auth::getAdapter( $providerId );
+				Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), adapter instance returned." );
+			} catch (Hybrid_Auth_Exception $e) {
+				Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), catched Auth Exception, send to login again" );
+				$provider_adapter = Hybrid_Auth::setup( $providerId, $params );
+				$provider_adapter->login();
+			}
 		}
+	}
+	
+	public static function forceLogin( $providerId, $params = NULL ) {
+		Hybrid_Logger::info( "Hybrid_Auth::forceLogin( $providerId ), User not connected to the provider. Try to authenticate.." );
+		$provider_adapter = Hybrid_Auth::setup( $providerId, $params );
+		$provider_adapter->login();
 	}
 
 	// --------------------------------------------------------------------

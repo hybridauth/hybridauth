@@ -50,8 +50,11 @@ class Hybrid_Storage
 	public function set( $key, $value )
 	{
 		$key = strtolower( $key ); 
-
-		$_SESSION["HA::STORE"][$key] = serialize( $value ); 
+		try {
+			$_SESSION["HA::STORE"][$key] = serialize( $value ); 
+		}catch (Exception $e) {
+			
+		}
 	}
 
 	function clear()
