@@ -102,7 +102,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		// see http://support.google.com/plus/answer/1713826?hl=en
 		if( property_exists($response,'urls') ){
 			foreach($response->urls as $u){
-				if($u->primary == true) $this->user->profile->webSiteURL = $u->value;
+				if(property_exists($u, 'primary') && $u->primary == true) $this->user->profile->webSiteURL = $u->value;
 			}
 		} else {
 			$this->user->profile->webSiteURL = '';
