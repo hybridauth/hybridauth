@@ -5,10 +5,12 @@
 * (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
+require_once realpath( dirname( __FILE__ ) )  . "/StorageInterface";
+
 /**
  * HybridAuth storage manager
  */
-class Hybrid_Storage 
+class Hybrid_Storage implements Hybrid_Storage_Interface
 {
 	function __construct()
 	{ 
