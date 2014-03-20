@@ -39,6 +39,19 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
  	 */
  	function loginBegin()
  	{
+		// Initiate the Reverse Auth flow; cf. https://dev.twitter.com/docs/ios/using-reverse-auth
+		if (isset($_REQUEST['reverse_auth']) && ($_REQUEST['reverse_auth'] == 'yes')){
+			$stage1 = $this->api->signedRequest( $this->api->request_token_url, 'POST', array( 'x_auth_mode' => 'reverse_auth' ) ); 
+			if ( $this->api->http_code != 200 ){
+				throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+			}
+			http_response_code(200);
+			$responseObj = array( 'x_reverse_auth_parameters' => $stage1, 'x_reverse_auth_target' => $this->config["keys"]["key"] );
+			header( "Content-Type: application/json" ) ;
+			$response = json_encode($responseObj,JSON_UNESCAPED_UNICODE);
+			echo $response;
+			die();
+		}
  		$tokens = $this->api->requestToken( $this->endpoint );
  	
  		// request tokens as recived from provider
@@ -64,6 +77,37 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		// else, redirect the user to the provider authentication url
  		Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens ) );
  	}
+
+	/**
+	* finish login step 
+	*/ 
+	function loginFinish()
+	{
+		// in case we are completing a Reverse Auth flow; cf. https://dev.twitter.com/docs/ios/using-reverse-auth
+		if(isset($_REQUEST['oauth_token_secret'])){
+			$tokens = $_REQUEST;
+			$this->access_tokens_raw = $tokens;
+
+			// we should have an access_token unless something has gone wrong
+			if ( ! isset( $tokens["oauth_token"] ) ){
+				throw new Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", 5 );
+			}
+
+			// Get rid of tokens we don't need
+			$this->deleteToken( "request_token"        );
+			$this->deleteToken( "request_token_secret" );
+
+			// Store access_token and secret for later use
+			$this->token( "access_token"        , $tokens['oauth_token'] );
+			$this->token( "access_token_secret" , $tokens['oauth_token_secret'] ); 
+
+			// set user as logged in to the current provider
+			$this->setUserConnected(); 
+			return;
+		}
+		parent::loginFinish();
+	}
+	
 
 	/**
 	* load the user profile from the IDp api client

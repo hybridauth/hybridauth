@@ -94,6 +94,22 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] == "access_denied" ){ 
 			throw new Exception( "Authentication failed! The user denied your request.", 5 );
 		}
+
+		// in case we are using iOS/Facebook reverse authentication
+		if(isset($_REQUEST['access_token'])){
+			$this->token("access_token",  $_REQUEST['access_token'] );
+			$this->api->setAccessToken( $this->token("access_token") );
+			$this->api->setExtendedAccessToken();
+			$access_token = $this->api->getAccessToken();
+
+			if( $access_token ){
+				$this->token("access_token", $access_token );
+				$this->api->setAccessToken( $access_token );
+			}
+
+			$this->api->setAccessToken( $this->token("access_token") );
+		}
+
 		
 		// if auth_type is used, then an auth_nonce is passed back, and we need to check it.
 		if(isset($_REQUEST['auth_nonce'])){
