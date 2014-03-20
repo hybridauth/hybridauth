@@ -6,7 +6,7 @@
 */
 
 /**
- * The Hybrid_User class represents the current loggedin user 
+ * The Hybrid_User class represents the current logged in user 
  */
 class Hybrid_User 
 {
@@ -16,11 +16,11 @@ class Hybrid_User
 	/* timestamp connection to the provider */
 	public $timestamp = NULL; 
 
-	/* user profile, containts the list of fields available in the normalized user profile structure used by HybridAuth. */
+	/* user profile, contains the list of fields available in the normalized user profile structure used by HybridAuth. */
 	public $profile = NULL;
 
 	/**
-	* inisialize the user object,
+	* initialize the user object.
 	*/
 	function __construct()
 	{
