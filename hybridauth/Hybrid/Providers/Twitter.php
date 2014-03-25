@@ -46,7 +46,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 				throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
 			}
 			$responseObj = array( 'x_reverse_auth_parameters' => $stage1, 'x_reverse_auth_target' => $this->config["keys"]["key"] );
-			$response = json_encode($responseObj,JSON_UNESCAPED_UNICODE);
+			$response = json_encode($responseObj);
 			header( "Content-Type: application/json", true, 200 ) ;
 			echo $response;
 			die();
