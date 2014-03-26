@@ -67,11 +67,11 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 	{
 		if( json_decode( $result ) ) return json_decode( $result );
 
-		parse_str( $result, $ouput ); 
+		parse_str( $result, $output );
 
 		$result = new StdClass();
 
-		foreach( $ouput as $k => $v )
+		foreach( $output as $k => $v )
 			$result->$k = $v;
 
 		return $result;
@@ -121,7 +121,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( "Authentication failed! {$this->providerId} returned an error: $error", 5 );
 		}
 
-		// try to authenicate user
+		// try to authenticate user
 		$code = (array_key_exists('code',$_REQUEST))?$_REQUEST['code']:"";
 
 		try{

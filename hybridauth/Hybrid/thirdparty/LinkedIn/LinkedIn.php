@@ -443,7 +443,7 @@ class LinkedIn {
 	 *   http://developer.linkedin.com/docs/DOC-1327   
 	 * 
 	 * @param str $cid
-	 *    Company ID you want the producte for.	
+	 *    Company ID you want the product for.
 	 * @param str $options
 	 *    [OPTIONAL] Data retrieval options.
 	 *            	
@@ -2065,10 +2065,10 @@ class LinkedIn {
 	 * 		The group id.
 	 * @param str $xml
 	 * 		The group settings to set. The settings are:
-	 * 		  -<show-group-logo-in-profle>
+	 * 		  -<show-group-logo-in-profile>
 	 * 		  -<contact-email>
 	 * 		  -<email-digest-frequency>
-	 * 		  -<email-annoucements-from-managers>
+	 * 		  -<email-announcements-from-managers>
 	 * 		  -<allow-messages-from-members>
 	 * 		  -<email-for-every-new-post>
 	 * 
@@ -2264,7 +2264,7 @@ class LinkedIn {
         // send request
         $response = $this->fetch('POST', $share_url, $data);
   		} else {
-  		  // data contraints/rules not met, raise an exception
+  		  // data constraints/rules not met, raise an exception
 		    throw new LinkedInException('LinkedIn->share(): sharing data constraints not met; check that you have supplied valid content and combinations of content to share.');
   		}
     } else {
@@ -2610,7 +2610,7 @@ class LinkedIn {
 	public static function xmlToArray($xml) {
 	  // check passed data
     if(!is_string($xml)) {
-	    // bad data possed
+	    // bad data passed
       throw new LinkedInException('LinkedIn->xmlToArray(): bad data passed, $xml must be a non-zero length string.');
 	  }
 	  

@@ -9,7 +9,7 @@
  * Hybrid_Provider_Adapter is the basic class which Hybrid_Auth will use
  * to connect users to a given provider. 
  * 
- * Basically Hybrid_Provider_Adapterwill create a bridge from your php 
+ * Basically Hybrid_Provider_Adapter will create a bridge from your php
  * application to the provider api.
  * 
  * Hybrid_Auth will automatically load Hybrid_Provider_Adapter and create
@@ -251,7 +251,7 @@ class Hybrid_Provider_Adapter
 		// get the stored callback url
 		$callback_url = Hybrid_Auth::storage()->get( "hauth_session.{$this->id}.hauth_return_to" );
 
-		// remove some unneed'd stored data 
+		// remove some unneeded stored data
 		Hybrid_Auth::storage()->delete( "hauth_session.{$this->id}.hauth_return_to"    );
 		Hybrid_Auth::storage()->delete( "hauth_session.{$this->id}.hauth_endpoint"     );
 		Hybrid_Auth::storage()->delete( "hauth_session.{$this->id}.id_provider_params" );

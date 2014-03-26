@@ -147,7 +147,7 @@ class OAuth2Client
 	}
 
 	/** 
-	* GET wrappwer for provider apis request
+	* GET wrapper for provider apis request
 	*/
 	function get( $url, $parameters = array() )
 	{
@@ -155,7 +155,7 @@ class OAuth2Client
 	} 
 
 	/** 
-	* POST wreapper for provider apis request
+	* POST wrapper for provider apis request
 	*/
 	function post( $url, $parameters = array() )
 	{
@@ -238,11 +238,11 @@ class OAuth2Client
 	{
 		if( json_decode( $result ) ) return json_decode( $result );
 
-		parse_str( $result, $ouput ); 
+		parse_str( $result, $output );
 
 		$result = new StdClass();
 
-		foreach( $ouput as $k => $v )
+		foreach( $output as $k => $v )
 			$result->$k = $v;
 
 		return $result;

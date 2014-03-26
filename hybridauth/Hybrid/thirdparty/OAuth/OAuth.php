@@ -576,7 +576,7 @@ class OAuthServer {
     $version = $request->get_parameter("oauth_version");
     if (!$version) {
       // Service Providers MUST assume the protocol version to be 1.0 if this parameter is not present. 
-      // Chapter 7.0 ("Accessing Protected Ressources")
+      // Chapter 7.0 ("Accessing Protected Resources")
       $version = '1.0';
     }
     if ($version !== $this->version) {
@@ -594,7 +594,7 @@ class OAuthServer {
         : NULL;
 
     if (!$signature_method) {
-      // According to chapter 7 ("Accessing Protected Ressources") the signature-method
+      // According to chapter 7 ("Accessing Protected Resources") the signature-method
       // parameter is required, and we can't just fallback to PLAINTEXT
       throw new OAuthExceptionPHP('No signature method parameter. This parameter is required');
     }
@@ -847,7 +847,7 @@ class OAuthUtil {
       $value = isset($split[1]) ? OAuthUtil::urldecode_rfc3986($split[1]) : '';
 
       if (isset($parsed_parameters[$parameter])) {
-        // We have already recieved parameter(s) with this name, so add to the list
+        // We have already received parameter(s) with this name, so add to the list
         // of parameters with this name
 
         if (is_scalar($parsed_parameters[$parameter])) {

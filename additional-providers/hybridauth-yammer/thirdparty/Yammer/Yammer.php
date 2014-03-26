@@ -180,7 +180,7 @@ class OAuth2Client
 	}
 
 	/**
-	* GET wrappwer for provider apis request
+	* GET wrapper for provider apis request
 	*/
 	function get( $url, $parameters = array() )
 	{
@@ -188,7 +188,7 @@ class OAuth2Client
 	}
 
 	/**
-	* POST wreapper for provider apis request
+	* POST wrapper for provider apis request
 	*/
 	function post( $url, $parameters = array() )
 	{

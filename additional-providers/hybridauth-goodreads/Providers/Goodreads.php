@@ -46,7 +46,7 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
 		// request an access token
 		$tokens = $this->api->accessToken( $oauth_verifier );
 
-		// access tokens as recived from provider
+		// access tokens as received from provider
 		$this->access_tokens_raw = $tokens;
 
 		// check the last HTTP status code returned
@@ -59,11 +59,11 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
 			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid access token.", 5 );
 		}
 
-		// we no more need to store requet tokens
+		// we no more need to store request tokens
 		$this->deleteToken( "request_token"        );
 		$this->deleteToken( "request_token_secret" );
 
-		// sotre access_token for later user
+		// store access_token for later user
 		$this->token( "access_token"        , $tokens['oauth_token'] );
 		$this->token( "access_token_secret" , $tokens['oauth_token_secret'] ); 
 

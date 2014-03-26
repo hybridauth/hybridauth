@@ -77,7 +77,7 @@ abstract class Hybrid_Provider_Model
 	* IDp wrappers initializer
 	*
 	* The main job of wrappers initializer is to performs (depend on the IDp api client it self): 
-	*     - include some libs nedded by this provider,
+	*     - include some libs needed by this provider,
 	*     - check IDp key and secret,
 	*     - set some needed parameters (stored in $this->params) by this IDp api client
 	*     - create and setup an instance of the IDp api client on $this->api 
@@ -119,7 +119,7 @@ abstract class Hybrid_Provider_Model
 	*/
 	function getUserProfile()
 	{
-		Hybrid_Logger::error( "HybridAuth do not provide users contats list for {$this->providerId} yet." ); 
+		Hybrid_Logger::error( "HybridAuth do not provide users contacts list for {$this->providerId} yet." );
 		
 		throw new Exception( "Provider does not support this feature.", 8 ); 
 	}
@@ -131,7 +131,7 @@ abstract class Hybrid_Provider_Model
 	*/
 	function getUserContacts() 
 	{
-		Hybrid_Logger::error( "HybridAuth do not provide users contats list for {$this->providerId} yet." ); 
+		Hybrid_Logger::error( "HybridAuth do not provide users contacts list for {$this->providerId} yet." );
 		
 		throw new Exception( "Provider does not support this feature.", 8 ); 
 	}
@@ -222,7 +222,7 @@ abstract class Hybrid_Provider_Model
 	// --------------------------------------------------------------------
 
 	/**
-	* clear all existen tokens for this provider
+	* clear all existent tokens for this provider
 	*/ 
 	public function clearTokens()
 	{ 
