@@ -32,7 +32,7 @@ Hybridauth Change log
 	Add a way to specify adapters and wrappers from config
 	Added emailVerified property to profile object.
 	Added ability to pass display type to Facebook SDK.
-	Refactored endpoind
+	Refactored endpoint
 	Add user contacts list for Google Hybrid_Providers_Google::getUserContacts()
 	Add Hybrid_Auth::getProviders() to return array listing all enabled providers as well as a flag if you are connected.
 
@@ -45,7 +45,7 @@ Hybridauth Change log
 	Remove https://www.googleapis.com/auth/plus.me from the default Google scope
 	Fix an issue with openid identifier verification
 	Fix an issue where a user cancel the auth it will persist for some providers
-	Another numbers of bug fixes and improvments
+	Another numbers of bug fixes and improvements
 
 
 
@@ -58,12 +58,12 @@ Hybridauth Change log
 
 
 2.0.8 - 18 nov 2011 
-	Add an auto insaller to make life a bit easier. 
+	Add an auto installer to make life a bit easier.
 	Change the configuration file name from hybridauth.php to config.php
 	Setting facebook scope from the configuration, now override the default requested scope
 	Fix a bug with twitter update status setUserStatus()
 	Fix a bug with logoutAllProviders()
-	Hubrid_Auth_Activity::$date return now a timestamp across supproted social networks
+	Hybrid_Auth_Activity::$date return now a timestamp across supported social networks
 	Introduce the refresh_token as its needed for some providers
 	fixed some minor issues and improved bunch of other stuff
 	Thanks for KVC, RB Lin and danhstevens! 

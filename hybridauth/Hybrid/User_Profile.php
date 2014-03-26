@@ -28,7 +28,7 @@ class Hybrid_User_Profile
 	/* URL link to user photo or avatar */
 	public $photoURL = NULL;
 
-	/* User dispalyName provided by the IDp or a concatenation of first and last name. */
+	/* User displayName provided by the IDp or a concatenation of first and last name. */
 	public $displayName = NULL;
 
 	/* A short about_me */
@@ -46,7 +46,7 @@ class Hybrid_User_Profile
 	/* language */
 	public $language = NULL;
 
-	/* User age, we dont calculate it. we return it as is if the IDp provide it. */
+	/* User age, we don't calculate it. we return it as is if the IDp provide it. */
 	public $age = NULL;
 
 	/* User birth Day */
@@ -58,10 +58,10 @@ class Hybrid_User_Profile
 	/* User birth Year */
 	public $birthYear = NULL;
 
-	/* User email. Note: not all of IDp garant access to the user email */
+	/* User email. Note: not all of IDp grant access to the user email */
 	public $email = NULL;
 	
-	/* Verified user email. Note: not all of IDp garant access to verified user email */
+	/* Verified user email. Note: not all of IDp grant access to verified user email */
 	public $emailVerified = NULL;
 
 	/* phone number */

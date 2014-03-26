@@ -629,7 +629,7 @@ class LightOpenID
     {
         $params = array();
         # We always use SREG 1.1, even if the server is advertising only support for 1.0.
-        # That's because it's fully backwards compatibile with 1.0, and some providers
+        # That's because it's fully backwards compatible with 1.0, and some providers
         # advertise 1.0 even if they accept only 1.1. One such provider is myopenid.com
         $params['openid.ns.sreg'] = 'http://openid.net/extensions/sreg/1.1';
         if ($this->required) {
@@ -679,7 +679,7 @@ class LightOpenID
                 $params['openid.ax.count.' . $alias] = $count;
             }
 
-            # Don't send empty ax.requied and ax.if_available.
+            # Don't send empty ax.required and ax.if_available.
             # Google and possibly other providers refuse to support ax when one of these is empty.
             if($required) {
                 $params['openid.ax.required'] = implode(',', $required);
@@ -812,7 +812,7 @@ class LightOpenID
 
         if ($this->data['openid_return_to'] != $this->returnUrl) {
             # The return_to url must match the url of current request.
-            # I'm assuing that noone will set the returnUrl to something that doesn't make sense.
+            # I'm assuming that no one will set the returnUrl to something that doesn't make sense.
             return false;
         }
 
@@ -821,7 +821,7 @@ class LightOpenID
         foreach (explode(',', $this->data['openid_signed']) as $item) {
             # Checking whether magic_quotes_gpc is turned on, because
             # the function may fail if it is. For example, when fetching
-            # AX namePerson, it might containg an apostrophe, which will be escaped.
+            # AX namePerson, it might contain an apostrophe, which will be escaped.
             # In such case, validation would fail, since we'd send different data than OP
             # wants to verify. stripslashes() should solve that problem, but we can't
             # use it when magic_quotes is off.
@@ -903,7 +903,7 @@ class LightOpenID
     }
 
     /**
-     * Gets AX/SREG attributes provided by OP. should be used only after successful validaton.
+     * Gets AX/SREG attributes provided by OP. should be used only after successful validation.
      * Note that it does not guarantee that any of the required/optional parameters will be present,
      * or that there will be no other attributes besides those specified.
      * In other words. OP may provide whatever information it wants to.

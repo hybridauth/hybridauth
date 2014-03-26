@@ -18,7 +18,7 @@
 		$hybridauth->redirect( "login.php" );
     }
 	catch( Exception $e ){
-		// Display the recived error, 
+		// Display the received error,
 		// to know more please refer to Exceptions handling section on the userguide
 		switch( $e->getCode() ){ 
 			case 0 : echo "Unspecified error."; break;

@@ -67,7 +67,7 @@ class Hybrid_Error
 	}
 
 	/**
-	* return string detailled error backtrace as string.
+	* return string detailed error backtrace as string.
 	*/
 	public static function getErrorTrace()
 	{ 
@@ -75,7 +75,7 @@ class Hybrid_Error
 	}
 
 	/**
-	* @return string detailled error backtrace as string.
+	* @return string detailed error backtrace as string.
 	*/
 	public static function getErrorPrevious()
 	{ 

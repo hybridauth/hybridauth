@@ -115,7 +115,7 @@ ul li label {
 	$GLOBAL_HYBRID_AUTH_PATH_BASE   = realpath( dirname( __FILE__ ) ) . "/";
 	$CONFIG_FILE_NAME               = $GLOBAL_HYBRID_AUTH_PATH_BASE . "config.php";
 
-	// deault providers
+	// default providers
 	$PROVIDERS_CONFIG      = ARRAY(
 								ARRAY( 
 									"label"             => "Facebook",
@@ -253,7 +253,7 @@ ul li label {
 
 <div id="content"> 
 	<?php
-		// check if php 5+. well donno the exact version to test, because it depend on which providers will be used..
+		// check if php 5+. well dunno the exact version to test, because it depend on which providers will be used..
 		if ( version_compare( PHP_VERSION, '5.2', '<=' ) ):
 	?>
 		<p style='background-color:#EE3322;color:#FFFFFF;margin:1em 0;padding:0.8em;border:1px #C52F24 solid;'><strong>Error: </strong> HybridAuth requires PHP 5.2 or higher</p>
@@ -306,7 +306,7 @@ ul li label {
 	
 	<ul style="list-style:circle inside;">
 		<li style="color: #000000;font-size: 14px;">HybridAuth endpoint url is where the index.php is located.</li>
-		<li style="color: #000000;font-size: 14px;">HybridAuth enpoint should be set to <b>+rx mode</b> (read and execute permissions)</li>
+		<li style="color: #000000;font-size: 14px;">HybridAuth endpoint should be set to <b>+rx mode</b> (read and execute permissions)</li>
 	</ul>
 	
 	<div> 
@@ -329,7 +329,7 @@ ul li label {
 
 	<ul style="list-style:circle inside;">
 		<li style="color: #000000;font-size: 14px;">To correctly setup these Identity Providers please carefully follow the help section of each one.</li>
-		<li style="color: #000000;font-size: 14px;">If <b>Provider Adapter Satus</b> is set to <b style="color:red">Disabled</b> then users will not be able to login with this provider on you website.</li>
+		<li style="color: #000000;font-size: 14px;">If <b>Provider Adapter Status</b> is set to <b style="color:red">Disabled</b> then users will not be able to login with this provider on you website.</li>
 	</ul>
 
 <?php
@@ -354,7 +354,7 @@ ul li label {
 		<div class="cfg">
 		   <div class="cgfparams">
 			  <ul>
-				 <li><label><?php echo $provider_name ?> Adapter Satus</label>
+				 <li><label><?php echo $provider_name ?> Adapter Status</label>
 					<select name="<?php echo strtoupper( $provider ) ?>_ADAPTER_STATUS">
 						<option selected="selected" value="true">Enabled</option>
 						<option value="false">Disabled</option>

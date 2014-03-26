@@ -388,7 +388,7 @@ class ViadeoGraphObject {
 //
 //      // insert here $VD initialization, setting client_id and client_secret
 //      try { $VD->OAuth_auto(); } catch (ViadeoException $e)  {
-//          echo "An error occured during Viadeo API authentication: $e";
+//          echo "An error occurred during Viadeo API authentication: $e";
 //      }
 //      // insert here API calls, ex: $me = $VD->get('me')->execute();
 //

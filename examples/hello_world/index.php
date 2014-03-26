@@ -37,7 +37,7 @@
 		//     https://dev.twitter.com/docs/api/1/get/account/totals
 		$account_totals = $twitter->api()->get( 'account/totals.json' );
 
-		// print recived stats 
+		// print received stats
 		echo "Here some of yours stats on Twitter:<br /><pre>" . print_r( $account_totals, true ) . "</pre>";
 
 		// logout
@@ -48,7 +48,7 @@
 		// In case we have errors 6 or 7, then we have to use Hybrid_Provider_Adapter::logout() to 
 		// let hybridauth forget all about the user so we can try to authenticate again.
 
-		// Display the recived error, 
+		// Display the received error,
 		// to know more please refer to Exceptions handling section on the userguide
 		switch( $e->getCode() ){ 
 			case 0 : echo "Unspecified error."; break;

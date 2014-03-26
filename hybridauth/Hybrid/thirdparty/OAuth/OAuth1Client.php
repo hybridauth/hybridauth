@@ -108,7 +108,7 @@ class OAuth1Client{
 	}
 
 	/** 
-	* GET wrappwer for provider apis request
+	* GET wrapper for provider apis request
 	*/
 	function get($url, $parameters = array())
 	{
@@ -116,7 +116,7 @@ class OAuth1Client{
 	} 
 
 	/** 
-	* POST wreapper for provider apis request
+	* POST wrapper for provider apis request
 	*/
 	function post($url, $parameters = array())
 	{

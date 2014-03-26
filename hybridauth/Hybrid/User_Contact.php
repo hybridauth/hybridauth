@@ -26,12 +26,12 @@ class Hybrid_User_Contact
 	/* URL link to user photo or avatar */
 	public $photoURL = NULL;
 
-	/* User dispalyName provided by the IDp or a concatenation of first and last name */
+	/* User displayName provided by the IDp or a concatenation of first and last name */
 	public $displayName = NULL;
 
 	/* A short about_me */
 	public $description = NULL;
 
-	/* User email. Not all of IDp garant access to the user email */
+	/* User email. Not all of IDp grant access to the user email */
 	public $email = NULL;
 }
