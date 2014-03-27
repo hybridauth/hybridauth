@@ -114,7 +114,7 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 		$this->token( "request_token_secret", $tokens["oauth_token_secret"] ); 
 
 		# redirect the user to the provider authentication url
-		Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens );
+		Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens ) );
 	}
 
 	// --------------------------------------------------------------------
