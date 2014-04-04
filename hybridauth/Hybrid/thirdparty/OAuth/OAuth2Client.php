@@ -62,7 +62,7 @@ class OAuth2Client
 			foreach( $extras as $k=>$v )
 				$params[$k] = $v;
 
-		return $this->authorize_url . "?" . http_build_query( $params );
+		return $this->authorize_url . "?" . http_build_query($params, '', '&');
 	}
 
 	public function authenticate( $code )
@@ -195,7 +195,7 @@ class OAuth2Client
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
 
 		if( $type == "GET" ){
-			$url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query( $params );
+			$url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
 		}
 
 		$this->http_info = array();
