@@ -128,4 +128,38 @@ class Hybrid_Providers_Viadeo extends Hybrid_Provider_Model
 		
 		return $this->user->profile;
 	}
+	
+	/**
+	* load the user contacts
+	* Note : you must select a maximum number of contacts to retrieve below, with the "limit" parameter
+	*/
+	function getUserContacts()
+	{
+		$contacts    = ARRAY();
+		
+		try{
+			$data = $this->api->get("/me/contacts?limit=500&user_detail=partial")->execute();
+		}
+		catch( ViadeoAPIException $e ){
+			throw new Exception( "Contacts request failed! Error message provided by {$this->providerId} : ".$e->getMessage(), 6 ); //User profile request failed! {$this->providerId} returned an error while requesting the user profile. $e.
+		}
+
+		if( ! $data || $data->count==0 ){
+			return ARRAY();
+		}
+
+		$contacts = ARRAY();
+ 
+		foreach( $data->data as $item ){
+			$uc = new Hybrid_User_Contact();
+
+			$uc->identifier  = (isset($item->id))?$item->id:"";
+			$uc->displayName  = (isset($item->name))?$item->name:"";
+			$uc->profileURL  = (isset($item->link))?$item->link:"";
+			$uc->photoURL  = (isset($item->picture_large))?$item->picture_large:"";
+			$uc->description  = (isset($item->headline))?$item->headline:"";
+
+			$contacts[] = $uc;
+		}
+	}
 }
