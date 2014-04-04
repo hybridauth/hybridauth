@@ -46,6 +46,17 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         $data = $this->request('user/' . $this->getUserId() . '/artists');
         $data = json_decode($data, true);
+        while (isset($data['next']))
+        {
+            $tempData = $this->request($data['next']);
+            $tempData = json_decode($tempData, true);
+            unset($data['next']);
+            if (isset($tempData['next']))
+            {
+                $data['next'] = $tempData['next'];
+            }
+            $data['data'] = array_merge($data['data'], $tempData['data']);
+        }
         return $data;
     }
 
@@ -53,6 +64,17 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         $data = $this->request('user/' . $this->getUserId() . '/albums');
         $data = json_decode($data, true);
+        while (isset($data['next']))
+        {
+            $tempData = $this->request($data['next']);
+            $tempData = json_decode($tempData, true);
+            unset($data['next']);
+            if (isset($tempData['next']))
+            {
+                $data['next'] = $tempData['next'];
+            }
+            $data['data'] = array_merge($data['data'], $tempData['data']);
+        }
         return $data;
     }
 
@@ -60,6 +82,17 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         $data = $this->request('user/' . $this->getUserId() . '/followings');
         $data = json_decode($data, true);
+        while (isset($data['next']))
+        {
+            $tempData = $this->request($data['next']);
+            $tempData = json_decode($tempData, true);
+            unset($data['next']);
+            if (isset($tempData['next']))
+            {
+                $data['next'] = $tempData['next'];
+            }
+            $data['data'] = array_merge($data['data'], $tempData['data']);
+        }
         return $data;
     }
 
@@ -67,7 +100,13 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         try
         {
-            $url = $this->api->api_base_url . $method . '?access_token=' . $this->api->access_token;
+            if (preg_match("/https:\/\//", $method)) {
+                $url = $method . '?access_token=' . $this->api->access_token;
+            }
+            else
+            {
+                $url = $this->api->api_base_url . $method . '?access_token=' . $this->api->access_token . '&limit=10000';
+            }
             $data = CURLHelper::simple($url);
         } catch (Exception $e)
         {
