@@ -62,12 +62,17 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		// ask google api for user infos
 		if (strpos($this->scope, '/auth/userinfo.email') !== false) {
 			$verified = $this->api->api( "https://www.googleapis.com/oauth2/v2/userinfo" );
+
+			if ( ! isset( $verified->id ) || isset( $verified->error ) )
+				$verified = new stdClass();
+		} else {
+			$verified = $this->api->api( "https://www.googleapis.com/plus/v1/people/me/openIdConnect" );
+
+			if ( ! isset( $verified->sub ) || isset( $verified->error ) )
+				$verified = new stdClass();
 		}
-		$response = $this->api->api( "https://www.googleapis.com/plus/v1/people/me" ); 		
-		
-		if ( ! isset( $verified->id ) || isset( $verified->error ) ){
-			$verified = new stdClass();
-		}
+
+		$response = $this->api->api( "https://www.googleapis.com/plus/v1/people/me" );
 		if ( ! isset( $response->id ) || isset( $response->error ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
@@ -83,6 +88,18 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->language      = (property_exists($response,'locale'))?$response->locale:((property_exists($verified,'locale'))?$verified->locale:"");
 		$this->user->profile->email         = (property_exists($response,'email'))?$response->email:((property_exists($verified,'email'))?$verified->email:"");
 		$this->user->profile->emailVerified = (property_exists($verified,'email'))?$verified->email:"";
+		if (property_exists($response, 'emails')) {
+			if (count($response->emails) == 1) {
+				$this->user->profile->email = $response->emails[0]->value;
+			} else {
+				foreach ($response->emails as $email) {
+					if ($email->type == 'account') {
+						$this->user->profile->email = $email->value;
+						break;
+					}
+				}
+			}
+		}
 		$this->user->profile->phone 		= (property_exists($response,'phone'))?$response->phone:"";
 		$this->user->profile->country 		= (property_exists($response,'country'))?$response->country:"";
 		$this->user->profile->region 		= (property_exists($response,'region'))?$response->region:"";
