@@ -29,6 +29,12 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->api->authorize_url  = "https://accounts.google.com/o/oauth2/auth";
 		$this->api->token_url      = "https://accounts.google.com/o/oauth2/token";
 		$this->api->token_info_url = "https://www.googleapis.com/oauth2/v2/tokeninfo";
+        
+        // Override the redirect uri when it's set in the config parameters. This way we prevent
+        // redirect uri mismatches when authenticating with Google.
+        if( isset( $this->config['redirect_uri'] ) && ! empty( $this->config['redirect_uri'] ) ){
+			$this->api->redirect_uri = $this->config['redirect_uri'];
+		}
 	}
 
 	/**
@@ -37,7 +43,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	function loginBegin()
 	{
 		$parameters = array("scope" => $this->scope, "access_type" => "offline");
-		$optionals  = array("scope", "access_type", "redirect_uri", "approval_prompt", "hd");
+		$optionals  = array("scope", "access_type", "redirect_uri", "approval_prompt", "hd", "state");
 
 		foreach ($optionals as $parameter){
 			if( isset( $this->config[$parameter] ) && ! empty( $this->config[$parameter] ) ){
