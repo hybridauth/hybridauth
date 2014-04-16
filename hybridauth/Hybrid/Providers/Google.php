@@ -30,8 +30,8 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->api->token_url      = "https://accounts.google.com/o/oauth2/token";
 		$this->api->token_info_url = "https://www.googleapis.com/oauth2/v2/tokeninfo";
         
-        // Override the redirect uri when it's set in the config parameters. This way we prevent
-        // redirect uri mismatches when authenticating with Google.
+		// Override the redirect uri when it's set in the config parameters. This way we prevent
+		// redirect uri mismatches when authenticating with Google.
 		if( isset( $this->config['redirect_uri'] ) && ! empty( $this->config['redirect_uri'] ) ){
 			$this->api->redirect_uri = $this->config['redirect_uri'];
 		}
