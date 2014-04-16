@@ -33,8 +33,8 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
         // Override the redirect uri when it's set in the config parameters. This way we prevent
         // redirect uri mismatches when authenticating with Google.
         if( isset( $this->config['redirect_uri'] ) && ! empty( $this->config['redirect_uri'] ) ){
-			$this->api->redirect_uri = $this->config['redirect_uri'];
-		}
+            $this->api->redirect_uri = $this->config['redirect_uri'];
+        }
 	}
 
 	/**
