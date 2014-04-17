@@ -157,7 +157,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	function getUserContacts()
 	{
 		try{ 
-			$response = $this->api->api('/me/friends?fields=link'); 
+			$response = $this->api->api('/me/friends?fields=link,name'); 
 		}
 		catch( FacebookApiException $e ){
 			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: $e" );
