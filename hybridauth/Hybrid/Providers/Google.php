@@ -191,21 +191,20 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 				$uc->displayName 	= isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';  
 				$uc->identifier		= ($uc->email!='')?$uc->email:'';
 				$uc->description 	= '';
-				if( property_exists($entry,'link') ){
-					/* Attention - Gmail requests must be made authenticated against photoURL or profileURL,
-					// we indicate this by adding parameter 'auth' here, sample request:
-					// $this->api->api( $uc->photoURL ); //-> returns photo bytes
-					*/
-					if(is_array($entry->link)){
-						foreach($entry->link as $l){
-							if( property_exists($l,'gd$etag') && $l->type=="image/*"){
-								$uc->photoURL = $l->href. http_build_query( array('auth' => '1') );
-							} else if($l->type=="self"){
-								$uc->profileURL = $l->href. http_build_query( array('auth' => '1') );
-							}
-						}
-					}
-				} else {
+                if( property_exists($entry,'link') ){
+                    /**
+                     * sign links with access_token
+                     */
+                    if(is_array($entry->link)){
+                        foreach($entry->link as $l){
+                            if( property_exists($l,'gd$etag') && $l->type=="image/*"){
+                                $uc->photoURL = $this->addUrlParam($l->href, array('access_token' => $this->api->access_token));
+                            } else if($l->type=="self"){
+                                $uc->profileURL = $this->addUrlParam($l->href, array('access_token' => $this->api->access_token));
+                            }
+                        }
+                    }
+                } else {
 					$uc->profileURL = '';
 				}
 				if( property_exists($response,'website') ){
@@ -252,4 +251,23 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		
 		return $contacts;
  	}
+
+  /**
+   * Add to the $url new parameters
+   * @param string $url
+   * @param array $params
+   * @return string
+   */
+  function addUrlParam($url, array $params)
+  {
+    $query = parse_url($url, PHP_URL_QUERY);
+
+    // Returns the URL string with new parameters
+    if( $query ) {
+      $url .= '&' . http_build_query( $params );
+    } else {
+      $url .= '?' . http_build_query( $params );
+    }
+    return $url;
+  }
 }
