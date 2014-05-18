@@ -86,7 +86,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		}
 
 		$response = $response->response[0];
-		$this->user->profile->identifier    = (property_exists($response,'uid'))?$response->uid:"";
+		$this->user->profile->identifier    = (property_exists($response,'uid'))?$response->screen_name:"";
 		$this->user->profile->firstName     = (property_exists($response,'first_name'))?$response->first_name:"";
 		$this->user->profile->lastName      = (property_exists($response,'last_name'))?$response->last_name:"";
 		$this->user->profile->displayName   = (property_exists($response,'nickname'))?$response->nickname:"";
