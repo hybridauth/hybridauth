@@ -33,4 +33,4 @@ this requirement. If PHP 5.4+ functions or features are used then there
 must be a fallback for PHP 5.3.
 
 ## License
-Except otherwise noted, HybridAuth is released under dual licence MIT and GPL.
+Except where otherwise noted, HybridAuth is released under dual licence MIT and GPL.
