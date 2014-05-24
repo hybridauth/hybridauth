@@ -1,5 +1,19 @@
 Hybridauth Change log
 =====================
+2.2.0 - May 24 2014
+        New provider: Yammer
+        New provider: freeagent.com
+        New provider: Drupal OAuth 2
+        New provider: PayPal OAuth 2
+        New provider: PayPal OpenID
+        Removed provider: MySpace
+        Fixes and updates to the following providers: Foursquare, Yandex, Disqus, Vkontakte, Steam, Odnoklassniki.ru, LinkedIn, Facebook, Twitter
+        Log curl_exec error for failure tracing
+        If log file does not exists it will be created
+        Typo fixes
+        Many other little changes and fixes
+        
+
 
 2.1.1 - 29 dec 2012 
 	Remove OAuth PECL conflict with OAuth PHP Library (https://github.com/hybridauth/hybridauth/issues/59)
