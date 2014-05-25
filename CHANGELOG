@@ -12,6 +12,7 @@ Hybridauth Change log
         If log file does not exists it will be created
         Typo fixes
         Many other little changes and fixes
+        Enabled to have your own storage mechanism #164
         
 
 
