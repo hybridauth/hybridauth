@@ -91,7 +91,7 @@ class Hybrid_Providers_Yammer extends Hybrid_Provider_Model
 				throw new Exception( "Authentication failed! {$this->providerId} returned an error: $error", 5 );
 		}
 
-		// try to authenicate user
+		// try to authenticate user
 		$code = (array_key_exists('code',$_REQUEST))?$_REQUEST['code']:"";
 
 		try{

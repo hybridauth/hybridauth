@@ -14,7 +14,7 @@
  */
 class Hybrid_Auth 
 {
-	public static $version = "2.1.1-dev";
+	public static $version = "2.2.0-dev";
 
 	public static $config  = array();
 
@@ -70,8 +70,6 @@ class Hybrid_Auth
 		require_once $config["path_base"] . "Error.php";
 		require_once $config["path_base"] . "Logger.php";
 
-		require_once $config["path_base"] . "Storage.php";
-
 		require_once $config["path_base"] . "Provider_Adapter.php";
 
 		require_once $config["path_base"] . "Provider_Model.php";
@@ -84,13 +82,17 @@ class Hybrid_Auth
 		require_once $config["path_base"] . "User_Contact.php";
 		require_once $config["path_base"] . "User_Activity.php";
 
+        if(!class_exists("Hybrid_Storage")){
+            require_once $config["path_base"] . "Storage.php";
+        }
+
 		// hash given config
 		Hybrid_Auth::$config = $config;
 
-		// instace of log mng
+		// instance of log mng
 		Hybrid_Auth::$logger = new Hybrid_Logger();
 
-		// instace of errors mng
+		// instance of errors mng
 		Hybrid_Auth::$error = new Hybrid_Error();
 
 		// start session storage mng
@@ -161,7 +163,7 @@ class Hybrid_Auth
 	/**
 	* Hybrid storage system accessor
 	*
-	* Users sessions are stored using HybridAuth storage system ( HybridAuth 2.0 handle PHP Session only) and can be acessed directly by
+	* Users sessions are stored using HybridAuth storage system ( HybridAuth 2.0 handle PHP Session only) and can be accessed directly by
 	* Hybrid_Auth::storage()->get($key) to retrieves the data for the given key, or calling
 	* Hybrid_Auth::storage()->set($key, $value) to store the key => $value set.
 	*/
@@ -249,7 +251,7 @@ class Hybrid_Auth
 		if( ! $params ){ 
 			$params = Hybrid_Auth::storage()->get( "hauth_session.$providerId.id_provider_params" );
 			
-			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the sotred for this provider.", $params );
+			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the stored for this provider.", $params );
 		}
 
 		if( ! $params ){ 

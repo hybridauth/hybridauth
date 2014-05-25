@@ -43,27 +43,26 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		if (isset($_REQUEST['reverse_auth']) && ($_REQUEST['reverse_auth'] == 'yes')){
 			$stage1 = $this->api->signedRequest( $this->api->request_token_url, 'POST', array( 'x_auth_mode' => 'reverse_auth' ) ); 
 			if ( $this->api->http_code != 200 ){
-				throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+				throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
 			}
-			http_response_code(200);
 			$responseObj = array( 'x_reverse_auth_parameters' => $stage1, 'x_reverse_auth_target' => $this->config["keys"]["key"] );
-			header( "Content-Type: application/json" ) ;
-			$response = json_encode($responseObj,JSON_UNESCAPED_UNICODE);
+			$response = json_encode($responseObj);
+			header( "Content-Type: application/json", true, 200 ) ;
 			echo $response;
 			die();
 		}
  		$tokens = $this->api->requestToken( $this->endpoint );
  	
- 		// request tokens as recived from provider
+ 		// request tokens as received from provider
  		$this->request_tokens_raw = $tokens;
  	
  		// check the last HTTP status code returned
  		if ( $this->api->http_code != 200 ){
- 			throw new Exception( "Authentification failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
+ 			throw new Exception( "Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ), 5 );
  		}
  	
  		if ( ! isset( $tokens["oauth_token"] ) ){
- 			throw new Exception( "Authentification failed! {$this->providerId} returned an invalid oauth token.", 5 );
+ 			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid oauth token.", 5 );
  		}
  	
  		$this->token( "request_token"       , $tokens["oauth_token"] );

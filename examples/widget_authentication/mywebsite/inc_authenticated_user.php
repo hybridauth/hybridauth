@@ -57,7 +57,7 @@
 					<td align="left"><?php echo $user_data->identifier; ?></td>
 				  </tr>
 				  <tr>
-					<td nowrap><div align="right"><strong>Dispaly name</strong></div></td>
+					<td nowrap><div align="right"><strong>Display name</strong></div></td>
 					<td align="left"><?php echo $user_data->displayName; ?></td>
 				  </tr>
 				  <tr>

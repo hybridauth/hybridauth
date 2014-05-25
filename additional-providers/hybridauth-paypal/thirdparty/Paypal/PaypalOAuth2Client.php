@@ -68,7 +68,7 @@ class PaypalOAuth2Client extends OAuth2Client
 
 	private function request( $url, $params=false, $type="GET" )
 	{
-        $params = http_build_query( $params );
+        $params = http_build_query($params, '', '&');
 		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", $params );
 
@@ -130,11 +130,11 @@ class PaypalOAuth2Client extends OAuth2Client
 	{
 		if( json_decode( $result ) ) return json_decode( $result );
 
-		parse_str( $result, $ouput ); 
+		parse_str( $result, $output );
 
 		$result = new StdClass();
 
-		foreach( $ouput as $k => $v )
+		foreach( $output as $k => $v )
 			$result->$k = $v;
 
 		return $result;
