@@ -1,5 +1,9 @@
 Hybridauth Change log
 =====================
+2.2.1 - May 26 2014
+        Hotfix for undefined variable #213
+        Hotfix for BYO Storage Mechanism #215
+
 2.2.0 - May 24 2014
         New provider: Yammer
         New provider: freeagent.com
