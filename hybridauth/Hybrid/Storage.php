@@ -5,7 +5,7 @@
 * (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
-require_once realpath( dirname( __FILE__ ) )  . "/StorageInterface";
+require_once realpath( dirname( __FILE__ ) )  . "/StorageInterface.php";
 
 /**
  * HybridAuth storage manager
