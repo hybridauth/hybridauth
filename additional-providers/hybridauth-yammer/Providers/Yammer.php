@@ -32,7 +32,7 @@ class Hybrid_Providers_Yammer extends Hybrid_Provider_Model
 	function initialize()
 	{
 
-		if ( ! $this->config["keys"]["key"] || ! $this->config["keys"]["secret"] ){
+		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
 				throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
 		}
 
@@ -44,7 +44,7 @@ class Hybrid_Providers_Yammer extends Hybrid_Provider_Model
 		require_once Hybrid_Auth::$config["path_libraries"] . "Yammer/Yammer.php";
 
 		// create a new OAuth2 client instance
-		$this->api = new YammerOAuth2Client( $this->config["keys"]["key"], $this->config["keys"]["secret"], $this->endpoint );
+		$this->api = new YammerOAuth2Client( $this->config["keys"]["id"], $this->config["keys"]["secret"], $this->endpoint );
 
 		// If we have an access token, set it
 		if( $this->token( "access_token" ) ){
