@@ -21,9 +21,9 @@ class YammerOAuth2Client extends OAuth2Client
 		);
 
 		$response = $this->request( $this->token_url, $params, $this->curl_authenticate_method );
-
+		
 		$response = $this->parseRequestResult( $response );
-
+		
 		if( ! $response || ! isset( $response->access_token ) ){
 			throw new Exception( "The Authorization Service has return: " . $response->error );
 		}
@@ -163,15 +163,14 @@ class OAuth2Client
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
 		}
-
 		$parameters[$this->sign_token_name] = $this->access_token;
+		$this->curl_header = array( 'Authorization: Bearer ' . $this->access_token );
 		$response = null;
-
+		
 		switch( $method ){
 			case 'GET'  : $response = $this->request( $url, $parameters, "GET"  ); break;
 			case 'POST' : $response = $this->request( $url, $parameters, "POST" ); break;
 		}
-
 		if( $response && $this->decode_json ){
 			$response = json_decode( $response );
 		}
@@ -240,9 +239,8 @@ class OAuth2Client
 		curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $this->access_token ) );
-
-
+		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
+		
 		if($this->curl_proxy){
 			curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
 		}
@@ -253,6 +251,7 @@ class OAuth2Client
 		}
 
 		$response = curl_exec($ch);
+
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
 
