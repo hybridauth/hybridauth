@@ -51,6 +51,18 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 			$this->user->profile->displayName = @ $data->login;
 		}
 
+		// request user emails from github api
+		if( ! $data->email ){
+			try{
+				$emails = $this->api->api("user/emails");
+
+				$this->user->profile->email = $emails[0]->email;
+			}
+			catch( GithubApiException $e ){
+				throw new Exception( "User email request failed! {$this->providerId} returned an error: $e", 6 );
+			}
+		}
+
 		return $this->user->profile;
 	}
 }
