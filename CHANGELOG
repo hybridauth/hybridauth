@@ -2,6 +2,7 @@ Hybridauth Change log
 =====================
 2.2.2 - 
         Fixing fatal error in Yammer Provider #226
+        #227 + #229 Github: getUserProfile() does not contain email address fix
 
 2.2.1 - May 26 2014
         Hotfix for undefined variable #213
