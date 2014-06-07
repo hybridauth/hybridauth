@@ -125,32 +125,59 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
   }
 
   /**
-   * load the user profile from the IDp api client
+   * Load the user profile from the api client.
    */
-  function getUserProfile()
-  {
-    // refresh tokens if needed
+  function getUserProfile() {
+    // Refresh tokens if needed.
     $this->refreshToken();
 
-    // get user profile
+    // Get user profile.
     $response = $this->post('/oauth2/user/profile');
     if (!isset($response->uid)) {
       throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
     }
+    // Covert the response to an array.
+    $response = json_decode(json_encode($response), true);
 
-    // match the fields of the returned data with
-    // the standard fields of the hybridauth profile
-    $this->user->profile->identifier    = (property_exists($response,'uid'))?$response->uid:"";
-    $this->user->profile->displayName   = (property_exists($response,'name'))?$response->name:"";
-    $this->user->profile->photoURL      = (property_exists($response,'picture'))?$response->picture:"";
-    $this->user->profile->email         = (property_exists($response,'mail'))?$response->mail:"";
-    $this->user->profile->emailVerified = (property_exists($response,'mail'))?$response->mail:"";
-    $this->user->profile->language      = (property_exists($response,'language'))?$response->language:"";
+    // Get profile field mappings.
+    // Config settings will override default settings.
+    $fields = array();
+    if (isset($this->config['profile_fields'])
+      and is_array($this->config['profile_fields'])) {
+      $fields += $this->config['profile_fields'];
+    }
+    $fields += array(
+      'identifier' => 'uid',
+      'displayName' => 'name',
+      'photoURL' => 'picture.url',
+      'email' => 'mail',
+      'emailVerified' => 'mail',
+      'language' => 'language',
+    );
 
-    // pass as well all the returned data
-    // on an extra field called 'remote_profile'
-    $this->user->profile->remote_profile = $response;
+    // Match the fields of the returned data with
+    // the fields of the hybridauth profile.
+    $profile = (object) array();
+    foreach ($fields as $field => $field_remote) {
+      if (empty($field)) continue;
+      if (empty($field_remote)) continue;
 
+      $arr_keys = explode('.', $field_remote);
+      $value = $response;
+      foreach ($arr_keys as $key) {
+        if (isset($value[$key])) {
+          $value = $value[$key];
+        }
+        else {
+          $value = NULL;
+          break;
+        }
+        $profile->$field = $value;
+      }
+    }
+
+    // Set and return the profile.
+    $this->user->profile = $profile;
     return $this->user->profile;
   }
 }
