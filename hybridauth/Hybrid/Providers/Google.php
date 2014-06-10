@@ -183,44 +183,46 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	
 			if( ! $response ){
 				return ARRAY();
-			}		
-	
-			foreach( $response->feed->entry as $idx => $entry ){
-				$uc = new Hybrid_User_Contact();
-				$uc->email 			= isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : ''; 
-				$uc->displayName 	= isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';  
-				$uc->identifier		= ($uc->email!='')?$uc->email:'';
-				$uc->description 	= '';
-				if( property_exists($entry,'link') ){
-					/**
-					 * sign links with access_token
-					 */
-					if(is_array($entry->link)){
-						foreach($entry->link as $l){
-							if( property_exists($l,'gd$etag') && $l->type=="image/*"){
-								$uc->photoURL = $this->addUrlParam($l->href, array('access_token' => $this->api->access_token));
-							} else if($l->type=="self"){
-								$uc->profileURL = $this->addUrlParam($l->href, array('access_token' => $this->api->access_token));
+			}
+
+			if (isset($response->feed->entry)) {
+				foreach( $response->feed->entry as $idx => $entry ){
+					$uc = new Hybrid_User_Contact();
+					$uc->email 			= isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : '';
+					$uc->displayName 	= isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';
+					$uc->identifier		= ($uc->email!='')?$uc->email:'';
+					$uc->description 	= '';
+					if( property_exists($entry,'link') ){
+						/**
+						 * sign links with access_token
+						 */
+						if(is_array($entry->link)){
+							foreach($entry->link as $l){
+								if( property_exists($l,'gd$etag') && $l->type=="image/*"){
+									$uc->photoURL = $this->addUrlParam($l->href, array('access_token' => $this->api->access_token));
+								} else if($l->type=="self"){
+									$uc->profileURL = $this->addUrlParam($l->href, array('access_token' => $this->api->access_token));
+								}
 							}
 						}
+					} else {
+						$uc->profileURL = '';
 					}
-				} else {
-					$uc->profileURL = '';
-				}
-				if( property_exists($response,'website') ){
-					if(is_array($response->website)){
-						foreach($response->website as $w){
-							if($w->primary == true) $uc->webSiteURL = $w->value;
+					if( property_exists($response,'website') ){
+						if(is_array($response->website)){
+							foreach($response->website as $w){
+								if($w->primary == true) $uc->webSiteURL = $w->value;
+							}
+						} else {
+							$uc->webSiteURL = $response->website->value;
 						}
 					} else {
-						$uc->webSiteURL = $response->website->value;
+						$uc->webSiteURL = '';
 					}
-				} else {
-					$uc->webSiteURL = '';
+
+					$contacts[] = $uc;
 				}
-	
-				$contacts[] = $uc;
-			}  
+			}
 		}
 		
 		// Google social contacts
