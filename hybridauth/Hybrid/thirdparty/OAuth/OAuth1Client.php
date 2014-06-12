@@ -118,21 +118,21 @@ class OAuth1Client{
 	/** 
 	* POST wrapper for provider apis request
 	*/
-	function post($url, $parameters = array())
+	function post($url, $parameters = array(), $body = NULL)
 	{
-		return $this->api($url, 'POST', $parameters); 
+		return $this->api($url, 'POST', $parameters, $body);
 	}
 
 	/** 
 	* Format and sign an oauth for provider api 
 	*/ 
-	function api( $url, $method = 'GET', $parameters = array() )
+	function api( $url, $method = 'GET', $parameters = array(), $body = NULL )
 	{
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
 		}
 
-		$response = $this->signedRequest( $url, $method, $parameters );
+		$response = $this->signedRequest( $url, $method, $parameters, $body );
 
 		if( $this->decode_json ){
 			$response = json_decode( $response );
@@ -144,13 +144,17 @@ class OAuth1Client{
 	/** 
 	* Make signed request  
 	*/ 
-	function signedRequest( $url, $method, $parameters )
+	function signedRequest( $url, $method, $parameters, $body = NULL )
 	{
 		$request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
 		$request->sign_request($this->sha1_method, $this->consumer, $this->token);
 		switch ($method) {
 			case 'GET': return $this->request( $request->to_url(), 'GET' );
-			default   : return $this->request( $request->get_normalized_http_url(), $method, $request->to_postdata(), $request->to_header() ) ;
+			default   :
+		if ($body)
+			return $this->request( $request->to_url(), $method, $body, $request->to_header() );
+		else
+			return $this->request( $request->get_normalized_http_url(), $method, $request->to_postdata(), $request->to_header() ) ;
 		}
 	}
 	
