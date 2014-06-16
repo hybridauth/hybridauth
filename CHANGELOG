@@ -4,6 +4,7 @@ Hybridauth Change log
 	#234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
         Fixing fatal error in Yammer Provider #226
         #227 + #229 Github: getUserProfile() does not contain email address fix
+        OAuth1Client: Allow to set a request body and a content type
 
 2.2.1 - May 26 2014
         Hotfix for undefined variable #213
