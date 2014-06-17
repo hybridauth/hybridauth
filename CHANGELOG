@@ -1,6 +1,7 @@
 Hybridauth Change log
 =====================
 2.2.2 -
+	Fixes to Disqus provider, which now works properly (the old one was not working)
 	#234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
         Fixing fatal error in Yammer Provider #226
         #227 + #229 Github: getUserProfile() does not contain email address fix
