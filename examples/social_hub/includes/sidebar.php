@@ -40,7 +40,6 @@
 			"Yahoo"     ,
 			"Facebook"  ,
 			"Twitter"   ,
-			"MySpace"   ,
 			"Live"      ,
 			"LinkedIn"  ,
 			"Foursquare",

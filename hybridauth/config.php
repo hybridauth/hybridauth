@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 // ----------------------------------------------------------------------------------------
@@ -48,11 +48,6 @@ return
 			"Live" => array ( 
 				"enabled" => true,
 				"keys"    => array ( "id" => "", "secret" => "" ) 
-			),
-
-			"MySpace" => array ( 
-				"enabled" => true,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
 			),
 
 			"LinkedIn" => array ( 

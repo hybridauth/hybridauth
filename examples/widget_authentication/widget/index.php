@@ -119,8 +119,8 @@ HR {
 		die();
 	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" >
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>HybridAuth Social Sing-on</title> 
 	<style>
@@ -143,7 +143,7 @@ HR {
 
 					switch( idp ){
 						case "google"  : case "twitter" : case "yahoo" : case "facebook": case "aol" : 
-						case "vimeo" : case "myspace" : case "tumblr" : case "lastfm" : case "twitter" : 
+						case "vimeo" : case "tumblr" : case "lastfm" : case "twitter" : 
 						case "linkedin" : 
 										start_auth( "?provider=" + idp );
 										break; 
@@ -225,7 +225,6 @@ HR {
 		  <tr>
 			<td align="center"><img class="idpico" idp="yahoo" src="images/icons/yahoo.png" title="yahoo" /></td>
 			<td align="center"><img class="idpico" idp="flickr" src="images/icons/flickr.png" title="flickr" /></td>
-			<td align="center"><img class="idpico" idp="myspace" src="images/icons/myspace.png" title="myspace" /></td>  
 			<td align="center"><img class="idpico" idp="linkedin" src="images/icons/linkedin.png" title="linkedin" /></td>
 		  </tr>
 		  <tr> 

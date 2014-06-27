@@ -15,7 +15,7 @@
 		header( "Location: login.php?error=Your are not connected to $provider or your session has expired" );
 	}
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -32,7 +32,7 @@
 			<legend>Update your status</legend> 
 			<b>Important</b>: 
 			<br />
-			1- Currently only <b>Facebook, MySpace, Twitter and LinkedIn</b> do support this feature! Please refer to the user guide to know more about each adapters capabilities. <a href='http://hybridauth.sourceforge.net/userguide.html'>http://hybridauth.sourceforge.net/userguide.html</a>
+			1- Currently only <b>Facebook, Twitter and LinkedIn</b> do support this feature! Please refer to the user guide to know more about each adapters capabilities. <a href='http://hybridauth.sourceforge.net/userguide.html'>http://hybridauth.sourceforge.net/userguide.html</a>
 			<br /> 
 			2- Also, some providers will truncate the status. for example, the text of the status update must be 140 characters max with twitter.
 			<hr /> 

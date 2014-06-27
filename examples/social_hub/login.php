@@ -57,7 +57,7 @@
 		}
     endif;
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <link rel="stylesheet" href="public/css.css" type="text/css">
@@ -85,7 +85,6 @@
 			&nbsp;&nbsp;<a href="?provider=Yahoo">Sign-in with Yahoo</a><br /> 
 			&nbsp;&nbsp;<a href="?provider=Facebook">Sign-in with Facebook</a><br />
 			&nbsp;&nbsp;<a href="?provider=Twitter">Sign-in with Twitter</a><br />
-			&nbsp;&nbsp;<a href="?provider=MySpace">Sign-in with MySpace</a><br />  
 			&nbsp;&nbsp;<a href="?provider=Live">Sign-in with Windows Live</a><br />  
 			&nbsp;&nbsp;<a href="?provider=LinkedIn">Sign-in with LinkedIn</a><br /> 
 			&nbsp;&nbsp;<a href="?provider=Foursquare">Sign-in with Foursquare</a><br /> 
@@ -134,7 +133,7 @@
 	<tr>  
 	<td>
 	<hr /> 
-	This example show how users can login with providers using <b>HybridAuth</b>. It also show how to grab their profile, update their status or to grab their freinds list from services like facebook, twitter, myspace.
+	This example show how users can login with providers using <b>HybridAuth</b>. It also show how to grab their profile, update their status or to grab their freinds list from services like facebook, twitter.
 	<br />
 	<br />
 	If you want even more providers please goto to HybridAuth web site and download the <a href="http://hybridauth.sourceforge.net/download.html">Additional Providers Package</a>.

@@ -1,6 +1,7 @@
 <?php
 	$HYBRIDAUTH_VERSION = "2.2.2-dev";
-?><html> 
+?><!DOCTYPE html>
+<html lang="en">
 <head>
 <title>HybridAuth Installer</title>
 <meta name="robots" content="NOINDEX, NOFOLLOW">  
@@ -119,7 +120,6 @@ ul li label {
 	{
 		$string = strip_tags($string);
 		$string = htmlentities($string, ENT_QUOTES, 'UTF-8');
-		$string = strip_image_tags($string);
 		return $string;
 	}
 
@@ -175,7 +175,7 @@ ul li label {
 									"provider_name"     => "Foursquare", 
 									"require_client_id" => TRUE, 
 									"callback"          => TRUE,
-									"new_app_link"      => "hhttps://foursquare.com/developers/apps",
+									"new_app_link"      => "https://foursquare.com/developers/apps",
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html",
 								)
 								,

@@ -33,7 +33,7 @@ A VERY basic example showing how to integrate Facebook Javascript SDK side by si
 	// user signed in with facebook
 	else{
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

@@ -1,11 +1,13 @@
 Hybridauth Change log
 =====================
 2.2.2 -
-	Fixes to Disqus provider, which now works properly (the old one was not working)
+	#239 Fixes to Disqus provider, which now works properly (the old one was not working)
 	#234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
-        Fixing fatal error in Yammer Provider #226
+        #226 Fixing fatal error in Yammer Provider
         #227 + #229 Github: getUserProfile() does not contain email address fix
-        OAuth1Client: Allow to set a request body and a content type
+        #236 + #237 OAuth1Client: Allow to set a request body and a content type
+	#241 Updates to Install.php
+	Updating and fixing examples #208
 
 2.2.1 - May 26 2014
         Hotfix for undefined variable #213
