@@ -1,5 +1,5 @@
 <?php
-	$HYBRIDAUTH_VERSION = "2.1.1-dev";
+	$HYBRIDAUTH_VERSION = "2.2.2-dev";
 ?><html> 
 <head>
 <title>HybridAuth Installer</title>
@@ -80,7 +80,7 @@ ul li label {
 <?php 
 	$CONFIG_TEMPLATE                = "";
 
-   /**
+	/**
 	* Utility function, return the current url 
 	*/
 	function getCurrentUrl() 
@@ -109,6 +109,19 @@ ul li label {
 		// return current url
 		return $url;
 	}
+	
+	/**
+	 * Sanitize the inputed string to prevent XSS attacks
+	 * @param string $string
+	 * @return string
+	 */
+	function stringSanitization($string)
+	{
+		$string = strip_tags($string);
+		$string = htmlentities($string, ENT_QUOTES, 'UTF-8');
+		$string = strip_image_tags($string);
+		return $string;
+	}
 
 	$GLOBAL_HYBRID_AUTH_URL_BASE    = getCurrentUrl();
 	$GLOBAL_HYBRID_AUTH_URL_BASE    = str_ireplace( "install.php", "", $GLOBAL_HYBRID_AUTH_URL_BASE );
@@ -121,7 +134,7 @@ ul li label {
 									"label"             => "Facebook",
 									"provider_name"     => "Facebook", 
 									"require_client_id" => TRUE, 
-									"new_app_link"      => "https://www.facebook.com/developers/",
+									"new_app_link"      => "https://developers.facebook.com/",
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Facebook.html",
 								)
 								,
@@ -137,7 +150,7 @@ ul li label {
 								ARRAY( 
 									"label"             => "Twitter",
 									"provider_name"     => "Twitter",  
-									"new_app_link"      => "https://dev.twitter.com/apps",
+									"new_app_link"      => "https://apps.twitter.com/",
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Twitter.html",
 								)
 								,
@@ -153,15 +166,8 @@ ul li label {
 									"label"             => "Live",
 									"provider_name"     => "Windows Live", 
 									"require_client_id" => TRUE, 
-									"new_app_link"      => "https://manage.dev.live.com/ApplicationOverview.aspx",
+									"new_app_link"      => "https://account.live.com/developers/applications/index",
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Live.html",
-								)
-								,
-								ARRAY( 
-									"label"             => "MySpace",
-									"provider_name"     => "MySpace", 
-									"new_app_link"      => "http://www.developer.myspace.com/",
-									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_MySpace.html",
 								)
 								,
 								ARRAY( 
@@ -169,7 +175,7 @@ ul li label {
 									"provider_name"     => "Foursquare", 
 									"require_client_id" => TRUE, 
 									"callback"          => TRUE,
-									"new_app_link"      => "https://www.foursquare.com/oauth/",
+									"new_app_link"      => "hhttps://foursquare.com/developers/apps",
 									"userguide_section" => "http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html",
 								)
 								,
@@ -199,7 +205,8 @@ ul li label {
 		$CONFIG_TEMPLATE = file_get_contents( $GLOBAL_HYBRID_AUTH_PATH_BASE . "Hybrid/resources/config.php.tpl" );
  
 		foreach( $_POST AS $k => $v ):
-			$v = strip_tags( $v );
+			$v = stringSanitization($v);
+			$k = stringSanitization($k);
 			$z = "#$k#";
 			
 			$CONFIG_TEMPLATE = str_replace( $z, $v, $CONFIG_TEMPLATE );
@@ -386,11 +393,7 @@ ul li label {
 							<br />
 							<?php echo $provider_callback_url ?>
 						</p>
-					<?php endif; ?> 
-
-					<?php if ( $provider == "MySpace" ) : ?>
-						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>External Url</b> and <b>External Callback Validation</b> fields. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p>
-					<?php endif; ?> 
+					<?php endif; ?>
 
 					<?php if ( $provider == "Live" ) : ?>
 						<p><?php echo "<b>" . ++$setupsteps . "</b>." ?> Put your website domain in the <b>Redirect Domain</b> field. It should match with the current hostname <em style="color:#CB4B16;"><?php echo $_SERVER["SERVER_NAME"] ?></em>.</p>
