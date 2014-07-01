@@ -7,8 +7,9 @@ Hybridauth Change log
         #227 + #229 Github: getUserProfile() does not contain email address fix
         #236 + #237 OAuth1Client: Allow to set a request body and a content type
 	#241 Updates to Install.php
-	Updating and fixing examples #208
-
+	#208 Updating and fixing examples
+	#244 OAuth if the class already exists, use the current class
+	
 2.2.1 - May 26 2014
         Hotfix for undefined variable #213
         Hotfix for BYO Storage Mechanism #215
