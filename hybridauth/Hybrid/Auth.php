@@ -82,9 +82,9 @@ class Hybrid_Auth
 		require_once $config["path_base"] . "User_Contact.php";
 		require_once $config["path_base"] . "User_Activity.php";
 
-        if(!class_exists("Hybrid_Storage")){
-            require_once $config["path_base"] . "Storage.php";
-        }
+		if ( ! class_exists("Hybrid_Storage", false) ){
+			require_once $config["path_base"] . "Storage.php";
+        	}
 
 		// hash given config
 		Hybrid_Auth::$config = $config;
