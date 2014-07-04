@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -17,7 +17,10 @@
  */
 class Hybrid_Provider_Model_OpenID extends Hybrid_Provider_Model
 {
-	/* Openid provider identifier */
+	/**
+	 * Openid provider identifier
+	 * @var string
+	 */
 	public $openidIdentifier = ""; 
 
 	// --------------------------------------------------------------------

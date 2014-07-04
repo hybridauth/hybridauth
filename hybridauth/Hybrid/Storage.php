@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 require_once realpath( dirname( __FILE__ ) )  . "/StorageInterface.php";
@@ -12,6 +12,9 @@ require_once realpath( dirname( __FILE__ ) )  . "/StorageInterface.php";
  */
 class Hybrid_Storage implements Hybrid_Storage_Interface
 {
+	/**
+	 * Constructor
+	 */
 	function __construct()
 	{ 
 		if ( ! session_id() ){
@@ -23,8 +26,13 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 		$this->config( "php_session_id", session_id() );
 		$this->config( "version", Hybrid_Auth::$version );
 	}
-
-	public function config($key, $value=null) 
+	
+	/**
+	 * Config
+	 * @param String $key
+	 * @param String $value
+	 */
+	public function config($key, $value = null) 
 	{
 		$key = strtolower( $key );  
 
@@ -37,7 +45,11 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 
 		return NULL; 
 	}
-
+	
+	/**
+	 * Get a key
+	 * @param String $key
+	 */
 	public function get($key) 
 	{
 		$key = strtolower( $key );  
@@ -48,19 +60,31 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 
 		return NULL; 
 	}
-
+	
+	/**
+	 * GEt a set of key and value
+	 * @param String $key
+	 * @param String $value
+	 */
 	public function set( $key, $value )
 	{
 		$key = strtolower( $key ); 
 
 		$_SESSION["HA::STORE"][$key] = serialize( $value ); 
 	}
-
+	
+	/**
+	 * Clear session storage
+	 */
 	function clear()
 	{ 
 		$_SESSION["HA::STORE"] = ARRAY(); 
-	} 
-
+	}
+	
+	/**
+	 * Delete a specific key
+	 * @param String $key
+	 */
 	function delete($key)
 	{
 		$key = strtolower( $key );  
@@ -71,7 +95,11 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 		    $_SESSION["HA::STORE"] = $f;
 		} 
 	}
-
+	
+	/**
+	 * Delete a set
+	 * @param String $key
+	 */
 	function deleteMatch($key)
 	{
 		$key = strtolower( $key ); 
@@ -87,7 +115,11 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 			
 		}
 	}
-
+	
+	/**
+	 * Get the storage session data into an array
+	 * @return Array
+	 */
 	function getSessionData()
 	{
 		if( isset( $_SESSION["HA::STORE"] ) ){ 
@@ -96,7 +128,11 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 
 		return NULL; 
 	}
-
+	
+	/**
+	 * Restore the storage back into session from an array
+	 * @param Array $sessiondata
+	 */
 	function restoreSessionData( $sessiondata = NULL )
 	{ 
 		$_SESSION["HA::STORE"] = unserialize( $sessiondata );

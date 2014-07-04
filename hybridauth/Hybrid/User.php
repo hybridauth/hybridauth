@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -10,17 +10,26 @@
  */
 class Hybrid_User 
 {
-	/* The ID (name) of the connected provider */
+	/**
+	 * The ID (name) of the connected provider
+	 * @var Numeric/String
+	 */
 	public $providerId = NULL;
 
-	/* timestamp connection to the provider */
+	/**
+	 * timestamp connection to the provider
+	 * @var timestamp
+	 */
 	public $timestamp = NULL; 
 
-	/* user profile, contains the list of fields available in the normalized user profile structure used by HybridAuth. */
+	/**
+	 * User profile, contains the list of fields available in the normalized user profile structure used by HybridAuth.
+	 * @var object
+	 */
 	public $profile = NULL;
 
 	/**
-	* initialize the user object.
+	* Initialize the user object.
 	*/
 	function __construct()
 	{

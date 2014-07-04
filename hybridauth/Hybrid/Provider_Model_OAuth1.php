@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -19,11 +19,21 @@
  */
 class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model
 {
-	public $request_tokens_raw = null; // request_tokens as received from provider
-	public $access_tokens_raw  = null; // access_tokens as received from provider
+	/**
+	 * request_tokens as received from provider
+	 * @var object
+	 */
+	public $request_tokens_raw = null;
 	
 	/**
-	* try to get the error message from provider api
+	 * access_tokens as received from provider
+	 * @var object
+	 */
+	public $access_tokens_raw  = null;
+	
+	/**
+	* Try to get the error message from provider api
+	* @param Numeric $code
 	*/ 
 	function errorMessageByStatus( $code = null ) { 
 		$http_status_codes = ARRAY(

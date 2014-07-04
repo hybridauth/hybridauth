@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -17,19 +17,34 @@
  */
 class Hybrid_Provider_Adapter
 {
-	/* Provider ID (or unique name) */
+	/**
+	 * Provider ID (or unique name)
+	 * @var Numeric/String
+	 */
 	public $id       = NULL ;
 
-	/* Provider adapter specific config */
+	/**
+	 * Provider adapter specific config
+	 * @var Array
+	 */
 	public $config   = NULL ;
 
-	/* Provider adapter extra parameters */
+	/**
+	 * Provider adapter extra parameters
+	 * @var array
+	 */
 	public $params   = NULL ; 
 
-	/* Provider adapter wrapper path */
+	/**
+	 * Provider adapter wrapper path
+	 * @var String
+	 */
 	public $wrapper  = NULL ;
 
-	/* Provider adapter instance */
+	/**
+	 * Provider adapter instance
+	 * @var object
+	 */
 	public $adapter  = NULL ;
 
 	// --------------------------------------------------------------------

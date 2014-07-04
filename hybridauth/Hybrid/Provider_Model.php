@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -21,27 +21,48 @@
  */
 abstract class Hybrid_Provider_Model
 {
-	/* IDp ID (or unique name) */
+	/**
+	 * IDp ID (or unique name)
+	 * @var Numeric/String
+	 */
 	public $providerId = NULL;
 
-	/* specific provider adapter config */
+	/**
+	 * specific provider adapter config
+	 * @var array
+	 */
 	public $config     = NULL;
 
-   	/* provider extra parameters */
+   	/**
+	 * provider extra parameters
+	 * @var array
+	 */
 	public $params     = NULL;
 
-	/* Endpoint URL for that provider */
+	/**
+	 * Endpoint URL for that provider
+	 * @var String
+	 */
 	public $endpoint   = NULL; 
 
-	/* Hybrid_User obj, represents the current loggedin user */
+	/**
+	 * Hybrid_User obj, represents the current loggedin user
+	 * @var object
+	 */
 	public $user       = NULL;
 
-	/* the provider api client (optional) */
+	/**
+	 * the provider api client (optional)
+	 * @var String
+	 */
 	public $api        = NULL; 
 
 	/**
-	* common providers adapter constructor
-	*/
+	 * Common providers adapter constructor
+	 * @param Numeric/String $providerId
+	 * @param Array $config
+	 * @param Array $params
+	 */
 	function __construct( $providerId, $config, $params = NULL )
 	{
 		# init the IDp adapter parameters, get them from the cache if possible

@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -18,12 +18,16 @@
  * Hybrid/thirdparty/OAuth/OAuth2Client.php
  */
 class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model
-{
-	// default permissions 
+{ 
+	/**
+	 * default permissions
+	 * @var string
+	 */
 	public $scope = "";
 
 	/**
-	* try to get the error message from provider api
+	* Try to get the error message from provider api
+	* @param Numeric $code
 	*/ 
 	function errorMessageByStatus( $code = null ) { 
 		$http_status_codes = ARRAY(

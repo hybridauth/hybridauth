@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
  
 /**
@@ -10,6 +10,9 @@
  */
 class Hybrid_Logger
 {
+	/**
+	 * Constructor
+	 */
 	function __construct()
 	{
  		// if debug mode is set to true, then check for the writable log file
@@ -25,7 +28,12 @@ class Hybrid_Logger
 			}
 		} 
 	}
-
+	
+	/**
+	 * Debug
+	 * @param String $message
+	 * @param Object $object
+	 */
 	public static function debug( $message, $object = NULL )
 	{
 		if( Hybrid_Auth::$config["debug_mode"] ){
@@ -39,7 +47,11 @@ class Hybrid_Logger
 			);
 		}
 	}
-
+	
+	/**
+	 * Info
+	 * @param String $message
+	 */
 	public static function info( $message )
 	{ 
 		if( Hybrid_Auth::$config["debug_mode"] ){
@@ -53,7 +65,12 @@ class Hybrid_Logger
 			);
 		}
 	}
-
+	
+	/**
+	 * Error
+	 * @param String $message Error message
+	 * @param Object $object
+	 */
 	public static function error($message, $object = NULL)
 	{ 
 		if( Hybrid_Auth::$config["debug_mode"] ){
