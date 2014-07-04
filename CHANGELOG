@@ -9,6 +9,7 @@ Hybridauth Change log
 	#241 Updates to Install.php
 	#208 Updating and fixing examples
 	#244 OAuth if the class already exists, use the current class
+	#246 Fixing version numbers
 	
 2.2.1 - May 26 2014
         Hotfix for undefined variable #213
