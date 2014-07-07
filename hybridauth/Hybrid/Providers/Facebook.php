@@ -179,7 +179,15 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$this->user->profile->email         = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->emailVerified = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->region        = (array_key_exists("hometown",$data)&&array_key_exists("name",$data['hometown']))?$data['hometown']["name"]:"";
-
+		
+		if(!empty($this->user->profile->region )){
+			$regionArr = explode(',',$this->user->profile->region );
+			if(count($regionArr) > 1){
+				$this->user->profile->city = trim($regionArr[0]);
+				$this->user->profile->country = trim($regionArr[1]);
+			}
+		}
+		
 		if( array_key_exists('birthday',$data) ) {
 			list($birthday_month, $birthday_day, $birthday_year) = explode( "/", $data['birthday'] );
 
