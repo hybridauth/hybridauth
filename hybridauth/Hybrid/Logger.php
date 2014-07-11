@@ -17,13 +17,15 @@ class Hybrid_Logger
 	{
  		// if debug mode is set to true, then check for the writable log file
  		if ( Hybrid_Auth::$config["debug_mode"] ){
- 			if ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) ){
+                        if ( ! isset(Hybrid_Auth::$config["debug_file"]) ) {
+                            throw new Exception( "'debug_mode' is set to 'true' but no log file path 'debug_file' is set.", 1 );
+                        }
+ 			elseif ( ! file_exists( Hybrid_Auth::$config["debug_file"] ) && ! is_writable( Hybrid_Auth::$config["debug_file"]) ){
                                 if ( ! touch( Hybrid_Auth::$config["debug_file"] ) ){
                                         throw new Exception( "'debug_mode' is set to 'true', but the file " . Hybrid_Auth::$config['debug_file'] . " in 'debug_file' can not be created.", 1 );
                                 }
 			}
- 
-			if ( ! is_writable( Hybrid_Auth::$config["debug_file"] ) ){
+			elseif ( ! is_writable( Hybrid_Auth::$config["debug_file"] ) ){
 				throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writable file.", 1 );
 			}
 		} 
