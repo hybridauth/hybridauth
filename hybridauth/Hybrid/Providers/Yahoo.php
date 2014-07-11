@@ -115,6 +115,10 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 			$uc->email        = $this->selectEmail( $item->fields );
 			$uc->displayName  = $this->selectName( $item->fields );
 			$uc->photoURL     = $this->selectPhoto( $item->fields );
+			
+			// Add by MJM3D
+			$uc->yahooMessenger	= $this->selectYahooId( $item->fields );
+			$uc->hotMail		= $this->selectOtherId( $item->fields );
 
 			$contacts[] = $uc;
 		}
@@ -219,6 +223,20 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 	{
 		$s = $this->select($v, 'email');
 		return ($s)?$s->value:"";
+	}
+
+	// Add by MJM3D
+	function selectYahooId( $v )
+	{
+		$s = $this->select($v, 'yahooid');
+		return ($s)? $s->value :"";
+	}
+
+	// Add by MJM3D
+	function selectOtherId( $v )
+	{
+		$s = $this->select($v, 'otherid');
+		return ($s)? $s->value :"";
 	}
 
 	public function getCurrentUserId()
