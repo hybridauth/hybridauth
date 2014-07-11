@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -16,7 +16,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	// or here: http://discovery-check.appspot.com/ (unofficial but up to date)
 
 	// default permissions 
-	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/";
+	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds/";
 
 	/**
 	* IDp wrappers initializer 
@@ -66,8 +66,8 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->refreshToken();
 
 		// ask google api for user infos
-		if (strpos($this->scope, '/auth/userinfo.email') !== false) {
-			$verified = $this->api->api( "https://www.googleapis.com/oauth2/v2/userinfo" );
+		if (strpos($this->scope, '/auth/plus.profile.emails.read') !== false) {
+			$verified = $this->api->api( "https://www.googleapis.com/plus/v1/people/me" );
 
 			if ( ! isset( $verified->id ) || isset( $verified->error ) )
 				$verified = new stdClass();
@@ -157,7 +157,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		} else {
 			$this->user->profile->birthDay=0;$this->user->profile->birthMonth=0;$this->user->profile->birthYear=0;
 		}
-		
+                
 		return $this->user->profile;
 	}
 
