@@ -54,7 +54,7 @@ class Hybrid_Logger
 	 */
 	public static function info( $message )
 	{ 
-		if( Hybrid_Auth::$config["debug_mode"] ){
+		if( in_array(Hybrid_Auth::$config["debug_mode"], array(true, 'info'), true) ){
 			$datetime = new DateTime();
 			$datetime =  $datetime->format(DATE_ATOM);
 
@@ -73,7 +73,7 @@ class Hybrid_Logger
 	 */
 	public static function error($message, $object = NULL)
 	{ 
-		if( Hybrid_Auth::$config["debug_mode"] ){
+		if( in_array(Hybrid_Auth::$config["debug_mode"], array(true, 'info', 'error'), true) ){
 			$datetime = new DateTime();
 			$datetime =  $datetime->format(DATE_ATOM);
 
