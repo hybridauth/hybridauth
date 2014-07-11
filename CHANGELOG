@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.2.2 -
+2.2.2 - July 11 2014
 	#239 Fixes to Disqus provider, which now works properly (the old one was not working)
 	#234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
         #226 Fixing fatal error in Yammer Provider
@@ -10,6 +10,7 @@ Hybridauth Change log
 	#208 Updating and fixing examples
 	#244 OAuth if the class already exists, use the current class
 	#246 Fixing version numbers
+        Few small fixes and updates to the examples
 	
 2.2.1 - May 26 2014
         Hotfix for undefined variable #213
