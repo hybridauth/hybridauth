@@ -68,7 +68,12 @@ class Hybrid_Storage implements Hybrid_Storage_Interface
 	 */
 	public function set( $key, $value )
 	{
-		$key = strtolower( $key ); 
+		$key = strtolower( $key );
+                
+                if(is_array($value))
+                {
+                    $value = implode($value);
+                }
 
 		$_SESSION["HA::STORE"][$key] = serialize( (string)$value );
 	}
