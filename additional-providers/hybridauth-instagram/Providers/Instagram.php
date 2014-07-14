@@ -42,6 +42,8 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->photoURL    = $data->data->profile_picture;
 
 		$this->user->profile->webSiteURL  = $data->data->website; 
+		
+		$this->user->profile->username    = $data->data->username;	
 
 		return $this->user->profile;
 	}
