@@ -119,8 +119,7 @@ class Hybrid_Endpoint {
 		if( ! Hybrid_Auth::storage()->get( "hauth_session.$provider_id.hauth_endpoint" ) ) {
 			Hybrid_Logger::error( "Endpoint: hauth_endpoint parameter is not defined on hauth_start, halt login process!" );
 
-			header( "HTTP/1.0 404 Not Found" );
-			die( "You cannot access this page directly." );
+			throw new Hybrid_Exception( "You cannot access this page directly." );
 		}
 
 		# define:hybrid.endpoint.php step 2.
@@ -130,8 +129,7 @@ class Hybrid_Endpoint {
 		if( ! $hauth ) {
 			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_start!" );
 
-			header( "HTTP/1.0 404 Not Found" );
-			die( "Invalid parameter! Please return to the login page and try again." );
+			throw new Hybrid_Exception( "Invalid parameter! Please return to the login page and try again." );
 		}
 
 		try {
@@ -165,8 +163,7 @@ class Hybrid_Endpoint {
 
 			$hauth->adapter->setUserUnconnected();
 
-			header("HTTP/1.0 404 Not Found"); 
-			die( "Invalid parameter! Please return to the login page and try again." );
+			throw new Hybrid_Exception( "Invalid parameter! Please return to the login page and try again." );
 		}
 
 		try {
@@ -201,10 +198,10 @@ class Hybrid_Endpoint {
 				$storage = new Hybrid_Storage(); 
 
 				// Check if Hybrid_Auth session already exist
-				if ( ! $storage->config( "CONFIG" ) ) { 
+				if ( ! $storage->config( "CONFIG" ) ) {
                                         Hybrid_Logger::error( "Endpoint: Config storage not found when trying to init Hyrid_Auth. " );
-					header( "HTTP/1.0 404 Not Found" );
-					die( "You cannot access this page directly." );
+
+					throw new Hybrid_Exception( "You cannot access this page directly." );
 				}
 
 				Hybrid_Auth::initialize( $storage->config( "CONFIG" ) ); 
@@ -212,8 +209,7 @@ class Hybrid_Endpoint {
 			catch ( Exception $e ){
 				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth: " . $e->getMessage()); 
 
-				header( "HTTP/1.0 404 Not Found" );
-				die( "Oophs. Error!" );
+				throw new Hybrid_Exception( "Oophs. Error!" );
 			}
 		}
 	}

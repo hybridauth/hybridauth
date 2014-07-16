@@ -14,7 +14,7 @@
  */
 class Hybrid_Auth 
 {
-	public static $version = "2.2.2";
+	public static $version = "2.3.0-dev";
 
 	public static $config  = array();
 
@@ -68,6 +68,7 @@ class Hybrid_Auth
 
 		# load hybridauth required files, a autoload is on the way...
 		require_once $config["path_base"] . "Error.php";
+		require_once $config["path_base"] . "Exception.php";
 		require_once $config["path_base"] . "Logger.php";
 
 		require_once $config["path_base"] . "Provider_Adapter.php";
