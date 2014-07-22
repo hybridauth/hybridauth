@@ -67,7 +67,50 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->birthMonth    = (property_exists($data,'birth_month'))?$data->birth_month:"";
 		$this->user->profile->birthYear     = (property_exists($data,'birth_year'))?$data->birth_year:"";
 
+		//$this->user->profile->photoURL      = $this->getUserPicture($this->user->profile->identifier,true);
+		$this->user->profile->photoURL      = $this->getCurrentUserPicture();
+		
 		return $this->user->profile;
+	}
+
+
+	/**
+	* load the current logged in user profile picture from the IDp api client  
+	*/
+	
+	function getCurrentUserPicture() 
+	{
+		$response = $this->api->get( "me/picture" );
+		
+		// picture url is returned as redirect. CURLOPT_FOLLOWLOCATION must be enabled in OAuth2Client.php		
+		$http=$this->api->http_info;
+		
+		if ( $http['http_code']==200 && $http['url'] && strpos($http['content_type'],"image")===0 )
+		{
+			return $http['url'];
+		}
+		
+		return null;
+	}
+
+
+	/**
+	* load the user profile picture from the ID 
+	*/
+	
+	function getUserPicture($id,$verify=false) 
+	{
+		$picture = "https://cid-".$id.".users.storage.live.com/users/0x".$id."/myprofile/expressionprofile/profilephoto:UserTileStatic";
+		
+		if ($verify) 
+		{
+			if (!$fp = curl_init($picture)) 
+			{	
+				return null;
+			}
+		}
+		
+		return $picture;
 	}
 
 
