@@ -33,7 +33,7 @@ class Hybrid_Provider_Adapter
 	 * Provider adapter extra parameters
 	 * @var array
 	 */
-	public $params   = NULL ; 
+	public $params   = array() ; 
 
 	/**
 	 * Provider adapter wrapper path
@@ -55,7 +55,7 @@ class Hybrid_Provider_Adapter
 	* @param string  $id      The id or name of the IDp
 	* @param array   $params  (optional) required parameters by the adapter 
 	*/
-	function factory( $id, $params = NULL )
+	function factory( $id, $params = array() )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Provider_Adapter::factory( $id )" );
 
@@ -138,6 +138,11 @@ class Hybrid_Provider_Adapter
 			$HYBRID_AUTH_URL_BASE = Hybrid_Auth::$config["base_url"];
 		}
 
+        // make sure params is array
+        if( !is_array( $this->params ) ){
+            $this->params = array();
+        }
+
 		# we make use of session_id() as storage hash to identify the current user
 		# using session_regenerate_id() will be a problem, but ..
 		$this->params["hauth_token"] = session_id();
@@ -154,9 +159,13 @@ class Hybrid_Provider_Adapter
 		# 	auth.done   required  the IDp ID
 		$this->params["login_done"]  = $HYBRID_AUTH_URL_BASE . ( strpos( $HYBRID_AUTH_URL_BASE, '?' ) ? '&' : '?' ) . "hauth.done={$this->id}";
 
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_return_to"    , $this->params["hauth_return_to"] );
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_endpoint"     , $this->params["login_done"] ); 
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.id_provider_params" , $this->params );
+        if( isset( $this->params["hauth_return_to"] ) ){
+            Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_return_to", $this->params["hauth_return_to"] );
+        }
+        if( isset( $this->params["login_done"] ) ){
+            Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.hauth_endpoint" , $this->params["login_done"] ); 
+        }
+        Hybrid_Auth::storage()->set( "hauth_session.{$this->id}.id_provider_params" , $this->params );
 
 		// store config to be used by the end point 
 		Hybrid_Auth::storage()->config( "CONFIG", Hybrid_Auth::$config );
