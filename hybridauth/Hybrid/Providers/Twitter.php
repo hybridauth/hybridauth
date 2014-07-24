@@ -186,19 +186,23 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
 		return $contacts;
  	}
 
-	/**
-	* update user status
-	*/ 
-	function setUserStatus( $status )
-	{
-		$parameters = array( 'status' => $status ); 
-		$response  = $this->api->post( 'statuses/update.json', $parameters ); 
+    /**
+    * update user status
+    */ 
+    function setUserStatus( $status )
+    {
 
-		// check the last HTTP status code returned
-		if ( $this->api->http_code != 200 ){
-			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
-		}
- 	}
+        if( is_array( $status ) && isset( $status[ 'message' ] ) && isset( $status[ 'picture' ] ) ){
+            $response = $this->api->post( 'statuses/update_with_media.json', array( 'status' => $status[ 'message' ], 'media[]' => file_get_contents( $status[ 'picture' ] ) ), null, null, true );
+        }else{
+            $response = $this->api->post( 'statuses/update.json', array( 'status' => $status ) ); 
+        }
+
+        // check the last HTTP status code returned
+        if ( $this->api->http_code != 200 ){
+            throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+        }
+    }
 
 	/**
 	* load the user latest activity  
