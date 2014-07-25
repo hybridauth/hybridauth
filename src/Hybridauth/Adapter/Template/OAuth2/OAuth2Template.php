@@ -10,6 +10,7 @@ namespace Hybridauth\Adapter\Template\OAuth2;
 use Hybridauth\Exception;
 use Hybridauth\Http\Util;
 use Hybridauth\Http\Client;
+use Hybridauth\Http\Request;
 
 use Hybridauth\Adapter\AbstractAdapter;
 use Hybridauth\Adapter\AdapterInterface;
@@ -58,7 +59,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	// --------------------------------------------------------------------
 
 	/**
-	* begin login step 
+	* begin login step
 	*/
 	function loginBegin()
 	{
@@ -83,9 +84,9 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	// --------------------------------------------------------------------
 
 	/**
-	* finish login step 
+	* finish login step
 	*/
-	function loginFinish( $requestAccessTokenParameters = array(), $requestAccessTokenMethod = 'POST' )
+	function loginFinish( $requestAccessTokenParameters = array(), $requestAccessTokenMethod = Request::POST )
 	{
 		$code  = ( array_key_exists( 'code' , $_REQUEST ) ) ? $_REQUEST['code']  : "";
 		$error = ( array_key_exists( 'error', $_REQUEST ) ) ? $_REQUEST['error'] : "";
@@ -132,7 +133,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	/**
 	* Exchanges authorization code for an access grant.
 	*/
-	function requestAccessToken( $parameters = array(), $method = 'POST' )
+	function requestAccessToken( $parameters = array(), $method = Request::POST )
 	{
 		$defaults = array(
 			"client_id"     => $this->getApplicationId(),
@@ -143,7 +144,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 		$parameters = array_merge( $defaults, (array) $parameters );
 
-		if( $method == 'POST' ){
+		if( $method == Request::POST ){
 			$this->httpClient->post( $this->endpoints->requestTokenUri, $parameters );
 		}
 		else{
@@ -181,7 +182,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	/**
 	* ...
 	*/
-	function refreshAccessToken( $parameters = array(), $method = 'POST', $force = false )
+	function refreshAccessToken( $parameters = array(), $method = Request::POST, $force = false )
 	{
 		// have an access token?
 		if( ! $force && ! $this->getTokens()->accessToken ){
@@ -206,7 +207,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 
 		$parameters = array_merge( $defaults, (array) $parameters );
 
-		if( $method == 'POST' ){
+		if( $method == Request::POST ){
 			$this->httpClient->post( $this->endpoints->requestTokenUri, $parameters );
 		}
 		else{
@@ -263,17 +264,21 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 	/**
 	* ...
 	*/
-	function signedRequest( $uri, $method = 'GET', $parameters = array() )
+	function signedRequest( $uri, $method = Request::GET, $parameters = array() )
 	{
 		if ( strrpos($uri, 'http://') !== 0 && strrpos($uri, 'https://') !== 0 ){
 			$uri = $this->endpoints->baseUri . $uri;
 		}
 
-		$parameters[ 'access_token' ] = $this->getTokens()->accessToken;
+		if( ! isset($parameters[ 'access_token' ] ) ) {
+			$parameters[ 'access_token' ] = $this->getTokens()->accessToken;
+		}
 
 		switch( $method ){
-			case 'GET'  : $this->httpClient->get ( $uri, $parameters ); break;
-			case 'POST' : $this->httpClient->post( $uri, $parameters ); break;
+			case Request::GET    : $this->httpClient->get    ( $uri, $parameters ); break;
+			case Request::POST   : $this->httpClient->post   ( $uri, $parameters ); break;
+			case Request::PUT    : $this->httpClient->put    ( $uri, $parameters ); break;
+			case Request::DELETE : $this->httpClient->delete ( $uri, $parameters ); break;
 		}
 
 		return $this->httpClient->getResponseBody();

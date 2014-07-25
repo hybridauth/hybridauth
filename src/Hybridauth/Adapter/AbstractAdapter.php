@@ -31,7 +31,7 @@ abstract class AbstractAdapter
 		$hybridauthConfig,
 		$config,
 		$parameters = null,
-		StorageInterface $storage = null 
+		StorageInterface $storage = null
 	)
 	{
 		$this->storage = $storage;
@@ -45,7 +45,7 @@ abstract class AbstractAdapter
 
 		$this->setHybridauthConfig( $hybridauthConfig );
 
-		$this->setAdapterParameters( $parameters ); 
+		$this->setAdapterParameters( $parameters );
 
 		$this->setAdapterConfig( $config );
 
@@ -84,7 +84,7 @@ abstract class AbstractAdapter
 		$parameters = array_merge( $defaults, (array) $parameters );
 
 		$this->storage->set( $this->providerId . ".hauth_return_to"    , $parameters["hauth_return_to"] );
-		$this->storage->set( $this->providerId . ".hauth_endpoint"     , $parameters["hauth_endpoint"]  ); 
+		$this->storage->set( $this->providerId . ".hauth_endpoint"     , $parameters["hauth_endpoint"]  );
 		$this->storage->set( $this->providerId . ".id_provider_params" , $parameters );
 
 		// store config
@@ -139,7 +139,7 @@ abstract class AbstractAdapter
 	*/
 	public final function getTokens()
 	{
-		return $this->storage->get( $this->providerId . '.tokens' ) ? $this->storage->get( $this->providerId . '.tokens' ) : $this->tokens;
+		return $this->storage->get( $this->providerId . '.tokens' ) ?: $this->tokens;
 	}
 
 	// --------------------------------------------------------------------
@@ -691,5 +691,10 @@ abstract class AbstractAdapter
 		$html .= sprintf('<pre>%s</pre>', print_r( debug_backtrace(), 1 ) );
 
 		return sprintf("<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:38px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:65px;}</style></head><body>%s</body></html>", $title, $html);
+	}
+
+	function logout() {
+		$this->disconnect();
+		return true;
 	}
 }

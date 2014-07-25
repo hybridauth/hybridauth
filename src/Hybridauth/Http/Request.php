@@ -11,6 +11,10 @@ use Hybridauth\Http\Response;
 
 class Request
 {
+	const GET = 'GET';
+	const POST = 'POST';
+	const PUT = 'PUT';
+	const DELETE = 'DELETE';
 	protected $curlOptions = null;
 
 	// --------------------------------------------------------------------
@@ -23,11 +27,11 @@ class Request
 
 		$response = new Response();
 
-		if( $method == 'GET' ){
+		if( $method == self::GET || $method == self::DELETE ){
 			$uri = $uri . ( strpos( $uri, '?' ) ? '&' : '?' ) . http_build_query( $args );
 		}
 
-		if( $method == 'POST' && ! isset( $headers['Content-type'] ) ) {
+		if( ($method == self::POST || $method==self::PUT) && ! isset( $headers['Content-type'] ) ) {
 			$headers['Content-type'] = 'Content-type: application/x-www-form-urlencoded';
 		}
 
@@ -39,7 +43,7 @@ class Request
 		$curl_opts = array(
 			CURLOPT_TIMEOUT        => 30,
 			CURLOPT_CONNECTTIMEOUT => 30,
-			CURLOPT_SSL_VERIFYPEER => 0, // its your call now 
+			CURLOPT_SSL_VERIFYPEER => 0, // its your call now
 			CURLOPT_USERAGENT      => "HybridAuth Library http://hybridauth.sourceforge.net/",
 		);
 
@@ -59,10 +63,19 @@ class Request
 			curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 		}
 
-		if( $method == 'POST' ){
+		if( $method == self::POST ){
 			curl_setopt( $ch, CURLOPT_POST, 1);
 
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $args ) );
+		}
+
+		if($method == self::PUT) {
+			curl_setopt($ch, CURLOPT_PUT, true);
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $args ) );
+		}
+
+		if($method == self::DELETE ){
+		    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
 		}
 
 		$response->setBody       ( curl_exec( $ch ) );
@@ -73,7 +86,7 @@ class Request
 
 		curl_close ($ch);
 
-		return $response; 
+		return $response;
 	}
 
 	// --------------------------------------------------------------------

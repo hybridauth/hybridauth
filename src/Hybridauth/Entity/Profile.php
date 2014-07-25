@@ -8,15 +8,12 @@
 namespace Hybridauth\Entity;
 
 /**
-* Model class representing a user profile. 
+* Model class representing a user profile.
 *
 * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Profile.html
 */
-class Profile
+class Profile extends Entity
 {
-	/* The Unique user's ID on the connected provider */
-	protected $identifier = null;
-
 	/* User website, blog, web page */
 	protected $webSiteURL = null;
 
@@ -92,29 +89,10 @@ class Profile
 
 	// --------------------------------------------------------------------
 
-	/**
-	* Backward compatiliblity with Hybridauth 2.x
-	*/
-	public function __get( $name )
-	{
-		if( property_exists( __CLASS__, $name) ){
-			trigger_error( 'Accessing ' . __CLASS__ . ' members directly will be deprecated in Hybridauth 3.1.0', E_USER_NOTICE );
 
-			return $this->$name;
-		}
-
-		trigger_error( 'Undefined property: ' . __CLASS__ . '::' . $name .' in ' . __FILE__ . ' on line ' . __LINE__, E_USER_NOTICE );
-	}
 
 	// --------------------------------------------------------------------
-	// A bunch of naive getters and setters for the fun of it: bitly.com/10oQqJH
-	// --------------------------------------------------------------------
-
-	function setIdentifier( $identifier )
-	{
-		$this->identifier = $identifier;
-	}
-
+	// A bunch of naive getters and setters for the fun of it
 	// --------------------------------------------------------------------
 
 	function setWebSiteURL( $webSiteURL )
@@ -268,14 +246,7 @@ class Profile
 		$this->zip = $zip;
 	}
 
-	// ====================================================================
-
-	function getIdentifier()
-	{
-		return $this->identifier;
-	}
-
-	// --------------------------------------------------------------------
+	// ===================================================================
 
 	function getWebSiteURL()
 	{

@@ -8,8 +8,11 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Exception;
+use Hybridauth\Http\Request;
 use Hybridauth\Adapter\Template\OAuth2\OAuth2Template;
-use Hybridauth\Entity\Profile;
+use Hybridauth\Entity\Facebook\Profile;
+use Hybridauth\Entity\Facebook\Page;
+use Hybridauth\Entity\Facebook\Event;
 
 /**
 * Facebook adapter extending OAuth2 Template
@@ -18,6 +21,25 @@ use Hybridauth\Entity\Profile;
 */
 class Facebook extends OAuth2Template
 {
+	//Using this so we can access things like pages. Not in love with it.
+	private $use_access_token = null;
+	function setFacebookAccessToken($use_access_token) {
+		$this->use_access_token = $use_access_token;
+	}
+
+	function getFacebookAccessToken() {
+		return $this->use_access_token;
+	}
+
+	function signedRequest( $uri, $method = Request::GET, $parameters = array() )
+	{
+		if(!isset($parameters[ 'access_token' ]) && !empty($this->use_access_token))
+		{
+			$parameters[ 'access_token' ] = $this->use_access_token;
+		}
+		return parent::signedRequest($uri,$method,$parameters);
+	}
+
 	/**
 	* Internal: Initialize Facebook adapter. This method isn't intended for public consumption.
 	*
@@ -32,8 +54,9 @@ class Facebook extends OAuth2Template
 		$this->letApplicationId( $this->getAdapterConfig( 'keys', 'id' ) );
 		$this->letApplicationSecret( $this->getAdapterConfig( 'keys', 'secret' ) );
 
-		$scope = $this->getAdapterConfig( 'scope' ) 
-			? $this->getAdapterConfig( 'scope' ) 
+		// @ todo create a way to track scope & request addtl scope as needed
+		$scope = $this->getAdapterConfig( 'scope' )
+			? $this->getAdapterConfig( 'scope' )
 			: 'email,user_about_me,user_birthday,user_hometown,user_website,read_stream,offline_access,publish_stream,read_friendlists';
 
 		$this->letApplicationScope( $scope );
@@ -55,10 +78,10 @@ class Facebook extends OAuth2Template
 	*
 	*	$data = $hybridauth->authenticate( "Facebook" )->getUserProfile();
 	*/
-	function getUserProfile()
+	function getUserProfile($user = null)
 	{
 		// request user infos
-		$response = $this->signedRequest( "me" );
+		$response = $this->signedRequest( isset($user) ? $user->getIdentifier() : 'me' );
 		$response = json_decode ( $response );
 
 		if ( ! isset( $response->id ) || isset ( $response->error ) ){
@@ -71,38 +94,7 @@ class Facebook extends OAuth2Template
 				);
 		}
 
-		$parser = function($property) use($response)
-		{
-			return property_exists( $response, $property ) ? $response->$property : null;
-		};
-
-		$profile = new Profile();
-
-		$profile->setIdentifier ( $parser( 'id'         ) );
-		$profile->setFirstName  ( $parser( 'first_name' ) );
-		$profile->setLastName   ( $parser( 'last_name'  ) );
-		$profile->setDisplayName( $parser( 'name'       ) ); 
-		$profile->setProfileURL ( $parser( 'link'       ) );
-		$profile->setWebSiteURL ( $parser( 'website'    ) );
-		$profile->setGender     ( $parser( 'gender'     ) );
-		$profile->setDescription( $parser( 'bio'        ) );
-		$profile->setEmail      ( $parser( 'email'      ) );
-		$profile->setLanguage   ( $parser( 'locale'     ) );
-		$profile->setPhotoURL   ( 'https://graph.facebook.com/' . $profile->getIdentifier() . '/picture?width=150&height=150' );
-
-		if( $parser( 'birthday' ) ){
-			list ( $m, $d, $y ) = explode ( "/", $parser( 'birthday' ) );
-			
-			$profile->setBirthDay  ( $d );
-			$profile->setBirthMonth( $m );
-			$profile->setBirthYear ( $y );
-		}
-
-		if( $parser( 'verified' ) ){
-			$profile->setEmailVerified( $profile->getEmail() );
-		}
-
-		return $profile;
+		return Profile::generateFromResponse($response,$this);
 	}
 
 	// --------------------------------------------------------------------
@@ -130,27 +122,88 @@ class Facebook extends OAuth2Template
 				);
 		}
 
-		$parser = function($property) use($response)
-		{
-			return property_exists( $response, $property ) ? $response->$property : null;
-		};
 
 		$contacts = array();
 
 		if( isset( $response->data ) && is_array( $response->data ) ){
 			foreach( $response->data as $item ){
-				$uc = new Profile();
-
-				$profile->setIdentifier ( $parser( 'id'   ) );
-				$profile->setDisplayName( $parser( 'name' ) ); 
-				$profile->setProfileURL ( 'https://www.facebook.com/profile.php?id=' . $profile->getIdentifier() );
-				$profile->setPhotoURL   ( 'https://graph.facebook.com/' . $profile->getIdentifier() . '/picture?width=150&height=150' );
-
-				$contacts [] = $uc;
+				$contacts[] = Profile::generateFromResponse($item,$this);
 			}
 		}
 
 		return $contacts;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	* Returns user profile
+	*
+	* Examples:
+	*
+	*	$data = $hybridauth->authenticate( "Facebook" )->getUserPages();
+	*/
+	function getUserPages($user = null)
+	{
+		// request user infos
+		$id = isset($user) ? $user->getIdentifier() : 'me';
+		$response = $this->signedRequest( $id . '/accounts' );
+		$response = json_decode ( $response );
+
+		if ( ! isset( $response->data ) || isset ( $response->error ) ){
+			throw new
+				Exception(
+					'User page listing request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
+		}
+
+
+		$pages = array();
+
+		foreach($response->data as $pageData) {
+			$pages[] = Page::generateFromResponse($pageData,$this);
+		}
+
+		return $pages;
+	}
+
+	function getPage($page_id)
+	{
+		// request user infos
+		$response = $this->signedRequest( $page_id);
+		$response = json_decode ( $response );
+
+		if ( ! isset( $response->id ) || isset ( $response->error ) ){
+			throw new
+				Exception(
+					'User page listing request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
+		}
+
+		return Page::generateFromResponse($response,$this);
+	}
+
+	function getEvent($eventIdentifier)
+	{
+		$response = $this->signedRequest($eventIdentifier );
+		$response = json_decode ( $response );
+
+		if ( ! isset( $response->id ) || isset ( $response->error ) ){
+			throw new
+				Exception(
+					'Event listing request failed: Provider returned an invalid response. ' .
+					'HTTP client state: (' . $this->httpClient->getState() . ')',
+					Exception::USER_PROFILE_REQUEST_FAILED,
+					$this
+				);
+		}
+		return Event::generateFromResponse($response);
 	}
 
 	// --------------------------------------------------------------------
