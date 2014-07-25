@@ -1,4 +1,4 @@
-# HybridAuth 2.2.0
+# HybridAuth 2.3.0-dev
 
 HybridAuth enables developers to easily build social applications and tools 
 to engage websites visitors and customers on a social level by implementing 
@@ -16,7 +16,7 @@ HybridAuth repository is made up of several projects:
 - **HybridAuth Core library** includes OpenID, Facebook, Twitter, LinkedIn, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** contains many others services
   which you may want to use,
-- **Examples and demos** contains five working examples for you to test, 
+- **Examples and demos** contains five examples for you to test, 
 
 ## Getting Started
 

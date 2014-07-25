@@ -1,5 +1,16 @@
 Hybridauth Change log
 =====================
+2.3.0 -
+        #87 - Make logging level based
+        #102 - Uses Exceptions instead of die() to handle critical problems.
+        #247 - Disable autoloading when doing class_exists()
+        #111 - Add more informative messages and logging
+        #221 - Google Provider: Scopes updated
+        #261 - Check if $params is_array
+        #265 - OAuth multipart support added
+        #266 - Twitter Provider: setUserStatus() message and picture support
+        #267 - fixed adapter undefined indexes and illegal string offsets (issues #200 and #105)
+
 2.2.2 - July 11 2014
 	#239 Fixes to Disqus provider, which now works properly (the old one was not working)
 	#234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
@@ -13,8 +24,8 @@ Hybridauth Change log
         Few small fixes and updates to the examples
 	
 2.2.1 - May 26 2014
-        Hotfix for undefined variable #213
-        Hotfix for BYO Storage Mechanism #215
+        #213 - Hotfix for undefined variable 
+        #215 - Hotfix for BYO Storage Mechanism
 
 2.2.0 - May 24 2014
         New provider: Yammer
@@ -33,15 +44,15 @@ Hybridauth Change log
 
 
 2.1.1 - 29 dec 2012 
-	Remove OAuth PECL conflict with OAuth PHP Library (https://github.com/hybridauth/hybridauth/issues/59)
-	Update Facebook PHP SDK (v.3.2.2) (https://github.com/hybridauth/hybridauth/pull/70)
-	Minor change to fix getCurrentUrl() (https://github.com/hybridauth/hybridauth/issues/63)
-	Fix misspellings of "authentication" and "valid"; me english bad ; (https://github.com/hybridauth/hybridauth/pull/73) 
-	Minor change to remove PHP Notices (https://github.com/hybridauth/hybridauth/pull/71;https://github.com/hybridauth/hybridauth/pull/48;https://github.com/hybridauth/hybridauth/pull/62) 
-	Composer Require CURL (https://github.com/hybridauth/hybridauth/pull/57) 
-	Proper handling of LinkedIn user profiles with no telephone numbers (https://github.com/hybridauth/hybridauth/pull/53) 
-	Allow restricting google provider to specific domain (https://github.com/hybridauth/hybridauth/pull/64) 
-	Update Windows Live endpoint URLs (https://github.com/hybridauth/hybridauth/pull/64;http://msdn.microsoft.com/en-us/library/live/hh243647.aspx) 
+	#59 - Remove OAuth PECL conflict with OAuth PHP Library
+	#70 - Update Facebook PHP SDK (v.3.2.2)
+	#63 - Minor change to fix getCurrentUrl()
+	#73 - Fix misspellings of "authentication" and "valid"; me english bad ;
+	#48 + #62 + #71 - Minor change to remove PHP Notices
+	#57 - Composer Require CURL
+	#53 - Proper handling of LinkedIn user profiles with no telephone numbers
+	#64 - Allow restricting google provider to specific domain
+	Update Windows Live endpoint URLs (http://msdn.microsoft.com/en-us/library/live/hh243647.aspx) 
 	Update lightopenid library
 	...
 
