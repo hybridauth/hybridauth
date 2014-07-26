@@ -172,11 +172,22 @@ abstract class Hybrid_Provider_Model
 	// --------------------------------------------------------------------
 
 	/**
-	* return the user activity stream  
+	* set user status
 	*/ 
 	function setUserStatus( $status )
 	{
 		Hybrid_Logger::error( "HybridAuth do not provide user's activity stream for {$this->providerId} yet." ); 
+		
+		throw new Exception( "Provider does not support this feature.", 8 ); 
+	}
+
+
+	/**
+	* return the user status
+	*/ 
+	function getUserStatus( $statusid )
+	{
+		Hybrid_Logger::error( "HybridAuth do not provide user's status for {$this->providerId} yet." ); 
 		
 		throw new Exception( "Provider does not support this feature.", 8 ); 
 	}

@@ -277,6 +277,22 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
  	}
 
 	/**
+	* get user status
+	*/
+    function getUserStatus( $postid )
+    {
+		try{
+            $postinfo = $this->api->api( "/" . $postid );
+        }
+		catch( FacebookApiException $e ){
+			throw new Exception( "Cannot retrieve user status! {$this->providerId} returned an error: $e" );
+		}
+
+        return $postinfo;
+    }
+
+
+	/**
 	* load the user latest activity  
 	*    - timeline : all the stream
 	*    - me       : the user activity only  
