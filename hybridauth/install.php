@@ -1,5 +1,5 @@
 <?php
-	$HYBRIDAUTH_VERSION = "2.3.0";
+	$HYBRIDAUTH_VERSION = "2.3.0-dev";
 ?><!DOCTYPE html>
 <html lang="en">
 <head>

@@ -96,5 +96,7 @@ class Hybrid_Providers_px500 extends Hybrid_Provider_Model_OAuth1
 		// we will commit photo upload soon in an extra function, called setUpload -
 		// because 500px users can also get an additional Upload Key to upload pictures
 		// refer to  http://developers.500px.com/docs/upload-post  for now
+                
+                return $response;
 	}
 }

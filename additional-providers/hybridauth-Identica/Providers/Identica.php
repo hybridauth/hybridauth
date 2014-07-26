@@ -117,6 +117,8 @@ class Hybrid_Providers_Identica extends Hybrid_Provider_Model_OAuth1
 		{
 			throw new Exception( "Update user status update failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
+                
+                return $response;
  	}
 
    /**

@@ -74,6 +74,8 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 
 		if ( $response->meta->status != 201 ){
 			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $response->meta->status ) );
-		} 
+		}
+                
+                return $response;
 	}
 }

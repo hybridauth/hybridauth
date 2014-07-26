@@ -10,6 +10,7 @@ Hybridauth Change log
         #265 - OAuth multipart support added
         #266 - Twitter Provider: setUserStatus() message and picture support
         #267 - fixed adapter undefined indexes and illegal string offsets (issues #200 and #105)
+        #270 - providers setUserStatus() return status info
 
 2.2.2 - July 11 2014
 	#239 Fixes to Disqus provider, which now works properly (the old one was not working)

@@ -192,6 +192,8 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 		if ( $this->api->http_code != 200 ){
 			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
+                
+                return $response;
 	}
 
 }
