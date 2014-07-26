@@ -206,6 +206,23 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
         return $response;
     }
 
+
+	/**
+	* get user status
+	*/
+    function getUserStatus( $tweetid )
+    {
+        $info = $this->api->get( 'statuses/show.json?id=' . $tweetid . '&include_entities=true' );
+
+        // check the last HTTP status code returned
+        if ( $this->api->http_code != 200 || !isset( $info->id ) ){
+			throw new Exception( "Cannot retrieve user status! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $this->api->http_code ) );
+        }
+
+        return $info;
+    }
+
+
 	/**
 	* load the user latest activity  
 	*    - timeline : all the stream
