@@ -252,29 +252,47 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		return $contacts;
  	}
 
-	/**
-	* update user status
-	*/
-	function setUserStatus( $status )
-	{
-		$parameters = array();
+    /**
+    * update user status
+	*
+	* @param  string $pageid   (optional) User page id
+    */
+    function setUserStatus( $status, $pageid = null )
+    {
+        if( !is_array( $status ) ){
+            $status = array( 'message' => $status );
+        }
 
-		if( is_array( $status ) ){
-			$parameters = $status;
-		}
-		else{
-			$parameters["message"] = $status; 
-		}
+        if( is_null( $pageid ) ){
+            $pageid = 'me';
 
-		try{ 
-			$response = $this->api->api( "/me/feed", "post", $parameters );
-		}
-		catch( FacebookApiException $e ){
-			throw new Exception( "Update user status failed! {$this->providerId} returned an error: $e" );
-		}
+        // if post on page, get access_token page
+        }else{
+            $access_token = null;
+            foreach( $this->getUserPages( true ) as $p ){
+                if( isset( $p[ 'id' ] ) && intval( $p['id'] ) == intval( $pageid ) ){
+                    $access_token = $p[ 'access_token' ];
+                    break;
+                }
+            }
+
+            if( is_null( $access_token ) ){
+                throw new Exception( "Update user page failed, page not found or not writable!" );
+            }
+
+            $status[ 'access_token' ] = $access_token;
+        }
+
+        try{ 
+            $response = $this->api->api( '/' . $pageid . '/feed', 'post', $status );
+        }
+        catch( FacebookApiException $e ){
+            throw new Exception( "Update user status failed! {$this->providerId} returned an error: $e" );
+        }
 
         return $response;
- 	}
+    }
+
 
 	/**
 	* get user status
@@ -291,6 +309,39 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
         return $postinfo;
     }
 
+
+	/**
+	* get user pages
+	*/
+    function getUserPages( $writableonly = false )
+    {
+        if( ( isset( $this->config[ 'scope' ] ) && strpos( $this->config[ 'scope' ], 'manage_pages' ) === false ) || ( !isset( $this->config[ 'scope' ] ) && strpos( $this->scope, 'manage_pages' ) === false ) )
+            throw new Exception( "User status requires manage_page permission!" );            
+
+        try{
+            $pages = $this->api->api( "/me/accounts", 'get' );
+        }
+        catch( FacebookApiException $e ){
+            throw new Exception( "Cannot retrieve user pages! {$this->providerId} returned an error: $e" );
+        }
+
+        if( !isset( $pages[ 'data' ] ) ){
+            return array();
+        }
+
+        if( !$writableonly ){
+            return $pages[ 'data' ];
+        }
+
+        $wrpages = array();
+        foreach( $pages[ 'data' ] as $p ){
+            if( isset( $p[ 'perms' ] ) && in_array( 'CREATE_CONTENT', $p[ 'perms' ] ) ){
+                $wrpages[] = $p;
+            }
+        }
+
+        return $wrpages;
+    }
 
 	/**
 	* load the user latest activity  
