@@ -201,6 +201,8 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model
 		{
 			throw new Exception( "Update user status update failed! {$this->providerId} returned an error." );
 		}
+
+        return $response;
 	}
 
 	/**
