@@ -87,7 +87,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->firstName     = (property_exists($response,'name'))?$response->name->givenName:"";
 		$this->user->profile->lastName      = (property_exists($response,'name'))?$response->name->familyName:"";
 		$this->user->profile->displayName   = (property_exists($response,'displayName'))?$response->displayName:"";
-		$this->user->profile->photoURL      = (property_exists($response,'image'))?((property_exists($response->image,'url'))?$response->image->url:''):'';
+		$this->user->profile->photoURL      = (property_exists($response,'image'))?((property_exists($response->image,'url'))?substr($response->image->url, 0, -2)."200":''):'';
 		$this->user->profile->profileURL    = (property_exists($response,'url'))?$response->url:"";
 		$this->user->profile->description   = (property_exists($response,'aboutMe'))?$response->aboutMe:"";
 		$this->user->profile->gender        = (property_exists($response,'gender'))?$response->gender:""; 
