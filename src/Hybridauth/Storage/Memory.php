@@ -65,7 +65,7 @@ class Memory implements StorageInterface
         $key = '/^' . strtolower($key) . '/';
         foreach(array_keys($this->store_var) as $store_key) {
             if ( preg_match( $key, $store_key ) ) {
-                unset( $this->store_var[$k] );
+                unset( $this->store_var[$key] );
             }
         }
     }
