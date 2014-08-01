@@ -74,12 +74,13 @@ class OAuth1Template extends AbstractAdapter implements AdapterInterface
 	{
 		// app credentials
 		if ( ! $this->getApplicationKey() || ! $this->getApplicationSecret() ){
-			Exception(
-				'Application credentials are missing. Check your hybridauth configuration file. ' .
-				'For more information refer to http://hybridauth.sourceforge.net/userguide/Configuration.html',
-				Exception::MISSING_APPLICATION_CREDENTIALS,
-				$this
-			);
+			throw new
+				Exception(
+					'Application credentials are missing. Check your hybridauth configuration file. ' .
+					'For more information refer to http://hybridauth.sourceforge.net/userguide/Configuration.html',
+					Exception::MISSING_APPLICATION_CREDENTIALS,
+					$this
+				);
 		}
 
 		$this->requestAuthToken();
