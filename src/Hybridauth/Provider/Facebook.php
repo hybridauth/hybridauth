@@ -203,7 +203,7 @@ class Facebook extends OAuth2Template
 					$this
 				);
 		}
-		return Event::generateFromResponse($response);
+		return Event::generateFromResponse($response, $this);
 	}
 
 	// --------------------------------------------------------------------
