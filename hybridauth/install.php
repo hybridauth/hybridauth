@@ -434,6 +434,7 @@ ul li label {
 	<div style="text-align:center">
 		Thanks for scrolling this far down! Now click the big button to complete the installation.
 		<br />
+                IMPORTANT: Don't forget to delete install.php after this!
 		<br />
 		<input type="submit" class="inputsave" value="Setup HybridAuth" /> 
 	</div> 
