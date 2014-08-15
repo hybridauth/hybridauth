@@ -118,6 +118,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 					if($c->primary == true){ 
 						$this->user->profile->address 	= $c->value;
 						$this->user->profile->city 	= $c->value;
+						break;
 					}
 				}else{
 					if(property_exists($c,'value')){
