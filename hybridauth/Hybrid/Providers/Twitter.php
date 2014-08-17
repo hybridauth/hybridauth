@@ -69,7 +69,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1
  		$this->token( "request_token_secret", $tokens["oauth_token_secret"] );
  	
 		// redirect the user to the provider authentication url with force_login
- 		if ( isset( $this->config['force_login'] ) && $this->config['force_login'] ){
+ 		if ( ( isset( $this->config['force_login'] ) && $this->config['force_login'] ) || ( isset( $this->config[ 'force' ] ) && $this->config[ 'force' ] === true ) ){
  			Hybrid_Auth::redirect( $this->api->authorizeUrl( $tokens, array( 'force_login' => true ) ) );
  		}
 

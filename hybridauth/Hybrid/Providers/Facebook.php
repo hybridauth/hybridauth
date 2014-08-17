@@ -78,6 +78,13 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			}
 		}
 
+        if( isset( $this->config[ 'force' ] ) && $this->config[ 'force' ] === true ){
+            $parameters[ 'auth_type' ]  = 'reauthenticate';
+            $parameters[ 'auth_nonce' ] = md5( uniqid( mt_rand(), true ) );
+
+            Hybrid_Auth::storage()->set( 'fb_auth_nonce', $parameters[ 'auth_nonce' ] );
+        }
+
 		// get the login url 
 		$url = $this->api->getLoginUrl( $parameters );
 

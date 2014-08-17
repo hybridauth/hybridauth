@@ -54,6 +54,10 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 			}
 		}
 
+        if( isset( $this->config[ 'force' ] ) && $this->config[ 'force' ] === true ){
+            $parameters[ 'approval_prompt' ] = 'force';
+        }
+
 		Hybrid_Auth::redirect( $this->api->authorizeUrl( $parameters ) ); 
 	}
 
