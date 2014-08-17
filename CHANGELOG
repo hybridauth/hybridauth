@@ -14,6 +14,8 @@ Hybridauth Change log
         #271 - new: provider::getUserStatus($id) retrieves status info (Facebook and Twitter)
         #272 - facebook::setUserStatus on a user's Page
         #273 - better profile image size for Google and Twitter
+        #241 - install.php was deleted
+        #291 - updated links in readmes and removed mentions of install.php.
 
 2.2.2 - July 11 2014
 	#239 Fixes to Disqus provider, which now works properly (the old one was not working)
