@@ -182,7 +182,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 		$this->user->profile->profileURL    = (array_key_exists('link',$data))?$data['link']:""; 
 		$this->user->profile->webSiteURL    = (array_key_exists('website',$data))?$data['website']:""; 
 		$this->user->profile->gender        = (array_key_exists('gender',$data))?$data['gender']:"";
-        $this->user->profile->language      = (array_key_exists('locale',$data))?$data['locale']:"";
+        	$this->user->profile->language      = (array_key_exists('locale',$data))?$data['locale']:"";
 		$this->user->profile->description   = (array_key_exists('about',$data))?$data['about']:"";
 		$this->user->profile->email         = (array_key_exists('email',$data))?$data['email']:"";
 		$this->user->profile->emailVerified = (array_key_exists('email',$data))?$data['email']:"";
@@ -233,20 +233,36 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 	*/
 	function getUserContacts()
 	{
-		try{ 
-			$response = $this->api->api('/me/friends?fields=link,name'); 
+		$apiCall = '?fields=link,name';
+		$returnedContacts = array();
+		$pagedList = false;
+
+		do {
+			try{ 
+				$response = $this->api->api('/me/friends' . $apiCall); 
+			}
+			catch( FacebookApiException $e ){
+				throw new Exception( 'User contacts request failed! {$this->providerId} returned an error: $e' );
+			} 
+
+			// Prepare the next call if paging links have been returned
+			if ( array_key_exists('paging', $response) &&
+			     array_key_exists('next', $response['paging']) ){
+				$pagedList = true;
+				$apiCall = explode('friends', $response['paging']['next'])[1];
+			}
+			else{
+				$pagedList = false;
+			}
+
+			// Add the new page contacts
+			$returnedContacts = array_merge($returnedContacts, $response['data']);
 		}
-		catch( FacebookApiException $e ){
-			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: $e" );
-		} 
- 
-		if( ! $response || ! count( $response["data"] ) ){
-			return ARRAY();
-		}
+		while ($pagedList == true);
 
 		$contacts = ARRAY();
  
-		foreach( $response["data"] as $item ){
+		foreach( $returnedContacts as $item ){
 			$uc = new Hybrid_User_Contact();
 
 			$uc->identifier  = (array_key_exists("id",$item))?$item["id"]:"";
