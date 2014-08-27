@@ -248,8 +248,8 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			// Prepare the next call if paging links have been returned
 			if (array_key_exists('paging', $response) && array_key_exists('next', $response['paging'])) {
 				$pagedList = true;
-        $next_page = explode('friends', $response['paging']['next']);
-        $apiCall = $next_page[1];
+			        $next_page = explode('friends', $response['paging']['next']);
+			        $apiCall = $next_page[1];
 			}
 			else{
 				$pagedList = false;
