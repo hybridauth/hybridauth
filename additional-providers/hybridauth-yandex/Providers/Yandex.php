@@ -26,6 +26,12 @@ class Hybrid_Providers_Yandex extends Hybrid_Provider_Model_OAuth2
 		$this->api->token_url     = "https://oauth.yandex.ru/token"; 
 
 		$this->api->sign_token_name = "oauth_token";
+		
+	        // Override the redirect uri when it's set in the config parameters. This way we prevent
+	        // redirect uri mismatches when authenticating. Just like Google provider does.
+	        if (isset($this->config['redirect_uri']) && !empty($this->config['redirect_uri'])) {
+            	$this->api->redirect_uri = $this->config['redirect_uri'];
+        	}
 	}
 
 	/**
