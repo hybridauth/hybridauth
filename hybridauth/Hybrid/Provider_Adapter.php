@@ -82,7 +82,9 @@ class Hybrid_Provider_Adapter
 
 		# include the adapter wrapper
 		if( isset( $this->config["wrapper"] ) && is_array( $this->config["wrapper"] ) ){
-			require_once $this->config["wrapper"]["path"];
+			if (isset( $this->config["wrapper"]["path"] )) {
+				require_once $this->config["wrapper"]["path"];
+			}
 
 			if( ! class_exists( $this->config["wrapper"]["class"] ) ){
 				throw new Exception( "Unable to load the adapter class.", 3 );
