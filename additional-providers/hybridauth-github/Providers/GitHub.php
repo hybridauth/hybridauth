@@ -47,12 +47,12 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->webSiteURL  = @ $data->blog;
 		$this->user->profile->region      = @ $data->location;
 
-		if( ! $this->user->profile->displayName ){
+		if( empty($this->user->profile->displayName) ){
 			$this->user->profile->displayName = @ $data->login;
 		}
 
 		// request user emails from github api
-		if( ! $data->email ){
+		if( empty($data->email) ){
 			try{
 				$emails = $this->api->api("user/emails");
 
