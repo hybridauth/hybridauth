@@ -218,6 +218,11 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 	function selectEmail( $v )
 	{
 		$s = $this->select($v, 'email');
+		if(empty($s)){
+			$s = $this->select($v, 'yahooid');
+			if(!empty($s) && isset($s->value) && strpos($s->value,"@")===FALSE)
+				$s->value .= "@yahoo.com";
+		}
 		return ($s)?$s->value:"";
 	}
 
