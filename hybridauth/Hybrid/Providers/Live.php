@@ -85,7 +85,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
-		if ( ! $response->data && ( $response->error != 0 ) )
+		if ( !isset($response->data) || ( isset($response->errcode) &&  $response->errcode != 0 ) )
 		{
 			return array();
 		}
