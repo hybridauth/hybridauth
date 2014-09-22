@@ -101,7 +101,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
-		if ( !$response->contacts->contact && ( $response->errcode != 0 ) )
+		if ( !isset($response->contacts) || !isset($response->contacts->contact) || ( isset($response->errcode) &&  $response->errcode != 0 ) )
 		{
 			return array();
 		}
