@@ -21,7 +21,7 @@ return
 
 			"Yahoo" => array ( 
 				"enabled" => true,
-				"keys"    => array ( "id" => "", "secret" => "" ),
+				"keys"    => array ( "key" => "", "secret" => "" ),
 			),
 
 			"AOL"  => array ( 
