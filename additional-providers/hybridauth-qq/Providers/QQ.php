@@ -8,7 +8,7 @@
 /**
  * Hybrid_Providers_QQ provider adapter based on OAuth2 protocol
  * 
- * @version		0.5   Tencent.php  add by 韦维 2014-09-27 16:48
+ * @version		0.5   QQ.php  add by 韦维 2014-09-27 16:48
  * @author		韦维<weivain@qq.com>www.weiva.com
  * @link		http://www.weiva.com
  *
