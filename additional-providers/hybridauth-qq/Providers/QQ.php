@@ -14,7 +14,7 @@
  *
  * 本代码是在 hybridauth 项目中通过 OAuth2 实现腾讯 QQ 登录，方便在其他 php 项目中提高用户体
  * 验。在开发过程中，参考了 hybridauth 项目的其他模块、腾讯官方开发文档、AlloVince 开
- * 发的 EvaOAuth 模块（http://avnpc.com/pages/evaoauth ，其他部分函数 
+ * 发的 EvaOAuth 模块（http://avnpc.com/pages/evaoauth ），其他部分函数 
  * 参考了网上资料。本代码如未做特殊申明，继承 hybridauth 项目版权声明及其他涉及的第三
  * 方版权声明，请在使用过程中，尊重相应的版权。本程序基于 hybridauth 2.1.1-dev 编写
  * 后续版本由于时间关系未来得及测试。
@@ -24,8 +24,8 @@
  */
 class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
 {
-    // > more infos on Tencent APIs: http://open.qq.com/ (official site)
-	// 关于QQ登录的其他信息，请关注腾讯开放平台
+    // > more infos on Tencent QQ connect: http://connect.qq.com/ (official site)
+	// 关于QQ登录的其他信息，请关注腾讯QQ互联
 
 	// default permissions 
 	public $openid;
