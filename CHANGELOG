@@ -24,6 +24,10 @@ Hybridauth Change log
         #301 - getUserContacts gets paged Facebook friends
         #305 - Require wrapper class file only if it is specified
         #306 - fixed E_NOTICE: Undefined index: debug_mode in Logger class
+        #310 - GitHub auth: Undefined property: stdClass::$email
+        #264 - Yahoo login not returning email address
+        #321, #322, #323 - Updated QQ
+        #324 - fixed port issue on openid
 
 2.2.2 - July 11 2014
 	#239 Fixes to Disqus provider, which now works properly (the old one was not working)
