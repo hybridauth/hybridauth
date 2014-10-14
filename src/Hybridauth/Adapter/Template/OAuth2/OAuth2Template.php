@@ -95,7 +95,7 @@ class OAuth2Template extends AbstractAdapter implements AdapterInterface
 			throw new
 				Exception(
 					'Authentication failed: Provider returned an invalid authorization code. ' .
-					'Recived error: ' . $error. '. ',
+					'Received error: ' . $error. '. ',
 					Exception::AUTHENTIFICATION_FAILED,
 					$this
 				);
