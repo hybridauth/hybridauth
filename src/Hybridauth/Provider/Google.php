@@ -63,13 +63,17 @@ class Google extends OAuth2Template
 
 		// Provider Errors shall not pass silently
 		if( ! $response || ! isset( $response->id ) ){
-			throw new
-				Exception(
-					'User profile request failed: Provider returned an invalid response. ' .
-					'HTTP client state: (' . $this->httpClient->getState() . ')',
-					Exception::AUTHENTIFICATION_FAILED,
-					$this
-				);
+            if ($response->errors->error[0]->reason == "authError") {
+                $this->logout();
+            } else {
+                throw new
+                Exception(
+                    'User profile request failed: Provider returned an invalid response. ' .
+                    'HTTP client state: (' . $this->httpClient->getState() . ')',
+                    Exception::AUTHENTIFICATION_FAILED,
+                    $this
+                );
+            }
 		}
 
 		$parser = function( $property ) use( $response )
