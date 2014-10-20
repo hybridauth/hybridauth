@@ -75,10 +75,10 @@ class authentications extends controller {
 				case 4 : $error = "Missing provider application credentials."; break;
 				case 5 : $error = "Authentication failed. The user has canceled the authentication or the provider refused the connection."; break;
 				case 6 : $error = "User profile request failed. Most likely the user is not connected to the provider and he should to authenticate again."; 
-					     $adapter->logout(); 
+					     if (isset($adapter)) $adapter->logout(); 
 					     break;
 				case 7 : $error = "User not connected to the provider."; 
-					     $adapter->logout(); 
+					     if (isset($adapter)) $adapter->logout(); 
 					     break;
 			} 
 
