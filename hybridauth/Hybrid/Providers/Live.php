@@ -20,7 +20,7 @@
 class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions 
-	public $scope = "wl.basic wl.emails wl.signin wl.share wl.birthday";
+	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday";
 
 	
 	/**
@@ -97,7 +97,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 
 			$uc->identifier   = (property_exists($item,'id'))?$item->id:"";
 			$uc->displayName  = (property_exists($item,'name'))?$item->name:"";
-
+			$uc->email        = (property_exists($item,'emails'))?$item->emails->preferred:"";
 			$contacts[] = $uc;
 		}
 		
