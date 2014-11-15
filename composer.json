@@ -17,12 +17,12 @@
         "issues": "https://github.com/hybridauth/hybridauth/issues"
     },
     "require": {
-        "php": ">=5.2.0",
+        "php": ">=5.4.0",
         "ext-curl": "*"
     },
     "autoload": {
-        "psr-0": {
-            "Hybrid": "hybridauth/"
+        "psr-4": {
+           "Hybridauth\\": "src/"
         } 
     }
 }
