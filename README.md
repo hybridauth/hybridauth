@@ -1,8 +1,8 @@
 ## [HybridAuth](http://hybridauth.sourceforge.net/) 3.0.0-Remake [![Build Status](https://travis-ci.org/miled/hybridauth.svg?branch=master)](https://travis-ci.org/miled/hybridauth) [![Code Climate](https://codeclimate.com/github/miled/hybridauth/badges/gpa.svg)](https://codeclimate.com/github/miled/hybridauth)
 
-    Important: This is a work in progress.
+    Important: This is a work in progress and subject to changes at any time.
 
-#### ToDo.. 
+#### ToDo..
 
 - [ ] Fix eventual bugs (priority to stability issues)
 - [x] Make hybridauth PSR-4 compliant
@@ -46,7 +46,7 @@ You can find complete Hybridauth documentation at ...
 
 #### Usage
 
-Hybridauth provides a number of basic [examples](https://github.com/hybridauth/hybridauth/tree/master/examples). 
+Hybridauth provides a number of basic [examples](https://github.com/hybridauth/hybridauth/tree/master/examples).
 
 ... 
 
@@ -91,7 +91,7 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 
 		$accessToken = $twitter->getAccessToken();
 
-		$apiResponse = $twitter->apiRequest( 'statuses/home_timeline.json' ); 
+		$apiResponse = $twitter->apiRequest( 'statuses/home_timeline.json' );
 	}
 	catch( Exception $e ){
 		echo "Ooophs, we ran into an issue! " . $e->getMessage();
@@ -112,9 +112,9 @@ If you want to jump in Hybridauth 3 without making a lot of changes to your proj
 		'base_url'  => 'http://localhost/hybridauth/examples/callback.php',
 
 		'providers' => array(
-			'GitHub' => array( 
+			'GitHub' => array(
 				'enabled' => true,
-				'keys'    => array ( 'id' => '', 'secret' => '' ), 
+				'keys'    => array ( 'id' => '', 'secret' => '' ),
 			)
 		)
 	);
