@@ -1,8 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Provider;
@@ -18,7 +18,7 @@ use Hybridauth\User;
  * http://www.reddit.com/dev/api/oauth
  * https://github.com/reddit/reddit/wiki/OAuth2
  */
-final class Reddit extends OAuth2
+class Reddit extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -55,7 +55,7 @@ final class Reddit extends OAuth2
 
 		$this->tokenExchangeHeaders = array( 'Authorization' => 'Basic ' . base64_encode( $this->clientId .  ':' . $this->clientSecret ) );
 
-		$this->apiRequestHeaders = array( 'Authorization' => 'Bearer ' . $this->token( "access_token" ) );
+		$this->apiRequestHeaders = array( 'Authorization' => 'Bearer ' . $this->token( 'access_token' ) );
 	}
 
 	/**
@@ -74,10 +74,7 @@ final class Reddit extends OAuth2
 	* {@inheritdoc}
 	*/
 	function getUserProfile()
-	{ 
-	print_r( $this->apiRequestHeaders  );
-	print_r( $_SESSION  );
-	print_r( $this->token( "access_token" ) . '---' );
+	{
 		try
 		{
 			$response = $this->apiRequest( 'me.json' );

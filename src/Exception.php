@@ -1,8 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth;
@@ -12,16 +12,16 @@ namespace Hybridauth;
  */
 class Exception extends \Exception
 {
-    public function __toString()
-    {
+	public function __toString()
+	{
 		$string  = 'HybridAuth has encountered the following error: ' . $this->message . ".\n"; 
 		$string .= 'More information about this error may be available in your server error log.' . /* now the follow up will be removed --> */ ' (or inspect the Exception: $e->debug()).';
 
 		return $string;
-    }
+	}
 
 	/**
-	* Shamelessly Borrowered from Slimframework
+	* Shamelessly Borrowed from Slimframework
 	*/
 	function debug( $object )
 	{
@@ -57,6 +57,6 @@ class Exception extends \Exception
 		$html .= '<h2>Session</h2>';
 		$html .= sprintf ( '<pre>%s</pre>', print_r ( $_SESSION, true ) );
 
-		return sprintf ( "<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:65px;}</style></head><body>%s</body></html>", $title, $html );
+		echo sprintf ( "<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:65px;}</style></head><body>%s</body></html>", $title, $html );
 	}
 }

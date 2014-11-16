@@ -1,5 +1,5 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
@@ -146,7 +146,7 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 		* http://oauth.net/core/1.0a/#signing_process
 		*/
 		$this->sha1Method  = new OAuthSignatureMethodHMACSHA1();
-		$this->consumerKey = new OAuthConsumer( $this->config->get( 'keys' )->get( 'key' ), $this->config->get( 'keys' )->get( 'secret' ) );
+		$this->consumerKey = new OAuthConsumer( $this->config->filter( 'keys' )->get( 'key' ), $this->config->filter( 'keys' )->get( 'secret' ) );
 
 		if( $this->token( 'request_token' ) )
 		{
@@ -205,36 +205,6 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 	}
 
 	/**
-	* Return oauth access tokens
-	*
-	* @param array $tokensNames
-	*
-	* @return array
-	*/
-	function getAccessToken( $tokenNames = array() )
-	{
-		if( ! $tokenNames )
-		{
-			$tokenNames = array(           
-				'access_token',
-				'access_token_secret',
-			);
-		}
-
-		$tokens = array();
-
-		foreach( $tokenNames as $name )
-		{
-			if( $this->token( $name ) )
-			{
-				$tokens[ $name ] = $this->token( $name );
-			}
-		}
-
-		return $tokens;
-	}
-
-	/**
 	* Initiate the authorization protocol
 	*
 	* 1. Obtaining an Unauthorized Request Token
@@ -255,7 +225,7 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 
 		$authUrl = $this->getAuthorizeUrl();
 
-		HttpCLient\Util::redirect( $authUrl );
+		HttpClient\Util::redirect( $authUrl );
 	}
 
 	/**
@@ -494,8 +464,7 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 	* @param string $content_type
 	* @param bool   $multipart
 	*
-	* @throws Exception
-	* @return Hybrid_Data_Collection
+	* @return object
 	*/
 	function apiRequest( $url, $method = 'GET', $parameters = array(), $headers = array() )
 	{
@@ -547,33 +516,5 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 		$this->validateApiResponse();
 
 		return $response;
-	}
-
-	/**
-	* Validate Signed API Requests responses
-	*
-	* Since the specifics of error responses is beyond the scope of RFC5849 specification,
-	* Hybridauth will consider any HTTP status code that is different than '200 OK' as an ERROR.
-	*
-	* This method uses Data_Parser to attempt to decodes the raw $response (usually JSON) into a data collection.
-	*
-	* Sub classes may redefine this method when necessary.
-	* 
-	* @param $response
-	*
-	* @return Hybrid_Data_Collection
-	* @throws Exception
-	*/
-	protected function validateApiResponse()
-	{
-		if( $this->httpClient->getResponseClientError() )
-		{
-			throw new Exception( 'HTTP client error: ' . $this->httpClient->getResponseClientError() . '.' );
-		}
-
-		if( 200 != $this->httpClient->getResponseHttpCode() )
-		{
-			throw new Exception( 'HTTP error ' . $this->httpClient->getResponseHttpCode() . '. Raw Provider API response: ' . $this->httpClient->getResponseBody() . '.' );
-		}
 	}
 }

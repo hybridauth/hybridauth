@@ -1,5 +1,5 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
@@ -265,39 +265,6 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		$this->clearTokens();
 
 		return true;
-	}
-
-	/**
-	* Return oauth access tokens
-	*
-	* @param array $tokensNames
-	*
-	* @return array
-	*/
-	function getAccessToken( $tokenNames = array() )
-	{
-		if( ! $tokenNames )
-		{
-			$tokenNames = array(           
-				'access_token',  // OAuth 2 access token
-				'token_type',    // OAuth 2 token type
-				'refresh_token', // OAuth 2 refresh token
-				'expires_in',    // OPTIONAL. OAuth 2. The duration in seconds of the access token lifetime
-				'expires_at'     // OPTIONAL. OAuth 2. Timestamp when the access_token expire. if not provided by the social api, then it should be calculated: expires_at = now + expires_in
-			);
-		}
-
-		$tokens = array();
-
-		foreach( $tokenNames as $name )
-		{
-			if( $this->token( $name ) )
-			{
-				$tokens[ $name ] = $this->token( $name );
-			}
-		}
-
-		return $tokens;
 	}
 
 	/**
@@ -591,7 +558,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	* @param array $headers
 	* @param null $body
 	*
-	* @return Hybrid_Data_Collection
+	* @return object
 	*/
 	function apiRequest( $url, $method = 'GET', $parameters = array(), $headers = array() )
 	{
@@ -618,38 +585,5 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		$response = ( new Data\Parser() )->parse( $response );
 
 		return $response;
-	}
-
-	/**
-	* Validate Signed API Requests responses
-	*
-	* RFC6749: Error Responses: If a resource access request fails, the resource server
-	* SHOULD inform the client of the error.
-	*
-	* http://tools.ietf.org/html/rfc6749#section-7.2
-	*
-	* Since the specifics of error responses is beyond the scope of RFC6749 specification,
-	* Hybridauth will consider any HTTP status code that is different than '200 OK' as an ERROR.
-	*
-	* This method uses Data_Parser to attempt to decodes the raw $response (usually JSON) into a data collection.
-	*
-	* Sub classes may redefine this method when necessary.
-	* 
-	* @param $response
-	*
-	* @return Hybrid_Data_Collection
-	* @throws Exception
-	*/
-	protected function validateApiResponse()
-	{
-		if( $this->httpClient->getResponseClientError() )
-		{
-			throw new Exception( 'HTTP client error: ' . $this->httpClient->getResponseClientError() . '.' );
-		}
-
-		if( 200 != $this->httpClient->getResponseHttpCode() )
-		{
-			throw new Exception( 'HTTP error ' . $this->httpClient->getResponseHttpCode() . '. Raw Provider API response: ' . $this->httpClient->getResponseBody() . '.' );
-		}
 	}
 }

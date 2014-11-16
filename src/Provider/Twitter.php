@@ -1,8 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Provider;
@@ -15,7 +15,7 @@ use Hybridauth\User;
 /**
 * Hybrid_Providers_Twitter provider adapter based on OAuth1 protocol
 */
-final class Twitter extends OAuth1
+class Twitter extends OAuth1
 {
 	/**
 	* {@inheritdoc}

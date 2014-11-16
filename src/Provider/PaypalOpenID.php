@@ -1,8 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Provider;
@@ -17,7 +17,7 @@ class PaypalOpenID extends OpenID
 	/**
 	* {@inheritdoc}
 	*/
-    protected $openidIdentifier = 'https://www.sandbox.paypal.com/webapps/auth/server'; 
+	protected $openidIdentifier = 'https://www.sandbox.paypal.com/webapps/auth/server'; 
 
 	/**
 	* {@inheritdoc}

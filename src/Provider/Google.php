@@ -15,12 +15,12 @@ use Hybridauth\User;
 /**
  *
  */
-final class Google extends OAuth2
+class Google extends OAuth2
 {
 	/**
 	* {@inheritdoc}
 	*/
-    public $scope = 'profile https://www.googleapis.com/auth/plus.profile.emails.read';
+	public $scope = 'profile https://www.googleapis.com/auth/plus.profile.emails.read';
 
 	/**
 	* {@inheritdoc}
@@ -40,12 +40,12 @@ final class Google extends OAuth2
 	/**
 	* {@inheritdoc}
 	*/
-    function getUserProfile()
-    {
+	function getUserProfile()
+	{
 		try
 		{
 			$response = $this->apiRequest( 'people/me' );
-			
+
 			$data = new Data\Collection( $response );
 		}
 		catch( Exception $e )
@@ -80,7 +80,7 @@ final class Google extends OAuth2
 		$userProfile = $this->fetchUserProfileUrl( $userProfile, $data );
 
 		$userProfile = $this->fetchBirthday( $userProfile, $data->get( 'birthday' ), '-' );
-		
+
 		$userProfile->emailVerified = $data->get( 'verified' ) ? $userProfile->email : '';
 
 		return $userProfile;
@@ -164,7 +164,7 @@ final class Google extends OAuth2
 	protected function getGmailContacts($extraParams )
 	{
 		$contacts = array(); 
-		
+
 		$url = 'https://www.google.com/m8/feeds/contacts/default/full?' . http_build_query( array_merge( array('alt' => 'json', 'v' => '3.0'), $extraParams ) );
 
 		$response = $this->apiRequest( $url );

@@ -1,5 +1,5 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
@@ -7,11 +7,15 @@
 
 namespace Hybridauth\Storage;
 
+use Hybridauth\Deprecated\DeprecatedStorageTrait;
+
 /**
  * HybridAuth storage manager
  */
 class Session implements StorageInterface
 {
+	use DeprecatedStorageTrait;
+
 	/**
 	* Initiate a new session
 	*
@@ -44,7 +48,7 @@ class Session implements StorageInterface
 			return unserialize( $_SESSION["HA::CONFIG"][$key] );
 		}
 
-		return null; 
+		return null;
 	}
 
 	/**
@@ -59,7 +63,7 @@ class Session implements StorageInterface
 			return unserialize( $_SESSION["HA::STORE"][$key] );  
 		}
 
-		return null; 
+		return null;
 	}
 
 	/**
@@ -89,9 +93,9 @@ class Session implements StorageInterface
 
 		if( isset( $_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key] ) )
 		{
-		    $tmp = $_SESSION['HA::STORE'];
+			$tmp = $_SESSION['HA::STORE'];
 
-		    unset( $tmp[$key] );
+			unset( $tmp[$key] );
 
 		    $_SESSION["HA::STORE"] = $tmp;
 		} 
@@ -106,9 +110,9 @@ class Session implements StorageInterface
 
 		if( isset( $_SESSION["HA::STORE"] ) && count( $_SESSION["HA::STORE"] ) )
 		{
-		    $swap = $_SESSION['HA::STORE'];
+			$swap = $_SESSION['HA::STORE'];
 
-		    foreach( $swap as $k => $v )
+			foreach( $swap as $k => $v )
 			{ 
 				if( strstr( $k, $key ) )
 				{
@@ -119,23 +123,4 @@ class Session implements StorageInterface
 			$_SESSION["HA::STORE"] = $swap;
 		}
 	}
-
-	/**
-	* {@inheritdoc}
-	*/
-	function getSessionData()
-	{
-		if( isset( $_SESSION["HA::STORE"] ) )
-		{ 
-			return serialize( $_SESSION["HA::STORE"] ); 
-		}
-	}
-
-	/**
-	* {@inheritdoc}
-	*/
-	function restoreSessionData( $sessiondata )
-	{ 
-		$_SESSION["HA::STORE"] = unserialize( $sessiondata );
-	} 
 }

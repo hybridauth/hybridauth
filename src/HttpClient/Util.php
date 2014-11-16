@@ -1,8 +1,8 @@
 <?php
 /*!
-* This file is part of the HybridAuth PHP Library (hybridauth.sourceforge.net | github.com/hybridauth/hybridauth)
-*
-* This branch contains work in progress toward the next HybridAuth 3 release and may be unstable.
+* HybridAuth
+* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\HttpClient;

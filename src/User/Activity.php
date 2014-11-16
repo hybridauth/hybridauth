@@ -1,5 +1,5 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
@@ -54,8 +54,6 @@ final class Activity
 		$this->user->profileURL  = null;
 		$this->user->photoURL    = null; 
 	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	* Prevent the providers adapters from adding new fields. 

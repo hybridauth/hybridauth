@@ -1,8 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Provider;
@@ -37,8 +37,8 @@ class px500 extends OAuth1
 	/**
 	* {@inheritdoc}
 	*/
-    function getUserProfile()
-    {
+	function getUserProfile()
+	{
 		try
 		{
 			$response = $this->apiRequest( 'users' );
@@ -54,18 +54,18 @@ class px500 extends OAuth1
 
 		$data = $data->filter( 'user' );
 
-        $userProfile->identifier    = $data->get( 'id' );
-        $userProfile->displayName   = $data->get( 'username' );
-        $userProfile->description   = $data->get( 'about' );
-        $userProfile->firstName     = $data->get( 'firstname' );
-        $userProfile->lastName      = $data->get( 'lastname' );
-        $userProfile->photoURL      = $data->get( 'userpic_url' );
-        $userProfile->city          = $data->get( 'city' );
-        $userProfile->region        = $data->get( 'state' );
-        $userProfile->country       = $data->get( 'country' );
+		$userProfile->identifier    = $data->get( 'id' );
+		$userProfile->displayName   = $data->get( 'username' );
+		$userProfile->description   = $data->get( 'about' );
+		$userProfile->firstName     = $data->get( 'firstname' );
+		$userProfile->lastName      = $data->get( 'lastname' );
+		$userProfile->photoURL      = $data->get( 'userpic_url' );
+		$userProfile->city          = $data->get( 'city' );
+		$userProfile->region        = $data->get( 'state' );
+		$userProfile->country       = $data->get( 'country' );
 
-        $userProfile->profileURL    = $data->exists( 'domain' ) ? ( 'http://' . $data->get( 'domain' ) ) : '';
+		$userProfile->profileURL    = $data->exists( 'domain' ) ? ( 'http://' . $data->get( 'domain' ) ) : '';
 
-        return $userProfile;
-    }
+		return $userProfile;
+	}
 }

@@ -1,26 +1,28 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
+
 namespace Hybridauth\Adapter;
 
-use Hybridauth\Error;
-use Hybridauth\Logger;
 use Hybridauth\Exception;
+use Hybridauth\Logger;
 use Hybridauth\Data;
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Storage\Session;
+use Hybridauth\HttpClient;
 use Hybridauth\HttpClient\HttpClientInterface;
-use Hybridauth\HttpClient\Curl;
+
+use Hybridauth\Deprecated\DeprecatedAdapterTrait;
 
 /**
  *
  */
 abstract class AdapterBase implements AdapterInterface 
 {
-	use AdapterTokensTrait, HelperTrait;
+	use AdapterTokensTrait, DeprecatedAdapterTrait, AdapterHelperTrait;
 
 	/**
 	* Provider ID (unique name)
@@ -76,26 +78,26 @@ abstract class AdapterBase implements AdapterInterface
 	*
 	* @param string $providerId
 	* @param array  $config
-	* @param array  $params
 	* @param object $httpClient
 	* @param object $storage
 	* @param object $logger
 	*/
-	function __construct( $config = array(), $params = array(), $httpClient = null, $storage = null, $logger = null )
+	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null, $logger = null )
 	{
-		$this->providerId = str_replace( 'Hybridauth\\Provider\\', '', get_class($this) );
-		
-		$this->httpClient = $httpClient ? $httpClient : new Curl();
+		$this->providerId = str_replace( 'Hybridauth\\Provider\\', '', get_class($this) ); 
+
+		$this->httpClient = $httpClient ? $httpClient : new HttpClient\Curl();
 		$this->storage    = $storage ? $storage : new Session();
-		$this->logger     = $logger  ? $storage : new Error( $this->storage );
+		$this->logger     = $logger ? $logger : new Logger( 
+			( isset( $config['debug_mode'] ) ? $config['debug_mode'] : false ), 
+			( isset( $config['debug_file'] ) ? $config['debug_file'] : '' ) 
+		);
 
-		$this->config = $config;
-		$this->params = $params ? $params : $this->storage->get( $this->providerId . '.id_provider_params' );
+		$this->logger->info( 'Initialize ' . get_class($this) . '. Dump provider config: ', $config );
 
-		$this->config = new Data\Collection( $this->config );
-		$this->params = new Data\Collection( $this->params );
+		$this->config = new Data\Collection( $config );
 
-		$this->endpoint   = $this->config->exists( 'callback' ) ? $this->config->get( 'callback' ) : $this->storage->get( $this->providerId . '.hauth_endpoint' );
+		$this->endpoint = $this->config->get( 'callback' );
 
 		$this->initialize();
 	}
@@ -139,15 +141,5 @@ abstract class AdapterBase implements AdapterInterface
 	function getAccessToken( $tokenNames = array() )
 	{
 		throw new Exception( 'Provider does not support this feature.', 8 ); 
-	}
-
-	/**
-	* Reset adapter access tokens
-	*
-	* @param array $tokens
-	*/
-	function setAccessToken( $tokens = array() )
-	{
-		$this->setTokens( $tokens );
 	}
 }

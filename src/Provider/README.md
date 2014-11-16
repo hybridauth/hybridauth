@@ -76,8 +76,6 @@ class MyCustomProvider extends OAuth2
 		{
 			/* now we use apiRequest() for signed requests. */
 			$response = $this->apiRequest( 'user/profile', 'GET', [], [ 'Authorization' => .. ] );
-
-			$collection = new Data\Collection( $response );
 		}
 		catch( Exception $e )
 		{
@@ -101,6 +99,8 @@ class MyCustomProvider extends OAuth2
 				}
 			}
 		*/
+
+		$collection = new Data\Collection( $response );
 
 		$userProfile = new User\Profile();
 
@@ -155,7 +155,7 @@ class MyCustomProvider extends OAuth1
 	/**
 	* Unauthorized Request Token Endpoint
 	*/
-	protected $accessTokenUrl = 'https://api.provider.ltd/oauth/request_token';
+	protected $requestTokenUrl = 'https://api.provider.ltd/oauth/request_token';
 
 	/**
 	* Default Access Token Endpoint
@@ -186,7 +186,7 @@ class MyCustomProvider extends OAuth1
 }
 ```
 
-### List of done adapters - but UNTESTED still
+### List of done adapters - (UNTESTED still)
 
 ##### OpenID
 
@@ -199,7 +199,7 @@ class MyCustomProvider extends OAuth1
 
 ##### OAuth 1
 
-* Twitter
+* Twitter (uncompleted)
 * 500px
 * Tumblr
 
@@ -207,7 +207,7 @@ class MyCustomProvider extends OAuth1
 
 * Google
 * Disqus
-* Facebook
+* Facebook (uncompleted)
 * Foursquare
 * Freeagent
 * GitHub
@@ -217,6 +217,8 @@ class MyCustomProvider extends OAuth1
 * WordPress (new)
 * Reddit (new)
 * Dribbble (new)
+* Mailru
+* Vkontakte (uncompleted)
 
 #### Pending list
 
@@ -224,14 +226,12 @@ class MyCustomProvider extends OAuth1
 * Goodreads
 * LinkedIn
 * Live
-* Mailru
 * Murmur
 * Odnoklassniki
 * Pixnet
 * Plurk
 * QQ
 * Skyrock
-* Vkontakte
 * XING
 * Yahoo
 * Yandex

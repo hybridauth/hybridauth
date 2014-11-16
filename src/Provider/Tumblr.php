@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Provider;
@@ -91,6 +91,6 @@ class Tumblr extends OAuth1
 			throw new Exception( 'Update user status failed! ' . $e->getMessage() );
 		}
 
-        return $response;
+		return $response;
 	}
 }

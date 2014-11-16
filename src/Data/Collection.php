@@ -1,8 +1,8 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Data;
@@ -48,14 +48,7 @@ final class Collection
 	{
 		if( $this->exists( $property ) )
 		{
-			$data = $this->collection->$property;
-
-			if( is_array( $data ) || is_object( $data ) )
-			{
-				$data = new Collection( $data );
-			}
-
-			return $data;
+			return $this->collection->$property;
 		}
 	}
 
@@ -76,11 +69,11 @@ final class Collection
 	/**
 	* Returns the whole collection
 	*
-	* @return mixed
+	* @return Collection
 	*/
 	function all()
 	{
-		return $this->collection;
+		return new Collection( $this->collection );
 	}
 
 	/**
@@ -88,13 +81,20 @@ final class Collection
 	*
 	* @param $property
 	*
-	* @return Hybrid_Data_Collection
+	* @return Collection
 	*/
 	function filter( $property )
 	{
 		if( $this->exists( $property ) )
 		{
-			return $this->get( $property );
+			$data = $this->get( $property );
+
+			if( ! is_a( $data, 'Collection' ) )
+			{
+				$data = new Collection( $data );
+			}
+
+			return $data;
 		}
 
 		return $this;

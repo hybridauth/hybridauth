@@ -1,5 +1,5 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
@@ -9,6 +9,55 @@ namespace Hybridauth\Adapter;
 
 trait AdapterTokensTrait
 {
+	/**
+	* Return oauth access tokens
+	*
+	* @param array $tokensNames
+	*
+	* @return array
+	*/
+	function getAccessToken( $tokenNames = array() )
+	{
+		if( ! $tokenNames )
+		{
+			$tokenNames = array(
+				'access_token',
+				'access_token_secret',
+				'token_type',
+				'refresh_token',
+				'expires_in',
+				'expires_at'
+			);
+		}
+
+		$tokens = array();
+
+		foreach( $tokenNames as $name )
+		{
+			if( $this->token( $name ) )
+			{
+				$tokens[ $name ] = $this->token( $name );
+			}
+		}
+
+		return $tokens;
+	}
+
+	/**
+	* Reset adapter access tokens
+	*
+	* @param array $tokens
+	*/
+	function setAccessToken( $tokens = array() )
+	{
+		$this->clearTokens();
+
+		foreach( $tokens as $token => $value )
+		{
+			$this->token( $token , $value );
+		}
+	}
+
 	/**
 	* Get or Set a token
 	*
@@ -37,22 +86,6 @@ trait AdapterTokensTrait
 		}
 
 		return null;
-	}
-
-	/**
-	* Store an array of tokens
-	*
-	* @param array $tokens
-	*/
-	function setTokens( $tokens = array() )
-	{
-		if( $tokens )
-		{
-			foreach( $tokens as $token => $value )
-			{
-				$this->token( $token , $value );
-			}
-		}
 	}
 
 	/**

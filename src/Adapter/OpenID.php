@@ -1,14 +1,14 @@
 <?php
-/**
+/*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 namespace Hybridauth\Adapter;
 
 use Hybridauth\Data;
-use Hybridauth\HttpCLient;
+use Hybridauth\HttpClient;
 use Hybridauth\Exception;
 use Hybridauth\User;
 
