@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.3.0 -
+2.3.0 - November 16 2014
         #87 - Make logging level based
         #102 - Uses Exceptions instead of die() to handle critical problems.
         #247 - Disable autoloading when doing class_exists()
@@ -28,17 +28,20 @@ Hybridauth Change log
         #264 - Yahoo login not returning email address
         #321, #322, #323 - Updated QQ
         #324 - fixed port issue on openid
+        #337 - Added email in Live contacts
+        #341 - [foursquare] photoURL is not a 'simple' string with the latest service API
+        
 
 2.2.2 - July 11 2014
-	#239 Fixes to Disqus provider, which now works properly (the old one was not working)
-	#234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
+	    #239 Fixes to Disqus provider, which now works properly (the old one was not working)
+	    #234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
         #226 Fixing fatal error in Yammer Provider
         #227 + #229 Github: getUserProfile() does not contain email address fix
         #236 + #237 OAuth1Client: Allow to set a request body and a content type
-	#241 Updates to Install.php
-	#208 Updating and fixing examples
-	#244 OAuth if the class already exists, use the current class
-	#246 Fixing version numbers
+	    #241 Updates to Install.php
+	    #208 Updating and fixing examples
+	    #244 OAuth if the class already exists, use the current class
+	    #246 Fixing version numbers
         Few small fixes and updates to the examples
 	
 2.2.1 - May 26 2014
