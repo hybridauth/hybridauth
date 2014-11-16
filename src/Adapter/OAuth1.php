@@ -8,7 +8,7 @@
 namespace Hybridauth\Adapter;
 
 use Hybridauth\Data; 
-use Hybridauth\HttpCLient;
+use Hybridauth\HttpClient;
 use Hybridauth\Exception;
 
 use Hybridauth\Thirdparty\OAuth\OAuthConsumer;
