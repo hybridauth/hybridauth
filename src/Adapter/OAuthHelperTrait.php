@@ -7,11 +7,31 @@
 
 namespace Hybridauth\Adapter;
 
+use Hybridauth\Exception; 
+
 /**
  * 
  */
-trait AdapterHelperTrait
+trait OAuthHelperTrait
 {
+	/**
+	* {@inheritdoc}
+	*/
+	function isAuthorized()
+	{
+		return (bool) $this->token( 'access_token' );
+	}
+
+	/**
+	* {@inheritdoc}
+	*/
+	function disconnect()
+	{
+		$this->clearTokens();
+
+		return true;
+	}
+
 	/**
 	* Validate Signed API Requests responses
 	*
@@ -34,19 +54,14 @@ trait AdapterHelperTrait
 	}
 
 	/**
-	* need to move this method somewhere else... 
+	* Override defaults endpoints
 	*/
-	function fetchBirthday( $userProfile, $birthday, $seperator  )
+	protected function overrideEndpoints() 
 	{
-		if( $birthday )
-		{
-			list( $birthday_year, $birthday_month, $birthday_day ) = explode( $seperator, $birthday );
+		$endpoints = $this->config->filter( 'endpoints' );
 
-			$userProfile->birthDay   = (int) $birthday_day;
-			$userProfile->birthMonth = (int) $birthday_month;
-			$userProfile->birthYear  = (int) $birthday_year;
-		}
-
-		return $userProfile;
+		$this->apiBaseUrl     = $endpoints->exists( 'api_base_url'     ) ? $endpoints->get( 'api_base_url'     ) : $this->apiBaseUrl     ;
+		$this->authorizeUrl   = $endpoints->exists( 'authorize_url'    ) ? $endpoints->get( 'authorize_url'    ) : $this->authorizeUrl   ;
+		$this->accessTokenUrl = $endpoints->exists( 'access_token_url' ) ? $endpoints->get( 'access_token_url' ) : $this->accessTokenUrl ;
 	}
 }

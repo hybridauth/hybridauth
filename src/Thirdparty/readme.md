@@ -2,11 +2,13 @@
 
 Here we include a number of third party libraries. Those libraries are used by the various providers supported by Hybridauth.
 
-Note: We no longer use the old OAuth clients. Please don't add new libs to this folder, unless strictly necessary.
-
-##### Included libraries
-
 Library | Description
 -------- | -------------
-[LightOpenID](https://gitorious.org/lightopenid) | Contain LightOpenID. Solid OpenID library 
-[OAuth Library](https://code.google.com/p/oauth/) | Contain OAuth Library. Used by OAuth 1 providers.
+[LightOpenID](https://gitorious.org/lightopenid) | Contain LightOpenID. Solid OpenID library licensed under the MIT License.
+[OAuth Library](https://code.google.com/p/oauth/) | Contain OAuth Library licensed under Apache License 2.0
+
+Notes: 
+
+    We no longer use the old OAuth clients. Please don't add new libs to this folder, unless strictly necessary.
+    Both LightOpenID and OAuth are (to be) partially/indirectly tested within the Hybridauth library. 
+    Both LightOpenID and OAuth libraries are excluded from Codeclimate.com Analysis/GPA.

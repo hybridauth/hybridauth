@@ -21,7 +21,7 @@ final class Parser
 	* This method will first attempt to parse data as a JSON string (since most providers use this format)
 	* then parse_str.
 	*
-	* @param $result
+	* @param string $raw
 	*
 	* @return mixed
 	*/
@@ -73,5 +73,15 @@ final class Parser
 		}
 
 		return $result;
+	}
+
+	/**
+	* needs to be improved
+	*/
+	function parseBirthday( $birthday, $seperator  )
+	{
+		list( $year, $month, $day ) = explode( $seperator, $birthday );
+
+		return array( $year, $month, $day );
 	}
 }

@@ -5,14 +5,14 @@
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
-namespace Hybridauth;
+namespace Hybridauth\Logger;
 
 use Hybridauth\Exception;
 
 /**
  * Debugging and Logging utility
  */
-class Logger
+class Logger implements LoggerInterface
 {
 	/**
 	* Debug level
@@ -53,11 +53,12 @@ class Logger
 	}
 
 	/**
-	* @param string $message
-	* @param mixed $object
+	* @param mixed  $debug_mode
+	* @param string $debug_file
+	*
 	* @throws Exception
 	*/
-	function initialize( $debug_mode, $debug_file )
+	protected function initialize( $debug_mode, $debug_file )
 	{
  		if( ! $debug_file )
 		{
@@ -76,25 +77,7 @@ class Logger
 	}
 
 	/**
-	* Debug
-	*
-	* @param string $message
-	* @param mixed $object
-	*/
-	function debug( $message, $object = null )
-	{
-		if( true !== $this->debug_mode )
-		{
-			return;
-		}
-
-		$this->_write( 'DEBUG', $message, $object );
-	}
-
-	/**
-	* Info
-	*
-	* @param string $message
+	* {@inheritdoc}
 	*/
 	function info( $message )
 	{
@@ -107,10 +90,20 @@ class Logger
 	}
 
 	/**
-	* Error
-	*
-	* @param string $message Error message
-	* @param mixed $object
+	* {@inheritdoc}
+	*/
+	function debug( $message, $object = null )
+	{
+		if( true !== $this->debug_mode )
+		{
+			return;
+		}
+
+		$this->_write( 'DEBUG', $message, $object );
+	}
+
+	/**
+	* {@inheritdoc}
 	*/
 	function error($message, $object = null)
 	{
@@ -122,7 +115,7 @@ class Logger
 	*
 	* @param string $level Error level
 	* @param string $message Error message
-	* @param mixed $object
+	* @param mixed  $object
 	*/
 	private function _write($level, $message, $object = null)
 	{

@@ -83,8 +83,6 @@ class Foursquare extends OAuth2
 
 		if( $data->exists( 'photo' ) )
 		{
-			$photoSize = isset( $this->config['photo_size'] ) ? $this->config['photo_size'] : ;
-
 			$userProfile->photoURL = $data->filter( 'photo' )->get( 'prefix' ) . '150x150' . $data->filter( 'photo' )->get( 'suffix' );
 		}
 

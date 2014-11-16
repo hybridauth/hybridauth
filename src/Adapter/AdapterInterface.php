@@ -14,23 +14,29 @@ interface AdapterInterface
 {
 	/**
 	* Initiate the authentication authorization protocol
+	*
+	* @throws Exception
+	* @return boolean
 	*/
 	function authenticate();
 
 	/**
-	* Initiate the authentication authorization protocol
+	* Returns TRUE if the user is authorized
 	*/
 	function isAuthorized();
 
 	/**
 	* Clear all access token in storage
+	*
+	* @return boolean
 	*/
 	function disconnect();
 
-   	/**
+	/**
 	* Retrieve the connected user profile
 	*
-	* @return User\Profile
+	* @throws Exception
+	* @return \Hybridauth\User\Profile
 	*/
 	function getUserProfile();
 
@@ -38,7 +44,7 @@ interface AdapterInterface
 	* Retrieve the connected user contacts list
 	*
 	* @throws Exception
-	* @return array of User\Contact
+	* @return array of \Hybridauth\User\Contact
 	*/
 	function getUserContacts();
 
@@ -48,7 +54,7 @@ interface AdapterInterface
 	* @param string $stream
 	*
 	* @throws Exception
-	* @return array of User\Activity
+	* @return array of \Hybridauth\User\Activity
 	*/
 	function getUserActivity( $stream );
 
@@ -58,7 +64,7 @@ interface AdapterInterface
 	* @param string|array $status
 	*
 	* @throws Exception
-	* @return mixed api response
+	* @return mixed API response
 	*/
 	function setUserStatus( $status );
 }

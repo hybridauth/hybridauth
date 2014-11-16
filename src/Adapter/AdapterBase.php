@@ -8,12 +8,13 @@
 namespace Hybridauth\Adapter;
 
 use Hybridauth\Exception;
-use Hybridauth\Logger;
-use Hybridauth\Data;
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Storage\Session;
-use Hybridauth\HttpClient;
+use Hybridauth\Logger\LoggerInterface;
+use Hybridauth\Logger\Logger;
 use Hybridauth\HttpClient\HttpClientInterface;
+use Hybridauth\HttpClient\Curl as HttpClient;
+use Hybridauth\Data;
 
 use Hybridauth\Deprecated\DeprecatedAdapterTrait;
 
@@ -22,7 +23,7 @@ use Hybridauth\Deprecated\DeprecatedAdapterTrait;
  */
 abstract class AdapterBase implements AdapterInterface 
 {
-	use AdapterTokensTrait, DeprecatedAdapterTrait, AdapterHelperTrait;
+	use AdapterTokensTrait, DeprecatedAdapterTrait;
 
 	/**
 	* Provider ID (unique name)
@@ -76,24 +77,37 @@ abstract class AdapterBase implements AdapterInterface
 	/**
 	* Common adapters constructor
 	*
-	* @param string $providerId
-	* @param array  $config
-	* @param object $httpClient
-	* @param object $storage
-	* @param object $logger
+	* @param array               $config
+	* @param HttpClientInterface $httpClient
+	* @param StorageInterface    $storage
+	* @param LoggerInterface     $logger
+	*
+	* @throws Exception
 	*/
-	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null, $logger = null )
+	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null )
 	{
 		$this->providerId = str_replace( 'Hybridauth\\Provider\\', '', get_class($this) ); 
 
-		$this->httpClient = $httpClient ? $httpClient : new HttpClient\Curl();
-		$this->storage    = $storage ? $storage : new Session();
-		$this->logger     = $logger ? $logger : new Logger( 
-			( isset( $config['debug_mode'] ) ? $config['debug_mode'] : false ), 
+		$this->storage = $storage ? $storage : new Session();
+
+		$this->logger = $logger ? $logger : new Logger( 
+			( isset( $config['debug_mode'] ) ? $config['debug_mode'] : false ),
 			( isset( $config['debug_file'] ) ? $config['debug_file'] : '' ) 
 		);
 
-		$this->logger->info( 'Initialize ' . get_class($this) . '. Dump provider config: ', $config );
+		$this->httpClient = $httpClient ? $httpClient : new HttpClient();
+
+		if( isset( $config['curl_options'] ) && method_exists( $this->httpClient, 'setCurlOptions' ) )
+		{
+			$this->httpClient->setCurlOptions( $this->config['curl_options'] );
+		}
+
+		if( method_exists( $this->httpClient, 'setLogger' ) )
+		{
+			$this->httpClient->setLogger( $this->logger );
+		}
+
+		$this->logger->debug( 'Initialize ' . get_class($this) . '. Provider config: ', $config );
 
 		$this->config = new Data\Collection( $config );
 
@@ -104,6 +118,8 @@ abstract class AdapterBase implements AdapterInterface
 
 	/**
 	* Adapter initializer
+	*
+	* @throws Exception
 	*/
 	abstract protected function initialize(); 
 
@@ -127,18 +143,6 @@ abstract class AdapterBase implements AdapterInterface
 	* {@inheritdoc}
 	*/
 	function getUserActivity( $stream )
-	{
-		throw new Exception( 'Provider does not support this feature.', 8 ); 
-	}
-
-	/**
-	* Return oauth access tokens
-	*
-	* @param array $tokensNames
-	*
-	* @return array
-	*/
-	function getAccessToken( $tokenNames = array() )
 	{
 		throw new Exception( 'Provider does not support this feature.', 8 ); 
 	}

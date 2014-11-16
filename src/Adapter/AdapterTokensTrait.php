@@ -12,7 +12,7 @@ trait AdapterTokensTrait
 	/**
 	* Return oauth access tokens
 	*
-	* @param array $tokensNames
+	* @param array $tokenNames
 	*
 	* @return array
 	*/
@@ -65,8 +65,9 @@ trait AdapterTokensTrait
 	* These tokens can be either OAuth tokens or any useful data (i.e., user_id, auth_nonce, etc.)
 	*
 	* @param string $token
-	* @param null $value
-	* @return string|null
+	* @param mixed  $value
+	*
+	* @return mixed
 	*/
 	function token( $token, $value = null )
 	{
@@ -89,9 +90,7 @@ trait AdapterTokensTrait
 	}
 
 	/**
-	* Delete all tokens
-	*
-	* @param array $tokens
+	* Delete all tokens of the instantiated adapter
 	*/
 	function clearTokens()
 	{

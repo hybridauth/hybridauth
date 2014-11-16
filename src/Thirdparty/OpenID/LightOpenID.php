@@ -1,10 +1,13 @@
 <?php
+/*!
+* This file is part of the LightOpenID PHP Library (https://github.com/iignatov/LightOpenID)
+*
+* LightOpenID is an open source software available under the MIT License.
+*/
 
 namespace Hybridauth\Thirdparty\OpenID;
 
 use Hybridauth\Exception;
-
-// https://github.com/iignatov/LightOpenID
 
 /**
  * This class provides a simple interface for OpenID 1.1/2.0 authentication.

@@ -52,9 +52,9 @@ class Vkontakte  extends OAuth2
 		try
 		{
 			$parameters = [
-				'uid'    => $this->token( 'user_id' );
+				'uid'    => $this->token( 'user_id' ),
 				'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big'
-			]
+			];
 
 			$response = $this->apiRequest( 'users.getInfo', 'GET', $parameters );
 

@@ -44,7 +44,7 @@ class Mailru  extends OAuth2
 	*
 	* {@inheritdoc}
 	*/
-	protected function apiRequest(  $url, $method = 'GET', $parameters = array(), $headers = array() )
+	function apiRequest(  $url, $method = 'GET', $parameters = array(), $headers = array() )
 	{
 		$signature = md5( 'client_id=' . $this->clientId . 'format=jsonmethod=' . $url . 'secure=1session_key='. $this->token( 'access_token' ) . $this->clientSecret );
 

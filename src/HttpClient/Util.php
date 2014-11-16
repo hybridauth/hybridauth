@@ -10,9 +10,11 @@ namespace Hybridauth\HttpClient;
 use Hybridauth\Data; 
 
 class Util
-{ 
+{
 	/**
 	* Redirect to a given URL
+	*
+	* @param string $url
 	*/
 	public static function redirect( $url )
 	{

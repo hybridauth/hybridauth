@@ -33,19 +33,4 @@ trait DeprecatedAdapterTrait
 	{
 		return $this->isAuthorized();
 	}
-
-	/**
-	* Make an API call. kept for backward compatibility.
-	*
-	* @deprecated 
-	*/ 
-	function api( /* polymorphic */ )
-	{
-		if( func_num_args() )
-		{
-			return call_user_func_array( array( $this, 'apiRequest' ), func_get_args() );
-		}
-
-		return $this;
-	}
 }

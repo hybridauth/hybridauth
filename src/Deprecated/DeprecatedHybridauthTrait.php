@@ -50,7 +50,7 @@ trait DeprecatedHybridauthTrait
 	* @deprecated 
 	*/
 	function restoreSessionData( $sessiondata )
-	{ 
+	{
 		$this->storage->restoreSessionData( $sessiondata );
 	}
 }

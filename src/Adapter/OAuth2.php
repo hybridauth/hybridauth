@@ -12,11 +12,15 @@ use Hybridauth\HttpClient;
 use Hybridauth\Exception;
 
 /**
- * To implement an OAuth 2 based service provider, Hybrid_Provider_Model_OAuth2
- * can be used to save the hassle of the authentication flow.
+ * This class  can be used to simplify the authorization flow of OAuth 2 based service providers.
+ *
+ * Subclasses (i.e., providers adapters) can either use the already provided methods or override
+ * them when necessary.
  */
 abstract class OAuth2 extends AdapterBase implements AdapterInterface 
 {
+	use OAuthHelperTrait;
+
 	/**
 	* Client Identifier
 	*
@@ -218,11 +222,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 			"redirect_uri"  => $this->endpoint
 		);
 
-		$endpoints = $this->config->filter( 'endpoints' );
-
-		$this->apiBaseUrl     = $endpoints->exists( 'api_base_url'     ) ? $endpoints->get( 'api_base_url'     ) : $this->apiBaseUrl     ;
-		$this->authorizeUrl   = $endpoints->exists( 'authorize_url'    ) ? $endpoints->get( 'authorize_url'    ) : $this->authorizeUrl   ;
-		$this->accessTokenUrl = $endpoints->exists( 'access_token_url' ) ? $endpoints->get( 'access_token_url' ) : $this->accessTokenUrl ;
+		$this->overrideEndpoints();
 	}
 
 	/**
@@ -239,13 +239,10 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		{
 			if( ! isset( $_GET['code'] ) )
 			{
-				$this->authenticateBegin();
+				return $this->authenticateBegin();
 			}
 
-			else
-			{
-				$this->authenticateFinish();
-			}
+			return $this->authenticateFinish();
 		}
 		catch( Exception $e )
 		{
@@ -255,28 +252,11 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		}
 	}
 
-	function isAuthorized()
-	{
-		return (bool) $this->token( 'access_token' );
-	}
-
-	function disconnect()
-	{
-		$this->clearTokens();
-
-		return true;
-	}
-
 	/**
 	* Initiate the authorization protocol
 	*
 	* Build Authorization URL for Authorization Request and redirect the user-agent to the
 	* Authorization Server.
-	*
-	* Sub classes may redefine this method when necessary.
-	*
-	* See getAuthorizeUrl()
-	* See Hybrid_Auth::redirect()
 	*/
 	function authenticateBegin()
 	{
@@ -286,7 +266,9 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	}
 
 	/**
-	* ..
+	* Finalize the authorization process
+	*
+	* @throws Exception
 	*/
 	function authenticateFinish()
 	{
@@ -443,7 +425,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @param $response
 	*
-	* @return Hybrid_Data_Collection
+	* @return \Hybridauth\Data\Collection
 	* @throws Exception
 	*/
 	protected function validateAccessTokenExchange( $response )
@@ -534,7 +516,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @param $response
 	*
-	* @return Hybrid_Data_Collection
+	* @return \Hybridauth\Data\Collection
 	* @throws Exception
 	*/
 	protected function validateRefreshAccessToken( $response )
@@ -552,13 +534,12 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* http://tools.ietf.org/html/rfc6749#section-7
 	* 
-	* @param $url
+	* @param string $url
 	* @param string $method
-	* @param array $parameters
-	* @param array $headers
-	* @param null $body
+	* @param array  $parameters
+	* @param array  $headers
 	*
-	* @return object
+	* @return object 
 	*/
 	function apiRequest( $url, $method = 'GET', $parameters = array(), $headers = array() )
 	{

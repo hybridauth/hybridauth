@@ -15,7 +15,10 @@ use Hybridauth\User;
 use Hybridauth\Thirdparty\OpenID\LightOpenID;
 
 /**
+ * This class  can be used to simplify the authentication flow of OpenID based service providers.
  *
+ * Subclasses (i.e., providers adapters) can either use the already provided methods or override
+ * them when necessary.
  */
 class OpenID extends AdapterBase implements AdapterInterface 
 {
@@ -34,7 +37,6 @@ class OpenID extends AdapterBase implements AdapterInterface
 	protected $openidIdentifier = '';
 
 	/**
-	/**
 	* Adapter initializer
 	*
 	* @throws Exception
@@ -44,11 +46,6 @@ class OpenID extends AdapterBase implements AdapterInterface
 		if( $this->config->exists( 'openid_identifier' ) )
 		{
 			$this->openidIdentifier = $this->config->get( 'openid_identifier' );
-		}
-
-		if( $this->params->exists( 'openid_identifier' ) )
-		{
-			$this->openidIdentifier = $this->params->get( 'openid_identifier' );
 		}
 
 		if( empty( $this->openidIdentifier ) )
@@ -64,11 +61,12 @@ class OpenID extends AdapterBase implements AdapterInterface
 			$hostUrl .= ':' . $hostPort;
 		}
 
+		// @fixme: add proxy
 		$this->openIdClient = new LightOpenID( $hostUrl, null );
 	}
 
 	/**
-	*
+	* {@inheritdoc}
 	*/
 	function authenticate()
 	{
@@ -79,17 +77,14 @@ class OpenID extends AdapterBase implements AdapterInterface
 
 		if( ! isset( $_GET['openid_mode'] ) )
 		{
-			$this->authenticateBegin();
+			return $this->authenticateBegin();
 		}
 
-		else
-		{
-			$this->authenticateFinish();
-		}
+		return $this->authenticateFinish();
 	}
 
 	/**
-	*
+	* {@inheritdoc}
 	*/
 	function isAuthorized()
 	{
@@ -97,11 +92,11 @@ class OpenID extends AdapterBase implements AdapterInterface
 	}
 
 	/**
-	*
+	* {@inheritdoc}
 	*/
 	function disconnect()
 	{
-		$this->clearTokens();
+		$this->storage->delete( $this->providerId . '.user' );
 
 		return true;
 	}
@@ -120,17 +115,13 @@ class OpenID extends AdapterBase implements AdapterInterface
 			'namePerson/last'        ,
 			'namePerson/friendly'    ,
 			'namePerson'             ,
-
 			'contact/email'          ,
-
 			'birthDate'              ,
 			'birthDate/birthDay'     ,
 			'birthDate/birthMonth'   ,
 			'birthDate/birthYear'    ,
-
 			'person/gender'          ,
 			'pref/language'          ,
-
 			'contact/postalCode/home',
 			'contact/city/home'      ,
 			'contact/country/home'   ,
@@ -142,7 +133,9 @@ class OpenID extends AdapterBase implements AdapterInterface
 	}
 
 	/**
-	* Validate and fetch the user profile.
+	* Finalize the authorization process.
+	*
+	* @throws Exception
 	*/
 	function authenticateFinish()
 	{
@@ -156,38 +149,61 @@ class OpenID extends AdapterBase implements AdapterInterface
 			throw new Exception( 'Authentication failed. Invalid request received!', 5 );
 		}
 
-		$response = $this->openIdClient->getAttributes();
+		$openidAttributes = $this->openIdClient->getAttributes();
 
-		$collection = new Data\Collection( $response );
+		$userProfile = $this->fetchUserProfile( $openidAttributes );
+
+		/* with openid providers we only get user profiles once, so we store it */
+		$this->storage->set( $this->providerId . '.user', $userProfile );
+	}
+
+	/**
+	* Fetch user profile from received openid attributes
+	*/
+	protected function fetchUserProfile( $openidAttributes )
+	{
+		$data = new Data\Collection( $openidAttributes );
 
 		$userProfile = new User\Profile();
 
 		$userProfile->identifier  = $this->openIdClient->identity;
 
-		$userProfile->firstName   = $collection->get( 'namePerson/first' );
-		$userProfile->lastName    = $collection->get( 'namePerson/last' );
-		$userProfile->displayName = $collection->get( 'namePerson' );
-		$userProfile->email       = $collection->get( 'contact/email' );
-		$userProfile->language    = $collection->get( 'pref/language' );
-		$userProfile->country     = $collection->get( 'contact/country/home' );
-		$userProfile->zip         = $collection->get( 'contact/postalCode/home' );
-		$userProfile->gender      = $collection->get( 'person/gender' );
-		$userProfile->photoURL    = $collection->get( 'media/image/default' );
-		$userProfile->birthDay    = $collection->get( 'birthDate/birthDay' );
-		$userProfile->birthMonth  = $collection->get( 'birthDate/birthMonth' );
-		$userProfile->birthYear   = $collection->get( 'birthDate/birthDate' );
+		$userProfile->firstName   = $data->get( 'namePerson/first' );
+		$userProfile->lastName    = $data->get( 'namePerson/last' );
+		$userProfile->email       = $data->get( 'contact/email' );
+		$userProfile->language    = $data->get( 'pref/language' );
+		$userProfile->country     = $data->get( 'contact/country/home' );
+		$userProfile->zip         = $data->get( 'contact/postalCode/home' );
+		$userProfile->gender      = $data->get( 'person/gender' );
+		$userProfile->photoURL    = $data->get( 'media/image/default' );
+		$userProfile->birthDay    = $data->get( 'birthDate/birthDay' );
+		$userProfile->birthMonth  = $data->get( 'birthDate/birthMonth' );
+		$userProfile->birthYear   = $data->get( 'birthDate/birthDate' );
 
-		$userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $collection->get( 'namePerson/friendly' );
-		$userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : trim( $userProfile->firstName . ' ' . $userProfile->lastName );
+		$userProfile = $this->fetchUserGender( $userProfile, $data->get( 'person/gender' ) );
+		
+		$userProfile = $this->fetchUserDisplayName( $userProfile, $data );
 
-		$userProfile = $this->fetchUserGender( $userProfile, $collection->get( 'person/gender' ) );
-
-		// with openid providers we get the user profile only once, so store it
-		$this->storage->set( $this->providerId . '.user', $userProfile );
-	}
+		return $userProfile;
+ 	}
 
 	/**
-	*
+	* Extract users display names
+	*/
+	protected function fetchUserDisplayName( $userProfile, $data )
+	{
+		$userProfile->displayName = $data->get( 'namePerson' );
+
+		$userProfile->displayName = $userProfile->displayName 
+				? $userProfile->displayName : $data->get( 'namePerson/friendly' );
+		$userProfile->displayName = $userProfile->displayName 
+				? $userProfile->displayName : trim( $userProfile->firstName . ' ' . $userProfile->lastName );
+
+		return $userProfile;
+ 	}
+
+	/**
+	* Extract users gender
 	*/
 	protected function fetchUserGender( $userProfile, $gender )
 	{
@@ -201,7 +217,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 			$gender = 'male';
 		}
 
-		$userProfile->gender = $gender;
+		$userProfile->gender = strtolower( $gender );
 
 		return $userProfile;
  	}

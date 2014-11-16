@@ -10,8 +10,10 @@ namespace Hybridauth;
 use Hybridauth\Exception; 
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Storage\Session;
-use Hybridauth\HttpClient;
+use Hybridauth\Logger\LoggerInterface;
+use Hybridauth\Logger\Logger;
 use Hybridauth\HttpClient\HttpClientInterface;
+use Hybridauth\HttpClient\Curl as HttpClient;
 use Hybridauth\Provider\ProviderAdapter;
 
 use Hybridauth\Deprecated\DeprecatedHybridauthTrait;
@@ -29,7 +31,7 @@ class Hybridauth
 	*
 	* @var string
 	*/
-	protected $version = "3.0.0";
+	protected $version = '3.0.0-Remake';
 
 	/**
 	* Hybridauth config
@@ -60,9 +62,14 @@ class Hybridauth
 	protected $logger = null;
 
 	/**
+	* @param array               $config
+	* @param HttpClientInterface $httpClient
+	* @param StorageInterface    $storage
+	* @param LoggerInterface     $logger
 	*
+	* @throws Exception
 	*/
-	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null )
+	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null )
 	{
 		if( is_string( $config ) && file_exists( $config ) )
 		{
@@ -75,14 +82,14 @@ class Hybridauth
 
 		$this->config = $config;
 
-		$this->logger = new Logger( 
+		$this->storage = $storage ? $storage : new Session();
+
+		$this->logger = $logger ? $logger : new Logger( 
 			( isset( $config['debug_mode'] ) ? $config['debug_mode'] : false ),
 			( isset( $config['debug_file'] ) ? $config['debug_file'] : '' ) 
 		);
 
-		$this->storage = $storage ? $storage : new Storage\Session();
-
-		$this->httpClient = $httpClient ? $httpClient : new HttpClient\Curl();
+		$this->httpClient = $httpClient ? $httpClient : new HttpClient();
 
 		if( isset( $config['curl_options'] ) && method_exists( $this->httpClient, 'setCurlOptions' ) )
 		{
@@ -124,58 +131,46 @@ class Hybridauth
 	}
 
 	/**
-	* 
-	*/
-	function getHttpClient()
-	{
-		return $this->httpClient;
-	}
-
-	/**
 	* Get provider config by ID
 	*
-	* @param $id
+	* @param string $id
+	*
+	* @return array
 	*/
 	protected function getProviderConfigById( $id )
 	{
-		$id = $this->validateProviderID( $id );
-
 		$config = [];
+		$providerId = $this->validateProviderID( $id );
+		$providerConfig = $this->config['providers'][$providerId];
 
 		if( isset( $this->config['callback'] ) )
 		{
 			$config['callback'] = $this->config['callback'];
 		}
 
-		// alias, for backward compatibility sake
-		if( isset( $this->config['base_url'] ) )
+		if( isset( $providerConfig['callback'] ) )
 		{
-			$config['callback'] = $this->config['base_url'];
+			$config['callback'] = $providerConfig['callback'];
 		}
 
-		if( isset( $this->config['providers'][$id]['callback'] ) )
+		if( isset( $providerConfig['keys']['id'] ) )
 		{
-			$config['callback'] = $this->config['providers'][$id]['callback'];
+			$config['keys']['id'] = $providerConfig['keys']['id'];
 		}
 
-		if( isset( $this->config['providers'][$id]['keys']['id'] ) )
+		if( isset( $providerConfig['keys']['key'] ) )
 		{
-			$config['keys']['id'] = $this->config['providers'][$id]['keys']['id'];
+			$config['keys']['key'] = $providerConfig['keys']['key'];
 		}
 
-		if( isset( $this->config['providers'][$id]['keys']['key'] ) )
+		if( isset( $providerConfig['keys']['secret'] ) )
 		{
-			$config['keys']['key'] = $this->config['providers'][$id]['keys']['key'];
+			$config['keys']['secret'] = $providerConfig['keys']['secret'];
 		}
 
-		if( isset( $this->config['providers'][$id]['keys']['secret'] ) )
+		if( isset( $providerConfig['endpoints'] ) )
 		{
-			$config['keys']['secret'] = $this->config['providers'][$id]['keys']['secret'];
-		}
-
-		if( isset( $this->config['providers'][$id]['endpoints'] ) )
-		{
-			$config['endpoints'] = $this->config['providers'][$id]['endpoints'];
+			$config['endpoints'] = $providerConfig['endpoints'];
 		}
 
 		return $config;
@@ -184,7 +179,9 @@ class Hybridauth
 	/**
 	* Get provider real provider ID. (case sensitive)
 	*
-	* @param $id
+	* @param string $id
+	*
+	* @return string $id
 	* @throws Exception
 	*/
 	protected function validateProviderID( $id )

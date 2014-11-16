@@ -79,7 +79,7 @@ class Google extends OAuth2
 
 		$userProfile = $this->fetchUserProfileUrl( $userProfile, $data );
 
-		$userProfile = $this->fetchBirthday( $userProfile, $data->get( 'birthday' ), '-' );
+		$userProfile = $this->fetchBirthday( $userProfile, $data->get( 'birthday' ) );
 
 		$userProfile->emailVerified = $data->get( 'verified' ) ? $userProfile->email : '';
 
@@ -91,16 +91,13 @@ class Google extends OAuth2
 	*/
 	protected function fetchUserEmail( $userProfile, $data )
 	{
-		if( $data->exists( 'emails' ) )
+		foreach( $data->filter( 'emails' )->all() as $email )
 		{
-			foreach( $data->filter( 'emails' )->all() as $email )
+			if( 'account' == $email->get( 'type' ) )
 			{
-				if( 'account' == $email->get( 'type' ) )
-				{
-					$userProfile->email = $email->get( 'value' );
+				$userProfile->email = $email->get( 'value' );
 
-					break;
-				}
+				break;
 			}
 		}
 
@@ -112,18 +109,29 @@ class Google extends OAuth2
 	*/
 	protected function fetchUserProfileUrl( $userProfile, $data )
 	{
-		if( $data->exists( 'urls' ) )
+		foreach( $data->filter( 'urls' )->all() as $url )
 		{
-			foreach( $data->filter( 'urls' )->all() as $url )
+			if( $url->get( 'primary' ) )
 			{
-				if( $url->get( 'primary' ) )
-				{
-					$userProfile->webSiteURL = $url->get( 'value' );
+				$userProfile->webSiteURL = $url->get( 'value' );
 
-					break;
-				}
+				break;
 			}
 		}
+
+		return $userProfile;
+ 	}
+
+	/**
+	*
+	*/
+	protected function fetchBirthday( $userProfile, $birthday )
+	{
+		$result = ( new Data\Parser() )->parseBirthday( $birthday, '-' );
+
+		$userProfile->birthDay   = (int) $result[0];
+		$userProfile->birthMonth = (int) $result[1];
+		$userProfile->birthYear  = (int) $result[2];
 
 		return $userProfile;
  	}
@@ -171,11 +179,6 @@ class Google extends OAuth2
 
 		$data = new Data\Collection( $response );
 
-		if( ! $data->filter( 'feed' )->filter( 'entry' )->count() )
-		{
-			return $contacts;
-		}
-
 		foreach( $data->filter( 'feed' )->filter( 'entry' )->all() as $idx => $entry )
 		{
 			$userContact = new User\Contact();
@@ -204,11 +207,6 @@ class Google extends OAuth2
 		$response = $this->apiRequest( $url );
 
 		$data = new Data\Collection( $response );
-
-		if( ! $data->filter( 'feed' )->filter( 'entry' )->count() )
-		{
-			return$contacts;
-		}
 
 		foreach( $data->filter( 'items' )->all() as $idx => $item )
 		{

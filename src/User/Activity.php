@@ -7,6 +7,8 @@
 
 namespace Hybridauth\User;
 
+use Hybridauth\Exception;
+
 /**
  * Hybrid_User_Activity 
  * 
@@ -44,7 +46,10 @@ final class Activity
 	*/
 	public $user = null;
 
-	public function __construct()
+	/**
+	* 
+	*/
+	function __construct()
 	{
 		$this->user = new \stdClass();
 
@@ -63,7 +68,7 @@ final class Activity
 	*
 	* @throws Exception
 	*/
-	public function __set( $name, $value )
+	function __set( $name, $value )
 	{
 		throw new Exception( 'Adding new properties to ' . __CLASS__ . ' is not allowed.' ); 
 	}

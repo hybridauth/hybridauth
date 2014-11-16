@@ -12,21 +12,22 @@ use Hybridauth\HttpClient;
 use Hybridauth\Exception;
 
 use Hybridauth\Thirdparty\OAuth\OAuthConsumer;
-use Hybridauth\Thirdparty\OAuth\OAuthDataStore;
 use Hybridauth\Thirdparty\OAuth\OAuthExceptionPHP;
 use Hybridauth\Thirdparty\OAuth\OAuthRequest;
-use Hybridauth\Thirdparty\OAuth\OAuthServer;
 use Hybridauth\Thirdparty\OAuth\OAuthSignatureMethod;
 use Hybridauth\Thirdparty\OAuth\OAuthSignatureMethodHMACSHA1;
-use Hybridauth\Thirdparty\OAuth\OAuthToken;
 use Hybridauth\Thirdparty\OAuth\OAuthUtil;
 
 /**
- * To implement an OAuth 1 based service provider, Hybrid_Provider_Model_OAuth2
- * can be used to save the hassle of the authentication flow.
+ * This class  can be used to simplify the authorization flow of OAuth 1 based service providers.
+ *
+ * Subclasses (i.e., providers adapters) can either use the already provided methods or override
+ * them when necessary.
  */
 abstract class OAuth1 extends AdapterBase implements AdapterInterface 
 {
+	use OAuthHelperTrait;
+
 	/**
 	* Base URL to provider API
 	* 
@@ -158,13 +159,12 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 			$this->consumerToken = new OAuthConsumer( $this->token( 'access_token' ), $this->token( 'access_token_secret' ) );
 		}
 
-		$endpoints = $this->config->filter( 'endpoints' );
-
-		$this->apiBaseUrl     = $endpoints->exists( 'api_base_url'     ) ? $endpoints->get( 'api_base_url'     ) : $this->apiBaseUrl     ;
-		$this->authorizeUrl   = $endpoints->exists( 'authorize_url'    ) ? $endpoints->get( 'authorize_url'    ) : $this->authorizeUrl   ;
-		$this->accessTokenUrl = $endpoints->exists( 'access_token_url' ) ? $endpoints->get( 'access_token_url' ) : $this->accessTokenUrl ;
+		$this->overrideEndpoints();
 	}
 
+	/**
+	* {@inheritdoc}
+	*/
 	function authenticate()
 	{
 		if( $this->isAuthorized() )
@@ -192,30 +192,12 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 		}
 	}
 
-	function isAuthorized()
-	{
-		return (bool) $this->token( 'access_token' );
-	}
-
-	function disconnect()
-	{
-		$this->clearTokens();
-
-		return true;
-	}
-
 	/**
 	* Initiate the authorization protocol
 	*
 	* 1. Obtaining an Unauthorized Request Token
 	* 2. Build Authorization URL for Authorization Request and redirect the user-agent to the
-	* Authorization Server.
-	*
-	* Sub classes may redefine this method when necessary.
-	*
-	* See requestAuthToken()
-	* See getAuthorizeUrl()
-	* See Hybrid_Auth::redirect()
+	*    Authorization Server.
 	*/
 	function authenticateBegin()
 	{
@@ -229,7 +211,9 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 	}
 
 	/**
-	* ..
+	* Finalize the authorization process
+	*
+	* @throws Exception
 	*/
 	function authenticateFinish()
 	{
@@ -307,7 +291,7 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 			$this->requestTokenParameters, 
 			$this->requestTokenHeaders
 		);
-		
+
 		return $response;
 	}
 
@@ -460,11 +444,8 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 	* @param string $method
 	* @param array  $parameters
 	* @param array  $headers
-	* @param string $body
-	* @param string $content_type
-	* @param bool   $multipart
 	*
-	* @return object
+	* @return object 
 	*/
 	function apiRequest( $url, $method = 'GET', $parameters = array(), $headers = array() )
 	{

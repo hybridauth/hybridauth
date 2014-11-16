@@ -8,20 +8,25 @@
 namespace Hybridauth;
 
 /**
- * Hybrid_Exception
+ * Hybridauth Exception
  */
 class Exception extends \Exception
 {
+	/**
+	* Quite Exception
+	*/
 	public function __toString()
 	{
 		$string  = 'HybridAuth has encountered the following error: ' . $this->message . ".\n"; 
-		$string .= 'More information about this error may be available in your server error log.' . /* now the follow up will be removed --> */ ' (or inspect the Exception: $e->debug()).';
+		$string .= 'More information about this error may be available in your server error log.' . /* the follow up will be removed --> */ ' (or inspect the Exception: $e->debug( $adapter )).';
 
 		return $string;
 	}
 
 	/**
 	* Shamelessly Borrowed from Slimframework
+	*
+	* @param $object
 	*/
 	function debug( $object )
 	{

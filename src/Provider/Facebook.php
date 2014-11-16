@@ -75,9 +75,9 @@ class Facebook extends OAuth2
 
 		$userProfile->emailVerified = $data->get( 'verified' ) == 1 ? $userProfile->email : ''; 
 
-		$userProfile = $this->fetchUserRegion( $userProfile  );
+		$userProfile = $this->fetchUserRegion( $userProfile, $userProfile  );
 
-		$userProfile = $this->fetchBirthday( $userProfile, $data->get( 'birthday' ), '/' );
+		$userProfile = $this->fetchBirthday( $userProfile, $data->get( 'birthday' ) );
 
 		return $userProfile;
  	}
@@ -97,6 +97,20 @@ class Facebook extends OAuth2
 				$userProfile->country = trim( $regionArr[1] );
 			}
 		}
+
+		return $userProfile;
+ 	}
+
+	/**
+	*
+	*/
+	protected function fetchBirthday( $userProfile, $birthday )
+	{
+		$result = ( new Data\Parser() )->parseBirthday( $birthday, '/' );
+
+		$userProfile->birthDay   = (int) $result[0];
+		$userProfile->birthMonth = (int) $result[1];
+		$userProfile->birthYear  = (int) $result[2];
 
 		return $userProfile;
  	}
