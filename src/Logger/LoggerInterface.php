@@ -16,6 +16,8 @@ interface LoggerInterface
 	* Info
 	*
 	* @param string $message
+	*
+	* @return boolean 
 	*/
 	function info( $message );
 
@@ -23,15 +25,19 @@ interface LoggerInterface
 	* Debug
 	*
 	* @param string $message
-	* @param mixed $object
+	* @param mixed  $object
+	*
+	* @return boolean 
 	*/
 	function debug( $message, $object = null );
 
 	/**
 	* Error
 	*
-	* @param string $message Error message
-	* @param mixed $object
+	* @param string $message
+	* @param mixed  $object
+	*
+	* @return boolean 
 	*/
 	function error($message, $object = null);
 }

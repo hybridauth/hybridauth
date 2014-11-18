@@ -34,7 +34,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 	*/
 	function test_set_and_get_data( $key, $value ){
 		$storage = new Session;
-		
+
 		$storage->set( $key, $value );
 
 		$data = $storage->get( $key );
@@ -70,6 +70,22 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 		$data = $storage->get( $key );
 
 		$this->assertNull( $data );
+	}
+
+	function test_clear_data_bulk(){
+		$storage = new Session;
+
+		foreach( (array) $this->some_randome_session_data() as $key => $value ){
+			$storage->set( $key, $value );
+		}
+
+		$storage->clear();
+
+		foreach( (array) $this->some_randome_session_data() as $key => $value ){
+			$data = $storage->get( $key );
+
+			$this->assertNull( $data );
+		}
 	}
 
 	/**

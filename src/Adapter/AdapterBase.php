@@ -126,7 +126,7 @@ abstract class AdapterBase implements AdapterInterface
 	*/
 	function getUserProfile()
 	{
-		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 ); 
+		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 );
 	}
 
 	/**

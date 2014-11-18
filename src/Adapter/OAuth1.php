@@ -178,19 +178,19 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 		{
 			if( ! $this->token( 'request_token' ) )
 			{
-				return $this->authenticateBegin();
+				$this->authenticateBegin();
 			}
 
-			if( ! $this->token( 'access_token' ) )
+			elseif( ! $this->token( 'access_token' ) )
 			{
-				return $this->authenticateFinish();
+				$this->authenticateFinish();
 			}
 		}
-		catch( Exception $e )
+		catch( \Exception $exception )
 		{
 			$this->clearTokens();
 
-			throw $e;
+			throw $exception;
 		}
 	}
 

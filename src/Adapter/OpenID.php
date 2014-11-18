@@ -80,10 +80,12 @@ class OpenID extends AdapterBase implements AdapterInterface
 
 		if( ! isset( $_GET['openid_mode'] ) )
 		{
-			return $this->authenticateBegin();
+			$this->authenticateBegin();
 		}
-
-		return $this->authenticateFinish();
+		else
+		{
+			return $this->authenticateFinish();
+		}
 	}
 
 	/**

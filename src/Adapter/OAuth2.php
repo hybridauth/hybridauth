@@ -232,35 +232,30 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	/**
 	* {@inheritdoc}
 	*/
-	function authenticate( $callable = null )
+	function authenticate()
 	{
-		$exception = false;
-
-		if( ! $this->isAuthorized() )
+		if( $this->isAuthorized() )
 		{
-			try
-			{
-				if( ! isset( $_GET['code'] ) )
-				{
-					$this->authenticateBegin();
-				}
-				else
-				{
-					$this->authenticateFinish();
-				}
-			}
-			catch( \Exception $exception )
-			{
-				$this->clearTokens();
-			}
+			return true;
 		}
 
-		if( null !== $callable )
+		try
 		{
-			return call_user_func_array( $callable, [ $this, $exception ] );
+			if( ! isset( $_GET['code'] ) )
+			{
+				$this->authenticateBegin();
+			}
+			else
+			{
+				$this->authenticateFinish();
+			}
 		}
-
-		throw $exception;
+		catch( \Exception $e )
+		{
+			$this->clearTokens();
+			
+			throw $exception;
+		}
 	}
 
 	/**

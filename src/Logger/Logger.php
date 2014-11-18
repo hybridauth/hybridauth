@@ -44,7 +44,7 @@ class Logger implements LoggerInterface
 	{
  		if( ! $debug_mode )
 		{
-			return;
+			return false;
 		}
 
 		$this->initialize( $debug_file );
@@ -84,7 +84,7 @@ class Logger implements LoggerInterface
 	{
 		if( 'error' === $this->debug_mode )
 		{
-			return;
+			return false;
 		}
 
 		$this->_write( 'INFO', $message );
@@ -97,7 +97,7 @@ class Logger implements LoggerInterface
 	{
 		if( true !== $this->debug_mode )
 		{
-			return;
+			return false;
 		}
 
 		$this->_write( 'DEBUG', $message, $object );
@@ -106,23 +106,25 @@ class Logger implements LoggerInterface
 	/**
 	* {@inheritdoc}
 	*/
-	function error($message, $object = null)
+	function error( $message, $object = null )
 	{
 		$this->_write( 'ERROR', $message, $object );
 	}
 
 	/**
-	* Write a message to log file
+	* Write a message to log file and return TRUE if entry was written to log.
 	*
 	* @param string $level Error level
 	* @param string $message Error message
 	* @param mixed  $object
+	*
+	* @return boolean 
 	*/
-	private function _write($level, $message, $object = null)
+	private function _write( $level, $message, $object = null )
 	{
 		if( ! $this->debug_mode )
 		{
-			return;
+			return false;
 		}
 
 		$datetime = new \DateTime();
