@@ -8,14 +8,14 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
  *
  */
-class Google extends OAuth2
+final class Google extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -42,15 +42,13 @@ class Google extends OAuth2
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'people/me' );
+		$response = $this->apiRequest( 'people/me' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'id' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();
@@ -141,26 +139,19 @@ class Google extends OAuth2
 	*/
 	function getUserContacts()
 	{
-		try
+		// @fixme
+		$extraParams = array( "max-results" => 500 );
+
+		// Google Gmail and Android contacts
+		if( false !== strpos( $this->scope, '/m8/feeds/' ) )
 		{
-			// @fixme
-			$extraParams = array( "max-results" => 500 );
-
-			// Google Gmail and Android contacts
-			if( false !== strpos( $this->scope, '/m8/feeds/' ) )
-			{
-				return $this->getGmailContacts( $extraParams );
-			}
-
-			// Google social contacts
-			if( false !== strpos( $this->scope, '/auth/plus.login' ) )
-			{
-				return $this->getGplusContacts( $extraParams );
-			}
+			return $this->getGmailContacts( $extraParams );
 		}
-		catch( Exception $e )
+
+		// Google social contacts
+		if( false !== strpos( $this->scope, '/auth/plus.login' ) )
 		{
-			throw new Exception( 'User contacts request failed! ' . $e->getMessage(), 6 );
+			return $this->getGplusContacts( $extraParams );
 		}
 	}
 
@@ -171,9 +162,9 @@ class Google extends OAuth2
 	*/
 	protected function getGmailContacts($extraParams )
 	{
-		$contacts = array(); 
+		$contacts = []; 
 
-		$url = 'https://www.google.com/m8/feeds/contacts/default/full?' . http_build_query( array_merge( array('alt' => 'json', 'v' => '3.0'), $extraParams ) );
+		$url = 'https://www.google.com/m8/feeds/contacts/default/full?' . http_build_query( array_merge( [ 'alt' => 'json', 'v' => '3.0' ], $extraParams ) );
 
 		$response = $this->apiRequest( $url );
 
@@ -200,7 +191,7 @@ class Google extends OAuth2
 	*/
 	protected function getGplusContacts( $extraParams )
 	{
-		$contacts = array(); 
+		$contacts = []; 
 
 		$url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?' . http_build_query( $extraParams );
 

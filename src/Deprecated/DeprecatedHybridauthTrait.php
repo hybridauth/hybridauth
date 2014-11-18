@@ -21,7 +21,7 @@ trait DeprecatedHybridauthTrait
 	*/
 	public static function isConnectedWith( $providerId )
 	{
-		return $this->getAdapter()->isAuthorized();
+		return $this->getAdapter( $providerId )->isAuthorized();
 	}
 
 	/**

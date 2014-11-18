@@ -8,7 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -18,7 +18,7 @@ use Hybridauth\User;
  * http://www.reddit.com/dev/api/oauth
  * https://github.com/reddit/reddit/wiki/OAuth2
  */
-class Reddit extends OAuth2
+final class Reddit extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -47,23 +47,29 @@ class Reddit extends OAuth2
 	{
 		parent::initialize();
 
-		$this->tokenExchangeParameters = array(
-			"client_id"     => $this->clientId,
-			"grant_type"    => "authorization_code",
-			"redirect_uri"  => $this->endpoint
-		);
+		$this->tokenExchangeParameters = [
+			'client_id'    => $this->clientId,
+			'grant_type'   => 'authorization_code',
+			'redirect_uri' => $this->endpoint
+		];
 
-		$this->tokenExchangeHeaders = array( 'Authorization' => 'Basic ' . base64_encode( $this->clientId .  ':' . $this->clientSecret ) );
+		$this->tokenExchangeHeaders = [ 
+			'Authorization' => 'Basic ' . base64_encode( $this->clientId .  ':' . $this->clientSecret ) 
+		];
 
-		$this->apiRequestHeaders = array( 'Authorization' => 'Bearer ' . $this->token( 'access_token' ) );
+		$this->apiRequestHeaders = [ 
+			'Authorization' => 'Bearer ' . $this->token( 'access_token' )
+		];
 	}
 
 	/**
 	* {@inheritdoc}
 	*/
-	protected function getAuthorizeUrl( $parameters = array() )
+	protected function getAuthorizeUrl( $parameters = [] )
 	{
-		$addtionals = array( 'duration' => 'temporary' );
+		$addtionals = [ 
+			'duration' => 'temporary'
+		];
 
 		$parameters = array_replace( $parameters, (array) $addtionals );
 
@@ -75,15 +81,13 @@ class Reddit extends OAuth2
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'me.json' );
+		$response = $this->apiRequest( 'me.json' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'id' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();

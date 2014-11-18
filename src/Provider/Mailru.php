@@ -8,14 +8,14 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
  * 
  */
-class Mailru  extends OAuth2
+final class Mailru  extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -44,7 +44,7 @@ class Mailru  extends OAuth2
 	*
 	* {@inheritdoc}
 	*/
-	function apiRequest(  $url, $method = 'GET', $parameters = array(), $headers = array() )
+	function apiRequest(  $url, $method = 'GET', $parameters = [], $headers = [] )
 	{
 		$signature = md5( 'client_id=' . $this->clientId . 'format=jsonmethod=' . $url . 'secure=1session_key='. $this->token( 'access_token' ) . $this->clientSecret );
 
@@ -58,15 +58,13 @@ class Mailru  extends OAuth2
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'users.getInfo' );
+		$response = $this->apiRequest( 'users.getInfo' );
 
-			$data = new Data\Collection( $response[0] );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response[0] );
+
+		if( ! $data->exists( 'uid' ) )
 		{
-			throw new Exception( "User profile request failed! " . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();

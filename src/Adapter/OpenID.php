@@ -7,9 +7,12 @@
 
 namespace Hybridauth\Adapter;
 
+use Hybridauth\Exception;
+use Hybridauth\Exception\InvalidOpenidIdentifierException;
+use Hybridauth\Exception\AuthorizationDeniedException;
+use Hybridauth\Exception\InvalidOpenidResponseException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
-use Hybridauth\Exception;
 use Hybridauth\User;
 
 use Hybridauth\Thirdparty\OpenID\LightOpenID;
@@ -39,7 +42,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 	/**
 	* Adapter initializer
 	*
-	* @throws Exception
+	* @throws InvalidOpenidIdentifierException
 	*/
 	protected function initialize()
 	{
@@ -50,7 +53,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 
 		if( empty( $this->openidIdentifier ) )
 		{
-			throw new Exception( 'OpenID adapter requires an openid_identifier.', 4 );
+			throw new InvalidOpenidIdentifierException( 'OpenID adapter requires an openid_identifier.', 4 );
 		}
 
 		$hostPort = parse_url( $this->endpoint, PHP_URL_PORT );
@@ -110,7 +113,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 	{
 		$this->openIdClient->identity  = $this->openidIdentifier;
 		$this->openIdClient->returnUrl = $this->endpoint;
-		$this->openIdClient->required  = array(
+		$this->openIdClient->required  = [
 			'namePerson/first'       ,
 			'namePerson/last'        ,
 			'namePerson/friendly'    ,
@@ -127,7 +130,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 			'contact/country/home'   ,
 
 			'media/image/default'    ,
-		);
+		];
 
 		HttpClient\Util::redirect( $this->openIdClient->authUrl() );
 	}
@@ -135,21 +138,27 @@ class OpenID extends AdapterBase implements AdapterInterface
 	/**
 	* Finalize the authorization process.
 	*
-	* @throws Exception
+	* @throws AuthorizationDeniedException
+	* @throws UnexpectedValueException
 	*/
 	function authenticateFinish()
 	{
 		if( $this->openIdClient->mode == 'cancel' )
 		{
-			throw new Exception( 'Authentication failed! User has cancelled authentication!', 5 );
+			throw new AuthorizationDeniedException( 'User has cancelled the authentication.' );
 		}
 
 		if( ! $this->openIdClient->validate() )
 		{
-			throw new Exception( 'Authentication failed. Invalid request received!', 5 );
+			throw new UnexpectedValueException( 'Invalid response received.' );
 		}
 
 		$openidAttributes = $this->openIdClient->getAttributes();
+
+		if( ! $this->openIdClient->identity )
+		{
+			throw new UnexpectedValueException( 'Provider returned an expected response.' );
+		}
 
 		$userProfile = $this->fetchUserProfile( $openidAttributes );
 
@@ -158,7 +167,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 	}
 
 	/**
-	* Fetch user profile from received openid attributes
+	* Fetch user profile from received openid attributes 
 	*/
 	protected function fetchUserProfile( $openidAttributes )
 	{
@@ -231,7 +240,7 @@ class OpenID extends AdapterBase implements AdapterInterface
 
 		if( ! is_object( $userProfile ) )
 		{
-			throw new Exception( "User profile request failed! User is not connected to {$this->providerId} or his session has expired.", 6 );
+			throw new UnexpectedValueException( 'Provider returned an expected response.' );
 		}
 
 		return $userProfile;

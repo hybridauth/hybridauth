@@ -7,9 +7,13 @@
 
 namespace Hybridauth\Adapter;
 
+use Hybridauth\Exception;
+use Hybridauth\Exception\InvalidApplicationCredentialsException;
+use Hybridauth\Exception\InvalidAuthorizationStateException;
+use Hybridauth\Exception\InvalidAuthorizationCodeException;
+use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
-use Hybridauth\Exception;
 
 /**
  * This class  can be used to simplify the authorization flow of OAuth 2 based service providers.
@@ -151,7 +155,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @var array
 	*/
-	protected $tokenExchangeParameters = array();
+	protected $tokenExchangeParameters = [];
 
 	/**
 	* Authorization Request HTTP headers.
@@ -162,7 +166,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @var array
 	*/
-	protected $tokenExchangeHeaders = array();
+	protected $tokenExchangeHeaders = [];
 
 	/**
 	* Authorization Request URL parameters.
@@ -173,7 +177,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @var array
 	*/
-	protected $apiRequestParameters = array();
+	protected $apiRequestParameters = [];
 
 	/**
 	* Authorization Request HTTP headers.
@@ -184,18 +188,18 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @var array
 	*/
-	protected $apiRequestHeaders = array();
+	protected $apiRequestHeaders = [];
 
 	/**
 	* Adapter initializer
 	*
-	* @throws Exception
+	* @throws InvalidApplicationCredentialsException
 	*/
 	protected function initialize() 
 	{
 		if( ! $this->config->filter( 'keys' )->get( 'id' ) )
 		{
-			throw new Exception( "Your application id is required in order to connect to {$this->providerId}.", 4 );
+			throw new InvalidApplicationCredentialsException( 'Your application id is required in order to connect to ' . $this->providerId );
 		}
 
 		$this->clientId     = $this->config->filter( 'keys' )->get( 'id' );
@@ -215,12 +219,12 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		*
 		* See exchangeCodeForAccessToken()
 		*/
-		$this->tokenExchangeParameters = array(
+		$this->tokenExchangeParameters = [
 			"client_id"     => $this->clientId,
 			"client_secret" => $this->clientSecret,
 			"grant_type"    => "authorization_code",
 			"redirect_uri"  => $this->endpoint
-		);
+		];
 
 		$this->overrideEndpoints();
 	}
@@ -228,28 +232,35 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	/**
 	* {@inheritdoc}
 	*/
-	function authenticate()
+	function authenticate( $callable = null )
 	{
-		if( $this->isAuthorized() )
-		{
-			return true;
-		}
+		$exception = false;
 
-		try
+		if( ! $this->isAuthorized() )
 		{
-			if( ! isset( $_GET['code'] ) )
+			try
 			{
-				return $this->authenticateBegin();
+				if( ! isset( $_GET['code'] ) )
+				{
+					$this->authenticateBegin();
+				}
+				else
+				{
+					$this->authenticateFinish();
+				}
 			}
-
-			return $this->authenticateFinish();
+			catch( \Exception $exception )
+			{
+				$this->clearTokens();
+			}
 		}
-		catch( Exception $e )
+
+		if( null !== $callable )
 		{
-			$this->clearTokens();
-
-			throw $e;
+			return call_user_func_array( $callable, [ $this, $exception ] );
 		}
+
+		throw $exception;
 	}
 
 	/**
@@ -268,7 +279,8 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	/**
 	* Finalize the authorization process
 	*
-	* @throws Exception
+	* @throws InvalidAuthorizationStateException
+	* @throws InvalidAuthorizationCodeException
 	*/
 	function authenticateFinish()
 	{
@@ -285,7 +297,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		*/
 		if( $this->supportRequestState && $this->token( 'authorization_state' ) != $collection->get( 'state' ) )
 		{
-			throw new Exception( "Authentication failed! The authorization state is either invalid or has been used.", 5 );
+			throw new InvalidAuthorizationStateException( 'The authorization state is either invalid or has been used.' );
 		}
 
 		/**
@@ -299,7 +311,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		*/
 		if( $collection->get( 'error' ) ) 
 		{
-			throw new Exception( "Authentication failed! {$this->providerId} returned an error: " . htmlentities( $collection->get( 'error' ) ), 5 );
+			throw new InvalidAuthorizationCodeException( 'Provider returned an error: ' . htmlentities( $collection->get( 'error' ) ) );
 		}
 
 		/**
@@ -337,14 +349,14 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @return string Authorization URL
 	*/
-	protected function getAuthorizeUrl( $parameters = array() )
+	protected function getAuthorizeUrl( $parameters = [] )
 	{
-		$defaults = array(
+		$defaults = [
 			'response_type' => 'code',
 			'client_id'     => $this->clientId,
 			'redirect_uri'  => $this->endpoint,
 			'scope'         => $this->scope,
-		);
+		];
 
 		$parameters = array_merge( $defaults, (array) $parameters );
 
@@ -423,10 +435,10 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* This method uses Data_Parser to attempt to decodes the raw $response (usually JSON) into a data collection.
 	*
-	* @param $response
+	* @param string $response
 	*
 	* @return \Hybridauth\Data\Collection
-	* @throws Exception
+	* @throws InvalidAccessTokenException
 	*/
 	protected function validateAccessTokenExchange( $response )
 	{
@@ -436,7 +448,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 
 		if( ! $collection->exists( 'access_token' ) )
 		{
-			throw new Exception( "Authentication failed! {$this->providerId} return an invalid response: " . $response, 5 );
+			throw new InvalidAccessTokenException( 'Provider returned an invalid access_token: ' . htmlentities( $response ) );
 		}
 
 		$this->token( 'access_token'  , $collection->get( 'access_token'  ) );
@@ -473,16 +485,14 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	* This method is similar to exchangeCodeForAccessToken(). The only difference is here
 	* we exchange refresh_token for a new access_token.
 	*
-	* @param string $code
-	*
 	* @return string Raw Provider API response
 	*/
 	function refreshAccessToken()
 	{
-		$defaults = array(
+		$defaults = [
 			'grant_type'    => 'refresh_token',
 			'refresh_token' => $this->token( 'refresh_token' ),
-		);
+		];
 
 		$this->tokenExchangeParameters = array_merge( $defaults, (array) $this->tokenExchangeParameters );
 
@@ -517,7 +527,6 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	* @param $response
 	*
 	* @return \Hybridauth\Data\Collection
-	* @throws Exception
 	*/
 	protected function validateRefreshAccessToken( $response )
 	{
@@ -532,6 +541,9 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	* validate the access token and ensure that it has not expired and that its scope
 	* covers the requested resource.
 	*
+	* Note: Since the specifics of error responses is beyond the scope of RFC6749 and OAuth specifications,
+	* Hybridauth will consider any HTTP status code that is different than '200 OK' as an ERROR.
+	*
 	* http://tools.ietf.org/html/rfc6749#section-7
 	* 
 	* @param string $url
@@ -541,7 +553,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 	*
 	* @return object 
 	*/
-	function apiRequest( $url, $method = 'GET', $parameters = array(), $headers = array() )
+	function apiRequest( $url, $method = 'GET', $parameters = [], $headers = [] )
 	{
 		if( strrpos( $url, 'http://' ) !== 0 && strrpos( $url, 'https://' ) !== 0 )
 		{
@@ -554,7 +566,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 
 		$headers = array_merge( $this->apiRequestHeaders, (array) $headers );
 
-		$response = $this->httpClient->request( 
+		$response = $this->httpClient->request(
 			$url,        //
 			$method,     // HTTP Request Method. Defaults to GET.
 			$parameters, // Request Parameters

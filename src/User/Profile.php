@@ -7,8 +7,6 @@
 
 namespace Hybridauth\User;
 
-use Hybridauth\Exception;
-
 /**
  * User\Profile object represents the current logged in user profile. 
  * The list of fields available in the normalized user profile structure used by HybridAuth.  
@@ -180,10 +178,10 @@ final class Profile
 	* @var string $name
 	* @var mixed  $value
 	*
-	* @throws Exception
+	* @throws \LogicException
 	*/
 	function __set( $name, $value )
 	{
-		throw new Exception( 'Adding new properties to ' . __CLASS__ . ' is not allowed.' ); 
+		throw new \LogicException( 'Adding new properties to ' . __CLASS__ . ' is not allowed.' ); 
 	}
 }

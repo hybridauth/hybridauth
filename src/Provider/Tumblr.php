@@ -8,11 +8,11 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth1;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
-class Tumblr extends OAuth1
+final class Tumblr extends OAuth1
 {
 	/**
 	* {@inheritdoc}
@@ -39,15 +39,13 @@ class Tumblr extends OAuth1
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'user/info' );
+		$response = $this->apiRequest( 'user/info' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'response' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();
@@ -66,7 +64,7 @@ class Tumblr extends OAuth1
 				$bloghostname = explode( '://', $blog->get( 'url' ) );
 				$bloghostname = substr( $bloghostname[1], 0, -1 );
 
-				$this->token( "primary_blog" , $bloghostname ); 
+				$this->token( 'primary_blog' , $bloghostname ); 
 
 				break;
 			}
@@ -80,16 +78,9 @@ class Tumblr extends OAuth1
 	*/
 	function setUserStatus( $status )
 	{
-		$status = is_string( $status ) ? array( 'type' => "text", 'body' => $status ) : $status;
+		$status = is_string( $status ) ? [ 'type' => 'text', 'body' => $status ] : $status;
 
-		try
-		{
-			$response = $this->apiRequest( 'blog/' . $this->token( "primary_blog" ) . '/post', 'POST', $status );
-		}
-		catch( Exception $e )
-		{
-			throw new Exception( 'Update user status failed! ' . $e->getMessage() );
-		}
+		$response = $this->apiRequest( 'blog/' . $this->token( 'primary_blog' ) . '/post', 'POST', $status );
 
 		return $response;
 	}

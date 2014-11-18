@@ -9,7 +9,7 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
 
-class Stackoverflow extends OpenID
+final class Stackoverflow extends OpenID
 {
 	protected $openidIdentifier = 'https://openid.stackexchange.com/';
 }
@@ -26,10 +26,11 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
-class MyCustomProvider extends OAuth2
+final class MyCustomProvider extends OAuth2
 {
 	/**
 	* Defaults scope to requests 
@@ -72,16 +73,8 @@ class MyCustomProvider extends OAuth2
 
 	function getUserProfile()
 	{
-		try
-		{
-			/* now we use apiRequest() for signed requests. */
-			$response = $this->apiRequest( 'user/profile', 'GET', [], [ 'Authorization' => .. ] );
-		}
-		catch( Exception $e )
-		{
-			/* apiRequest() will throw an exception when a request fails. raw api response can be inspected via self::httpClient. */
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
-		}
+		/* now we use apiRequest() for signed requests. */
+		$response = $this->apiRequest( 'user/profile', 'GET', [], [ 'Authorization' => .. ] );
 
 		/* example of how to instantiate a user profile and how to use data collection, assuming user/profile returns this response:
 
@@ -103,6 +96,11 @@ class MyCustomProvider extends OAuth2
 		$collection = new Data\Collection( $response );
 
 		$userProfile = new User\Profile();
+
+		if( ! $data->exists( 'id' ) )
+		{
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
+		}
 
 		$userProfile->identifier = $collection->get( 'id' );
 
@@ -136,11 +134,11 @@ OAuth 1 is very similar to OAuth 2. Subclasses can set the default provider endp
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth1;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
-class MyCustomProvider extends OAuth1
+final class MyCustomProvider extends OAuth1
 {
 	/**
 	* Default Base URL to provider API

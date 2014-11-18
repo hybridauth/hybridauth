@@ -1,5 +1,3 @@
-.editorconfig
-phpunit.xml
 junit.xml
 composer.json
 *.log

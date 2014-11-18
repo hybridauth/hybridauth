@@ -8,14 +8,14 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
  *
  */
-class Foursquare extends OAuth2
+final class Foursquare extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -46,7 +46,7 @@ class Foursquare extends OAuth2
 		
 		$apiVersion = $this->config->exists( 'api_version' ) ? $this->config->get( 'api_version' ) : '20120610';
 
-		$this->apiRequestParameters = array( "v" => $apiVersion );
+		$this->apiRequestParameters = [ "v" => $apiVersion ];
 	}
 
 	/**
@@ -54,15 +54,13 @@ class Foursquare extends OAuth2
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'users/self' );
+		$response = $this->apiRequest( 'users/self' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'response' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();

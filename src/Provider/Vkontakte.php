@@ -8,14 +8,14 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
  * 
  */
-class Vkontakte  extends OAuth2
+final class Vkontakte  extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -49,20 +49,18 @@ class Vkontakte  extends OAuth2
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$parameters = [
-				'uid'    => $this->token( 'user_id' ),
-				'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big'
-			];
+		$parameters = [
+			'uid'    => $this->token( 'user_id' ),
+			'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big'
+		];
 
-			$response = $this->apiRequest( 'users.getInfo', 'GET', $parameters );
+		$response = $this->apiRequest( 'users.getInfo', 'GET', $parameters );
 
-			$data = new Data\Collection( $response->response[0] );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response->response[0] );
+
+		if( ! $data->exists( 'uid' ) )
 		{
-			throw new Exception( "User profile request failed! " . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();
@@ -80,7 +78,7 @@ class Vkontakte  extends OAuth2
 			switch( $data->get( 'sex' ) )
 			{
 				case 1: $userProfile->gender = 'female'; break;
-				case 2: $userProfile->gender = 'male'; break;
+				case 2: $userProfile->gender =   'male'; break;
 			}
 		}
 

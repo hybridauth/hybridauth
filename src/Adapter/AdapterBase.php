@@ -7,7 +7,7 @@
 
 namespace Hybridauth\Adapter;
 
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnsupportedFeatureException;
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Storage\Session;
 use Hybridauth\Logger\LoggerInterface;
@@ -23,7 +23,7 @@ use Hybridauth\Deprecated\DeprecatedAdapterTrait;
  */
 abstract class AdapterBase implements AdapterInterface 
 {
-	use AdapterTokensTrait, DeprecatedAdapterTrait;
+	use DeprecatedAdapterTrait;
 
 	/**
 	* Provider ID (unique name)
@@ -37,14 +37,14 @@ abstract class AdapterBase implements AdapterInterface
 	*
 	* @var mixed
 	*/
-	protected $config = array();
+	protected $config = [];
 
 	/**
 	* Extra Provider parameters
 	*
 	* @var mixed
 	*/
-	protected $params = array();
+	protected $params = [];
 
 	/**
 	* Redirection Endpoint (i.e., redirect_uri, callback_url)
@@ -81,10 +81,8 @@ abstract class AdapterBase implements AdapterInterface
 	* @param HttpClientInterface $httpClient
 	* @param StorageInterface    $storage
 	* @param LoggerInterface     $logger
-	*
-	* @throws Exception
 	*/
-	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null )
+	function __construct( $config = [], HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null )
 	{
 		$this->providerId = str_replace( 'Hybridauth\\Provider\\', '', get_class($this) ); 
 
@@ -97,13 +95,11 @@ abstract class AdapterBase implements AdapterInterface
 
 		$this->httpClient = $httpClient ? $httpClient : new HttpClient();
 
-		if( isset( $config['curl_options'] ) && method_exists( $this->httpClient, 'setCurlOptions' ) )
-		{
+		if( isset( $config['curl_options'] ) && method_exists( $this->httpClient, 'setCurlOptions' ) ){
 			$this->httpClient->setCurlOptions( $this->config['curl_options'] );
 		}
 
-		if( method_exists( $this->httpClient, 'setLogger' ) )
-		{
+		if( method_exists( $this->httpClient, 'setLogger' ) ){
 			$this->httpClient->setLogger( $this->logger );
 		}
 
@@ -119,16 +115,26 @@ abstract class AdapterBase implements AdapterInterface
 	/**
 	* Adapter initializer
 	*
-	* @throws Exception
+	* @throws InvalidArgumentException
+	* @throws InvalidApplicationCredentialsException
+	* @throws InvalidOpenidIdentifierException
 	*/
 	abstract protected function initialize(); 
 
 	/**
 	* {@inheritdoc}
 	*/
+	function getUserProfile()
+	{
+		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 ); 
+	}
+
+	/**
+	* {@inheritdoc}
+	*/
 	function getUserContacts()
 	{
-		throw new Exception( 'Provider does not support this feature.', 8 ); 
+		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 ); 
 	}
 
 	/**
@@ -136,7 +142,7 @@ abstract class AdapterBase implements AdapterInterface
 	*/
 	function setUserStatus( $status )
 	{
-		throw new Exception( 'Provider does not support this feature.', 8 ); 
+		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 ); 
 	}
 
 	/**
@@ -144,6 +150,24 @@ abstract class AdapterBase implements AdapterInterface
 	*/
 	function getUserActivity( $stream )
 	{
-		throw new Exception( 'Provider does not support this feature.', 8 ); 
+		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 ); 
+	}
+
+	/**
+	* {@inheritdoc}
+	*/
+	function apiRequest( $url, $method = 'GET', $parameters = [], $headers = [] )
+	{
+		throw new UnsupportedFeatureException( 'Provider does not support this feature.', 8 );
+	}
+
+	/**
+	* Return http client instance
+	*
+	* @return HttpClient
+	*/
+	function getHttpClient()
+	{
+		return $this->httpClient; 
 	}
 }

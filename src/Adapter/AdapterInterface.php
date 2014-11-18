@@ -13,15 +13,30 @@ namespace Hybridauth\Adapter;
 interface AdapterInterface
 {
 	/**
-	* Initiate the authentication authorization protocol
+	* Initiate the appropriate protocol and process/automate the authentication or authorization flow.
 	*
 	* @throws Exception
-	* @return boolean
+	* @throws RuntimeException
+	* @throws UnexpectedValueException
+	* @throws InvalidArgumentException
+	* @throws AuthorizationDeniedException
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws InvalidAccessTokenException
+	* @throws InvalidApplicationCredentialsException
+	* @throws InvalidAuthorizationCodeException
+	* @throws InvalidAuthorizationStateException
+	* @throws InvalidOauthTokenException
+	* @throws InvalidOpenidIdentifierException
+	*
+	* @return boolean|null
 	*/
 	function authenticate();
 
 	/**
 	* Returns TRUE if the user is authorized
+	*
+	* @return boolean
 	*/
 	function isAuthorized();
 
@@ -35,7 +50,9 @@ interface AdapterInterface
 	/**
 	* Retrieve the connected user profile
 	*
-	* @throws Exception
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws UnexpectedValueException
 	* @return \Hybridauth\User\Profile
 	*/
 	function getUserProfile();
@@ -43,7 +60,10 @@ interface AdapterInterface
 	/**
 	* Retrieve the connected user contacts list
 	*
-	* @throws Exception
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws UnexpectedValueException
+	* @throws UnsupportedFeatureException
 	* @return array of \Hybridauth\User\Contact
 	*/
 	function getUserContacts();
@@ -53,7 +73,10 @@ interface AdapterInterface
 	*
 	* @param string $stream
 	*
-	* @throws Exception
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws UnexpectedValueException
+	* @throws UnsupportedFeatureException
 	* @return array of \Hybridauth\User\Activity
 	*/
 	function getUserActivity( $stream );
@@ -63,8 +86,22 @@ interface AdapterInterface
 	*
 	* @param string|array $status
 	*
-	* @throws Exception
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws UnexpectedValueException
+	* @throws UnsupportedFeatureException
 	* @return mixed API response
 	*/
 	function setUserStatus( $status );
+
+	/**
+	* Send a signed request to provider API
+	*
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws UnexpectedValueException
+	* @throws UnsupportedFeatureException
+	* @return \Hybridauth\User\Profile
+	*/
+	function apiRequest( $url, $method = 'GET', $parameters = [], $headers = [] );
 }

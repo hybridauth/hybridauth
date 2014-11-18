@@ -8,10 +8,8 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
-use Hybridauth\Exception;
-use Hybridauth\User;
 
-class Stackoverflow extends OpenID
+final class Stackoverflow extends OpenID
 {
 	/**
 	* {@inheritdoc}

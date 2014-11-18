@@ -63,7 +63,7 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
 		}
 		$session_var_name = 'state_' . $this->api->client_id;
 		$_SESSION[$session_var_name] = $this->state;
-		$extra_params = arry();
+		$extra_params = array();
 		$extra_params['state'] = $this->state;
 		$extra_params['response_type'] = "code";
 

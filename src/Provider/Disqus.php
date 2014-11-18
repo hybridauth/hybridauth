@@ -8,14 +8,14 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
  *
  */
-class Disqus extends OAuth2
+final class Disqus extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -44,7 +44,9 @@ class Disqus extends OAuth2
 	{
 		parent::initialize();
 		
-		$this->apiRequestParameters = array( 'api_key' => $this->clientId, 'api_secret' => $this->clientSecret );
+		$this->apiRequestParameters = [
+			'api_key' => $this->clientId, 'api_secret' => $this->clientSecret
+		];
 	}
 
 	/**
@@ -52,15 +54,13 @@ class Disqus extends OAuth2
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'users/details' );
+		$response = $this->apiRequest( 'users/details' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'id' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();

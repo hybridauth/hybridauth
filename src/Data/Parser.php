@@ -80,8 +80,8 @@ final class Parser
 	*/
 	function parseBirthday( $birthday, $seperator  )
 	{
-		list( $year, $month, $day ) = explode( $seperator, $birthday );
+		$birthday = date_parse( $birthday );
 
-		return array( $year, $month, $day );
+		return [ $birthday['year'], $birthday['month'], $birthday['day'] ];
 	}
 }

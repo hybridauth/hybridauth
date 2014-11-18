@@ -7,8 +7,8 @@
 
 namespace Hybridauth\Provider;
 
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -18,7 +18,7 @@ use Hybridauth\User;
  * ! This is an attempt to replace FACEBOOK SDK.
  * ! Methods tested so far: getUserProfile, getUserContacts, getUserActivity
  */
-class Facebook extends OAuth2
+final class Facebook extends OAuth2
 {
 	/**
 	* {@inheritdoc}
@@ -43,17 +43,15 @@ class Facebook extends OAuth2
 	/**
 	* {@inheritdoc}
 	*/
-	function getUserProfile()
+	function getUserProfile( $callback = null )
 	{
-		try
-		{
-			$response = $this->apiRequest( 'me' );
+		$response = $this->apiRequest( 'me' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'id' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();
@@ -125,22 +123,20 @@ class Facebook extends OAuth2
 	function getUserContacts()
 	{
 		// $apiUrl = 'me/friends?fields=link,name';
-		$contacts = array();
+		$contacts = [];
 
 		// @fixme: delete this line. I'm using graph api v1 just for tests.
 		$apiUrl = 'https://graph.facebook.com/me/friends?fields=link,name';
 
 		do
 		{
-			try
+			$response = $this->apiRequest( $apiUrl ); 
+
+			$data = new Data\Collection( $response );
+
+			if( ! $data->exists( 'data' ) )
 			{
-				$response = $this->apiRequest( $apiUrl ); 
-				
-				$data = new Data\Collection( $response );
-			}
-			catch( Exception $e )
-			{
-				throw new Exception( 'User contacts request failed! ' . $e->getMessage(), 6 );
+				throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 			}
 
 			if( $data->filter('data')->isEmpty() )
@@ -193,20 +189,11 @@ class Facebook extends OAuth2
 	*/
 	function setUserStatus( $status )
 	{
-		try
-		{
-			$status = is_string( $status ) ? array( 'message' => $status ) : $status;
+		$status = is_string( $status ) ? [ 'message' => $status ] : $status;
 
-			$response = $this->apiRequest( '/me/feed', 'POST', $status );
-			
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
-		{
-			throw new Exception( 'Update user status failed! ' . $e->getMessage() );
-		}
+		$response = $this->apiRequest( '/me/feed', 'POST', $status );
 
-		return $data;
+		return $response;
 	}
 
 	/**
@@ -214,20 +201,18 @@ class Facebook extends OAuth2
 	*/
 	function getUserActivity( $stream )
 	{
-		$activities = array();
+		$activities = [];
 
-		try
+		$apiUrl = $stream == 'me' ? '/me/feed' : '/me/home';
+
+		$response = $this->apiRequest( $apiUrl ); 
+
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'data' ) )
 		{
-			$apiUrl = $stream == 'me' ? '/me/feed' : '/me/home';
-
-			$response = $this->apiRequest( $apiUrl ); 
-
-			$data = new Data\Collection( $response );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
-		catch( Exception $e )
-		{
-			throw new Exception( 'User activity stream request failed! ' . $e->getMessage() );
-		} 
 
 		if( $data->filter( 'data' )->isEmpty() )
 		{

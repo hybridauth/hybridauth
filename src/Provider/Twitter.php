@@ -8,14 +8,14 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth1;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
 * Hybrid_Providers_Twitter provider adapter based on OAuth1 protocol
 */
-class Twitter extends OAuth1
+final class Twitter extends OAuth1
 {
 	/**
 	* {@inheritdoc}
@@ -42,15 +42,13 @@ class Twitter extends OAuth1
 	*/
 	function getUserProfile()
 	{
-		try
-		{
-			$response = $this->apiRequest( 'account/verify_credentials.json' );
+		$response = $this->apiRequest( 'account/verify_credentials.json' );
 
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'id' ) )
 		{
-			throw new Exception( 'User profile request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$userProfile = new User\Profile();
@@ -73,19 +71,17 @@ class Twitter extends OAuth1
 	*/
 	function getUserContacts()
 	{
-		$contacts = array();
+		$contacts = [];
 
-		$parameters = array( 'cursor' => '-1' ); 
+		$parameters = [ 'cursor' => '-1' ]; 
 
-		try
+		$response = $this->apiRequest( 'friends/ids.json', 'GET', $parameters ); 
+
+		$data = new Data\Collection( $response );
+
+		if( ! $data->exists( 'ids' ) )
 		{
-			$response = $this->apiRequest( 'friends/ids.json', 'GET', $parameters ); 
-
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
-		{
-			throw new Exception( 'User contacts request failed! ' . $e->getMessage(), 6 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		if( $data->filter( 'ids' )->isEmpty() )
@@ -98,7 +94,7 @@ class Twitter extends OAuth1
 
 		foreach( $contactsIds as $chunk )
 		{ 
-			$parameters = array( 'user_id' => implode( ',', $chunk ) ); 
+			$parameters = [ 'user_id' => implode( ',', $chunk ) ]; 
 
 			try
 			{
@@ -142,26 +138,15 @@ class Twitter extends OAuth1
 	*/
 	function setUserStatus( $status )
 	{
-		try
+		if( is_array( $status ) && isset( $status[ 'message' ] ) && isset( $status[ 'picture' ] ) )
 		{
-			if( is_array( $status ) && isset( $status[ 'message' ] ) && isset( $status[ 'picture' ] ) )
-			{
-				// @fixme;
-				$response = $this->apiRequest( 'statuses/update_with_media.json', 'POST', array( 'status' => $status[ 'message' ], 'media[]' => file_get_contents( $status[ 'picture' ] ) ) );
-			}
-			else
-			{
-				$response = $this->apiRequest( 'statuses/update.json', 'POST', array( 'status' => $status ) ); 
-			}
-			
-			$data = new Data\Collection( $response );
+			// @fixme;
+			return $this->apiRequest( 'statuses/update_with_media.json', 'POST', array( 'status' => $status[ 'message' ], 'media[]' => file_get_contents( $status[ 'picture' ] ) ) );
 		}
-		catch( Exception $e )
-		{
-			throw new Exception( 'Update user status failed! ' . $e->getMessage() );
-		}
+		
+		$response = $this->apiRequest( 'statuses/update.json', 'POST', [ 'status' => $status ] ); 
 
-		return $data;
+		return $response;
 	}
 
 	/**
@@ -169,20 +154,13 @@ class Twitter extends OAuth1
 	*/
 	function getUserActivity( $stream )
 	{
-		$activities = array();
+		$activities = [];
 
-		try
-		{
-			$apiUrl = $stream == 'me' ? 'statuses/user_timeline.json' : 'statuses/home_timeline.json';
+		$apiUrl = $stream == 'me' ? 'statuses/user_timeline.json' : 'statuses/home_timeline.json';
 
-			$response = $this->apiRequest( $apiUrl );
-			
-			$data = new Data\Collection( $response );
-		}
-		catch( Exception $e )
-		{
-			throw new Exception( 'User activity stream request failed! ' . $e->getMessage() );
-		}
+		$response = $this->apiRequest( $apiUrl );
+
+		$data = new Data\Collection( $response );
 
 		if( $data->isEmpty() )
 		{

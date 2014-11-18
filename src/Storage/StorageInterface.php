@@ -13,16 +13,6 @@ namespace Hybridauth\Storage;
 interface StorageInterface
 {
 	/**
-	* Store Hybridauth Config
-	*
-	* @param string $key
-	* @param string $value
-	*
-	* @return mixed
-	*/
-	function config( $key, $value = null );
-
-	/**
 	* Retrieve a item from storage
 	*
 	* @param string $key
@@ -40,11 +30,6 @@ interface StorageInterface
 	function set( $key, $value );
 
 	/**
-	* Clear all items in storage
-	*/
-	function clear();
-
-	/**
 	* Delete an item from storage
 	*
 	* @param string $key
@@ -57,4 +42,9 @@ interface StorageInterface
 	* @param string $key
 	*/
 	function deleteMatch( $key );
+
+	/**
+	* Clear all items in storage
+	*/
+	function clear();
 }

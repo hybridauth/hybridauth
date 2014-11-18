@@ -7,12 +7,10 @@
 
 namespace Hybridauth\Provider;
 
-use Hybridauth\Adapter\OpenID;
-use Hybridauth\Exception;
-use Hybridauth\User;
+use Hybridauth\Adapter\OpenID; 
 use Hybridauth\HttpClient;
 
-class PaypalOpenID extends OpenID
+final class PaypalOpenID extends OpenID
 {
 	/**
 	* {@inheritdoc}
@@ -26,7 +24,7 @@ class PaypalOpenID extends OpenID
 	{
 		$this->openIdClient->identity  = $this->openidIdentifier;
 		$this->openIdClient->returnUrl = $this->endpoint;
-		$this->openIdClient->required  = array(
+		$this->openIdClient->required  = [
 			'namePerson/prefix',
 			'namePerson/first',
 			'namePerson/last',
@@ -58,7 +56,7 @@ class PaypalOpenID extends OpenID
 			'contact/postalcode/business',
 			'company/name',
 			'company/title',
-		);
+		];
 
 		HttpClient\Util::redirect( $this->openIdClient->authUrl() );
 	}

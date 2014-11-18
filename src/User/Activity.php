@@ -7,8 +7,6 @@
 
 namespace Hybridauth\User;
 
-use Hybridauth\Exception;
-
 /**
  * Hybrid_User_Activity 
  * 
@@ -66,10 +64,10 @@ final class Activity
 	* @var string $name
 	* @var mixed  $value
 	*
-	* @throws Exception
+	* @throws \LogicException
 	*/
 	function __set( $name, $value )
 	{
-		throw new Exception( 'Adding new properties to ' . __CLASS__ . ' is not allowed.' ); 
+		throw new \LogicException( 'Adding new properties to ' . __CLASS__ . ' is not allowed.' ); 
 	}
 }

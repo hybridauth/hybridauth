@@ -139,7 +139,7 @@ final class Collection
 	*/
 	function properties()
 	{
-		$properties = array();
+		$properties = [];
 
 		foreach( $this->collection as $property )
 		{
@@ -156,7 +156,7 @@ final class Collection
 	*/
 	function values()
 	{
-		$values = array();
+		$values = [];
 
 		foreach( $this->collection as $property )
 		{

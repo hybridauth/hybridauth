@@ -8,10 +8,10 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
-use Hybridauth\Exception;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\User;
 
-class Steam extends OpenID
+final class Steam extends OpenID
 {
 	/**
 	* {@inheritdoc}
@@ -31,7 +31,7 @@ class Steam extends OpenID
 
 		if( ! $userProfile->identifier )
 		{
-			throw new Exception( "Authentication failed! {$this->providerId} returned an invalid user ID.", 5 );
+			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
 		}
 
 		$result = array();

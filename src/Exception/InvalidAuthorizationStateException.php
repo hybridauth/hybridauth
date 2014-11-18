@@ -5,10 +5,11 @@
 * (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
-namespace Hybridauth\Provider;
+namespace Hybridauth\Exception;
 
-use Hybridauth\Adapter; 
-
-final class OpenID extends Adapter\OpenID
+/**
+ *
+ */
+class InvalidAuthorizationStateException extends InvalidArgumentException implements ExceptionInterface
 {
 }

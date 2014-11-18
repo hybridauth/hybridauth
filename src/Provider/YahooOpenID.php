@@ -8,10 +8,8 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
-use Hybridauth\Exception;
-use Hybridauth\User;
 
-class YahooOpenID extends OpenID
+final class YahooOpenID extends OpenID
 {
 	/**
 	* {@inheritdoc}

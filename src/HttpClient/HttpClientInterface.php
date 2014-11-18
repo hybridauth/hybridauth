@@ -24,7 +24,7 @@ interface HttpClientInterface
 	*
 	* @return mixed
 	*/
-	function request( $uri, $method = 'GET', $parameters = array(), $headers = array() );
+	function request( $uri, $method = 'GET', $parameters = [], $headers = [] );
 
 	/**
 	* Returns raw response from the server on success, FALSE on failure

@@ -7,7 +7,8 @@
 
 namespace Hybridauth\Logger;
 
-use Hybridauth\Exception;
+use Hybridauth\Exception\RuntimeException;
+use Hybridauth\Exception\InvalidArgumentException;
 
 /**
  * Debugging and Logging utility
@@ -46,33 +47,33 @@ class Logger implements LoggerInterface
 			return;
 		}
 
-		$this->initialize( $debug_mode, $debug_file );
+		$this->initialize( $debug_file );
 
 		$this->debug_mode = $debug_mode;
 		$this->debug_file = $debug_file;  
 	}
 
 	/**
-	* @param mixed  $debug_mode
 	* @param string $debug_file
 	*
-	* @throws Exception
+	* @throws InvalidArgumentException
+	* @throws RuntimeException
 	*/
-	protected function initialize( $debug_mode, $debug_file )
+	protected function initialize( $debug_file )
 	{
  		if( ! $debug_file )
 		{
-			throw new Exception( "'debug_mode' is set to 'true' but the log file path 'debug_file' is not set.", 1 );
+			throw new InvalidArgumentException( "'debug_mode' is set to 'true' but the log file path 'debug_file' is not given." );
 		}
 
 		if( ! file_exists( $debug_file ) && ! touch( $debug_file ) )
 		{
-			throw new Exception( "'debug_mode' is set to 'true', but the file 'debug_file' in 'debug_file' can not be created.", 1 );
+			throw new RuntimeException( "'debug_mode' is set to 'true', but the file 'debug_file' in 'debug_file' can not be created." );
 		}
 
  		if( ! is_writable( $debug_file ) )
 		{
-			throw new Exception( "'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writeable file.", 1 );
+			throw new RuntimeException( "'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writeable." );
 		}
 	}
 

@@ -7,7 +7,9 @@
 
 namespace Hybridauth;
 
-use Hybridauth\Exception; 
+use Hybridauth\Exception\RuntimeException;
+use Hybridauth\Exception\InvalidArgumentException;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Storage\Session;
 use Hybridauth\Logger\LoggerInterface;
@@ -38,7 +40,7 @@ class Hybridauth
 	*
 	* @var array
 	*/
-	protected $config = array();
+	protected $config = [];
 
 	/**
 	* Storage
@@ -67,9 +69,9 @@ class Hybridauth
 	* @param StorageInterface    $storage
 	* @param LoggerInterface     $logger
 	*
-	* @throws Exception
+	* @throws InvalidArgumentException
 	*/
-	function __construct( $config = array(), HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null )
+	function __construct( $config = [], HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null )
 	{
 		if( is_string( $config ) && file_exists( $config ) )
 		{
@@ -77,7 +79,7 @@ class Hybridauth
 		}
 		elseif( ! is_array( $config ) )
 		{
-			throw new Exception( "Hybriauth config does not exist on the given path.", 1 );
+			throw new InvalidArgumentException( 'Hybriauth config does not exist on the given path.' );
 		}
 
 		$this->config = $config;
@@ -103,7 +105,28 @@ class Hybridauth
 	}
 
 	/**
+	* Instantiate the given provider and authentication or authorization protocol. 
 	*
+	* If user not authenticated yet, the user will be redirected to the authorization Service
+	* to authorize the application.
+	*
+	* @param string $providerId Provider ID (canse insensitive)
+	*
+	* @throws Exception
+	* @throws RuntimeException
+	* @throws UnexpectedValueException
+	* @throws InvalidArgumentException
+	* @throws AuthorizationDeniedException
+	* @throws HttpClientFailureException
+	* @throws HttpRequestFailedException
+	* @throws InvalidAccessTokenException
+	* @throws InvalidApplicationCredentialsException
+	* @throws InvalidAuthorizationCodeException
+	* @throws InvalidAuthorizationStateException
+	* @throws InvalidOauthTokenException
+	* @throws InvalidOpenidIdentifierException
+	*
+	* @return object|null
 	*/
 	function authenticate( $providerId )
 	{
@@ -117,7 +140,9 @@ class Hybridauth
 	}
 
 	/**
+	* Instantiate and returns the given provider adapter.
 	*
+	* @return object
 	*/
 	function getAdapter( $providerId )
 	{
@@ -133,44 +158,19 @@ class Hybridauth
 	/**
 	* Get provider config by ID
 	*
-	* @param string $id
+	* @param string $id Provider ID (canse insensitive)
 	*
 	* @return array
 	*/
 	protected function getProviderConfigById( $id )
 	{
-		$config = [];
-		$providerId = $this->validateProviderID( $id );
-		$providerConfig = $this->config['providers'][$providerId];
+		$id = $this->validateProviderID( $id );
+
+		$config = $this->config['providers'][$id];
 
 		if( isset( $this->config['callback'] ) )
 		{
 			$config['callback'] = $this->config['callback'];
-		}
-
-		if( isset( $providerConfig['callback'] ) )
-		{
-			$config['callback'] = $providerConfig['callback'];
-		}
-
-		if( isset( $providerConfig['keys']['id'] ) )
-		{
-			$config['keys']['id'] = $providerConfig['keys']['id'];
-		}
-
-		if( isset( $providerConfig['keys']['key'] ) )
-		{
-			$config['keys']['key'] = $providerConfig['keys']['key'];
-		}
-
-		if( isset( $providerConfig['keys']['secret'] ) )
-		{
-			$config['keys']['secret'] = $providerConfig['keys']['secret'];
-		}
-
-		if( isset( $providerConfig['endpoints'] ) )
-		{
-			$config['endpoints'] = $providerConfig['endpoints'];
 		}
 
 		return $config;
@@ -179,31 +179,32 @@ class Hybridauth
 	/**
 	* Get provider real provider ID. (case sensitive)
 	*
-	* @param string $id
+	* @param string $providerId Provider ID (canse insensitive)
 	*
+	* @throws InvalidArgumentException
+	* @throws UnexpectedValueException
 	* @return string $id
-	* @throws Exception
 	*/
-	protected function validateProviderID( $id )
+	protected function validateProviderID( $providerId )
 	{
 		foreach( $this->config["providers"] as $idpId => $config )
 		{
-			if( strtolower( $idpId ) == strtolower( $id ) )
+			if( strtolower( $idpId ) == strtolower( $providerId ) )
 			{
-				$id = $idpId;
+				$providerId = $idpId;
 			}
 		}
 
-		if( ! isset( $this->config["providers"][$id] ) )
+		if( ! isset( $this->config['providers'][$providerId] ) )
 		{
-			throw new Exception( "Unknown Provider ID.", 3 ); 
+			throw new InvalidArgumentException( 'Unknown Provider.' );
 		}
 
-		if( ! $this->config["providers"][$id]["enabled"] )
+		if( ! $this->config['providers'][$providerId]['enabled'] )
 		{
-			throw new Exception( "Provider disabled.", 3 );
+			throw new UnexpectedValueException( 'Disabled Provider.' );
 		}
 
-		return $id;
+		return $providerId;
 	}
 }

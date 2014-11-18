@@ -1,11 +1,5 @@
-<?php
-function loader( $class )
-{
-	$file = $class . '.php';
+<?php namespace HybridauthTest;
 
-	if( file_exists( $file ) ){
-		require $file;
-	}
-}
+session_start(); // they will hate me for this.. 
 
-spl_autoload_register( 'loader' );
+require __DIR__ . '/../vendor/autoload.php';
