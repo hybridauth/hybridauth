@@ -38,7 +38,7 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
-		$this->user->profile->identifier  = @ $data->id; 
+		$this->user->profile->identifier  = @ $data->login; 
 		$this->user->profile->displayName = @ $data->name;
 		$this->user->profile->description = @ $data->bio;
 		$this->user->profile->photoURL    = @ $data->avatar_url;
