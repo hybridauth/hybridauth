@@ -20,6 +20,7 @@
 - [x] Rework OAuth1 and OAuth2 templates
     - [x] Merge OAuth1Client with Model_OAuth1
     - [x] Merge OAuth2Client with Model_OAuth2
+- [x] Rework Exceptions
 - [x] Implement Data parser and Data Collection. 
 - [ ] Upgrading supported providers to 3.0.
     - [x] Remove introduced methods and users profile fields. 
@@ -36,7 +37,9 @@ Notes:
     Below is probably what going to be the new readme file.
     Update, changes and remakes are welcome.
 
-## [Hybridauth](http://hybridauth.sourceforge.net/) 3.x.z [![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Code Climate](https://codeclimate.com/github/hybridauth/hybridauth/badges/gpa.svg)](https://codeclimate.com/github/hybridauth/hybridauth) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth)
+## [Hybridauth](http://hybridauth.sourceforge.net/) 3.x.z 
+
+[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Code Climate](https://codeclimate.com/github/hybridauth/hybridauth/badges/gpa.svg)](https://codeclimate.com/github/hybridauth/hybridauth) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Latest Unstable Version](https://poser.pugx.org/hybridauth/hybridauth/v/unstable.svg)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth) [![License](https://poser.pugx.org/hybridauth/hybridauth/license.svg)](https://packagist.org/packages/hybridauth/hybridauth)
 
 Hybridauth enables developers to easily build social applications and tools to engage websites visitors and customers on a social level by implementing social sign-in, social sharing, users profiles, friends list, activities stream, status updates and more.
 
@@ -65,7 +68,7 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 			'secret' => 'your-consumer-secret'
 		],
 
-	/*	
+	/*
 		OPTIONAL: Connect with a pair of access tokens
 			'tokens' => [
 				'access_token'        => 'your-access-token',
@@ -195,4 +198,6 @@ The list of the awesome people who have contributed to Hybridauth on Github can 
 
 #### License
 
-Except where otherwise noted, Hybridauth is released under dual licence MIT and GPL.
+Hybridauth PHP Library is released under the terms of MIT License.
+
+For the full Copyright Notice and Disclaimer, see [COPYING.md](https://github.com/hybridauth/hybridauth/blob/master/COPYING.md).
