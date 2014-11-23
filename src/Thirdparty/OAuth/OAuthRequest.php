@@ -2,7 +2,7 @@
 /*!
 * This file is part of the OAuth PHP Library (https://code.google.com/p/oauth/)
 *
-* OAuth PHP Library is licensed under Apache License 2.0
+* OAuth PHP Library is an open source software available under the MIT License.
 */
 
 namespace Hybridauth\Thirdparty\OAuth;
@@ -220,7 +220,7 @@ class OAuthRequest
 			if (substr($k, 0, 5) != "oauth")
 				continue;
 			if (is_array($v)) {
-				throw new OAuthExceptionPHP('Arrays not supported in headers');
+				continue;
 			}
 			$out .= ($first) ? ' ' : ',';
 			$out .= OAuthUtil::urlencode_rfc3986($k) . '="' . OAuthUtil::urlencode_rfc3986($v) . '"';

@@ -5,7 +5,7 @@ Here we include a number of third party libraries. Those libraries are used by t
 Library | Description
 -------- | -------------
 [LightOpenID](https://gitorious.org/lightopenid) | Contain LightOpenID. Solid OpenID library licensed under the MIT License.
-[OAuth Library](https://code.google.com/p/oauth/) | Contain OAuth Library licensed under Apache License 2.0
+[OAuth Library](https://code.google.com/p/oauth/) | Contain OAuth Library licensed under the MIT License.
 
 Notes: 
 
