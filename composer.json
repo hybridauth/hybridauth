@@ -4,7 +4,7 @@
     "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter"],
     "homepage": "http://hybridauth.sourceforge.net",
     "type": "library",
-    "license": "(MIT or GPL-3.0+)",
+    "license": "MIT",
     "authors": [
         {
             "name": "Miled",
@@ -19,9 +19,18 @@
         "php": ">=5.4.0",
         "ext-curl": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*",
+        "mockery/mockery": "0.9.2"
+    },
     "autoload": {
         "psr-4": {
            "Hybridauth\\": "src/"
         } 
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        }
     }
 }
