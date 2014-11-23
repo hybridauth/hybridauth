@@ -21,10 +21,8 @@ use Hybridauth\HttpClient;
  * Subclasses (i.e., providers adapters) can either use the already provided methods or override
  * them when necessary.
  */
-abstract class OAuth2 extends AdapterBase implements AdapterInterface 
+abstract class OAuth2 extends AbstractAdapter implements AdapterInterface 
 {
-	use OAuthHelperTrait;
-
 	/**
 	* Client Identifier
 	*
@@ -254,7 +252,7 @@ abstract class OAuth2 extends AdapterBase implements AdapterInterface
 		{
 			$this->clearTokens();
 			
-			throw $exception;
+			throw $e;
 		}
 	}
 

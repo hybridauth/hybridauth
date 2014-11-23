@@ -23,7 +23,7 @@ use Hybridauth\Thirdparty\OpenID\LightOpenID;
  * Subclasses (i.e., providers adapters) can either use the already provided methods or override
  * them when necessary.
  */
-class OpenID extends AdapterBase implements AdapterInterface 
+abstract class OpenID extends AbstractAdapter implements AdapterInterface 
 {
 	/**
 	* LightOpenID instance

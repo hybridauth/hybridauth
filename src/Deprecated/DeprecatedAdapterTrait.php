@@ -29,7 +29,7 @@ trait DeprecatedAdapterTrait
 	*
 	* @deprecated 
 	*/ 
-	public function isUserConnected()
+	function isUserConnected()
 	{
 		return $this->isAuthorized();
 	}

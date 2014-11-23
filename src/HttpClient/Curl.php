@@ -198,7 +198,7 @@ class Curl implements HttpClientInterface
 	* @param object $logger
 	*/
 	function setLogger( $logger )
-	{ 
+	{
 		$this->logger = $logger;
 	}
 

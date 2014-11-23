@@ -26,10 +26,8 @@ use Hybridauth\Thirdparty\OAuth\OAuthUtil;
  * Subclasses (i.e., providers adapters) can either use the already provided methods or override
  * them when necessary.
  */
-abstract class OAuth1 extends AdapterBase implements AdapterInterface 
+abstract class OAuth1 extends AbstractAdapter implements AdapterInterface 
 {
-	use OAuthHelperTrait;
-
 	/**
 	* Base URL to provider API
 	* 
@@ -239,11 +237,11 @@ abstract class OAuth1 extends AdapterBase implements AdapterInterface
 
 		if( ! $oauth_token )
 		{
-			throw new InvalidOauthTokenException( 'Provider returned an invalid oauth_token.' );
+			throw new InvalidOauthTokenException( 'Expecting a non-null oauth_token to continue the authorization flow.' );
 		}
 
 		$response = $this->exchangeAuthTokenForAccessToken( $oauth_token, $oauth_verifier );
-		
+
 		$this->validateAccessTokenExchange( $response );
 
 		$this->initialize();
