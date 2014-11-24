@@ -107,7 +107,7 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
             {
                 $url = $this->api->api_base_url . $method . '?access_token=' . $this->api->access_token . '&limit=10000';
             }
-            $data = CURLHelper::simple($url);
+            $data = $this->simpleRequest($url);
         } catch (Exception $e)
         {
             $data = ['error' => "Can't provide query"];
@@ -122,6 +122,28 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         // redirect the user to the provider authentication url
         Hybrid_Auth::redirect($this->api->authorizeUrl(array("perms" => $this->scope)));
+    }
+
+    /**
+     * @param string $url URL
+     * @return mixed
+     */
+    function simpleRequest($url, $check_code = false) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'CWM UserAgent');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $data = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+
+        if ($check_code && $info['http_code'] != 200)
+        {
+            return null;
+        }
+
+        return $data;
     }
 
 
