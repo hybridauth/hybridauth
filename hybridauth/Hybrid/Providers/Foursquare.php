@@ -27,6 +27,9 @@
 
 class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 { 
+	private static $apiVersion = array( "v" => "20120610" );
+	private static $defPhotoSize = "100x100";
+
 	/**
 	* IDp wrappers initializer 
 	*/
@@ -47,7 +50,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-		$data = $this->api->api( "users/self", "GET", array( "v" => "20120610" ) ); 
+		$data = $this->api->api( "users/self", "GET", Hybrid_Providers_Foursquare::$apiVersion ); 
 
 		if ( ! isset( $data->response->user->id ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
@@ -55,14 +58,11 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 
 		$data = $data->response->user;
 
-		// get profile photo size from config
-		$photoSize = ((isset($this->config["params"]["photo_size"]))?($this->config["params"]["photo_size"]):("100x100"));
-
 		$this->user->profile->identifier    = $data->id;
 		$this->user->profile->firstName     = $data->firstName;
 		$this->user->profile->lastName      = $data->lastName;
-		$this->user->profile->displayName   = trim( $this->user->profile->firstName . " " . $this->user->profile->lastName );
-		$this->user->profile->photoURL      = $data->photo->prefix.$photoSize.$data->photo->suffix;
+		$this->user->profile->displayName   = $this->buildDisplayName( $this->user->profile->firstName, $this->user->profile->lastName );
+		$this->user->profile->photoURL      = $this->buildPhotoURL( $data->photo->prefix, $data->photo->suffix );
 		$this->user->profile->profileURL    = "https://www.foursquare.com/user/" . $data->id;
 		$this->user->profile->gender        = $data->gender;
 		$this->user->profile->city          = $data->homeCity;
@@ -70,5 +70,55 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->emailVerified = $data->contact->email;
 
 		return $this->user->profile;
+	}
+
+	/**
+	* load the user contacts
+	*/
+	function getUserContacts()
+	{
+		// refresh tokens if needed 
+		$this->refreshToken();  
+
+		//
+		$response = array();
+		$contacts = array();
+		try {
+			$response = $this->api->api( "users/self/friends", "GET", Hybrid_Providers_Foursquare::$apiVersion ); 
+		}
+		catch( LinkedInException $e ){
+			throw new Exception( "User contacts request failed! {$this->providerId} returned an error: $e" );
+		}
+
+		if( isset( $response ) && $response->meta->code == 200 ) {
+			foreach( $response->response->friends->items as $contact ) {
+				$uc = new Hybrid_User_Contact();
+				//
+				$uc->identifier		= $contact->id;
+				//$uc->profileURL		= ;
+				//$uc->webSiteURL		= ;
+				$uc->photoURL			= $this->buildPhotoURL( $contact->photo->prefix, $contact->photo->suffix );
+				$uc->displayName	= $this->buildDisplayName( (isset($contact->firstName)?($contact->firstName):("")), (isset($contact->lastName)?($contact->lastName):("")) );
+				//$uc->description	= ;
+				$uc->email				= (isset($contact->contact->email)?($contact->contact->email):(""));
+				//
+				$contacts[] = $uc;
+			}
+		}
+		return $contacts;
+	}
+
+	/**
+	* utils
+	*/
+	private function buildDisplayName( $firstName, $lastName ) {
+		return trim( $firstName . " " . $lastName );
+	}
+
+	private function buildPhotoURL( $prefix, $suffix ) {
+		if ( isset( $prefix ) && isset( $suffix ) ) {
+			return $prefix . ((isset($this->config["params"]["photo_size"]))?($this->config["params"]["photo_size"]):(Hybrid_Providers_Foursquare::defPhotoSize)) . $suffix;
+		}
+		return ("");
 	}
 }
