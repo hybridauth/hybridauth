@@ -57,9 +57,17 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 				$emails = $this->api->api("user/emails");
 
 				// fail gracefully, and let apps collect the email if not present
-				if (is_array($emails) && !empty($emails[0]->email))
-				{
-				    $this->user->profile->email = $emails[0]->email;
+				if (is_array($emails)) {
+					foreach ($emails as $email) {
+						if ($email instanceof stdClass
+							&& property_exists('primary', $email)
+							&& true === $email->primary
+							&& property_exists('email', $email)
+						) {
+							$this->user->profile->email = $email->email;
+							break;
+						}
+					}
 				}
 			}
 			catch( GithubApiException $e ){
