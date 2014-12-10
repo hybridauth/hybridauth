@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Hybrid_Providers_Rhapsody - BeatsMusic provider adapter based on OAuth2 protocol
+ * Hybrid_Providers_Rhapsody - Rhapsody provider adapter based on OAuth2 protocol
  */
 class Hybrid_Providers_Rhapsody extends Hybrid_Provider_Model_OAuth2
 {
