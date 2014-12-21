@@ -14,7 +14,7 @@
 class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions 
-	public $scope = "";
+	public $scope = "email";
 
 	/**
 	* IDp wrappers initializer 
@@ -61,6 +61,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		// store user id. it is required for api access to Vkontakte
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_id", $response->user_id );
+		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_email", $response->email );
 
 		// set user connected locally
 		$this->setUserConnected();
@@ -92,6 +93,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->displayName   = (property_exists($response,'screen_name'))?$response->screen_name:"";
 		$this->user->profile->photoURL      = (property_exists($response,'photo_big'))?$response->photo_big:"";
 		$this->user->profile->profileURL    = (property_exists($response,'screen_name'))?"http://vk.com/" . $response->screen_name:"";
+		$this->user->profile->email         = Hybrid_Auth::storage()->get( "hauth_session.{$this->providerId}.user_email" );
 
 		if(property_exists($response,'sex')){
 			switch ($response->sex)
