@@ -106,7 +106,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		if( property_exists($response,'bdate') ){
 			
-			birthday = explode('.', $response->bdate);
+			$birthday = explode('.', $response->bdate);
 			
 			if (count($birthday) === 3) {
 				$this->user->profile->birthDay   = (int) $birthday[0];
