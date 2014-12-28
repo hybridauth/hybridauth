@@ -106,18 +106,17 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		if( property_exists($response,'bdate') ){
 			
-			$birthday = explode('.', $response->bdate);
+			birthday = explode('.', $response->bdate);
 			
 			if (count($birthday) === 3) {
-				list($birthday_year, $birthday_month, $birthday_day) = $birthday;
-			} else {
-				$birthday_year = date('Y');
-				list($birthday_month, $birthday_day) = $birthday;
+				$this->user->profile->birthDay   = (int) $birthday[0];
+				$this->user->profile->birthMonth = (int) $birthday[1];
+				$this->user->profile->birthYear  = (int) $birthday[2];
 			}
-
-			$this->user->profile->birthDay   = (int) $birthday_day;
-			$this->user->profile->birthMonth = (int) $birthday_month;
-			$this->user->profile->birthYear  = (int) $birthday_year;
+			elseif (count($birthday) === 2) {
+				$this->user->profile->birthDay   = (int) $birthday[0];
+				$this->user->profile->birthMonth = (int) $birthday[1];
+			}
 		}
 
 		return $this->user->profile;
