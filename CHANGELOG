@@ -1,5 +1,21 @@
 Hybridauth Change log
 =====================
+2.4.0 -
+      New Providers:
+        - Rhapsody #362
+        - Rdio #352
+        - SoundCloud #352
+        - BeatsMusic #351
+        - Dropbox #344 via #367
+      Fixes:
+        #368 - Correct year and date birth in VKontakte provider
+        #228 - HTTP_HOST not found via #366
+        #358 - Added abbility get email from vkontakte response
+        #363 - Fixed Phpdoc in Rhaspody provider
+        #360 - GitHub provider fix: Return primary email address, not the first
+        #354 - Hybrid_Providers_Foursquare::getUserContacts() implementation
+        #351 - Deezer provider fix
+
 2.3.0 - November 16 2014
         #87 - Make logging level based
         #102 - Uses Exceptions instead of die() to handle critical problems.
@@ -30,22 +46,22 @@ Hybridauth Change log
         #324 - fixed port issue on openid
         #337 - Added email in Live contacts
         #341 - [foursquare] photoURL is not a 'simple' string with the latest service API
-        
+
 
 2.2.2 - July 11 2014
-	    #239 Fixes to Disqus provider, which now works properly (the old one was not working)
-	    #234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
+	      #239 Fixes to Disqus provider, which now works properly (the old one was not working)
+	      #234 Error fix for when you don't have friends in G+ and try using getUsersContacts()
         #226 Fixing fatal error in Yammer Provider
         #227 + #229 Github: getUserProfile() does not contain email address fix
         #236 + #237 OAuth1Client: Allow to set a request body and a content type
-	    #241 Updates to Install.php
-	    #208 Updating and fixing examples
-	    #244 OAuth if the class already exists, use the current class
-	    #246 Fixing version numbers
+	      #241 Updates to Install.php
+	      #208 Updating and fixing examples
+	      #244 OAuth if the class already exists, use the current class
+	      #246 Fixing version numbers
         Few small fixes and updates to the examples
-	
+
 2.2.1 - May 26 2014
-        #213 - Hotfix for undefined variable 
+        #213 - Hotfix for undefined variable
         #215 - Hotfix for BYO Storage Mechanism
 
 2.2.0 - May 24 2014
@@ -61,10 +77,10 @@ Hybridauth Change log
         Typo fixes
         Many other little changes and fixes
         Enabled to have your own storage mechanism #164
-        
 
 
-2.1.1 - 29 dec 2012 
+
+2.1.1 - 29 dec 2012
 	#59 - Remove OAuth PECL conflict with OAuth PHP Library
 	#70 - Update Facebook PHP SDK (v.3.2.2)
 	#63 - Minor change to fix getCurrentUrl()
@@ -73,24 +89,24 @@ Hybridauth Change log
 	#57 - Composer Require CURL
 	#53 - Proper handling of LinkedIn user profiles with no telephone numbers
 	#64 - Allow restricting google provider to specific domain
-	Update Windows Live endpoint URLs (http://msdn.microsoft.com/en-us/library/live/hh243647.aspx) 
+	Update Windows Live endpoint URLs (http://msdn.microsoft.com/en-us/library/live/hh243647.aspx)
 	Update lightopenid library
 	...
 
 
 
-2.1.0 - 04 aug 2012 
+2.1.0 - 04 aug 2012
 	Yahoo! provider adapter is now based on OAuth1 protocol (by Lukasz Koprowski)
 	Windows Live provider adapter is now based on OAuth2 protocol (by Lukasz Koprowski)
 	Yahoo! and Google openid based are now part of the "additional providers package"
 	Add proxy config for providers API (by fedetorre)
 	Fix Hybrid_Providers_Google::getUserContacts()
 	Fix Twitter user's profile url
-	Fix the user profile url on Hybrid_Providers_Facebook::getUserActivity() 
+	Fix the user profile url on Hybrid_Providers_Facebook::getUserActivity()
 
 
 
-2.0.11 - 25 jan 2012 
+2.0.11 - 25 jan 2012
 	Fix a bug with Twitter update status
 	Add a way to specify adapters and wrappers from config
 	Added emailVerified property to profile object.
@@ -101,7 +117,7 @@ Hybridauth Change log
 
 
 
-2.0.10 - 05 dec 2011 
+2.0.10 - 05 dec 2011
 	Fix a bug with Facebook update status setUserStatus()
 	Fix a bug with linkedin get contacts list getUserContacts()
 	Fix refresh token issue with oauth2 client
@@ -112,7 +128,7 @@ Hybridauth Change log
 
 
 
-2.0.9 - 24 nov 2011 
+2.0.9 - 24 nov 2011
 	Move Google to work with OAuth 2 protocol.
 	Get back Foursquare and AOL to library core as supported networks
 	Add 2 new examples "Sign-in/Sign-up Users" and "Basic Facebook integration"
@@ -120,7 +136,7 @@ Hybridauth Change log
 
 
 
-2.0.8 - 18 nov 2011 
+2.0.8 - 18 nov 2011
 	Add an auto installer to make life a bit easier.
 	Change the configuration file name from hybridauth.php to config.php
 	Setting facebook scope from the configuration, now override the default requested scope
@@ -129,13 +145,13 @@ Hybridauth Change log
 	Hybrid_Auth_Activity::$date return now a timestamp across supported social networks
 	Introduce the refresh_token as its needed for some providers
 	fixed some minor issues and improved bunch of other stuff
-	Thanks for KVC, RB Lin and danhstevens! 
+	Thanks for KVC, RB Lin and danhstevens!
 
 
 
-2.0.7 - 12 oct 2011 
+2.0.7 - 12 oct 2011
 	Add some generic functions: Hybrid_Provider_Adapter::getUserContacts(), Hybrid_Provider_Adapter::setUserStatus() and Hybrid_Provider_Adapter::getUserActivity() to Facebook, MySpace, Twitter, Identica and LinkedIn.
-	Add a generic function to logout all connected provider at once Hybrid_Auth::logoutAllProviders() 
+	Add a generic function to logout all connected provider at once Hybrid_Auth::logoutAllProviders()
 	Correct a bug with Hybrid_Auth::getCurrentUrl()
 	Split HybridAuth into 2 packages. i) a core library which come with 8 major providers by default, ii) the others one which containt some additional providers
 	fixed some minors issues and improved some stuff and whatnot
