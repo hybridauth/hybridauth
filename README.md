@@ -104,7 +104,7 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 
 ##### Legacy way (Compatible with Hybridauth 2.x)
 
-If you want to jump in Hybridauth 3 without making a lot of changes to your project codebase, there is possibility for that. For more information, refer to [UPGRADING.md](https://github.com/hybridauth/hybridauth/blob/master/UPGRADING.md) 
+Please refer to [Upgrade guide](https://github.com/hybridauth/hybridauth/blob/master/UPGRADING.md) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
 
 ```php
 <?php
@@ -146,7 +146,7 @@ If you want to jump in Hybridauth 3 without making a lot of changes to your proj
 
 #### Dependencies
 
-Hybridauth depends on few external libraries that comes already included:
+Hybridauth depends on few external libraries that come already included in HybridAuth:
 
 * [LightOpenID](https://gitorious.org/lightopenid)
 * [OAuth Library](https://code.google.com/p/oauth/)
@@ -182,7 +182,7 @@ For more information, see [CONTRIBUTING.md](https://github.com/hybridauth/hybrid
 
 For general questions (i.e, "how-to" questions), consider using [StackOverflow](https://stackoverflow.com/questions/tagged/hybridauth). 
 
-We also have a mailing list at http://groups.google.com/group/hybridauth.
+We also have a mailing list at [Google Groups](http://groups.google.com/group/hybridauth).
 
 #### Project maintainers
 
@@ -192,7 +192,7 @@ We also have a mailing list at http://groups.google.com/group/hybridauth.
 
 #### Thanks
 
-Big thanks to everyone who have contributed to Hybridauth by submitting patches, new ideas, code reviews and constructive discussions .
+Big thanks to everyone who have contributed to Hybridauth by submitting patches, new ideas, code reviews and constructive discussions.
 
 The list of the awesome people who have contributed to Hybridauth on Github can be found at https://github.com/hybridauth/hybridauth/graphs/contributors
 
