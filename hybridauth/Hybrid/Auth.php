@@ -376,6 +376,10 @@ class Hybrid_Auth
 	*/
 	public static function getCurrentUrl( $request_uri = true ) 
 	{
+		if (php_sapi_name() == 'cli') {
+			return '';
+		}
+		
 		if(
 			isset( $_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )
 		|| 	isset( $_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
