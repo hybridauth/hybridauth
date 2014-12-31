@@ -50,7 +50,11 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
+<<<<<<< HEAD
 		$data = $this->api->api( "users/self", "GET", Hybrid_Providers_Foursquare::$apiVersion ); 
+=======
+		$data = $this->api->api( "users/self", "GET", array( "v" => "20120401" ) ); 
+>>>>>>> 030da9f7179db2ae21a449cc2beb4bb4b9b38e05
 
 		if ( ! isset( $data->response->user->id ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
@@ -71,6 +75,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 
 		return $this->user->profile;
 	}
+<<<<<<< HEAD
 
 	/**
 	* load the user contacts
@@ -120,5 +125,50 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 			return $prefix . ((isset($this->config["params"]["photo_size"]))?($this->config["params"]["photo_size"]):(Hybrid_Providers_Foursquare::defPhotoSize)) . $suffix;
 		}
 		return ("");
+=======
+	
+	/**
+	* Get Foursquare friends list
+	* 
+	*/
+	function getUserContacts()
+	{ 
+		 
+		//We need our id to retrieve contacts
+		if ( ! isset( $this->user->profile->identifier  ) ){
+			$this->getUserProfile();
+		}
+		
+		$response = $this->api->api( "users/" .$this->user->profile->identifier. "/friends" ); 
+
+		if ( $this->api->http_code != 200 )
+		{
+			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
+		}
+
+		if ( !$response->friends->items && ( $response->errcode != 0 ) )
+		{
+			return array();
+		}
+
+		$contacts = array();
+
+
+		foreach( $response->response->friends->items as $item ) {
+
+			$uc = new Hybrid_User_Contact();
+
+			$uc->identifier   = $item->id;
+			$uc->email        = $item->contact->email;
+			$uc->displayName  = $item->firstName . " " . $item->lastName;
+			$uc->photoURL     = $item->photo;
+			$uc->gender		  = $this->gender;
+
+			$contacts[] = $uc;
+		}
+		
+		return $contacts;
+		
+>>>>>>> 030da9f7179db2ae21a449cc2beb4bb4b9b38e05
 	}
 }
