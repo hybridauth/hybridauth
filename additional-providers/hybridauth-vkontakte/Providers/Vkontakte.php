@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | https://github.com/hybridauth/hybridauth
-*  (c) 2009-2011 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
+*  (c) 2009-2015 HybridAuth authors | hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -13,13 +13,13 @@
 
 class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 {
-	// default permissions 
+	// default permissions
 	public $scope = "email";
 
 	/**
-	* IDp wrappers initializer 
+	* IDp wrappers initializer
 	*/
-	function initialize() 
+	function initialize()
 	{
 		parent::initialize();
 
@@ -61,7 +61,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		// store user id. it is required for api access to Vkontakte
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_id", $response->user_id );
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_email", $response->email );
+		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_email", $response->user_email );
 
 		// set user connected locally
 		$this->setUserConnected();
@@ -72,7 +72,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-		// refresh tokens if needed 
+		// refresh tokens if needed
 		$this->refreshToken();
 
 		// Vkontakte requires user id, not just token for api access
@@ -105,16 +105,16 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		}
 
 		if( property_exists($response,'bdate') ){
-			
+
 			$birthday = explode('.', $response->bdate);
-			
+
 			switch (count($birthday)) {
 				case 3:
 					$this->user->profile->birthDay   = (int) $birthday[0];
 					$this->user->profile->birthMonth = (int) $birthday[1];
 					$this->user->profile->birthYear  = (int) $birthday[2];
 					break;
-				
+
 				case 2:
 					$this->user->profile->birthDay   = (int) $birthday[0];
 					$this->user->profile->birthMonth = (int) $birthday[1];
@@ -124,22 +124,22 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		return $this->user->profile;
 	}
-		
+
 	/**
 	* load the user contacts
 	*/
-	function getUserContacts() 
+	function getUserContacts()
 	{
 		$params=array(
 			'fields' => 'nickname, domain, sex, bdate, city, country, timezone, photo_200_orig'
 		);
-		
+
 		$response = $this->api->api('https://api.vk.com/method/friends.get','GET',$params);
-		
+
 		if(!$response || !count($response->response)){
 			return array();
 		}
-		
+
 		$contacts = array();
 		foreach( $response->response as $item ){
 			$uc = new Hybrid_User_Contact();
@@ -149,7 +149,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 			$uc->photoURL    = $item->photo_200_orig;
 			$contacts[] = $uc;
 		}
-		
+
 		return $contacts;
 	}
 }
