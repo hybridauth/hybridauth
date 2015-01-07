@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth - Google Authentication</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="../assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">HybridAuth</a>
+        </div>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="../userguide.html">Documentation</a></li>
+          <li><a href="../apidoc.html">API</a></li>
+          <li><a href="../support.html">Help & Support</a></li>
+          <li><a href="../plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="../download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="../search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+	<div id="page" class="container" >
+    <ul class="breadcrumb" >
+    	<li><a href="../index.html">Home</a></li>
+    	<li><a href="../userguide.html">User guide</a></li>
+    	<li class="active">Google</li>
+    </ul>
+  	<div id="content">
+    	<div class="page-header">
+    	  <h1>Google</h1>
+    	</div>
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Adapter capabilities </h4>
+          <table class="table table-striped table-hover">
+          	<tr><td><strong>&nbsp;User authentication</strong></td><td width="5%" ><span class="label label-success">YES</span></td></tr>
+          	<tr><td><strong>&nbsp;User profile</strong></td><td><span class="label label-success">YES</span></td></tr>
+          	<tr><td><strong>&nbsp;User contacts list</strong></td><td><span class="label label-success">YES</span></td></tr>
+          	<tr><td><strong>&nbsp;User activity stream</strong></td><td><span class="label label-danger">NO</span></td></tr>
+          	<tr><td><strong>&nbsp;Post to user wall / update status</strong></td><td><span class="label label-danger">NO</span></td></tr>
+          	<tr><td ><strong>&nbsp;Access provider API</strong></td><td><span class="label label-success">YES</span></td></tr>
+          </table>
+
+          <h4>Adapter specifications </h4>
+          <table class="table table-striped table-hover">
+            <tr>
+              <td width="19%" ><strong>&nbsp;ID</strong></td>
+              <td>Google</tr>
+            <tr>
+              <td><strong>&nbsp;Protocol</strong></td>
+              <td>OAuth2</td>
+            </tr>
+            <tr>
+              <td><strong>&nbsp;IDp URL</strong></td>
+              <td>http://www.google.com/</td>
+            </tr>
+            <tr>
+              <td><strong>&nbsp;Keys registeration</strong></td>
+              <td>https://code.google.com/apis/console/</td>
+            </tr>
+            <tr>
+              <td><strong>&nbsp;Dev documentation</strong></td>
+              <td>http://code.google.com/intl/fr/apis/accounts/docs/OAuth2.html</td>
+            </tr>
+            <tr>
+              <td><strong>&nbsp;Since</strong></td>
+              <td>HybridAuth 1.0.1</td>
+            </tr>
+              <td width="19%" ><strong>&nbsp;Wrapper</strong></td>
+              <td width="81%">./Hybrid/Providers/Google.php</td>
+            </tr>
+            <tr>
+              <td><strong>Callback URL</strong></td>
+              <td>http://mywebsite.com/path_to_hybridauth/?hauth.done=<strong>Google</strong></td>
+            </tr>
+          </table>
+
+          <h4>Configuration & Usage</h4>
+<pre class="prettyprint linenums">
+&lt;?php
+    $config = array(
+      &quot;base_url&quot; =&gt; &quot;http://mywebsite.com/path/to/hybridauth/&quot;,
+      &quot;providers&quot; =&gt; array (
+        "Google" => array (
+          "enabled" => true,
+          "keys"    => array ( "id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE" ),
+          "scope"           => "https://www.googleapis.com/auth/userinfo.profile ". // optional
+                               "https://www.googleapis.com/auth/userinfo.email"   , // optional
+          "access_type"     => "offline",   // optional
+          "approval_prompt" => "force",     // optional
+          "hd"              => "domain.com" // optional
+    )));
+
+    require_once( &quot;/path/to/hybridauth/Hybrid/Auth.php&quot; );
+
+    $hybridauth = new Hybrid_Auth( $config );
+
+    $adapter = $hybridauth-&gt;authenticate( &quot;Google&quot; );
+
+    $user_profile = $adapter-&gt;getUserProfile();
+</pre>
+        <p>
+          For <strong>Google</strong> you can configure several extra options: (refer to <a href="https://developers.google.com/accounts/docs/OAuth2WebServer#formingtheurl">https://developers.google.com/accounts/docs/OAuth2WebServer#formingtheurl</a>")
+        </p>
+        <ul>
+        	<li>
+            <code>scope</code>: A space delimited set of permissions the application requests. Indicates the Google API access your application is requesting.
+        	</li>
+        	<li>
+            <code>access_type</code>: Can be "online or offline". By default its set to "offline". Indicates if your application needs to access a Google API when the user is not present at the browser.
+        	</li>
+        	<li>
+            <code>approval_prompt</code>: Can be "force or auto". By default its set to "auto". Indicates if the user should be re-prompted for consent. The default is auto, so a given user should only see the consent page for a given set of scopes the first time through the sequence. If the value is force, then the user sees a consent page even if they have previously given consent to your application for a given set of scopes.
+        	</li>
+        	<li>
+            <code>hd</code>: Can be used to force users from a specific domain.
+        	</li>
+        </ul>
+
+        <h4>Registering application</h4>
+        <div class="alert alert-danger" role="alert">
+          <p>
+            Please note that this section might be outdated in the exact way how to get your application registered on Google.
+          </p>
+        </div>
+        <ol>
+          <li>
+            Go to <a target="_blank" href="https://code.google.com/apis/console/">https://code.google.com/apis/console/</a> and create a new project.
+          </li>
+          <li>
+            Go to <strong>API Access</strong> under <strong>API Project</strong>. After that click on <strong>Create an OAuth 2.0 client ID</strong> to <strong>create a new application</strong>.
+          </li>
+          <li>
+            A pop-up named <strong>"Create Client ID"</strong> will appear, fill out any required fields such as the application name and description.
+          </li>
+          <li>
+            Click on <strong>Next</strong>.
+          </li>
+          <li>
+            On the popup set <strong>Application type</strong> to <strong>Web application</strong> and switch to advanced settings by clicking on <strong>(more options)</strong>.
+          </li>
+          <li>
+            Provide this URL as the Callback URL for your application: <span style="color:green">http://mywebsite.com/path_to_hybridauth/?hauth.done=Google</span>
+          </li>
+          <li>
+            Once you have registered, copy and past the created application credentials (Client ID and Secret) into the HybridAuth <a href="Configuration.html#SETUP_API_KEYS">config file</a>.
+          </li>
+        </ol>
+
+				<hr />
+				<div class="text-center">
+					<a href="http://hybridauth.sourceforge.net/userguide/img/setup/google/1.png"><img src="http://hybridauth.sourceforge.net/userguide/img/setup/google/1.png" class="span4 thumbnail"></a>
+					<a href="http://hybridauth.sourceforge.net/userguide/img/setup/google/2.png"><img src="http://hybridauth.sourceforge.net/userguide/img/setup/google/2.png" class="span4 thumbnail"></a>
+					<a href="http://hybridauth.sourceforge.net/userguide/img/setup/google/3.png"><img src="http://hybridauth.sourceforge.net/userguide/img/setup/google/3.png" class="span4 thumbnail"></a>
+				</div>
+			</div>
+    </div>
+	</div>
+
+	<br />
+
+	<div class="disqus">
+    <div class="row">
+			<div class="col-md-12">
+				<div id="disqus_thread"></div>
+				<script type="text/javascript">
+					/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+						var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+						var disqus_identifier = 'IDProvider_info_Google';
+						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html';
+
+					/* * * DON'T EDIT BELOW THIS LINE * * */
+						(function() {
+							var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+							dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+							(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+						})();
+				</script>
+			</div>
+    </div>
+	</div>
+
+  <!-- Footer -->
+  <footer class="well">
+    <div class="container">
+      <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+      <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+      <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+      <p>HybridAuth was created by <a href="../contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+        Many other people have also contributed with constructive discussions, support and by submitting patches.
+      </p>
+    </div>
+  </footer>
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

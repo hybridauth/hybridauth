@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
   <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
-  <title>HybridAuth - Update User Status</title>
+  <title>HybridAuth - Twitter Authentication</title>
 
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -49,54 +49,90 @@
     </div>
   </nav>
 
-
 	<div id="page" class="container" >
     <ul class="breadcrumb" >
     	<li><a href="../index.html">Home</a></li>
     	<li><a href="../userguide.html">User guide</a></li>
-    	<li class="active">Update User Status</li>
+    	<li class="active">Twitter</li>
     </ul>
-  	<div id="content">
+    	<div id="content">
     	<div class="page-header">
-    	  <h1>Update User Status</h1>
+    	  <h1>Twitter</h1>
     	</div>
-      <div class="row">
-        <div class="col-md-12">
-          <p><span class="label label-warning">Important</span> Currently only <strong>Facebook, Twitter, Identica, LinkedIn, QQ, Sina, Murmur, Pixnet and Plurk</strong> do support this feature. Others providers will throw an exception (#8 "Provider does not support this feature"), when <code>setUserStatus()</code> is called. Please refer to the user guide to know more about each adapters capabilities.</p>
-          <p>Since <strong>HybridAuth</strong> <span class="label label-warning">2.0.7</span>, we can set the user status or post to his wall simply by using a generic funtion across social networks.</p>
-          <p>
-            <strong>Example</strong>
-          </p>
-<pre class="prettyprint linenums">
-  // init hybridauth
-  $hybridauth = new Hybrid_Auth( $config );
+        <div class="row">
+          <div class="col-md-12">
+            <h4>Adapter capabilities </h4>
+            <table class="table table-striped table-hover">
+            	<tr><td><strong>&nbsp;User authentication</strong></td><td width="5%" ><span class="label label-success">YES</span></td></tr>
+            	<tr><td><strong>&nbsp;User profile</strong></td><td><span class="label label-success">YES</span></td></tr>
+            	<tr><td><strong>&nbsp;User contacts list</strong></td><td><span class="label label-success">YES</span></td></tr>
+            	<tr><td><strong>&nbsp;User activity stream</strong></td><td><span class="label label-success">YES</span></td></tr>
+            	<tr><td><strong>&nbsp;Update status</strong></td><td><span class="label label-success">YES</span></td></tr>
+            	<tr><td><strong>&nbsp;Access provider API</strong></td><td><span class="label label-success">YES</span></td></tr>
+            </table>
 
-  // try to authenticate with twitter
-  $adapter = $hybridauth-&gt;authenticate( &quot;Twitter&quot; );
+            <h4>Adapter specifications </h4>
+            <table class="table table-striped table-hover">
+              <tr>
+                <td width="19%"><strong>&nbsp;ID</strong></td>
+                <td>Twitter</tr>
+              </tr>
+              <tr>
+                <td><strong>&nbsp;Protocol</strong></td>
+                <td>OAuth</td>
+              </tr>
+              <tr>
+                <td><strong>&nbsp;IDp URL</strong></td>
+                <td>http://dev.twitter.com/</td>
+              </tr>
+              <tr>
+                <td><strong>&nbsp;Keys registeration</strong></td>
+                <td>https://dev.twitter.com/apps</td>
+              </tr>
+              <tr>
+                <td><strong>&nbsp;Dev documentation</strong></td>
+                <td>https://dev.twitter.com/docs</td>
+              </tr>
+              <tr>
+                <td><strong>&nbsp;Since</strong></td>
+                <td>HybridAuth 1.0.1</td>
+              </tr>
+              <tr>
+                <td width="19%"><strong>&nbsp;Wrapper</strong></td>
+                <td width="81%">./Hybrid/Providers/Twitter.php</td>
+              </tr>
+              <tr>
+                <td><strong>Callback URL</strong></td>
+                <td>http://mywebsite.com/path_to_hybridauth/?hauth.done=<strong>Twitter</strong></td>
+              </tr>
+            </table>
 
-  // update the user status
-  $adapter->setUserStatus( "Hi there! this is just a random update to test some stuff" );
-</pre>
 
-          <p>
-          	For facebook we can add even more informations to the user update:
-          </p>
-<pre class="prettyprint linenums">
-  // init hybridauth
-  $hybridauth = new Hybrid_Auth( $config );
+            <h4>Registering application</h4>
+            <ol>
+              <li>
+                Go to <a target="_blank" href="https://dev.twitter.com/apps">https://dev.twitter.com/apps</a> and <strong>create a new application</strong>.
+              </li>
+              <li>
+                Fill out any required fields such as the application name and description.
+              </li>
+              <li>
+                Put your website domain in the <strong>Website</strong> field.
+              </li>
+              <li>
+                Provide this URL as the <strong>Callback URL</strong> for your application: (<em style="color:green;">http://mywebsite.com/path_to_hybridauth/?hauth.done=Twitter</em>).
+              </li>
+              <li>
+                Once you have registered, copy and past the created application credentials (Consumer Key and Secret) into the HybridAuth <a href="Configuration.html#SETUP_API_KEYS">config file</a>.
+              </li>
+            </ol>
 
-  // try to authenticate with twitter
-  $adapter = $hybridauth-&gt;authenticate( &quot;Facebook&quot; );
-
-  // update the user status
-  $adapter->setUserStatus(
-    array(
-       "message" => "", // status or message content
-       "link"    => "", // webpage link
-       "picture" => "", // a picture link
-    )
-  );
-</pre>
+				<hr />
+				<div class="text-center">
+					<a href="http://hybridauth.sourceforge.net/userguide/img/setup/twitter/1.png"><img src="http://hybridauth.sourceforge.net/userguide/img/setup/twitter/1.png" class="span4 thumbnail"></a>
+					<a href="http://hybridauth.sourceforge.net/userguide/img/setup/twitter/2.png"><img src="http://hybridauth.sourceforge.net/userguide/img/setup/twitter/2.png" class="span4 thumbnail"></a>
+					<a href="http://hybridauth.sourceforge.net/userguide/img/setup/twitter/3.png"><img src="http://hybridauth.sourceforge.net/userguide/img/setup/twitter/3.png" class="span4 thumbnail"></a>
+				</div>
 
 			</div>
     </div>
@@ -111,8 +147,8 @@
 				<script type="text/javascript">
 					/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
 						var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
-						var disqus_identifier = 'Profile_Data_User_Status';
-						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Status.html';
+						var disqus_identifier = 'IDProvider_info_Twitter';
+						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/IDProvider_info_Twitter.html';
 
 					/* * * DON'T EDIT BELOW THIS LINE * * */
 						(function() {
@@ -136,7 +172,6 @@
       </p>
     </div>
   </footer>
-
 </div> <!-- /container -->
 
 <script type="text/javascript">
