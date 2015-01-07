@@ -1,0 +1,352 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth - Simple Sign-In Script</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="../assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="../userguide.html">Documentation</a></li>
+          <li><a href="../apidoc.html">API</a></li>
+          <li><a href="../support.html">Help & Support</a></li>
+          <li><a href="../plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="../download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="../search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+	<div id="page" class="container" >
+
+<ul class="breadcrumb" >
+	<li><a href="../index.html">Home</a></li>
+	<li><a href="../userguide.html">User guide</a></li>
+	<li>Client Library Integration</li>
+	<li class="active">Social Login Integration</li>
+</ul>
+
+	<div id="content">
+	<div class="page-header">
+	  <h1>Simple Social Login Integration<small></small></h1>
+	</div>
+
+
+
+    <div class="row">
+			<div class="col-md-12">
+
+<div class="alert alert-danger">
+	<p>
+		<strong>Note:</strong> This example is provided for illustrative purposes only! This tutorial shows how to integrate HybridAuth into an existing login page. The code however, is incomplete, insecure, relatively untested and not to be used in production AS-IS.
+	</p>
+</div>
+<hr />
+
+<div class="text-center"><img src="img/social_integration_exp.gif" /></div>
+
+<p class="text-center">
+	<br>
+	<a href="login.php.txt" target="_blank" class="btn success"><i class="icon-download icon-white"></i> Download this example source code</a>
+	<br>
+	<hr />
+</p>
+
+<p>
+Let say we have an <strong>existen login system</strong> on a website on which we want to let users to authenticate using <a href="IDProvider_info_Facebook.html">Facebook</a>, <a href="IDProvider_info_Twitter.html">Twitter</a> and <a href="IDProvider_info_LinkedIn.html">LinkedIn</a>.
+</p>
+
+<p>Lets also assume our <code>databse.users</code> table look like this:</p>
+
+<pre class="prettyprint linenums">
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(200) NOT NULL,
+  `password` varchar(200) NOT NULL,
+  `first_name` varchar(200) NOT NULL,
+  `last_name` varchar(200) NOT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+</pre>
+
+<p>and <code>login.php</code> form is something like this:</p>
+
+<pre class="prettyprint linenums">
+&lt;form&gt;
+	&lt;fieldset&gt;
+		&lt;legend&gt;Sign-in form&lt;/legend&gt;
+		email   : &lt;input type=&quot;text&quot; name=&quot;email&quot; /&gt;&lt;br /&gt;
+		password: &lt;input type=&quot;password&quot; name=&quot;password&quot; /&gt;&lt;br /&gt;
+
+		&lt;input type=&quot;submit&quot; value=&quot;Sign-in&quot; /&gt;
+	&lt;/fieldset&gt;
+&lt;/form&gt;
+</pre>
+<hr />
+<p>
+<strong>1.</strong> First we need some awesome <strong>Social sign in buttons</strong> to add to our forms, and we are going to use those created by <a href="http://www.komodomedia.com/blog/2009/06/sign-in-with-twitter-facebook-and-openid/" target="_blank">komodomedia.com</a> (you may also like these <a href="http://zocial.smcllns.com/" target="_blank">CSS social sign-in buttons</a> made by samcollins).
+</p>
+<p>
+<strong>2.</strong> Then we add three buttons for these social networks to our login form, and each one of them will link to <code>login.php</code> providing the selected provider name as parameter: <code>login.php?provider={provider_name}</code><br />
+</p>
+<pre class="prettyprint linenums" _style="width: 600px;">
+&lt;fieldset&gt;
+    &lt;legend&gt;Or use another service&lt;/legend&gt;
+
+    &lt;a href=&quot;login.php?provider=facebook&quot;&gt;&lt;img src=&quot;images/buttons/facebook.gif&quot; /&gt;&lt;/a&gt;&lt;br /&gt;
+    &lt;a href=&quot;login.php?provider=twitter&quot; &gt;&lt;img src=&quot;images/buttons/twitter.gif&quot;  /&gt;&lt;/a&gt;&lt;br /&gt;
+    &lt;a href=&quot;login.php?provider=linkedin&quot;&gt;&lt;img src=&quot;images/buttons/linkedin.gif&quot; /&gt;&lt;/a&gt;
+&lt;/fieldset&gt;
+</pre>
+<p><strong>3.</strong>. Add 2 fields ( Provider name, Provider user ID) to <code>databse.users</code>. Then create the couple (provider_name, provider_uid) to be able to identify the connected user:</p>
+<pre class="prettyprint linenums">
+ALTER TABLE `users` ADD `hybridauth_provider_name` VARCHAR(255) NOT NULL COMMENT 'Provider name';
+ALTER TABLE `users` ADD `hybridauth_provider_uid` VARCHAR(255) NOT NULL COMMENT 'Provider user ID';
+
+CREATE UNIQUE INDEX hybridauth_idx ON users (hybridauth_provider_name, hybridauth_provider_uid);
+
+-- `hybridauth_provider_name` is the provider name if the user is signed up with hybridauth
+-- `hybridauth_provider_uid`  is the Unique user ID on the used provider.
+</pre>
+<p>
+<strong>4.</strong> Next, we need to alter <code>login.php</code> flow by handling requested <code>provider</code> parameter:<br />
+</p>
+
+<pre class="prettyprint linenums">
+&lt;?php
+// if page requested by submitting login form
+if( isset( $_REQUEST["email"] ) && isset( $_REQUEST["password"] ) )
+{
+	$user_exist = get_user_by_email_and_password( $_REQUEST["email"], $_REQUEST["password"] );
+
+	// user exist?
+	if( $user_exist )
+	{
+		// set the user as connected and redirect him to a home page or something
+		$_SESSION["user_connected"] = true;
+
+		header("Location: http://www.example.com/user/home.php");
+	}
+
+	// wrong email or password?
+	else
+	{
+		// redirect him to an error page
+		header("Location: http://www.example.com/login-error.php");
+	}
+}
+
+// else, if login page request by clicking a provider button
+elseif( isset( $_REQUEST["provider"] ) )
+{
+	// the selected provider
+	$provider_name = $_REQUEST["provider"];
+
+	try
+	{
+		// inlcude HybridAuth library
+		// change the following paths if necessary
+		$config   = dirname(__FILE__) . '/library/config.php';
+		require_once( "library/Hybrid/Auth.php" );
+
+		// initialize Hybrid_Auth class with the config file
+		$hybridauth = new Hybrid_Auth( $config );
+
+		// try to authenticate with the selected provider
+		$adapter = $hybridauth->authenticate( $provider_name );
+
+		// then grab the user profile
+		$user_profile = $adapter->getUserProfile();
+	}
+
+	// something went wrong?
+	catch( Exception $e )
+	{
+		header("Location: http://www.example.com/login-error.php");
+	}
+
+	// check if the current user already have authenticated using this provider before
+	$user_exist = get_user_by_provider_and_id( $provider_name, $user_profile->identifier );
+
+	// if the used didn't authenticate using the selected provider before
+	// we create a new entry on database.users for him
+	if( ! $user_exist )
+	{
+		create_new_hybridauth_user(
+			$user_profile->email,
+			$user_profile->firstName,
+			$user_profile->lastName,
+			$provider_name,
+			$user_profile->identifier
+		);
+	}
+
+	// set the user as connected and redirect him
+	$_SESSION["user_connected"] = true;
+
+	header("Location: http://www.example.com/user/home.php");
+}
+</pre>
+<p>
+<strong>5.</strong> Finally we need define and implement <code>get_user_by_provider_and_id()</code> and <code>create_new_hybridauth_user()</code> to respectively find a user by a given unique index (provider_name, provider_uid) on <code>databse.users</code>, and to register new users connected via Hybridauth library.<br />
+</p>
+<p>
+	On the snippets below, we provide some of the functions used on (4.):
+</p>
+
+<pre class="prettyprint linenums">
+&lt;?php
+// You know how it works...
+$link = mysqli_connect( "localhost", "my_user", "my_password", "database" );
+
+/*
+* We need this function cause I'm lazy
+**/
+function mysqli_query_excute( $sql )
+{
+	global $link;
+
+	$result = mysqli_query( $link, $sql );
+
+	if(  ! $result )
+	{
+		die( printf( "Error: %s\n", mysqli_error( $link ) ) );
+	}
+
+	return $result->fetch_object();
+}
+
+/*
+* get the user data from database by email and password
+**/
+function get_user_by_email_and_password( $email, $password )
+{
+	return mysqli_query_excute( "SELECT * FROM users WHERE email = '$email' AND password = '$password'" );
+}
+
+/*
+* get the user data from database by provider name and provider user id
+**/
+function get_user_by_provider_and_id( $provider_name, $provider_user_id )
+{
+	return mysqli_query_excute( "SELECT * FROM users WHERE hybridauth_provider_name = '$provider_name' AND hybridauth_provider_uid = '$provider_user_id'" );
+}
+
+/*
+* get the user data from database by provider name and provider user id
+**/
+function create_new_hybridauth_user( $email, $first_name, $last_name, $provider_name, $provider_user_id )
+{
+	// let generate a random password for the user
+	$password = md5( str_shuffle( "0123456789abcdefghijklmnoABCDEFGHIJ" ) );
+
+	mysqli_query_excute(
+		"INSERT INTO users
+		(
+			email,
+			password,
+			first_name,
+			last_name,
+			hybridauth_provider_name,
+			hybridauth_provider_uid,
+			created_at
+		)
+		VALUES
+		(
+			'$email',
+			'$password',
+			'$first_name',
+			'$last_name',
+			$provider_name,
+			$provider_user_id,
+			NOW()
+		)"
+	);
+}
+</pre>
+			</div>
+    </div>
+	</div>
+
+	<br />
+
+	<div class="disqus">
+    <div class="row">
+			<div class="col-md-12">
+				<div id="disqus_thread"></div>
+				<script type="text/javascript">
+					/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+						var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+						var disqus_identifier = 'Integrating_HybridAuth_Social_Login';
+						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/Integrating_HybridAuth_Social_Login.html';
+
+					/* * * DON'T EDIT BELOW THIS LINE * * */
+						(function() {
+							var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+							dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+							(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+						})();
+				</script>
+			</div>
+        </div>
+	</div>
+
+  <!-- Footer -->
+  <footer class="well">
+    <div class="container">
+      <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+      <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+      <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+      <p>HybridAuth was created by <a href="../contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+        Many other people have also contributed with constructive discussions, support and by submitting patches.
+      </p>
+    </div>
+  </footer>
+
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

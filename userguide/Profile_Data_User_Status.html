@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
   <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
-  <title>HybridAuth Overview</title>
+  <title>HybridAuth - Update User Status</title>
 
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -21,7 +21,6 @@
 <body>
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-
       <div class="containter-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
@@ -33,7 +32,6 @@
           <a class="navbar-brand" href="index.html">HybridAuth</a>
         </div>
       </div>
-
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
           <li><a href="../userguide.html">Documentation</a></li>
@@ -48,60 +46,84 @@
           </div>
         </form>
       </div>
-
     </div>
   </nav>
 
-<div id="page" class="container" >
-  <ul class="breadcrumb">
-    <li><a href="../index.html">Home</a></li>
-    <li><a href="../userguide.html">User guide</a></li>
-    <li class="active">Overview</li>
-  </ul>
-	<div id="content">
-  	<div class="page-header">
-  	  <h1>Overview<small></small></h1>
-  	</div>
-    <div>
-      <h3>1. What is HybridAuth?</h3>
-      <p>
-        The main goal of HybridAuth library is to act as an abstract api between your application and various social apis and identities providers such as Facebook, Twitter, LinkedIn, Google and Yahoo.
-      </p>
-      <p>
-        HybridAuth enable developers to easily build social applications to engage websites vistors and customers on a social level by implementing social signin, social sharing, users profiles, friends list, activities stream, status updates and more.
-      </p>
-      <p>
-        Basicly, HybridAuth main tasks are to performs two types of actions:
-      </p>
-      <ol>
-        <li>
-          <strong>user Authentication</strong> step, the user is redirected to his identity provider authentification page to enter their login and password and be asked for approval. When the user is returned back to your web site, the identity provider sends an encrypted token that indicates a successful Authentication.
-        </li>
-        <li>
-          <strong>access Autorisation</strong>, Once a user has authenticated, HybridAuth move to the next step and requires that the identity provider give your web site a temporary Autorisation to read the user account information (profile, contacts list, etc.).
-        </li>
-      </ol>
-      <a name="features"></a>
-      <h3>2. Features</h3>
-      <ul>
-        <li>HybridAuth makes it easy to authenticate users with a wide variety of well known social networks,</li>
-        <li>HybridAuth provide the connected user profile's in a rich, simple and standardized structure across all the social apis,</li>
-        <li>And, besides authentication, the library enables you to interact with the social api that the users are connected to. Eg. we can grab their <strong>freinds list</strong>, update or get their <strong>status</strong>, grab their <strong>photos albums</strong>, <strong>events list</strong>, etcetera.</li>
-        <li>The complexity of implementing identity providers authentication and authorization protocols are simplified for the developers,</li>
-        <li>All transactions are completely transparent to the end user,</li>
-      </ul>
 
-      <p>
-      	Over all, <strong>HybridAuth</strong> can be used for many purposes, such as:
-      </p>
-    	<ul>
-    		<li>enable users to sign-in/sign-up using popular social service accounts like Facebook, Twitter, Google and others,</li>
-    		<li>allow users to share their comments, reviews and other activities from your site to their friends via social networks,</li>
-    		<li>build social applications which can be integrated on your blog, web site, web application, ERP or CRM,</li>
-    		<li>etc.</li>
-    	</ul>
-  	</div>
-  </div>
+	<div id="page" class="container" >
+    <ul class="breadcrumb" >
+    	<li><a href="../index.html">Home</a></li>
+    	<li><a href="../userguide.html">User guide</a></li>
+    	<li class="active">Update User Status</li>
+    </ul>
+  	<div id="content">
+    	<div class="page-header">
+    	  <h1>Update User Status</h1>
+    	</div>
+      <div class="row">
+        <div class="col-md-12">
+          <p><span class="label label-warning">Important</span> Currently only <strong>Facebook, Twitter, Identica, LinkedIn, QQ, Sina, Murmur, Pixnet and Plurk</strong> do support this feature. Others providers will throw an exception (#8 "Provider does not support this feature"), when <code>setUserStatus()</code> is called. Please refer to the user guide to know more about each adapters capabilities.</p>
+          <p>Since <strong>HybridAuth</strong> <span class="label label-warning">2.0.7</span>, we can set the user status or post to his wall simply by using a generic funtion across social networks.</p>
+          <p>
+            <strong>Example</strong>
+          </p>
+<pre class="prettyprint linenums">
+  // init hybridauth
+  $hybridauth = new Hybrid_Auth( $config );
+
+  // try to authenticate with twitter
+  $adapter = $hybridauth-&gt;authenticate( &quot;Twitter&quot; );
+
+  // update the user status
+  $adapter->setUserStatus( "Hi there! this is just a random update to test some stuff" );
+</pre>
+
+          <p>
+          	For facebook we can add even more informations to the user update:
+          </p>
+<pre class="prettyprint linenums">
+  // init hybridauth
+  $hybridauth = new Hybrid_Auth( $config );
+
+  // try to authenticate with twitter
+  $adapter = $hybridauth-&gt;authenticate( &quot;Facebook&quot; );
+
+  // update the user status
+  $adapter->setUserStatus(
+    array(
+       "message" => "", // status or message content
+       "link"    => "", // webpage link
+       "picture" => "", // a picture link
+    )
+  );
+</pre>
+
+			</div>
+    </div>
+	</div>
+
+	<br />
+
+	<div class="disqus">
+    <div class="row">
+			<div class="col-md-12">
+				<div id="disqus_thread"></div>
+				<script type="text/javascript">
+					/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+						var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+						var disqus_identifier = 'Profile_Data_User_Status';
+						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Status.html';
+
+					/* * * DON'T EDIT BELOW THIS LINE * * */
+						(function() {
+							var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+							dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+							(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+						})();
+				</script>
+			</div>
+    </div>
+	</div>
 
   <!-- Footer -->
   <footer class="well">
@@ -114,6 +136,7 @@
       </p>
     </div>
   </footer>
+
 </div> <!-- /container -->
 
 <script type="text/javascript">

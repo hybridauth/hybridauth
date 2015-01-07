@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth - Simple Sign-In script</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="../assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="../userguide.html">Documentation</a></li>
+          <li><a href="../apidoc.html">API</a></li>
+          <li><a href="../support.html">Help & Support</a></li>
+          <li><a href="../plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="../download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="../search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+	<div id="page" class="container" >
+
+<ul class="breadcrumb" >
+	<li><a href="../index.html">Home</a></li>
+	<li><a href="../userguide.html">User guide</a></li>
+	<li>Client Library Integration</li>
+	<li class="active">Simple Sign-In Script</li>
+</ul>
+
+	<div id="content">
+	<div class="page-header">
+	  <h1>Simple Sign-In with Twitter<small></small></h1>
+	</div>
+    <div class="row">
+			<div class="col-md-12">
+        <div class="alert alert-warning">
+        	<p>
+        	As a good start we also recommend to read <strong><a href="http://www.peachpit.com/articles/article.aspx?p=1998951">"Social Media Authentication and Authorization Using PHP"</a></strong>, an extremely well written tutorial by <strong>Larry E. Ullman</strong></strong>.
+        	</p>
+        </div>
+        <hr />
+        <p>
+        HybridAuth can  be easly integrated on you existing website. All you have to do is to include hybridauth main file and to add a couple of lines to your login page like it's shown in the sample bellow.
+        </p>
+        <p>
+        The snippet will try to directly connect the user with Twitter then grab his <a href="Profile_Data_User_Profile.html">complete profile</a> and also <a href="Access_IDps_APIs.html">access the twitter social api</a>:
+        </p>
+<pre class="prettyprint linenums lang-php">
+&lt;?php
+  // start a new session (required for Hybridauth)
+  session_start();
+
+  // change the following paths if necessary
+  $config   = dirname(__FILE__) . '/library/config.php';
+  require_once( &quot;library/Hybrid/Auth.php&quot; );
+
+  try{
+  	// create an instance for Hybridauth with the configuration file path as parameter
+  	$hybridauth = new Hybrid_Auth( $config );
+
+  	// try to authenticate the user with twitter,
+  	// user will be redirected to Twitter for authentication,
+  	// if he already did, then Hybridauth will ignore this step and return an instance of the adapter
+  	$twitter = $hybridauth-&gt;authenticate( &quot;Twitter&quot; );
+
+  	// get the user profile
+  	$twitter_user_profile = $twitter-&gt;getUserProfile();
+
+  	echo &quot;Ohai there! U are connected with: &lt;b&gt;{$twitter-&gt;id}&lt;/b&gt;&lt;br /&gt;&quot;;
+  	echo &quot;As: &lt;b&gt;{$twitter_user_profile-&gt;displayName}&lt;/b&gt;&lt;br /&gt;&quot;;
+  	echo &quot;And your provider user identifier is: &lt;b&gt;{$twitter_user_profile-&gt;identifier}&lt;/b&gt;&lt;br /&gt;&quot;;
+
+  	// debug the user profile
+  	print_r( $twitter_user_profile );
+
+  	// exp of using the twitter social api: Returns settings for the authenticating user.
+  	$account_settings = $twitter-&gt;api()-&gt;get( 'account/settings.json' );
+
+  	// print recived settings
+  	echo &quot;Your account settings on Twitter: &quot; . print_r( $account_settings, true );
+
+  	// disconnect the user ONLY form twitter
+  	// this will not disconnect the user from others providers if any used nor from your application
+  	echo "Logging out..";
+  	$twitter-&gt;logout();
+  }
+  catch( Exception $e ){
+  	// Display the recived error,
+  	// to know more please refer to <strong>Exceptions handling</strong> section on the userguide
+  	switch( $e-&gt;getCode() ){
+  	  case 0 : echo &quot;Unspecified error.&quot;; break;
+  	  case 1 : echo &quot;Hybriauth configuration error.&quot;; break;
+  	  case 2 : echo &quot;Provider not properly configured.&quot;; break;
+  	  case 3 : echo &quot;Unknown or disabled provider.&quot;; break;
+  	  case 4 : echo &quot;Missing provider application credentials.&quot;; break;
+  	  case 5 : echo &quot;Authentification failed. &quot;
+  	              . &quot;The user has canceled the authentication or the provider refused the connection.&quot;;
+  	           break;
+  	  case 6 : echo &quot;User profile request failed. Most likely the user is not connected &quot;
+  	              . &quot;to the provider and he should authenticate again.&quot;;
+  	           $twitter-&gt;logout();
+  	           break;
+  	  case 7 : echo &quot;User not connected to the provider.&quot;;
+  	           $twitter-&gt;logout();
+  	           break;
+  	  case 8 : echo "Provider does not support this feature."; break;
+  	}
+
+  	// well, basically your should not display this to the end user, just give him a hint and move on..
+  	echo &quot;&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Original error message:&lt;/b&gt; &quot; . $e-&gt;getMessage();
+  }
+</pre>
+<p>
+  After authentication, the sample will output something similar to:
+</p>
+<pre>
+Ohai there! U are connected with: <strong>Twitter</strong><br />As: <strong>HybridAuth</strong><br />And your provider user identifier is: <strong>80359084</strong>
+Hybrid_User_Profile Object
+(
+    [identifier] => 80359084
+    [webSiteURL] => http://hybridauth.sourceforge.net/
+    [profileURL] => http://twitter.com/HybridAuth
+    [photoURL] => http://a0.twimg.com/profile_images/480547080/twi_normal.gif
+    [displayName] => HybridAuth
+    [description] => HybridAuth, An Open Source Social-Sign-On PHP Library. #PHP #API #REST #OpenID #OAuth #SSO
+    [firstName] => Zachy
+    [lastName] =>
+    [gender] =>
+    [language] =>
+    [age] =>
+    [birthDay] =>
+    [birthMonth] =>
+    [birthYear] =>
+    [email] =>
+    [phone] =>
+    [address] =>
+    [country] =>
+    [region] =>
+    [city] =>
+    [zip] =>
+)
+Your account settings on Twitter:
+stdClass Object
+(
+    [protected] =>
+    [use_cookie_personalization] => 1
+    [geo_enabled] =>
+    [always_use_https] => 1
+    [sleep_time] => stdClass Object
+        (
+            [start_time] =>
+            [end_time] =>
+            [enabled] =>
+        )
+
+    [screen_name] => Zachy
+    [discoverable_by_email] => 1
+    [language] => en
+)
+Logging out..
+</pre>
+<hr />
+<h4>How it work <small>the short story</small></h4>
+<pre>
+                          +------------+
+                          |            |   1    +--------------+   2    +------------+
+                          |   Your     |=======>|              |=======>|            |
+                          |            |        |  HybridAuth  |   3    |  Twitter   |
+                          |   Login    |        |              |<=======|            |
+                          |            |   5    |   Endpoint   |   4    |    API     |
+                          |   Page     |<=======|              |<======>|            |
+                          |            |        +--------------+        +------------+
+                          +------------+
+
+1) If not connected yet, Hybrid_Auth::authenticate() will redirect the user to the HybridAuth endpoint
+2) HybridAuth endpoint will redirect the user to twitter for authentication
+3) IF the user grant access to your site, then Twitter will call back HybridAuth endpoint
+4) HybridAuth endpoint will ask twitter for a temporary authorization in order for your application to access the twitter api and the user private resources (eg. profile, contact lists, photos)
+5) Finally, we redirect the user a one last time to the original page where he come from
+
+To authentificate a user with Twitter all what we have to do here is the first step, and HybridAuth will take care of the rest of it (steps 2, 3, 4 and 5).
+</pre>
+
+        <p>
+        <span class="label label-warning">Note:</span>
+        <br />
+        Basically, when a user is connected to your application via a given provider using hybridauth, then he should be considered as if he have 3 different sessions:
+        </p>
+        <ul>
+          <li>the first one is on the provider side</li>
+          <li>a session within hybridauth</li>
+          <li>and another one within your application</li>
+        </ul>
+        <p>
+        If the first session is interrupted for some reason (if the user revoke the access given for your application while he still have a session with hybridauth, the authorization has expired, user disconnect form the provider, etc.) then hybridauth will no longer be able to communicate with the provider api ( Error Codes <span class="label important">6</span> or <span class="label important">7</span> )  and in this case we have to use <code>Hybrid_Provider_Adapter::logout()</code> to let hybridauth forget all about the user so we can try to authenticate the user again or to move on to something else.
+        </p>
+			</div>
+    </div>
+	</div>
+
+	<br />
+
+	<div class="disqus">
+    <div class="row">
+			<div class="col-md-12">
+				<div id="disqus_thread"></div>
+				<script type="text/javascript">
+					/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+						var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+						var disqus_identifier = 'Integrating_HybridAuth_SignIn';
+						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/Integrating_HybridAuth_SignIn.html';
+
+					/* * * DON'T EDIT BELOW THIS LINE * * */
+						(function() {
+							var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+							dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+							(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+						})();
+				</script>
+			</div>
+        </div>
+	</div>
+
+  <!-- Footer -->
+  <footer class="well">
+    <div class="container">
+      <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+      <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+      <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+      <p>HybridAuth was created by <a href="../contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+        Many other people have also contributed with constructive discussions, support and by submitting patches.
+      </p>
+    </div>
+  </footer>
+
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>
