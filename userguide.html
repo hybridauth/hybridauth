@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth Userguide</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="userguide.html">Documentation</a></li>
+          <li><a href="apidoc.html">API</a></li>
+          <li><a href="support.html">Help & Support</a></li>
+          <li><a href="plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="http://hybridauth.sourceforge.net/search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </nav>
+
+	<div id="page" class="container" >
+	<div id="content">
+	<div class="page-header">
+	  <h1>
+		HybridAuth User guide <small>Version 2.x</small>
+	  </h1>
+	</div>
+  <div class="row">
+    <div class="row">
+      <div class="col-md-4">
+				<ul>
+				  <li  style="list-style: none outside none;">
+					<h5>Getting Started</h5>
+						<ul class="ulsections">
+							<li><a href="userguide/Overview.html">Overview</a></li>
+							<li><a href="userguide/Configuration.html">Configuration</a></li>
+							<li><a href="userguide/Examples_and_Demos.html">Examples and demos</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-4">
+				<ul>
+				  <li style="list-style: none outside none;">
+						<h5>Client Library Integration</h5>
+						<ul class="ulsections">
+							<li><a href="userguide/Integrating_HybridAuth_SignIn.html">Simple sign-in script</a></li>
+							<li><a href="userguide/Integrating_HybridAuth_Social_Login.html"><b>Social login integration</b></a></li>
+						</ul>
+				  </li>
+				</ul>
+			</div>
+		</div>
+
+		<hr style="margin:0 10px 10px;" />
+
+		<div class="row">
+			<div class="col-md-4">
+				<ul>
+					  <li style="list-style: none outside none;">
+					  <h5>HybridAuth API</h5>
+						<ul class="ulsections">
+							<li><a href="apidoc.html">Full API documentation</a><hr /></li>
+
+							<li><a href="userguide/Profile_Data_User_Profile.html">Access user profile</a></li>
+							<li><a href="userguide/Profile_Data_User_Status.html">Update user status</a></li>
+							<li><a href="userguide/Profile_Data_User_Contacts.html">Access user contacts</a></li>
+							<li><a href="userguide/Profile_Data_User_Activity.html">Access user activity</a></li>
+							<li><a href="userguide/Access_IDps_APIs.html">Access providers APIs</a><hr /></li>
+
+							<li><a href="userguide/HybridAuth_Sessions.html">HybridAuth sessions</a></li>
+							<li><a href="userguide/Errors_and_Exceptions_Handling.html">Exceptions handling</a></li>
+						</ul>
+					  </li>
+				</ul>
+			</div>
+
+			<div class="col-md-4">
+				<ul>
+					  <li style="list-style: none outside none;">
+					  <h5>Popular Providers</h5>
+						<ol class="ulsections">
+							<li><a href="userguide/IDProvider_info_OpenID.html">OpenID</a></li>
+							<li><a href="userguide/IDProvider_info_Google.html">Google</a></li>
+							<li><a href="userguide/IDProvider_info_Facebook.html">Facebook</a></li>
+							<li><a href="userguide/IDProvider_info_Twitter.html">Twitter</a></li>
+							<li><a href="userguide/IDProvider_info_Yahoo.html">Yahoo</a></li>
+							<li><a href="userguide/IDProvider_info_Live.html">Windows Live</a></li>
+							<li><a href="userguide/IDProvider_info_LinkedIn.html">LinkedIn</a></li>
+							<li><a href="userguide/IDProvider_info_Foursquare.html">Foursquare</a></li>
+						</ol>
+					  </li>
+				</ul>
+			</div>
+
+			<div class="col-md-4">
+				<ul>
+					  <li style="list-style: none outside none;">
+					  <h5>Additional Providers</h5>
+						<ol class="ulsections">
+							<li><a href="userguide/IDProvider_info_Github.html">Github</a></li>
+							<li><a href="userguide/IDProvider_info_LastFM.html">LastFM</a></li>
+							<li><a href="userguide/IDProvider_info_Vimeo.html">Vimeo</a> <br>
+							<li><a href="userguide/IDProvider_info_Viadeo.html">Viadeo</a> <br>
+							<li><a href="userguide/IDProvider_info_Identica.html">Identica</a></li>
+							<li><a href="userguide/IDProvider_info_Tumblr.html">Tumblr</a></li>
+							<li><a href="userguide/IDProvider_info_Goodreads.html">Goodreads</a></li>
+
+							<li><a href="userguide/IDProvider_info_QQ.html">QQ</a></li>
+							<li><a href="userguide/IDProvider_info_Sina.html">Sina</a></li>
+							<li><a href="userguide/IDProvider_info_Murmur.html">Murmur</a></li>
+							<li><a href="userguide/IDProvider_info_Pixnet.html">Pixnet</a></li>
+							<li><a href="userguide/IDProvider_info_Plurk.html">Plurk</a></li>
+
+							<li><a href="userguide/IDProvider_info_Skyrock.html">Skyrock</a></li>
+
+							<li><a href="userguide/IDProvider_info_Geni.html">Geni</a></li>
+							<li><a href="userguide/IDProvider_info_FamilySearch.html">FamilySearch</a></li>
+							<li><a href="userguide/IDProvider_info_MyHeritage.html">MyHeritage</a></li>
+
+							<li><a href="userguide/IDProvider_info_500px.html">500px</a></li>
+							<li><a href="userguide/IDProvider_info_Vkontakte.html">Vkontakte</a></li>
+
+							<li><a href="userguide/IDProvider_info_Mailru.html">Mail.ru</a></li>
+							<li><a href="userguide/IDProvider_info_Yandex.html">Yandex</a></li>
+							<li><a href="userguide/IDProvider_info_Odnoklassniki.html">Odnoklassniki</a></li>
+
+							<li><a href="userguide/IDProvider_info_Instagram.html">Instagram</a></li>
+
+							<li><a href="userguide/IDProvider_info_TwitchTV.html">Twitch.tv</a> <span class="label">new</span></li>
+							<li><a href="userguide/IDProvider_info_Steam.html">Steam Community</a> <span class="label">new</span></li>
+						</ol>
+					  </li>
+				</ul>
+			</div>
+
+			<div class="col-md-3">
+				<ul>
+				  <li style="list-style: none outside none;">
+						<h5>Plugins and Addons</h5>
+						<ul class="ulsections">
+							<li><a target="_blank" href="https://github.com/andacata/HybridIgniter">CodeIgniter</a></li>
+							<li><a target="_blank" href="https://github.com/ADmad/CakePHP-HybridAuth">CakePHP</a></li>
+							<li><a target="_blank" href="https://github.com/SocalNick/ScnSocialAuth">Zend Framework</a></li>
+							<li><a target="_blank" href="http://www.yiiframework.com/extension/hybridauth/">Yii Framework</a></li>
+							<li><a target="_blank" href="https://bitbucket.org/atticmedia/anvard">Laravel 4</a></li>
+							<li><a href="userguide/Plugin_WordPress_Social_Login.html">WordPress</a></li>
+							<li><a target="_blank" href="http://drupal.org/project/hybridauth">Drupal</a></li>
+							<li><a href="plugins.html">And many others &raquo;</a></li>
+						</ul>
+				  </li>
+				</ul>
+			</div>
+		</div>
+
+		<hr />
+    <div class="col-md-12">
+      <h5>Tutorials</h5>
+      <ul class="ulsections">
+        <li><a href="userguide/tuts/integrating-openid-providers.html">How to authenticate users with OpenID providers</a> (such as Stackoverflow, Yahoo japan and Mixi.jp)</li>
+        <li><a href="userguide/tuts/change-hybridauth-endpoint-url.html">How to change HybridAuth Endpoint URL</a>  (HybridAuth internal Callback URL)</li>
+        <li><a href="userguide/tuts/specific-provider-wrapper.html">How to use a specific provider wrapper</a></li>
+        <li><a href="userguide/tuts/advanced-access-facebook-api.html">Advanced access to Facebook API</a> (Post to user wall, Post to pages, FQL, Insights, etc)</li>
+        <li><a href="userguide/tuts/advanced-access-google-api.html">Advanced access to Google API</a> (Working with Google Analytics API)</li>
+      </ul>
+
+      <hr />
+
+      <h5>External tutorials contributed by members of the community</h5>
+      <h6>EN</h6>
+      <ul class="ulsections">
+        <li><a href="http://www.peachpit.com/articles/article.aspx?p=1998951" target="_blank">Social Media Authentication and Authorization Using PHP</a> (by Larry Ullman, Dec 2012) <span class="label success">Recommended</span></li>
+        <li><a href="http://timforsythe.com/blog/a-hybridauth-mysql-demo/" target="_blank">A HybridAuth MySQL demo</a> (by Tim Forsythe, Dec 2012)</li>
+        <li><a href="http://www.mrcasual.com/on/coding/laravel4-package-management-with-composer/" target="_blank">Using HybridAuth with Laravel 4 </a> (by Mr. Casual, @CasualMr Nov 2012) <span class="label">Laravel</span></li>
+        <li><a href="http://bakery.cakephp.org/articles/thehanx/2012/07/27/social_login_with_hybridauth" target="_blank">Social login with Hybridauth for CakePHP</a> (by thehanx, July 2012) <span class="label">CakePHP</span></li>
+        <li><a href="http://blog.elliothesp.co.uk/coding/laravel-4-and-hybrid-auth/" target="_blank">Installing and using Hybrid Auth with Laravel 4 (Steam Community)</a> (by Elliot, July 2013 ) <span class="label">Laravel</span></li>
+        <li><a href="http://hayageek.com/login-with-facebook-twitter-google-php/" target="_blank">Login With Facebook Twitter and Google using PHP</a> (by Ravishanker Kusuma, Jan 2014 )</li>
+        <li><a href="http://hasin.me/2014/02/10/integrate-social-sign-on-in-your-php-apps-using-hybridauth/" target="_blank">Integrate Social Sign On in your PHP apps using HybridAuth 3.0-dev branch</a> (by Hasin Hayder, February 2014 ) <span class="label warning">HybridAuth 3.x is still a work in progress</span></li>
+        <li><a href="http://blog.endpoint.com/2014/06/integrating-facebook-sdk-and-hybridauth.html" target="_blank">Integrating Facebook SDK and HybridAuth PHP library</a> (by Spencer Christensen, June 2014 )</li>
+        <li><a href="http://miftyisbored.com/complete-social-login-application-tutorial-cakephp-2-3-twitter-facebook-google/" target="_blank">A complete social login application tutorial for Cakephp 2.3</a> (by Mifty, September  2014 ) <span class="label">Cakephp</span></li>
+      </ul>
+      <h6>PO</h6>
+      <ul class="ulsections">
+        <li><a href="https://www.youtube.com/watch?v=J_exXTHN1qg" target="_blank">Utilizando HybridAuth com Laravel 4</a> (by DevsBrasil, May 2014) <span class="label">Laravel</span> <span class="label success">Video</span></li>
+      </ul>
+      <h6>JP</h6>
+      <ul class="ulsections">
+        <li><a href="http://blog.loadlimits.info/2012/07/symfony-1-4%E3%81%A7hybridauth%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6twitterfacebook%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E3%82%92%E5%AE%9F%E8%A3%85%E3%81%99%E3%82%8B/" target="_blank">Symfony 1.4&#12391;HybridAuth&#12434;&#20351;&#12387;&#12390;twitter/facebook&#12525;&#12464;&#12452;&#12531;&#12434;&#23455;&#35013;&#12377;&#12427;</a> (by HOMMA Teppei, July 2012)</li>
+        <li><a href="http://hp.nonip.info/wiki/work/index.php?php%2FHybridAuth" target="_blank">twitter&#12420;facebook&#12398;&#35469;&#35388;&#12398;&#12510;&#12483;&#12497;&#12540;&#12521;&#12452;&#12502;&#12521;&#12522;</a></li>
+      </ul>
+      <h6>RU</h6>
+      <ul class="ulsections">
+        <li><a href="http://habrahabr.ru/post/149187/" target="_blank">HybridAuth � &#1080;&#1085;&#1090;&#1077;&#1075;&#1088;&#1072;&#1094;&#1080;&#1103; &#1089;&#1072;&#1081;&#1090;&#1072; &#1089; &#1089;&#1086;&#1094;&#1080;&#1072;&#1083;&#1100;&#1085;&#1099;&#1084;&#1080; &#1089;&#1077;&#1090;&#1103;&#1084;&#1080;</a> (by xbreaker, Aug 2012)</li>
+      </ul>
+      <h6>TH</h6>
+      <ul class="ulsections">
+        <li><a href="http://www.thaicreate.com/community/hybridauth-social-login-api.html" target="_blank">Social Login Integration &#3585;&#3634;&#3619; Login &#3604;&#3657;&#3623;&#3618; Social API (Facebook, Google, Twitter, OpenID etc...)</a> (by T-MONROE, Jan 2013)</li>
+      </ul>
+
+      <hr />
+
+      <h5>Internal</h5>
+      <ul class="ulsections">
+        <li><a href="userguide/Debugging_and_Logging.html">Debugging and logging</a></li>
+        <li><a href="userguide/HybridAuth_endpoint_URL.html">HybridAuth endpoint URL</a></li>
+        <li><a href="userguide/OpenID_Relying_Party_Discovery.html">OpenID RP discovery</a></li>
+        <li><a href="roadmap.html">HybridAuth Roadmap</a></li>
+      </ul>
+    </div>
+	</div>
+
+	<br />
+
+  <div class="disqus">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+        var disqus_identifier = 'userguide';
+        var disqus_url = 'http://hybridauth.sourceforge.net/userguide.html';
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="well">
+  <div class="container">
+    <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+    <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+    <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+    <p>HybridAuth was created by <a href="contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+      Many other people have also contributed with constructive discussions, support and by submitting patches.
+    </p>
+  </div>
+</footer>
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

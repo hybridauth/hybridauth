@@ -1,0 +1,602 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth API Documentation</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="userguide.html">Documentation</a></li>
+          <li><a href="apidoc.html">API</a></li>
+          <li><a href="support.html">Help & Support</a></li>
+          <li><a href="plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="http://hybridauth.sourceforge.net/search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </nav>
+
+  <div id="page" class="container">
+    <div id="content">
+
+    <!-- Hybrid_Auth
+    ================================================== -->
+
+    <section id="modal">
+      <div class="alert alert-warning">
+        <p><strong>Note</strong>: This documentation <strong>only</strong> describe classes, functions and attributes you will use throughout your application. <a href="http://pdfmyurl.com?url=http%3A%2F%2Fhybridauth.sourceforge.net%2Fapidoc.html">Download this API documentation &raquo;</a></p>
+      </div>
+
+      <div class="page-header">
+        <h1>Hybrid_Auth <small>Hybrid/Auth.php</small></h1>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p><code>Hybrid_Auth</code> class provide a simple way to authenticate users via OpenID and OAuth.</p>
+          <p>Generally, <code>Hybrid_Auth</code> is the only class you should instanciate and use throughout your application.</p>
+        </div>
+        <div class="col-md-12">
+          <h4>Using Hybrid_Auth</h4>
+          <p>
+            <code>Hybrid_Auth</code> constructor will require either a valid config array or a path for a configuration file as parameter. To know more please refer to the <a href="Configuration.html">Configuration</a> section.
+            <hr />
+            <strong>Ex1:</strong> Initialize <code>Hybrid_Auth</code> with an array:
+          </p>
+<pre class="prettyprint linenums">
+$config_array = array(
+   &quot;base_url&quot; =&gt; &quot;http://mywebsite.com/path/to/hybridauth/&quot;,
+       &quot;providers&quot; =&gt; array (
+       "Twitter" => array (
+           "enabled" => true, "keys" => array ( "key" => "", "secret" => "" )
+       ),
+       "Facebook" => array (
+           "enabled" => true, "keys" => array ( "id" => "", "secret" => "" )
+       ),
+       "OpenID" => array (
+           "enabled" => true
+       )
+   )
+);
+
+$hybridauth = new Hybrid_Auth( $config_array );
+</pre>
+<p>
+  <strong>Ex2:</strong> Initialize <code>Hybrid_Auth</code> with a configuration file path:
+</p>
+<pre class="prettyprint linenums">
+$config_file_path = '/path/to/library/hybridauth.php';
+
+$hybridauth = new Hybrid_Auth( $config_file_path );
+</pre>
+<h4>Constructor options</h4>
+<table class="table table-striped table-hover">
+  <thead>
+   <tr>
+     <th style="width: 100px;">Name</th>
+     <th style="width: 80px;">type</th>
+     <th>description</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+     <td>config</td>
+     <td>array, string</td>
+     <td>It can be a config array or the path of a configuration file</td>
+   </tr>
+  </tbody>
+</table>
+
+<h3>Methods</h3>
+
+<h4>authenticate()</h4>
+<p>
+  Try to authenticate the user with a given <code>provider</code>.
+  <br />
+  <br />
+  If the user is already connected we just return and instance of the provider adapter <code>Hybrid_Provider_Adapter</code>,
+  ELSE, try to authenticate and or authorize the user with this <code>provider</code>.
+  <br />
+  <br />
+  When a user login via a given provider using <code>Hybrid_Auth::authenticate()</code>, HybridAuth Library creates a login session for the user. By default the session and will stay as long as the current <a href="http://www.php.net/manual/en/intro.session.php">PHP Sessions</a> is still active or until <code>Hybrid_Provider_Adapter::logout()</code> method is called. To know more refer to the <a href="userguide/HybridAuth_Sessions.html">HybridAuth Sessions</a> section.
+</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::authenticate( <code>provider</code>, <code>params</code>  )
+</pre>
+<table class="table table-striped table-hover">
+<thead>
+ <tr>
+   <th style="width: 100px;">Name</th>
+   <th style="width: 80px;">type</th>
+   <th>description</th>
+ </tr>
+</thead>
+<tbody>
+ <tr>
+   <td>provider</td>
+   <td>string</td>
+   <td>
+		<code>$provider</code> is an the provider name to connect to.
+   </td>
+ </tr>
+ </tr>
+   <td>params</td>
+   <td>optional, array</td>
+   <td>
+		<code>$params</code> is an <span class="label label-notice">Optional</span> array which generally contain some extra info in order for the <code>provider</code> to work,
+		Ex. :
+		<ul>
+		<li>hauth_return_to: URL to call back after authentication is done</li>
+		<li>openid_identifier: The OpenID identity <code>provider</code> identifier</li>
+		</ul>
+   </td>
+ </tr>
+</tbody>
+</table>
+
+
+
+<h4>getAdapter()</h4>
+<p>Return the adapter instance of an authenticated provider adapter <code>Hybrid_Provider_Adapter</code>.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::getAdapter(<code>provider</code>)
+</pre>
+
+<h4>isConnectedWith()</h4>
+<p>Return a true or false if the current user is connected to a given <code>provider</code>. <code>Hybrid_Auth::isConnectedWith()</code> use PHP Sessions. To know more refer to the <a href="userguide/HybridAuth_Sessions.html">HybridAuth Sessions</a> section.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::isConnectedWith(<code>provider</code>)
+</pre>
+
+<h4>getConnectedProviders()</h4>
+<p>Return list of Authenticated providers. <code>Hybrid_Auth::getConnectedProviders()</code> use PHP Sessions. To know more refer to the <a href="userguide/HybridAuth_Sessions.html">HybridAuth Sessions</a> section.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::getConnectedProviders()
+</pre>
+
+<h4>getSessionData()</h4>
+<p>Get the session stored data. To be used on case you want to store session on a more persistent backend. Return a serialized <code>array</code>.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::getSessionData()
+</pre>
+
+<h4>restoreSessionData()</h4>
+<p>Restore HybridAuth session from a given [serialized] <code>array</code>.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::restoreSessionData(<code>array</code>)
+</pre>
+
+<h4>logoutAllProviders() </h4>
+<p>A generic function to logout all connected providers at once.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::logoutAllProviders()
+</pre>
+
+<h4>redirect()</h4>
+<p>Utility function, redirect to a given <code>url</code> with php header function</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::redirect(<code>url</code>)
+</pre>
+
+<h4>getCurrentUrl()</h4>
+<p>Utility function, return the current url of the request web page.</p>
+<pre class="prettyprint linenums">
+Hybrid_Auth::getCurrentUrl()
+</pre>
+
+
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+
+
+
+    <!-- Hybrid_Provider_Adapter
+    ================================================== -->
+
+    <section id="modal">
+      <div class="page-header">
+        <h1>Hybrid_Provider_Adapter <small>Hybrid/Provider_Adapter.php</small></h1>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+<p>
+<code>Hybrid_Provider_Adapter</code> is the basic class which <code>Hybrid_Auth</code> will use to connect users to a given provider.
+Basically <code>Hybrid_Provider_Adapter</code> will create a bridge from your php application to the provider api.
+<br /><br />
+There is a different Adapter for each providers HybridAuth support.
+</p>
+
+        </div>
+        <div class="col-md-12 columns">
+<p>
+<code>Hybrid_Auth</code> will automatically load <code>Hybrid_Provider_Adapter</code> and create an instance of it for each authenticated provider.
+</p>
+<pre class="prettyprint linenums">
+// hybridauth will try to authenticate the user, then return an instance of Twitter adapter
+$twitter_adapter = $hybridauth-&gt;authenticate( &quot;Twitter&quot; );
+
+// get the user profile
+$twitter_user_profile = $twitter_adapter-&gt;getUserProfile();
+
+// disconnect the user form twitter
+$twitter_adapter-&gt;logout();
+</pre>
+
+<h3>Methods</h3>
+
+<h4>isUserConnected()</h4>
+<p> Return true if the user is authenticate with the provider or false if not. <code>Hybrid_Provider_Adapter::isUserConnected()</code> use PHP Sessions. To know more refer to the <a href="userguide/HybridAuth_Sessions.html">HybridAuth Sessions</a> section.</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::isUserConnected()
+</pre>
+
+<h4>getUserProfile()</h4>
+<p>Return an instance of <code>Hybrid_User_Profile</code> an object which represents the current logged in user profile</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::getUserProfile()
+</pre>
+
+<h4>setUserStatus() </h4>
+<p>Update the user status or post to his wall across social networks.
+<br />
+<b>Currently not all providers support this feature</b>. Please refer to <a href="userguide/Profile_Data_User_Status.html#API">Update User Status</a> section to know more.</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::setUserStatus( $status )
+</pre>
+
+<table class="table table-striped table-hover">
+<thead>
+ <tr>
+   <th style="width: 100px;">Name</th>
+   <th style="width: 80px;">type</th>
+   <th>description</th>
+ </tr>
+</thead>
+<tbody>
+ <tr>
+   <td>status</td>
+   <td>string</td>
+   <td><code>$status</code> is the user status to send to the social service</td>
+ </tr>
+</tbody>
+</table>
+
+<h4>getUserContacts() </h4>
+<p>Provide the connected user contact list's in a rich, simple and standardized structure across social networks.
+<br />
+<b>Currently not all providers support this feature</b>. Please refer to <a href="userguide/Profile_Data_User_Contacts.html#API">Access User Contacts</a> section to know more.</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::getUserContacts()
+</pre>
+
+<h4>getUserActivity() </h4>
+<p>Provide the connected user and his friends activity stream in simple and standardized structure across social networks.
+<br />
+<b>Currently not all providers support this feature</b>. Please refer to <a href="userguide/Profile_Data_User_Activity.html#API">Access User Contacts</a> section to know more.</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::getUserContacts( $stream )
+</pre>
+<table class="table table-striped table-hover">
+<thead>
+ <tr>
+   <th style="width: 100px;">Name</th>
+   <th style="width: 80px;">type</th>
+   <th>description</th>
+ </tr>
+</thead>
+<tbody>
+ <tr>
+   <td>stream</td>
+   <td>string</td>
+   <td><code>$stream</code> can be <b>"timeline"</b> to get all the stream or <b>"me"</b> to load the user activity only</td>
+ </tr>
+</tbody>
+</table>
+
+<h4>logout()</h4>
+<p>Let hybridauth forget all about the current user ONLY for this provider</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::logout()
+</pre>
+
+<h4>getAccessToken()</h4>
+<p>Return the current oauth <code>access.token</code> for the provider if the provider is using OAuth protocol.</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::getAccessToken()
+</pre>
+
+<h4>api()</h4>
+<p>Return an instance of the provider <a href="userguide/Access_IDps_APIs.html">api</a> if any</p>
+<pre class="prettyprint linenums">
+Hybrid_Provider_Adapter::api()
+</pre>
+
+<h3>Properties</h3>
+<table class="table table-striped table-hover">
+
+<thead>
+ <tr>
+   <th style="width: 100px;">Name</th>
+   <th style="width: 80px;">type</th>
+   <th>description</th>
+ </tr>
+
+</thead>
+<tbody>
+ <tr>
+   <td>id</td>
+   <td>string</td>
+   <td>Provider ID (or name)</td>
+ </tr>
+ <tr>
+   <td>config</td>
+   <td>array</td>
+   <td>Provider config</td>
+ </tr>
+ <tr>
+   <td>params</td>
+   <td>array</td>
+   <td>Provider paramameters</td>
+ </tr>
+</tbody>
+
+</table>
+
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Hybrid_User_Profile
+    ================================================== -->
+
+    <section id="modal">
+      <div class="page-header">
+        <h1>Hybrid_User_Profile <small>Hybrid/User/Profile.php</small></h1>
+      </div>
+      <div class="row">
+        <div class="col-md-12 columns">
+          <p><code>Hybrid_User_Profile</code> object represents the current logged in user profile. list of fields available in the normalized user profile structure used by HybridAuth. The <code>Hybrid_User_Profile</code> object is populated with as much information about the user as HybridAuth was able to pull from the given API or authentication provider.</p>
+        </div>
+        <div class="col-md-12 columns">
+<pre class="prettyprint linenums">
+// try to authenticate the user with Twitter
+$twitter_adapter = $hybridauth-&gt;authenticate( &quot;Twitter&quot; );
+
+// get the user profile
+$twitter_user_profile = $twitter_adapter-&gt;getUserProfile();
+
+// debug the received user profile
+print_r( $twitter_user_profile );
+
+// echo the user profile page on twitter &gt;&gt; http://twitter.com/&lt;username&gt;
+echo $twitter_user_profile-&gt;profileURL;
+</pre>
+<h3>Properties</h3>
+
+<table class="table table-striped table-hover">
+<thead>
+  <tr>
+   <th style="width: 100px;">Name</th>
+   <th style="width: 80px;">type</th>
+	<th ><b>description</b></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+	<td>identifier</td>
+	<td>&nbsp;String</td>
+	<td>The Unique user's ID on the connected provider. Can be an interger for some providers, Email, URL, etc.</td>
+  </tr>
+  <tr>
+	<td>profileURL</td>
+	<td>&nbsp;String</td>
+	<td>URL link to profile page on the IDp web site</td>
+  </tr>
+  <tr>
+	<td>webSiteURL</td>
+	<td>&nbsp;String</td>
+	<td>User website, blog, web page, </td>
+  </tr>
+  <tr>
+	<td>photoURL</td>
+	<td>&nbsp;String</td>
+	<td>URL link to user photo or avatar</td>
+  </tr>
+  <tr>
+	<td>displayName</td>
+	<td>&nbsp;String</td>
+	<td> User dispalyName provided by the IDp or a concatenation of first and last name. </td>
+  </tr>
+  <tr>
+	<td>description</td>
+	<td>&nbsp;String</td>
+	<td>A short about_me</td>
+  </tr>
+  <tr>
+
+	<td>firstName</td>
+	<td>&nbsp;String</td>
+	<td>User's first name</td>
+  </tr>
+  <tr>
+	<td>lastName</td>
+	<td>&nbsp;String</td>
+	<td>User's last name</td>
+  </tr>
+  <tr>
+	<td>gender</td>
+	<td>&nbsp;String</td>
+	<td> User's  gender. Values are 'female', 'male' or NULL</td>
+  </tr>
+  <tr>
+	<td>language</td>
+	<td>&nbsp;String</td>
+	<td>User's language</td>
+  </tr>
+  <tr>
+	<td>age</td>
+	<td>&nbsp;Integer</td>
+	<td>User' age, note that we dont calculate it. we return it as is if the IDp provide it</td>
+  </tr>
+  <tr>
+	<td>birthDay</td>
+	<td>&nbsp;Integer</td>
+	<td>The day in the month in which the person was born.</td>
+  </tr>
+  <tr>
+	<td>birthMonth</td>
+	<td>&nbsp;Integer</td>
+	<td>The month in which the person was born.</td>
+  </tr>
+  <tr>
+	<td>birthYear</td>
+	<td>&nbsp;Integer</td>
+	<td>The year in which the person was born.</td>
+  </tr>
+  <tr>
+	<td>email</td>
+	<td>&nbsp;String</td>
+	<td>User email. Not all of IDp garant access to the user email</td>
+  </tr>
+  <tr>
+	<td>emailVerified</td>
+	<td>&nbsp;String</td>
+	<td>Verified user email. Note: not all of IDp garant access to verified user email.
+
+		<hr />
+		Added since version <span class="label warning">2.0.11</span>.
+		Currently only <b>Facebook, Google, Yahoo and Foursquare</b> do provide the verified user email.
+	</td>
+  </tr>
+  <tr>
+	<td>phone</td>
+	<td>&nbsp;String</td>
+	<td>User's phone number</td>
+  </tr>
+  <tr>
+	<td>address</td>
+	<td>&nbsp;String</td>
+	<td>User's address</td>
+  </tr>
+  <tr>
+	<td>country</td>
+	<td>&nbsp;String</td>
+	<td>User's country</td>
+  </tr>
+  <tr>
+	<td>region</td>
+	<td>&nbsp;String</td>
+	<td> User's state or region&nbsp; </td>
+  </tr>
+  <tr>
+	<td>city</td>
+	<td>&nbsp;String</td>
+	<td>User's city</td>
+  </tr>
+  <tr>
+	<td>zip</td>
+	<td>&nbsp;Integer</td>
+	<td>Postal code or zipcode.</td>
+  </tr>
+  </tbody>
+</table>
+
+
+        </div>
+      </div>
+    </section>
+
+
+
+	<br />
+
+  <div class="disqus">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+        var disqus_identifier = 'apidoc';
+        var disqus_url = 'http://hybridauth.sourceforge.net/apidoc.html';
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Footer -->
+  <footer class="well">
+    <div class="container">
+      <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+      <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+      <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+      <p>HybridAuth was created by <a href="contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+        Many other people have also contributed with constructive discussions, support and by submitting patches.
+      </p>
+    </div>
+  </footer>
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

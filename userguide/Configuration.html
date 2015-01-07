@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth Overview</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="../assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="../assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="../userguide.html">Documentation</a></li>
+          <li><a href="../apidoc.html">API</a></li>
+          <li><a href="../support.html">Help & Support</a></li>
+          <li><a href="../plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="../download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="http://hybridauth.sourceforge.net/search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </nav>
+
+	<div id="page" class="container" >
+
+<ul class="breadcrumb" >
+	<li><a href="../index.html">Home</a></li>
+	<li><a href="../userguide.html">User guide</a></li>
+	<li class="active">Configuration</li>
+</ul>
+
+	<div id="content">
+  	<div class="page-header">
+  	  <h1>Configuration</h1>
+  	</div>
+    <div class="row">
+			<div class="col-md-12">
+        <p>
+          Except for OpenID providers, each social network will require that you create an external application linking your Web site to theirs apis. These external applications ensures that users are logging into the proper Web site and allows IDps to send the user back to the correct Web site after successfully authenticating their Accounts.
+        </p>
+        <p>
+          You can found where and how to create these externals applications by refering to <strong>Registering application</strong> and <strong>Adapter specifications</strong> sections on the list of <strong>Identity Providers</strong> on the <a href="../userguide.html">user guide</a>.
+        </p>
+        <hr />
+        <p>
+	         HybridAuth will require either a valid <strong>config array</strong> or a <strong>configuration file</strong> in order to work. An example of a valid hybridauth configuration file can be found on <code>hybridauth/config.php</code>.
+        </p>
+        <p>
+          Required configuration informations are:
+        </p>
+      	<ul>
+      		<li> <code>base_url</code> the url to HybridAuth Endpoint (where the index.php and config.php are found)
+      		<li> <code>providers</code> the list of providers supported by HybridAuth which you want to use.
+      			<ul>
+      				<li> <code>enabled</code> can be true or false; if you dont want to use a specific provider then set it to 'false'
+      				<li> <code>keys</code> are your application credentials, for example :
+      						<ul>
+      							<li><code>id</code> is your (facebook or live) application id
+      							<li><code>key</code> is your (twitter, myspace, linkedin, etc.) application consumer key
+      							<li><code>secret</code> is your application consumer secret
+      						</ul>
+      				<li><code>scope</code> <span class="label notice">Optional</span> used for facebook in case you want to provider the permissions requested by default
+      				</li>
+      			</ul>
+      		<li> <span class="label notice">Optional</span> To enable Logging, set <code>debug_mode</code> to true, then provide a path of a writable file on <code>debug_file</code>
+      	</ul>
+
+<p>
+  <strong>Example of using a configuration file :</strong>
+</p>
+<pre class="prettyprint linenums">
+// hybridauth-2.x.x/hybridauth/config.php
+return
+   array(
+      // "base_url" the url that point to HybridAuth Endpoint (where index.php and config.php are found)
+      &quot;base_url&quot; =&gt; &quot;http://mywebsite/path/to/hybridauth/&quot;,
+
+      &quot;providers&quot; =&gt; array (
+         // google
+            &quot;Google&quot; =&gt; array ( // 'id' is your google client id
+               &quot;enabled&quot; =&gt; true
+               &quot;keys&quot; =&gt; array ( &quot;id&quot; =&gt; &quot;&quot;, &quot;secret&quot; =&gt; &quot;&quot; ),
+            ),
+
+         // facebook
+            &quot;Facebook&quot; =&gt; array ( // 'id' is your facebook application id
+               &quot;enabled&quot; =&gt; true,
+               &quot;keys&quot; =&gt; array ( &quot;id&quot; =&gt; &quot;&quot;, &quot;secret&quot; =&gt; &quot;&quot; ),
+               &quot;scope&quot; =&gt; &quot;email, user_about_me, user_birthday, user_hometown&quot; // optional
+            ),
+
+         // twitter
+            &quot;Twitter&quot; =&gt; array ( // 'key' is your twitter application consumer key
+               &quot;enabled&quot; =&gt; true,
+               &quot;keys&quot; =&gt; array ( &quot;key&quot; =&gt; &quot;&quot;, &quot;secret&quot; =&gt; &quot;&quot; )
+            ),
+
+         // and so on ...
+      ),
+
+      &quot;debug_mode&quot; =&gt; false ,
+
+      // to enable logging, set 'debug_mode' to true, then provide here a path of a writable file
+      &quot;debug_file&quot; =&gt; &quot;&quot;,
+    );
+</pre>
+<p>
+  Then inside your scripts you shoud call <code>Hybrid_Auth</code> constructor with the full path of it:
+</p>
+<pre class="prettyprint linenums">
+$config_file_path = '/full/path/to/hybridauth/config.php';
+
+require_once( "/path/to/hybridauth/Hybrid/Auth.php" );
+
+$hybridauth = new Hybrid_Auth( $config_file_path );
+</pre>
+<p>
+  <strong>Or, configurating <code>Hybrid_Auth</code> using an array as parameter:</strong>
+</p>
+<pre class="prettyprint linenums">
+require_once( &quot;/path/to/hybridauth/Auth.php&quot; );
+
+$config = array(
+   // "base_url" the url that point to HybridAuth Endpoint (where the index.php and config.php are found)
+   &quot;base_url&quot; =&gt; &quot;http://mywebsite.com/path/to/hybridauth/&quot;,
+
+   &quot;providers&quot; =&gt; array (
+       "Twitter" => array (
+           "enabled" => true, "keys" => array ( "key" => "****", "secret" => "****" )
+       )
+   )
+);
+
+$hybridauth = new Hybrid_Auth( $config );
+</pre>
+
+			</div>
+    </div>
+	</div>
+
+	<br />
+
+  <div class="disqus">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
+        var disqus_identifier = 'Configuration';
+        var disqus_url = 'http://hybridauth.sourceforge.net/userguide/Configuration.html';
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+        </script>
+      </div>
+    </div>
+  </div>
+
+<!-- Footer -->
+<footer class="well">
+  <div class="container">
+    <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+    <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+    <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+    <p>HybridAuth was created by <a href="contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+      Many other people have also contributed with constructive discussions, support and by submitting patches.
+    </p>
+  </div>
+</footer>
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

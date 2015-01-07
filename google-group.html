@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth Help & Support</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="userguide.html">Documentation</a></li>
+          <li><a href="apidoc.html">API</a></li>
+          <li><a href="support.html">Help & Support</a></li>
+          <li><a href="plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="http://hybridauth.sourceforge.net/search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </nav>
+
+	<div id="page" class="container" >
+	<div id="content">
+        <div class="row">
+			<div style="margin-left: 10px;">
+				<p style="text-align:center;" id="pggl"><br /><br />Loading... please wait.</p>
+				<iframe id="google_group_embed" src="javascript:void(0)" scrolling="no" frameborder="0" width="100%"></iframe>
+				<script type="text/javascript">
+				$(function () {
+					$( "#pggl" ).delay( 2000 ).hide();
+				});
+
+				var init = function() {
+				var forumEmbed = document.getElementById('google_group_embed');
+				var adjust = function() {
+					var height = document.all ? document.body.offsetHeight : window.innerHeight;
+					forumEmbed.height = Math.max(height - 90, 400);
+				};
+				var groupUrl = 'http://groups.google.com/forum/embed/?place=forum/hybridauth&showsearch=true&showpopout=false&parenturl=' + encodeURIComponent(window.location.href);
+				forumEmbed.src = groupUrl;
+				adjust();
+				window.onresize = adjust;
+				}();
+				</script>
+			</div>
+        </div>
+	</div>
+
+</div> <!-- /container -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

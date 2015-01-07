@@ -1,86 +1,250 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, MySpace, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+  <title>HybridAuth, Open Source Social Sign On PHP Library</title>
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
 
-    <title>Hybridauth by hybridauth</title>
-  </head>
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/prettify.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/css.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/js/prettify.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/js/script.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
 
-  <body>
-    <header>
-      <div class="inner">
-        <h1>Hybridauth</h1>
-        <h2>Open source social sign on PHP Library. HybridAuth goal is to act as an abstract api between your application and various social apis and identities providers such as Facebook, Twitter, MySpace and Google.</h2>
-        <a href="https://github.com/hybridauth/hybridauth" class="button"><small>View project on</small> GitHub</a>
+      <div class="containter-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">HybridAuth</a>
+        </div>
       </div>
-    </header>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a id="hybridauth-240-dev" class="anchor" href="#hybridauth-240-dev" aria-hidden="true"><span class="octicon octicon-link"></span></a>HybridAuth 2.4.0-dev</h1>
-
-<p>HybridAuth enables developers to easily build social applications and tools
-to engage websites visitors and customers on a social level by implementing
-social sign-in, social sharing, users profiles, friends list, activities
-stream, status updates and more.</p>
-
-<p>The main goal of HybridAuth is to act as an abstract API between your application
-and various social apis and identities providers such as Facebook, Twitter and Google.</p>
-
-<h2>
-<a id="repository" class="anchor" href="#repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Repository</h2>
-
-<p>HybridAuth repository is made up of several projects:</p>
-
-<ul>
-<li>
-<strong>HybridAuth Core library</strong> includes OpenID, Facebook, Twitter, LinkedIn, Google, Yahoo, Windows Live, Foursquare and AOL.</li>
-<li>
-<strong>The additional providers project</strong> contains many others services
-which you may want to use,</li>
-<li>
-<strong>Examples and demos</strong> contains five examples for you to test,</li>
-</ul>
-
-<h2>
-<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
-
-<p>We highly recommend that you download and use the latest release from HybridAuth website
-at <a href="http://hybridauth.sourceforge.net/download.html">http://hybridauth.sourceforge.net/download.html</a></p>
-
-<p>You can find  complete documentation for HybridAuth
-at <a href="http://hybridauth.sourceforge.net">http://hybridauth.sourceforge.net</a></p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/hybridauth/hybridauth/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/hybridauth/hybridauth/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/hybridauth/hybridauth"></a> is maintained by <a href="https://github.com/hybridauth">hybridauth</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="userguide.html">Documentation</a></li>
+          <li><a href="apidoc.html">API</a></li>
+          <li><a href="support.html">Help & Support</a></li>
+          <li><a href="plugins.html" style="color: orange;">Plugins</a></li>
+          <li><a href="download.html" style="color: gold;">Download</a></li>
+        </ul>
+        <form action="http://hybridauth.sourceforge.net/search.html" method="get" class="navbar-form navbar-right" role="search">
+          <div class="form-group">
+            <input type="text" name="q" placeholder="Search" class="form-control" />
+          </div>
+        </form>
       </div>
+
     </div>
+  </nav>
 
-  
-  </body>
+  <div class="container">
+    <div class="jumbotron">
+      <div class="page-header">
+        <h1>HybridAuth, <small>open source social sign on php library</small></h1>
+      </div>
+
+  		<p class="text-justify">
+  		HybridAuth enable developers to easily build social applications to engage websites vistors and customers on a social level by implementing social signin, social sharing, users profiles, friends list, activities stream, status updates and more.
+  		</p>
+
+  		<p>
+  		HybridAuth goal is to act as an abstract api between your application and various social apis and identities providers such as Facebook, Twitter, MySpace and Google.
+  		</p>
+
+  		<div class="row">
+        <div class="col-md-6">
+          <p><a class="btn btn-primary btn-large" href="userguide/Overview.html#index">Learn more &raquo;</a>
+            <a class="btn btn-success btn-large" href="userguide.html#index">User Guide  &raquo;</a></p>
+        </div>
+  			<div class="col-md-3">
+  				<!-- AddThis Button BEGIN -->
+  				<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+  				<a class="addthis_button_facebook"></a>
+  				<a class="addthis_button_twitter"></a>
+  				<a class="addthis_button_favorites"></a>
+  				<a class="addthis_button_compact"></a>
+  				</div>
+  				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4eb971af501a445f"></script>
+  				<!-- AddThis Button END -->
+  			</div>
+  			<div class="col-md-3">
+  				<a href="https://twitter.com/HybridAuth" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @HybridAuth</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  			</div>
+  		</div>
+    </div>
+    <main class="container">
+      <div class="row panel">
+        <div class="col-md-6">
+          <h2>HybridAuth Overview</h2>
+          <p><b>HybridAuth</b> is an easy to install and use social sign on php library. Connect users to a wide variety of well known social networks, grab their profiles, contact lists, update their status and even more.</p>
+          <p><a class="btn btn-danger" href="userguide/Overview.html#features">Main Features &raquo;</a></p>
+        </div>
+        <div class="col-md-6">
+          <h2>Get started</h2>
+           <p>A comprehensive online user guide that gives the definitive description of <b>HybridAuth</b> features with samples and tutorials.</p>
+          <p><a class="btn btn-info" href="userguide.html#index">HybridAuth User Guide &raquo;</a></p>
+        </div>
+        <div class="col-md-6">
+          <h2>Download</h2>
+  	       <p>Download the latest version of <b>HybridAuth</b> at Github.</p>
+           <p><a class="btn btn-success" href="https://github.com/hybridauth/hybridauth/releases" target="_blank"><img src="assets/img/github.png" style="margin: 0;padding: 0;border: 0 none;vertical-align: bottom;" alt="GitHub" /> Download now &raquo;</a>
+  	       <a class="btn btn-default" href="http://github.com/hybridauth/hybridauth" target="_blank"><img src="assets/img/github.png" style="margin: 0;padding: 0;border: 0 none;vertical-align: bottom;" alt="GitHub" /> Fork on Github &raquo;</a></p>
+        </div>
+      </div>
+  	<hr>
+      <div class="row panel">
+      <!-- Getting rid of examples for now?
+        <div class="col-md-4">
+        	<h4>Hello world with HybridAuth</h4>
+        	<p>HybridAuth can be easly integrated on you existing website. All you have to do is to include hybridauth main file and a couple of lines to your login page like it's shown in the this sample. </p>
+        	<p><a class="btn btn-default" href="userguide/Examples_and_Demos.html#index">More examples &raquo;</a></p>
+        </div>
+      -->
+        <div class="col-md-12">
+          <h4>Hello world with HybridAuth</h4>
+      		<h5>Connect to Twitter, update your status and grab your freinds list in 20 lines of code:</h5>
+      		<p>This snippet show how to connect a user with Twitter, grab his profile, update his twitter status then grab his freinds list:</p>
+
+          <pre class="prettyprint linenums">
+          &lt;?php
+           $config = dirname(__FILE__) . '/library/config.php';
+           require_once( &quot;library/Hybrid/Auth.php&quot; );
+
+           try{
+               $hybridauth = new Hybrid_Auth( $config );
+
+               $twitter = $hybridauth-&gt;authenticate( &quot;Twitter&quot; );
+
+               $user_profile = $twitter-&gt;getUserProfile();
+
+               echo &quot;Hi there! &quot; . $user_profile-&gt;displayName;
+
+               $twitter->setUserStatus( "Hello world!" );
+
+               $user_contacts = $twitter-&gt;getUserContacts();
+           }
+           catch( Exception $e ){
+               echo &quot;Ooophs, we got an error: &quot; . $e-&gt;getMessage();
+           }
+          </pre>
+        </div>
+      </div>
+      <hr>
+      <div class="row panel">
+
+        <div class="col-md-4">
+        	<h4>HybridAuth Extensions</h4>
+
+        	<p>Third party extensions available for serval CMS and PHP frameworks.</p>
+
+        	<p><a class="btn btn-primary" href="plugins.html">Download Extensions &raquo;</a></p>
+        </div>
+
+        <div class="col-md-12">
+          <p>With more than 20 third-party plugins and addons, HybridAuth can be easily integrated with your existing platforms.</p>
+          <a href="plugins.html" class="haext">
+            <ul class="list-inline">
+              <li><img src="assets/img/zf.png" alt="Zend" /></li>
+              <li><img src="assets/img/codeigniter.png" alt="CodeIgniter" /></li>
+              <li><img src="assets/img/cakephp.png" alt="Cake PHP" /></li>
+              <li><img src="assets/img/yii.png" alt="Yii" /></li>
+              <li><img src="assets/img/wordpress.png" alt="Wordpress" /></li>
+              <li><img src="assets/img/elgg.png" alt="Elgg" /></li>
+              <li><img src="assets/img/drupal.png" alt="Drupal" /></li>
+              <li><img src="assets/img/opencart.png" alt="OpenCart" /></li>
+              <li><img src="assets/img/joomla.png" alt="Joomla" /></li>
+              <li><img src="assets/img/c5.png" alt="Concrete 5" /></li>
+              <li><img src="assets/img/ee.png" alt="Expression Engine" /></li>
+              <li><img src="assets/img/modx.jpg" alt="ModX" /></li>
+              <li><img src="assets/img/cotonti.png" alt="Cotonti" /></li>
+              <li><img src="assets/img/schlix.png" alt="Schlix" /></li>
+              <li><img src="assets/img/subrion.png" alt="Subrion" /></li>
+              <li><img src="assets/img/cms-made-simple.png" alt="CMS Made Simple" /></li>
+            </ul>
+          </a>
+        </div>
+      </div>
+      <hr>
+      <div class="row panel" id="mcontributors">
+        <div class="col-md-2">
+        	<h4>HybridAuth Contributors</h4>
+
+        	<p>This is a list of the awesome people who have contributed to Hybridauth Library on Github.</p>
+
+        	<p>Many other people have also contributed by submitting patches, constructive discussions and support.</p>
+
+        	<p> Thanks to each and everyone of you!</p>
+        </div>
+        <div class="col-md-10" id="icontributors">
+        </div>
+      </div>
+      <hr>
+      <div class="row panel">
+        <div class="col-md-2">
+          <h4>HybridAuth on Twitter</h4>
+          <p>Follow us on Twitter to keep track of updates and announcements.</p>
+        </div>
+
+        <div class="col-md-5">
+          <a class="twitter-timeline" href="https://twitter.com/HybridAuth" data-widget-id="385480901951365120">Tweets by @HybridAuth</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+        <div class="col-md-5">
+          <a class="twitter-timeline" href="https://twitter.com/search?q=hybridauth" data-widget-id="385480619087519744">Tweets about "hybridauth"</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+      </div>
+    </main>
+    <!-- Footer -->
+    <footer class="well">
+      <div class="container">
+        <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.</p>
+        <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+        <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://sourceforge.net/">Sourceforge</a> and <a href="http://github.com/">Github</a>.</p>
+        <p>HybridAuth was created by <a href="contact.html">Mohamed Mrassi</a> (a.k.a Miled) and <a href="https://github.com/hybridauth/hybridauth/graphs/contributors">contributors</a>.
+          Many other people have also contributed with constructive discussions, support and by submitting patches.</p>
+      </div>
+    </footer>
+  </div> <!-- /container -->
+
+<script type="text/javascript">
+$(function(){
+  $.ajax({
+      url: 'https://api.github.com/repos/hybridauth/hybridauth/contributors?page=1&per_page=150',
+      dataType: 'jsonp',
+      success: function(data) {
+          $.each(data.data, function(key, val) {
+              $('#icontributors').append('<a href="' + val.html_url + '" target="_blank" title="' + val.login + '"><img src="' + val.avatar_url + '" width="52" height="52"  style="border:0; padding:0; margin:5px;"  /></a>');
+		});
+      }
+  });
+});
+</script>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-11037160-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
 </html>
