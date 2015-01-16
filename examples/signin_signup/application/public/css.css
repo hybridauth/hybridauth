@@ -17,7 +17,7 @@ LEGEND {
 	border:1px solid #ccc;
 	padding:5px;
 }
-INPUT[type=text] {
+INPUT[type=text], INPUT[type=password], INPUT[type=email] {
 	display: block;
 	font-family: Arial, verdana;
 	padding: 7px;
