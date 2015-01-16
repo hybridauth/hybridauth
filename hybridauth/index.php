@@ -16,7 +16,7 @@ function _include_class_file($Class_Name='')
 	{
 		require_once($class_file);
 	}
-	echo $class_file;
+	#echo $class_file;
 }
 spl_autoload_register('_include_class_file');
 
