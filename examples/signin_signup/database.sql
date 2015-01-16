@@ -14,8 +14,6 @@ CREATE TABLE `authentications` (
   UNIQUE KEY `provider_uid` (`provider_uid`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
 CREATE TABLE `users` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(200) NOT NULL DEFAULT '',

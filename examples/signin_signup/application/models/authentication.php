@@ -17,6 +17,7 @@ class authentication extends model {
 	} 
 	
 	function find_by_user_id( $user_id ){ 
+		$user_id = (int)$user_id;
 		$sql = "SELECT * FROM authentications WHERE user_id = '$user_id' LIMIT 1";
 
 		$result = mysql_query_excute($sql);
