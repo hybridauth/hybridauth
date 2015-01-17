@@ -117,7 +117,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2
 
 	private function buildPhotoURL( $prefix, $suffix ) {
 		if ( isset( $prefix ) && isset( $suffix ) ) {
-			return $prefix . ((isset($this->config["params"]["photo_size"]))?($this->config["params"]["photo_size"]):(Hybrid_Providers_Foursquare::defPhotoSize)) . $suffix;
+			return $prefix . ((isset($this->config["params"]["photo_size"]))?($this->config["params"]["photo_size"]):(Hybrid_Providers_Foursquare::$defPhotoSize)) . $suffix;
 		}
 		return ("");
 	}
