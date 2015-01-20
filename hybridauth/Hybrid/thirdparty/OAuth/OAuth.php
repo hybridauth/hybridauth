@@ -28,7 +28,7 @@ if (!class_exists('OAuthConsumer')) {
   }
 }
 
-if (!class_exists('OAuthConsumer')) {
+if (!class_exists('OAuthToken')) {
   class OAuthToken {
     // access tokens and request tokens
     public $key;
