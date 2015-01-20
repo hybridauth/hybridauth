@@ -1685,6 +1685,73 @@ class LinkedIn {
 	}
 
 	/**
+	 * Send Messages.
+	 *
+	 * Send a message to another member or members
+	 *
+	 * @param array $recipients
+	 *    The id or ids to send the message to.
+	 * @param str $subject
+	 *    The subject of the invitation to send.
+	 * @param str $body
+	 *    The body of the invitation to send.
+	 *
+	 * @return arr
+	 *    Array containing retrieval success, LinkedIn response.
+	 */
+	public function send_msg($recipients, $subject, $body) {
+		/**
+		 * Clean up the passed data per these rules:
+		 *
+		 * 1) No HTML permitted
+		 * 2) 200 characters max in the invitation subject
+		 * 3) Only able to connect as a friend at this point
+		 */
+
+		// check passed data
+		if(empty($recipients)) {
+			throw new LinkedInException('LinkedIn->send_msg(): you must provide an invitation recipient.');
+		}
+		if(!empty($subject)) {
+			$subject = trim(htmlspecialchars(strip_tags(stripslashes($subject))));
+		} else {
+			throw new LinkedInException('LinkedIn->send_msg(): message subject is empty.');
+		}
+		if(!empty($body)) {
+			$body = trim(htmlspecialchars(strip_tags(stripslashes($body))));
+			if(strlen($body) > self::_INV_BODY_LENGTH) {
+				throw new LinkedInException('LinkedIn->send_msg(): message body length is too long - max length is ' . self::_INV_BODY_LENGTH . ' characters.');
+			}
+		} else {
+			throw new LinkedInException('LinkedIn->send_msg(): message body is empty.');
+		}
+		// construct the xml data
+		$data   = '<?xml version="1.0" encoding="UTF-8"?>
+		           <mailbox-item>
+		             <recipients>
+                   ';
+		foreach( $recipients as $recipient )
+		{
+			$data .= '<recipient>';
+			$data .= '<person path="/people/'. $recipient . '"/>';
+			$data .= '</recipient>';
+		}
+		$data  .= ' </recipients>
+	                <subject>' . $subject . '</subject>
+	                <body>' . $body . '</body>
+	                </mailbox-item>';
+		// send request
+		$query    = self::_URL_API . '/v1/people/~/mailbox';
+		$response = $this->fetch('POST', $query, $data);
+
+		/**
+		 * Check for successful request (a 201 response from LinkedIn server)
+		 * per the documentation linked in method comments above.
+		 */
+		return $this->checkResponse(201, $response);
+
+	}
+	/**
 	 * Manual API call method, allowing for support for un-implemented API
 	 * functionality to be supported.
 	 *
