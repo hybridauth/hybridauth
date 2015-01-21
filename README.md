@@ -6,8 +6,7 @@ social sign-in, social sharing, users profiles, friends list, activities
 stream, status updates and more.
 
 The main goal of HybridAuth is to act as an abstract API between your application
-and various social apis and identities providers such as Facebook, Twitter,
-MySpace and Google.
+and various social apis and identities providers such as Facebook, Twitter and Google.
 
 ## Repository
 
