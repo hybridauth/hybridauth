@@ -7,7 +7,11 @@ Hybridauth Change log
         - SoundCloud #352
         - BeatsMusic #351
         - Dropbox #344 via #367
+      New:
+        #382 - LinkedIn send direct message
       Fixes:
+        #382 - Fix undefined variable in Foursquare
+        #379 - Google authentication problem on the master branch (invalid_request, missing parameter) with Drupal 7
         #368 - Correct year and date birth in VKontakte provider
         #228 - HTTP_HOST not found via #366
         #358 - Added abbility get email from vkontakte response
@@ -15,6 +19,7 @@ Hybridauth Change log
         #360 - GitHub provider fix: Return primary email address, not the first
         #354 - Hybrid_Providers_Foursquare::getUserContacts() implementation
         #351 - Deezer provider fix
+        #296 - OAuth2Client - curl - invalid POSTc
 
 2.3.0 - November 16 2014
         #87 - Make logging level based
