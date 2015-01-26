@@ -7,6 +7,7 @@ Hybridauth Change log
         - SoundCloud #352
         - BeatsMusic #351
         - Dropbox #344 via #367
+        - Providers for Citrix #385
       New:
         #382 - LinkedIn send direct message
       Fixes:
