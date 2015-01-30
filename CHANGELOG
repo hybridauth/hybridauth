@@ -10,6 +10,7 @@ Hybridauth Change log
         - Providers for Citrix #385
       New:
         #382 - LinkedIn send direct message
+        #388 - Add home town in VKontakte
       Fixes:
         #382 - Fix undefined variable in Foursquare
         #379 - Google authentication problem on the master branch (invalid_request, missing parameter) with Drupal 7
