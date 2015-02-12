@@ -19,8 +19,7 @@ HybridAuth repository is made up of several projects:
 
 ## Getting Started
 
-We highly recommend that you download and use the latest release from HybridAuth website
-at [http://hybridauth.sourceforge.net/download.html](http://hybridauth.sourceforge.net/download.html)
+We highly recommend that you download and use the latest release from [https://github.com/hybridauth/hybridauth/releases](https://github.com/hybridauth/hybridauth/releases)
 
 You can find  complete documentation for HybridAuth
 at [http://hybridauth.sourceforge.net](http://hybridauth.sourceforge.net)
