@@ -8,6 +8,8 @@ Hybridauth Change log
         - BeatsMusic #351
         - Dropbox #344 via #367
         - Providers for Citrix #385
+        - MailChimp OAuth2 #399
+        - Wordpress and Dribbble #394
       New:
         #382 - LinkedIn send direct message
         #388 - Add home town in VKontakte
@@ -22,6 +24,7 @@ Hybridauth Change log
         #354 - Hybrid_Providers_Foursquare::getUserContacts() implementation
         #351 - Deezer provider fix
         #296 - OAuth2Client - curl - invalid POSTc
+        #395 - Do not replace $_REQUEST with something else
 
 2.3.0 - November 16 2014
         #87 - Make logging level based
