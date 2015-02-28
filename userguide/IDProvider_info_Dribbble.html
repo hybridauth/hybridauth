@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
   <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
-  <title>HybridAuth - Github Authentication</title>
+  <title>HybridAuth - Dribbble Authentication</title>
 
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -48,21 +48,21 @@
       </div>
     </div>
   </nav>
-	<div id="page" class="container" >
-    <ul class="breadcrumb" >
+	<div id="page" class="container">
+    <ul class="breadcrumb">
     	<li><a href="../index.html">Home</a></li>
     	<li><a href="../userguide.html">User guide</a></li>
-    	<li>Github</li>
+    	<li>Dribbble</li>
     </ul>
 
   	<div id="content">
     	<div class="page-header">
-    	  <h1>Github</h1>
+    	  <h1>Dribbble</h1>
     	</div>
       <div class="row">
         <div class="col-md-12">
 
-          <h4>Adapter capabilities </h4>
+          <h4>Adapter capabilities</h4>
           <table class="table table-striped table-hover">
           	<tr><td><strong>&nbsp;User authentication</strong></td><td width="5%" ><span class="label label-success">YES</span></td></tr>
           	<tr><td><strong>&nbsp;User profile</strong></td><td><span class="label label-success">YES</span></td></tr>
@@ -81,22 +81,22 @@
 
             <tr><td><strong>&nbsp;Protocol</strong></td><td>OAuth2</td></tr>
 
-            <tr><td><strong>&nbsp;IDp URL</strong></td><td>http://www.github.com</td></tr>
-            <tr><td><strong>&nbsp;Keys registeration</strong></td><td>https://github.com/settings/applications/new</td></tr>
-            <tr><td><strong>&nbsp;Dev documentation</strong></td><td>http://developer.github.com/v3/</td></tr>
+            <tr><td><strong>&nbsp;IDp URL</strong></td><td>http://dribbble.com</td></tr>
+            <tr><td><strong>&nbsp;Keys registeration</strong></td><td>https://dribbble.com/account/applications</td></tr>
+            <tr><td><strong>&nbsp;Dev documentation</strong></td><td>http://developer.dribbble.com/</td></tr>
             <tr>
               <td width="19%" ><strong>&nbsp;Wrapper</strong></td>
-              <td width="81%">./Hybrid/Providers/Github.php</td>
+              <td width="81%">./Hybrid/Providers/Dribbble.php</td>
             </tr>
 
             <tr>
               <td><strong>Callback URL</strong></td>
-              <td>http://mywebsite.com/path_to_hybridauth/?hauth.done=<strong>Github</strong></td>
+              <td>http://mywebsite.com/path_to_hybridauth/?hauth.done=<strong>Dribbble</strong></td>
             </tr>
           </table>
 
           <h4>Registering application</h4>
-          <p>Go to <a href="https://github.com/account/applications/new">https://github.com/account/applications/new</a> then create a new application. Fill required input, then copy your created application credentials (App ID and App Secret) and <a href="Configuration.html#SETUP_API_KEYS">set them on HybridAuth config file</a>.</p>
+          <p>Go to <a href="https://dribbble.com/account/applications">https://dribbble.com/account/applications</a> and create a new application by clicking on the <b>Register application</b> button on your right. then create a new application. Fill the required inputs, then copy your created application credentials (App ID and App Secret, <b>not</b> the Access Token) and <a href="Configuration.html#SETUP_API_KEYS">set them on HybridAuth config file</a>.</p>
 			</div>
     </div>
 	</div>
