@@ -200,7 +200,6 @@ class Hybrid_Endpoint {
 
 				// Check if Hybrid_Auth session already exist
 				if ( ! $storage->config( "CONFIG" ) ) {
-                                        Hybrid_Logger::error( "Endpoint: Config storage not found when trying to init Hyrid_Auth. " );
 
 					throw new Hybrid_Exception( "You cannot access this page directly." );
 				}
