@@ -2,6 +2,7 @@ Hybridauth Change log
 =====================
 2.4.0 -
       New Providers:
+        - BitBucket #405
         - Rhapsody #362
         - Rdio #352
         - SoundCloud #352
