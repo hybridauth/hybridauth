@@ -208,7 +208,9 @@ class OAuth2Client
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , $this->curl_ssl_verifyhost );
-		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
+
+		$header = array_merge($this->curl_header, ['Authorization: OAuth ' . $this->access_token]);		
+		curl_setopt($ch, CURLOPT_HTTPHEADER     , $header);
 
 		if($this->curl_proxy){
 			curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
