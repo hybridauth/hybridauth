@@ -7,7 +7,7 @@
 
 /**
  * Hybrid_Endpoint class
- * 
+ *
  * Hybrid_Endpoint class provides a simple way to handle the OpenID and OAuth endpoint.
  */
 class Hybrid_Endpoint {
@@ -26,7 +26,7 @@ class Hybrid_Endpoint {
 
 		if ( is_null(Hybrid_Endpoint::$request) ){
 			// Fix a strange behavior when some provider call back ha endpoint
-			// with /index.php?hauth.done={provider}?{args}... 
+			// with /index.php?hauth.done={provider}?{args}...
 			// >here we need to parse $_SERVER[QUERY_STRING]
 			$request = $_REQUEST;
 			if ( strrpos( $_SERVER["QUERY_STRING"], '?' ) ) {
@@ -67,7 +67,7 @@ class Hybrid_Endpoint {
 	*/
 	public static function processOpenidPolicy()
 	{
-		$output = file_get_contents( dirname(__FILE__) . "/resources/openid_policy.html" ); 
+		$output = file_get_contents( dirname(__FILE__) . "/resources/openid_policy.html" );
 		print $output;
 		die();
 	}
@@ -83,7 +83,7 @@ class Hybrid_Endpoint {
 		(
 			"{RETURN_TO_URL}",
 			str_replace(
-				array("<", ">", "\"", "'", "&"), array("&lt;", "&gt;", "&quot;", "&apos;", "&amp;"), 
+				array("<", ">", "\"", "'", "&"), array("&lt;", "&gt;", "&quot;", "&apos;", "&amp;"),
 				Hybrid_Auth::getCurrentUrl( false )
 			),
 			file_get_contents( dirname(__FILE__) . "/resources/openid_xrds.xml" )
@@ -102,7 +102,7 @@ class Hybrid_Endpoint {
 			"{X_XRDS_LOCATION}",
 			htmlentities( Hybrid_Auth::getCurrentUrl( false ), ENT_QUOTES, 'UTF-8' ) . "?get=openid_xrds&v=" . Hybrid_Auth::$version,
 			file_get_contents( dirname(__FILE__) . "/resources/openid_realm.html" )
-		); 
+		);
 		print $output;
 		die();
 	}
@@ -126,7 +126,7 @@ class Hybrid_Endpoint {
 		# define:hybrid.endpoint.php step 2.
 		$hauth = Hybrid_Auth::setup( $provider_id );
 
-		# if REQUESTed hauth_idprovider is wrong, session not created, etc. 
+		# if REQUESTed hauth_idprovider is wrong, session not created, etc.
 		if( ! $hauth ) {
 			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_start!" );
 
@@ -160,7 +160,7 @@ class Hybrid_Endpoint {
 		$hauth = Hybrid_Auth::setup( $provider_id );
 
 		if( ! $hauth ) {
-			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_done!" ); 
+			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_done!" );
 
 			$hauth->adapter->setUserUnconnected();
 
@@ -170,13 +170,13 @@ class Hybrid_Endpoint {
 		try {
 			Hybrid_Logger::info( "Endpoint: call adapter [{$provider_id}] loginFinish() " );
 
-			$hauth->adapter->loginFinish(); 
+			$hauth->adapter->loginFinish();
 		}
 		catch( Exception $e ){
 			Hybrid_Logger::error( "Exception:" . $e->getMessage(), $e );
 			Hybrid_Error::setError( $e->getMessage(), $e->getCode(), $e->getTraceAsString(), $e->getPrevious());
 
-			$hauth->adapter->setUserUnconnected(); 
+			$hauth->adapter->setUserUnconnected();
 		}
 
 		Hybrid_Logger::info( "Endpoint: job done. retrun to callback url." );
@@ -195,8 +195,8 @@ class Hybrid_Endpoint {
                 if(!class_exists("Hybrid_Storage")){
                     require_once realpath( dirname( __FILE__ ) )  . "/Storage.php";
                 }
-				
-				$storage = new Hybrid_Storage(); 
+
+				$storage = new Hybrid_Storage();
 
 				// Check if Hybrid_Auth session already exist
 				if ( ! $storage->config( "CONFIG" ) ) {
@@ -204,10 +204,10 @@ class Hybrid_Endpoint {
 					throw new Hybrid_Exception( "You cannot access this page directly." );
 				}
 
-				Hybrid_Auth::initialize( $storage->config( "CONFIG" ) ); 
+				Hybrid_Auth::initialize( $storage->config( "CONFIG" ) );
 			}
 			catch ( Exception $e ){
-				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth: " . $e->getMessage()); 
+				Hybrid_Logger::error( "Endpoint: Error while trying to init Hybrid_Auth: " . $e->getMessage());
 
 				throw new Hybrid_Exception( "Oophs. Error!" );
 			}
