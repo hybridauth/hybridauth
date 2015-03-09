@@ -26,6 +26,7 @@ Hybridauth Change log
         #351 - Deezer provider fix
         #296 - OAuth2Client - curl - invalid POSTc
         #395 - Do not replace $_REQUEST with something else
+        #412 - Facebook now requires access_token to get coverInfoURL
 
 2.3.0 - November 16 2014
         #87 - Make logging level based
