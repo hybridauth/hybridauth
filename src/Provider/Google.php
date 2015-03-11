@@ -89,16 +89,16 @@ final class Google extends OAuth2
 	*/
 	protected function fetchUserEmail( $userProfile, $data )
 	{
-		foreach( $data->filter( 'emails' )->all() as $email )
+		foreach( $data->get( 'emails' ) as $email )
 		{
-			if( 'account' == $email->get( 'type' ) )
+			if( 'account' == $email->type )
 			{
-				$userProfile->email = $email->get( 'value' );
+				$userProfile->email = $email->value;
 
 				break;
 			}
 		}
-
+		
 		return $userProfile;
  	}
 
