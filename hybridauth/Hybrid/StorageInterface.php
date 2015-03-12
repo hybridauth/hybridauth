@@ -10,7 +10,7 @@
  */
 interface Hybrid_Storage_Interface
 {
-    public function config($key, $value);
+    public function config($key, $value = null);
 
     public function get($key);
 
