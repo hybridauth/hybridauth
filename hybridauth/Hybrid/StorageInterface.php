@@ -24,5 +24,5 @@ interface Hybrid_Storage_Interface
 
     function getSessionData();
 
-    function restoreSessionData( $sessiondata);
+    function restoreSessionData( $sessiondata = null);
 }
