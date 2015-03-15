@@ -38,7 +38,7 @@ class Hybrid_Logger
 	 */
 	public static function debug( $message, $object = NULL )
 	{
-		if( Hybrid_Auth::$config["debug_mode"] ){
+		if( Hybrid_Auth::$config["debug_mode"] === true ){
 			$datetime = new DateTime();
 			$datetime =  $datetime->format(DATE_ATOM);
 
