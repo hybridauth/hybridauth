@@ -1,5 +1,7 @@
 # HybridAuth 2.4.0-dev
 
+[![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 HybridAuth enables developers to easily build social applications and tools
 to engage websites visitors and customers on a social level by implementing
 social sign-in, social sharing, users profiles, friends list, activities
