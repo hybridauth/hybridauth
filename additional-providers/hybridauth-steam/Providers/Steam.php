@@ -64,7 +64,7 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
         $apiUrl = 'http://steamcommunity.com/profiles/' . $this->user->profile->identifier . '/?xml=1';
 
         $data = @file_get_contents($apiUrl);
-        $data = @ new SimpleXMLElement($data['response']);
+        $data = @ new SimpleXMLElement($data);
 
         if (!is_object($data)) {
             return false;
