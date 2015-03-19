@@ -673,6 +673,10 @@ class LinkedIn {
       curl_setopt($handle, CURLOPT_URL, $url);
       curl_setopt($handle, CURLOPT_VERBOSE, FALSE);
 
+      // Restrict the request timeout to 5 seconds. Linkedin is sometimes very
+      // slow and we don't want to trigger a PHP timeout on our end.
+      curl_setopt($handle, CURLOPT_TIMEOUT, 5);
+
       if ( isset ( Hybrid_Auth::$config["proxy"] ) ) {
       	curl_setopt($handle, CURLOPT_PROXY, Hybrid_Auth::$config["proxy"]);
       }
