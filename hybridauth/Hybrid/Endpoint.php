@@ -66,7 +66,9 @@ class Hybrid_Endpoint {
 	 */
 	public static function process( $request = NULL )
 	{
-		new static( $request );
+		// Trick for PHP 5.2, because it doesn't support late static binding
+		$class = function_exists('get_called_class') ? get_called_class() : __CLASS__;
+		new $class( $request );
 	}
 
 	/**
