@@ -8,7 +8,7 @@
 /**
  * Hybrid_Endpoint class
  *
- * Hybrid_Endpoint class provides a simple way to handle the OpenID and OAuth endpoint.
+ * Provides a simple way to handle the OpenID and OAuth endpoint
  */
 class Hybrid_Endpoint {
 	protected $request = NULL;
@@ -17,7 +17,7 @@ class Hybrid_Endpoint {
 	/**
 	 * Process the current request
 	 *
-	 * $request - The current request parameters. Leave as NULL to default to use $_REQUEST.
+	 * @param array $request The current request parameters. Leave as NULL to default to use $_REQUEST.
 	 */
 	public function __construct( $request = NULL )
 	{
@@ -60,18 +60,18 @@ class Hybrid_Endpoint {
 		}
 	}
 	/**
-	* Process the current request
-	*
-	* $request - The current request parameters. Leave as NULL to default to use $_REQUEST.
-	*/
+	 * Process the current request
+	 *
+	 * @param array $request The current request parameters. Leave as NULL to default to use $_REQUEST.
+	 */
 	public static function process( $request = NULL )
 	{
 		new static( $request );
 	}
 
 	/**
-	* Process OpenID policy request
-	*/
+	 * Process OpenID policy request
+	 */
 	protected function processOpenidPolicy()
 	{
 		$output = file_get_contents( dirname(__FILE__) . "/resources/openid_policy.html" );
@@ -80,8 +80,8 @@ class Hybrid_Endpoint {
 	}
 
 	/**
-	* Process OpenID XRDS request
-	*/
+	 * Process OpenID XRDS request
+	 */
 	protected function processOpenidXRDS()
 	{
 		header("Content-Type: application/xrds+xml");
@@ -100,8 +100,8 @@ class Hybrid_Endpoint {
 	}
 
 	/**
-	* Process OpenID realm request
-	*/
+	 * Process OpenID realm request
+	 */
 	protected function processOpenidRealm()
 	{
 		$output = str_replace
@@ -115,25 +115,25 @@ class Hybrid_Endpoint {
 	}
 
 	/**
-	* define:endpoint step 3.
-	*/
+	 * define:endpoint step 3.
+	 */
 	protected function processAuthStart()
 	{
 		$this->authInit();
 
 		$provider_id = trim( strip_tags( $this->request["hauth_start"] ) );
 
-		# check if page accessed directly
+		// check if page accessed directly
 		if( ! Hybrid_Auth::storage()->get( "hauth_session.$provider_id.hauth_endpoint" ) ) {
 			Hybrid_Logger::error( "Endpoint: hauth_endpoint parameter is not defined on hauth_start, halt login process!" );
 
 			throw new Hybrid_Exception( "You cannot access this page directly." );
 		}
 
-		# define:hybrid.endpoint.php step 2.
+		// define:hybrid.endpoint.php step 2.
 		$hauth = Hybrid_Auth::setup( $provider_id );
 
-		# if REQUESTed hauth_idprovider is wrong, session not created, etc.
+		// if REQUESTed hauth_idprovider is wrong, session not created, etc.
 		if( ! $hauth ) {
 			Hybrid_Logger::error( "Endpoint: Invalid parameter on hauth_start!" );
 
@@ -156,8 +156,8 @@ class Hybrid_Endpoint {
 	}
 
 	/**
-	* define:endpoint step 3.1 and 3.2
-	*/
+	 * define:endpoint step 3.1 and 3.2
+	 */
 	protected function processAuthDone()
 	{
 		$this->authInit();
@@ -197,7 +197,7 @@ class Hybrid_Endpoint {
 		if ( ! $this->initDone) {
 			$this->initDone = TRUE;
 
-			# Init Hybrid_Auth
+			// Init Hybrid_Auth
 			try {
                 if(!class_exists("Hybrid_Storage")){
                     require_once realpath( dirname( __FILE__ ) )  . "/Storage.php";
