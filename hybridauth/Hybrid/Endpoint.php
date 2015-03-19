@@ -11,15 +11,15 @@
  * Hybrid_Endpoint class provides a simple way to handle the OpenID and OAuth endpoint.
  */
 class Hybrid_Endpoint {
-	public $request = NULL;
-	public $initDone = FALSE;
+	protected $request = NULL;
+	protected $initDone = FALSE;
 
 	/**
 	 * Process the current request
 	 *
 	 * $request - The current request parameters. Leave as NULL to default to use $_REQUEST.
 	 */
-	function __construct ( $request = NULL )
+	public function __construct( $request = NULL )
 	{
 		if ( is_null($request) ){
 			// Fix a strange behavior when some provider call back ha endpoint
@@ -72,7 +72,7 @@ class Hybrid_Endpoint {
 	/**
 	* Process OpenID policy request
 	*/
-	public function processOpenidPolicy()
+	protected function processOpenidPolicy()
 	{
 		$output = file_get_contents( dirname(__FILE__) . "/resources/openid_policy.html" );
 		print $output;
@@ -82,7 +82,7 @@ class Hybrid_Endpoint {
 	/**
 	* Process OpenID XRDS request
 	*/
-	public function processOpenidXRDS()
+	protected function processOpenidXRDS()
 	{
 		header("Content-Type: application/xrds+xml");
 
@@ -102,7 +102,7 @@ class Hybrid_Endpoint {
 	/**
 	* Process OpenID realm request
 	*/
-	public function processOpenidRealm()
+	protected function processOpenidRealm()
 	{
 		$output = str_replace
 		(
@@ -117,7 +117,7 @@ class Hybrid_Endpoint {
 	/**
 	* define:endpoint step 3.
 	*/
-	public function processAuthStart()
+	protected function processAuthStart()
 	{
 		$this->authInit();
 
@@ -158,7 +158,7 @@ class Hybrid_Endpoint {
 	/**
 	* define:endpoint step 3.1 and 3.2
 	*/
-	public function processAuthDone()
+	protected function processAuthDone()
 	{
 		$this->authInit();
 
@@ -192,7 +192,7 @@ class Hybrid_Endpoint {
 		die();
 	}
 
-	public function authInit()
+	protected function authInit()
 	{
 		if ( ! $this->initDone) {
 			$this->initDone = TRUE;
