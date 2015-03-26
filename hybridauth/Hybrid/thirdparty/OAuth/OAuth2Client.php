@@ -216,7 +216,7 @@ class OAuth2Client
 
 		if( $type == "POST" ){
 			curl_setopt($ch, CURLOPT_POST, 1);
-			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query($params, '', '&') );
+			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
 		}
 
 		$response = curl_exec($ch);
