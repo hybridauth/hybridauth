@@ -4,7 +4,7 @@
     "keywords": ["hybridauth", "login", "oauth", "social", "openid", "facebook", "google", "twitter", "yahoo"],
     "homepage": "http://hybridauth.sourceforge.net",
     "type": "library",
-    "license": "(MIT or GPL-3.0+)", 
+    "license": "(MIT or GPL-3.0+)",
     "authors": [
         {
             "name": "Miled",
@@ -12,9 +12,10 @@
         }
     ],
     "support": {
-        "email": "hybridauth@gmail.com", 
+        "email": "hybridauth@gmail.com",
         "forum": "https://groups.google.com/d/forum/hybridauth",
-        "issues": "https://github.com/hybridauth/hybridauth/issues"
+        "issues": "https://github.com/hybridauth/hybridauth/issues",
+        "gitter": "https://gitter.im/hybridauth/hybridauth",
     },
     "require": {
         "php": ">=5.2.0",
@@ -23,6 +24,9 @@
     "autoload": {
         "psr-0": {
             "Hybrid": "hybridauth/"
-        } 
+        },
+        "classmap":[
+          "hybridauth/Hybrid"
+        ]
     }
 }
