@@ -10,11 +10,14 @@ FIELDSET {
 	border: 1px solid #ccc;
 	padding: 1em;
 	margin: 0;
+	margin-bottom:15px;
 }
 LEGEND {
 	color: #666666;
+	border:1px solid #ccc;
+	padding:5px;
 }
-INPUT[type=text] {
+INPUT[type=text], INPUT[type=password], INPUT[type=email] {
 	display: block;
 	font-family: Arial, verdana;
 	padding: 7px;
