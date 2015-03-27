@@ -15,7 +15,7 @@
         "email": "hybridauth@gmail.com",
         "forum": "https://groups.google.com/d/forum/hybridauth",
         "issues": "https://github.com/hybridauth/hybridauth/issues",
-        "gitter": "https://gitter.im/hybridauth/hybridauth",
+        "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
         "php": ">=5.2.0",
