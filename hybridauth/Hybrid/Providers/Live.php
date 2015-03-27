@@ -78,8 +78,6 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 	/**
 	 * load the current logged in user contacts list from the IDp api client
 	 */
-
-	/* Windows Live api does not support retrieval of email addresses (only hashes :/) */
 	function getUserContacts()
 	{
 
