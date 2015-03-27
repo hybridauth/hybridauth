@@ -2,31 +2,31 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
-/** 
+/**
  * Windows Live OAuth2 Class
- * 
- * @package             HybridAuth providers package 
+ *
+ * @package             HybridAuth providers package
  * @author              Lukasz Koprowski <azram19@gmail.com>
  * @version             0.2
  * @license             BSD License
- */ 
+ */
 
 /**
  * Hybrid_Providers_Live - Windows Live provider adapter based on OAuth2 protocol
  */
 class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 {
-	// default permissions 
-	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday";
+	// default permissions
+	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.offline_access";
 
-	
+
 	/**
-	* IDp wrappers initializer 
-	*/
-	function initialize() 
+	 * IDp wrappers initializer
+	 */
+	function initialize()
 	{
 		parent::initialize();
 
@@ -39,11 +39,15 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 	}
 
 	/**
-	* grab the user profile from the api client
-	*/
+	 * grab the user profile from the api client
+	 */
 	function getUserProfile()
 	{
-		$data = $this->api->get( "me" ); 
+
+		//Refresh tokens if needed
+		$this->refreshToken();
+
+		$data = $this->api->get( "me" );
 
 		if ( ! isset( $data->id ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
@@ -72,12 +76,16 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 
 
 	/**
-	* load the current logged in user contacts list from the IDp api client  
-	*/
+	 * load the current logged in user contacts list from the IDp api client
+	 */
 
 	/* Windows Live api does not support retrieval of email addresses (only hashes :/) */
-	function getUserContacts() 
+	function getUserContacts()
 	{
+
+		//Refresh tokens if needed
+		$this->refreshToken();
+
 		$response = $this->api->get( 'me/contacts' );
 
 		if ( $this->api->http_code != 200 )
@@ -89,7 +97,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 		{
 			return array();
 		}
-		
+
 		$contacts = array();
 
 		foreach( $response->data as $item ) {
@@ -100,7 +108,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 			$uc->email        = (property_exists($item,'emails'))?$item->emails->preferred:"";
 			$contacts[] = $uc;
 		}
-		
+
 		return $contacts;
 	}
 }
