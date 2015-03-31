@@ -31,7 +31,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 		$this->api->token_info_url = "https://www.googleapis.com/oauth2/v2/tokeninfo";
 
 		// Google POST methods require an access_token in the header
-		$this->api->curl_header = array("Authorization: OAuth " . $this->access_token);
+		$this->api->curl_header = array("Authorization: OAuth " . $this->api->access_token);
 
 		// Override the redirect uri when it's set in the config parameters. This way we prevent
 		// redirect uri mismatches when authenticating with Google.
