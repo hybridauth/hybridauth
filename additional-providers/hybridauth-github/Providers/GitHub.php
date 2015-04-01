@@ -60,9 +60,9 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 				if (is_array($emails)) {
 					foreach ($emails as $email) {
 						if ($email instanceof stdClass
-							&& property_exists('primary', $email)
+							&& property_exists($email, 'primary')
 							&& true === $email->primary
-							&& property_exists('email', $email)
+							&& property_exists($email, 'email')
 						) {
 							$this->user->profile->email = $email->email;
 							break;
