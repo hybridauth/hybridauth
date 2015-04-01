@@ -31,6 +31,7 @@ class OAuth1Client{
 
 	public $http_code             = "";
 	public $http_info             = "";
+	protected $response           = null;
 
 	/**
 	* OAuth client constructor
@@ -138,7 +139,17 @@ class OAuth1Client{
 			$response = json_decode( $response );
 		}
 
-		return $response;
+		return $this->response = $response;
+	}
+
+	/**
+	 * Return the response object afer the fact
+	 *
+	 * @return mixed
+	 */
+	public function getResponse()
+	{
+	    return $this->response;
 	}
 
 	/**
