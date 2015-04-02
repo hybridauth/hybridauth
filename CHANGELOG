@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.4.0 - March 26 2015
+2.4.0 - April 2 2015
       New Providers:
         - BitBucket #405
         - Rhapsody #362
@@ -17,7 +17,8 @@ Hybridauth Change log
         #396 + #408 - Make Hybrid_Endpoint methods non-static
         #410 - Set LinkedIn API request timeout to 5 seconds because the API can be slow.
         #419 - Adding emailVerified for Google email type 'account'
-        #406 - Add access token to header in google provider
+        #406 + #425 - Add access token to header in google provider
+        #427 - Add class property for responses to be stored
       Fixes:
         #382 - Fix undefined variable in Foursquare
         #379 - Google authentication problem on the master branch (invalid_request, missing parameter) with Drupal 7
@@ -34,6 +35,7 @@ Hybridauth Change log
         #413 - Fix Fatal Error: Declaration of Hybrid_Storage::config() must be compatible with that of Hybrid_Storage_Interface::config()
         #417 - Fixed an issue with email property for vkontakte
         #393 + #420 - Steam API user data support
+        #426 - GitHub provider fix: Parameter order incorrect
       Removed:
         - Removed examples (#381, #339, #208)
 
