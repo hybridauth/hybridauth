@@ -34,12 +34,13 @@ class OAuth2Client
 	public $curl_header              = array();
 	public $curl_useragent           = "OAuth/2 Simple PHP Client v0.1; HybridAuth http://hybridauth.sourceforge.net/";
 	public $curl_authenticate_method = "POST";
-        public $curl_proxy               = null;
+	public $curl_proxy               = null;
 
 	//--
 
 	public $http_code             = "";
 	public $http_info             = "";
+	protected $response           = null;
 
 	//--
 
@@ -140,10 +141,20 @@ class OAuth2Client
 		}
 
 		if( $response && $this->decode_json ){
-			$response = json_decode( $response );
+			$this->response = json_decode( $response );
 		}
 
-		return $response;
+		return $this->response = $response;
+	}
+
+	/**
+	 * Return the response object afer the fact
+	 *
+	 * @return mixed
+	 */
+	public function getResponse()
+	{
+	    return $this->response;
 	}
 
 	/**
