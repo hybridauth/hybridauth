@@ -201,7 +201,7 @@ class Hybrid_Endpoint {
 
 			// Init Hybrid_Auth
 			try {
-                if(!class_exists("Hybrid_Storage")){
+                if(!class_exists("Hybrid_Storage", false)){
                     require_once realpath( dirname( __FILE__ ) )  . "/Storage.php";
                 }
 
