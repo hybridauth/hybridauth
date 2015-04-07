@@ -141,7 +141,7 @@ class OAuth2Client
 		}
 
 		if( $response && $this->decode_json ){
-			$this->response = json_decode( $response );
+			return $this->response = json_decode( $response );
 		}
 
 		return $this->response;

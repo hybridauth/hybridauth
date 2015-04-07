@@ -112,16 +112,18 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 					}
 				}
 			}
-            if (count($verified->emails) == 1) {
-                $this->user->profile->emailVerified = $verified->emails[0]->value;
-            } else {
-                foreach ($verified->emails as $email) {
-                    if ($email->type == 'account') {
-                        $this->user->profile->emailVerified = $email->value;
-                        break;
-                    }
-                }
-            }
+		}
+		if (property_exists($verified, 'emails')) {
+			if (count($verified->emails) == 1) {
+				$this->user->profile->emailVerified = $verified->emails[0]->value;
+			} else {
+				foreach ($verified->emails as $email) {
+					if ($email->type == 'account') {
+						$this->user->profile->emailVerified = $email->value;
+						break;
+					}
+				}
+			}
 		}
 		$this->user->profile->phone 		= (property_exists($response,'phone'))?$response->phone:"";
 		$this->user->profile->country 		= (property_exists($response,'country'))?$response->country:"";
