@@ -216,7 +216,8 @@ final class MyCustomProvider extends OAuth1
 * Reddit (new)
 * Dribbble (new)
 * Mailru
-* Vkontakte (uncompleted)
+* Vkontakte
+* Odnoklassniki
 
 #### Pending list
 
@@ -225,7 +226,6 @@ final class MyCustomProvider extends OAuth1
 * LinkedIn
 * Live
 * Murmur
-* Odnoklassniki
 * Pixnet
 * Plurk
 * QQ
