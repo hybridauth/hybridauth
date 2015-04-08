@@ -42,6 +42,7 @@ final class Vkontakte  extends OAuth2
 		$data = parent::validateAccessTokenExchange( $response );
 
 		$this->token( 'user_id', $data->get( 'user_id') );
+        $this->token( 'email'  , $data->get( 'email'  ) );
 	}
 
 	/**
@@ -85,5 +86,6 @@ final class Vkontakte  extends OAuth2
 
 		return $userProfile;
 	}
+
 }
 

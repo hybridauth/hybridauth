@@ -448,7 +448,6 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 		$this->token( 'token_type'    , $collection->get( 'token_type'    ) );
 		$this->token( 'refresh_token' , $collection->get( 'refresh_token' ) );
 		$this->token( 'expires_in'    , $collection->get( 'expires_in'    ) );
-		$this->token( 'email'         , $collection->get( 'email'         ) );
 
 		// calculate when the access token expire
 		if( $collection->exists( 'expires_in' ) )
