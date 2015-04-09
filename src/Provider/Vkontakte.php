@@ -42,6 +42,7 @@ final class Vkontakte  extends OAuth2
 		$data = parent::validateAccessTokenExchange( $response );
 
 		$this->token( 'user_id', $data->get( 'user_id') );
+        $this->token( 'email'  , $data->get( 'email'  ) );
 	}
 
 	/**
@@ -51,10 +52,10 @@ final class Vkontakte  extends OAuth2
 	{
 		$parameters = [
 			'uid'    => $this->token( 'user_id' ),
-			'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big'
+			'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big,photo_max_orig'
 		];
 
-		$response = $this->apiRequest( 'users.getInfo', 'GET', $parameters );
+		$response = $this->apiRequest( 'users.get', 'GET', $parameters );
 
 		$data = new Data\Collection( $response->response[0] );
 
@@ -66,10 +67,11 @@ final class Vkontakte  extends OAuth2
 		$userProfile = new User\Profile();
 
 		$userProfile->identifier  = $data->get( 'uid' );
+        $userProfile->email       = $this->token( 'email' );
 		$userProfile->firstName   = $data->get( 'first_name' );
 		$userProfile->lastName    = $data->get( 'last_name' );
 		$userProfile->displayName = $data->get( 'screen_name' );
-		$userProfile->photoURL    = $data->get( 'photo_big' );
+		$userProfile->photoURL    = $data->get( 'photo_max_orig' );
 
 		$userProfile->profileURL  = $data->get( 'screen_name' ) ? 'http://vk.com/' . $data->get( 'screen_name' ) : '';
 
@@ -84,5 +86,6 @@ final class Vkontakte  extends OAuth2
 
 		return $userProfile;
 	}
+
 }
 
