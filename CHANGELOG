@@ -1,5 +1,11 @@
 Hybridauth Change log
 =====================
+2.4.1 - April 11 2015
+      Fixes:
+        #430 - Disable autoloading for class_exists() checks
+        #435 + #436 - Google fix Undefined property: stdClass::$emails
+        #437 + #442 - OAuth2Client->api() - json_decode
+
 2.4.0 - April 2 2015
       New Providers:
         - BitBucket #405
