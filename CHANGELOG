@@ -1,5 +1,11 @@
 Hybridauth Change log
 =====================
+2.4.2 -
+      New:
+        #444 + #445 - Slack provider
+      Fixes:
+        #438 + #445 - [LinkedIn] getusercontacts error
+
 2.4.1 - April 11 2015
       Fixes:
         #430 - Disable autoloading for class_exists() checks
