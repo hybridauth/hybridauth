@@ -70,13 +70,29 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
             return false;
         }
 
-        $this->user->profile->displayName = property_exists($data, 'steamID') ? (string)$data->steamID : '';
-        $this->user->profile->firstName = property_exists($data, 'realname') ? $data->realname : '';
-        $this->user->profile->photoURL = property_exists($data, 'avatarfull') ? $data->avatarfull : '';
-        $this->user->profile->description = property_exists($data, 'summary') ? (string)$data->summary : '';
-        $this->user->profile->region = property_exists($data, 'location') ? (string)$data->location : '';
-        $this->user->profile->profileURL = property_exists($data, 'customURL')
-                ? "http://steamcommunity.com/id/{$data->customURL}/"
-                : "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
+		# store the user profile.  
+		//$this->user->profile->identifier		=	"";
+		$this->user->profile->profileURL		=	property_exists($data, 'customURL') ? "http://steamcommunity.com/id/{$data->customURL}/" : "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
+		$this->user->profile->webSiteURL		=	"";
+		$this->user->profile->photoURL			=	property_exists($data, 'avatarFull') ? (string)$data->avatarFull : '';
+		$this->user->profile->displayName		=	property_exists($data, 'steamID') ? (string)$data->steamID : '';
+		$this->user->profile->description		=	property_exists($data, 'summary') ? (string)$data->summary : '';
+		$this->user->profile->firstName			=	property_exists($data, 'realname') ? (string)$data->realname : '';
+		$this->user->profile->lastName			=	"";
+		$this->user->profile->gender			=	"";
+		$this->user->profile->language			=	"";
+		$this->user->profile->age				=	"";
+		$this->user->profile->birthDay			=	"";
+		$this->user->profile->birthMonth		=	"";
+		$this->user->profile->birthYear			=	"";
+		$this->user->profile->email				=	"";
+		$this->user->profile->emailVerified	    =	"";
+		$this->user->profile->phone				=	"";
+		$this->user->profile->address			=	"";
+		$this->user->profile->country			=	"";
+		$this->user->profile->region			=	property_exists($data, 'location') ? (string)$data->location : '';
+		$this->user->profile->city				=	"";
+		$this->user->profile->zip				=	"";
+
     }
 }
