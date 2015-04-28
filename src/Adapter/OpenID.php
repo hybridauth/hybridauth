@@ -11,6 +11,7 @@ use Hybridauth\Exception;
 use Hybridauth\Exception\InvalidOpenidIdentifierException;
 use Hybridauth\Exception\AuthorizationDeniedException;
 use Hybridauth\Exception\InvalidOpenidResponseException;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
 use Hybridauth\User;
