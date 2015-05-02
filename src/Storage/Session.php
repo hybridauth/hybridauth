@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Storage;
@@ -15,101 +15,93 @@ use Hybridauth\Deprecated\DeprecatedStorageTrait;
  */
 class Session implements StorageInterface
 {
-	use DeprecatedStorageTrait;
+    use DeprecatedStorageTrait;
 
-	/**
-	* Initiate a new session
-	*
-	* @throws RuntimeException
-	*/
-	function __construct()
-	{
-		if( session_id() )
-		{
-			return true;
-		}
+    /**
+    * Initiate a new session
+    *
+    * @throws RuntimeException
+    */
+    public function __construct()
+    {
+        if (session_id()) {
+            return true;
+        }
 
-		if( headers_sent() )
-		{
-			throw new RuntimeException( 'Hybridauth wasn\'t able to start PHP session. HTTP headers already sent.' );
-		}
+        if (headers_sent()) {
+            throw new RuntimeException('Hybridauth wasn\'t able to start PHP session. HTTP headers already sent.');
+        }
 
-		if( ! session_start() )
-		{
-			throw new RuntimeException( 'PHP session failed to start.' );
-		}
-	}
+        if (! session_start()) {
+            throw new RuntimeException('PHP session failed to start.');
+        }
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function get( $key ) 
-	{
-		$key = 'hauth_session.' . strtolower( $key );
+    /**
+    * {@inheritdoc}
+    */
+    public function get($key)
+    {
+        $key = 'hauth_session.' . strtolower($key);
 
-		if( isset( $_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key] ) )
-		{ 
-			return unserialize( $_SESSION["HA::STORE"][$key] );
-		}
+        if (isset($_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key])) {
+            return unserialize($_SESSION["HA::STORE"][$key]);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function set( $key, $value )
-	{
-		$key = 'hauth_session.' . strtolower( $key );
+    /**
+    * {@inheritdoc}
+    */
+    public function set($key, $value)
+    {
+        $key = 'hauth_session.' . strtolower($key);
 
-		$_SESSION["HA::STORE"][$key] = serialize( $value );
-	}
+        $_SESSION["HA::STORE"][$key] = serialize($value);
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function clear()
-	{ 
-		$_SESSION["HA::STORE"] = [];
-	}
+    /**
+    * {@inheritdoc}
+    */
+    public function clear()
+    {
+        $_SESSION["HA::STORE"] = [];
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function delete( $key )
-	{
-		$key = 'hauth_session.' . strtolower( $key );
+    /**
+    * {@inheritdoc}
+    */
+    public function delete($key)
+    {
+        $key = 'hauth_session.' . strtolower($key);
 
-		if( isset( $_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key] ) )
-		{
-			$tmp = $_SESSION['HA::STORE'];
+        if (isset($_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key])) {
+            $tmp = $_SESSION['HA::STORE'];
 
-			unset( $tmp[$key] );
+            unset($tmp[$key]);
 
-			$_SESSION["HA::STORE"] = $tmp;
-		} 
-	}
+            $_SESSION["HA::STORE"] = $tmp;
+        }
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function deleteMatch( $key )
-	{
-		$key = 'hauth_session.' . strtolower( $key );
+    /**
+    * {@inheritdoc}
+    */
+    public function deleteMatch($key)
+    {
+        $key = 'hauth_session.' . strtolower($key);
 
-		if( isset( $_SESSION["HA::STORE"] ) && count( $_SESSION["HA::STORE"] ) )
-		{
-			$tmp = $_SESSION['HA::STORE'];
+        if (isset($_SESSION["HA::STORE"]) && count($_SESSION["HA::STORE"])) {
+            $tmp = $_SESSION['HA::STORE'];
 
-			foreach( $tmp as $k => $v )
-			{ 
-				if( strstr( $k, $key ) )
-				{
-					unset( $tmp[ $k ] ); 
-				}
-			}
+            foreach ($tmp as $k => $v) {
+                if (strstr($k, $key)) {
+                    unset($tmp[ $k ]);
+                }
+            }
 
-			$_SESSION["HA::STORE"] = $tmp;
-		}
-	}
+            $_SESSION["HA::STORE"] = $tmp;
+        }
+    }
 }

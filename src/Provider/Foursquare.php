@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Provider;
@@ -17,73 +17,71 @@ use Hybridauth\User;
  */
 final class Foursquare extends OAuth2
 {
-	/**
-	* {@inheritdoc}
-	*/
-	protected $apiBaseUrl = 'https://api.foursquare.com/v2/';
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiBaseUrl = 'https://api.foursquare.com/v2/';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $authorizeUrl = 'https://foursquare.com/oauth2/authenticate';
+    /**
+    * {@inheritdoc}
+    */
+    protected $authorizeUrl = 'https://foursquare.com/oauth2/authenticate';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenUrl = 'https://foursquare.com/oauth2/access_token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenUrl = 'https://foursquare.com/oauth2/access_token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenName = 'oauth_token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenName = 'oauth_token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected function initialize()
-	{
-		parent::initialize();
-		
-		$apiVersion = $this->config->exists( 'api_version' ) ? $this->config->get( 'api_version' ) : '20120610';
+    /**
+    * {@inheritdoc}
+    */
+    protected function initialize()
+    {
+        parent::initialize();
+        
+        $apiVersion = $this->config->exists('api_version') ? $this->config->get('api_version') : '20120610';
 
-		$this->apiRequestParameters = [ "v" => $apiVersion ];
-	}
+        $this->apiRequestParameters = [ "v" => $apiVersion ];
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function getUserProfile()
-	{
-		$response = $this->apiRequest( 'users/self' );
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserProfile()
+    {
+        $response = $this->apiRequest('users/self');
 
-		$data = new Data\Collection( $response );
+        $data = new Data\Collection($response);
 
-		if( ! $data->exists( 'response' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if (! $data->exists('response')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		$data = $data->filter( 'response' )->filter( 'user' );
+        $data = $data->filter('response')->filter('user');
 
-		$userProfile->identifier    = $data->get( 'id' );
-		$userProfile->firstName     = $data->get( 'firstName' );
-		$userProfile->lastName      = $data->get( 'lastName' ); 
-		$userProfile->gender        = $data->get( 'gender' );
-		$userProfile->city          = $data->get( 'homeCity' ); 
+        $userProfile->identifier    = $data->get('id');
+        $userProfile->firstName     = $data->get('firstName');
+        $userProfile->lastName      = $data->get('lastName');
+        $userProfile->gender        = $data->get('gender');
+        $userProfile->city          = $data->get('homeCity');
 
-		$userProfile->email         = $data->filter( 'contact' )->get( 'email' ); 
-		$userProfile->emailVerified = $userProfile->email;
+        $userProfile->email         = $data->filter('contact')->get('email');
+        $userProfile->emailVerified = $userProfile->email;
 
-		$userProfile->profileURL    = 'https://www.foursquare.com/user/' . $userProfile->identifier; 
-		$userProfile->displayName   = trim( $userProfile->firstName . ' ' . $userProfile->lastName );
+        $userProfile->profileURL    = 'https://www.foursquare.com/user/' . $userProfile->identifier;
+        $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
-		if( $data->exists( 'photo' ) )
-		{
-			$userProfile->photoURL = $data->filter( 'photo' )->get( 'prefix' ) . '150x150' . $data->filter( 'photo' )->get( 'suffix' );
-		}
+        if ($data->exists('photo')) {
+            $userProfile->photoURL = $data->filter('photo')->get('prefix') . '150x150' . $data->filter('photo')->get('suffix');
+        }
 
-		return $userProfile;
-	}
+        return $userProfile;
+    }
 }

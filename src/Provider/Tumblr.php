@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Provider;
@@ -14,74 +14,71 @@ use Hybridauth\User;
 
 final class Tumblr extends OAuth1
 {
-	/**
-	* {@inheritdoc}
-	*/
-	protected $apiBaseUrl = 'http://api.tumblr.com/v2/';
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiBaseUrl = 'http://api.tumblr.com/v2/';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $authorizeUrl = 'http://www.tumblr.com/oauth/authorize';
+    /**
+    * {@inheritdoc}
+    */
+    protected $authorizeUrl = 'http://www.tumblr.com/oauth/authorize';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $requestTokenUrl = 'http://www.tumblr.com/oauth/request_token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $requestTokenUrl = 'http://www.tumblr.com/oauth/request_token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenUrl = 'http://www.tumblr.com/oauth/access_token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenUrl = 'http://www.tumblr.com/oauth/access_token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	function getUserProfile()
-	{
-		$response = $this->apiRequest( 'user/info' );
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserProfile()
+    {
+        $response = $this->apiRequest('user/info');
 
-		$data = new Data\Collection( $response );
+        $data = new Data\Collection($response);
 
-		if( ! $data->exists( 'response' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if (! $data->exists('response')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		$userProfile->displayName = $data->filter( 'response' )->filter( 'user' )->get( 'name' );
+        $userProfile->displayName = $data->filter('response')->filter('user')->get('name');
 
-		foreach( $data->filter( 'response' )->filter( 'user' )->filter( 'blogs' )->all() as $blog )
-		{
-			if( $blog->get( 'primary' ) && $blog->exists( 'url' ) )
-			{
-				$userProfile->identifier  = $blog->get( 'url' );
-				$userProfile->profileURL  = $blog->get( 'url' );
-				$userProfile->webSiteURL  = $blog->get( 'url' );
-				$userProfile->description = strip_tags( $blog->get( 'description' ) );
+        foreach ($data->filter('response')->filter('user')->filter('blogs')->all() as $blog) {
+            if ($blog->get('primary') && $blog->exists('url')) {
+                $userProfile->identifier  = $blog->get('url');
+                $userProfile->profileURL  = $blog->get('url');
+                $userProfile->webSiteURL  = $blog->get('url');
+                $userProfile->description = strip_tags($blog->get('description'));
 
-				$bloghostname = explode( '://', $blog->get( 'url' ) );
-				$bloghostname = substr( $bloghostname[1], 0, -1 );
+                $bloghostname = explode('://', $blog->get('url'));
+                $bloghostname = substr($bloghostname[1], 0, -1);
 
-				$this->token( 'primary_blog' , $bloghostname ); 
+                $this->token('primary_blog', $bloghostname);
 
-				break;
-			}
-		}
+                break;
+            }
+        }
 
-		return $userProfile;
- 	}
+        return $userProfile;
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function setUserStatus( $status )
-	{
-		$status = is_string( $status ) ? [ 'type' => 'text', 'body' => $status ] : $status;
+    /**
+    * {@inheritdoc}
+    */
+    public function setUserStatus($status)
+    {
+        $status = is_string($status) ? [ 'type' => 'text', 'body' => $status ] : $status;
 
-		$response = $this->apiRequest( 'blog/' . $this->token( 'primary_blog' ) . '/post', 'POST', $status );
+        $response = $this->apiRequest('blog/' . $this->token('primary_blog') . '/post', 'POST', $status);
 
-		return $response;
-	}
+        return $response;
+    }
 }
