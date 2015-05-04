@@ -14,7 +14,7 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     /**
      * IDp wrappers initializer
      */
-    function initialize()
+    public function initialize()
     {
         parent::initialize();
 
@@ -27,8 +27,7 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
 
     public function getUserProfile()
     {
-        if (self::$_profileData === null)
-        {
+        if (self::$_profileData === null) {
             $data = $this->request('user/me');
             self::$_profileData = json_decode($data, true);
         }
@@ -46,13 +45,11 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         $data = $this->request('user/' . $this->getUserId() . '/artists');
         $data = json_decode($data, true);
-        while (isset($data['next']))
-        {
+        while (isset($data['next'])) {
             $tempData = $this->request($data['next']);
             $tempData = json_decode($tempData, true);
             unset($data['next']);
-            if (isset($tempData['next']))
-            {
+            if (isset($tempData['next'])) {
                 $data['next'] = $tempData['next'];
             }
             $data['data'] = array_merge($data['data'], $tempData['data']);
@@ -64,13 +61,11 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         $data = $this->request('user/' . $this->getUserId() . '/albums');
         $data = json_decode($data, true);
-        while (isset($data['next']))
-        {
+        while (isset($data['next'])) {
             $tempData = $this->request($data['next']);
             $tempData = json_decode($tempData, true);
             unset($data['next']);
-            if (isset($tempData['next']))
-            {
+            if (isset($tempData['next'])) {
                 $data['next'] = $tempData['next'];
             }
             $data['data'] = array_merge($data['data'], $tempData['data']);
@@ -82,13 +77,11 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     {
         $data = $this->request('user/' . $this->getUserId() . '/followings');
         $data = json_decode($data, true);
-        while (isset($data['next']))
-        {
+        while (isset($data['next'])) {
             $tempData = $this->request($data['next']);
             $tempData = json_decode($tempData, true);
             unset($data['next']);
-            if (isset($tempData['next']))
-            {
+            if (isset($tempData['next'])) {
                 $data['next'] = $tempData['next'];
             }
             $data['data'] = array_merge($data['data'], $tempData['data']);
@@ -98,18 +91,14 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
 
     public function request($method)
     {
-        try
-        {
+        try {
             if (preg_match("/https:\/\//", $method)) {
                 $url = $method . '?access_token=' . $this->api->access_token;
-            }
-            else
-            {
+            } else {
                 $url = $this->api->api_base_url . $method . '?access_token=' . $this->api->access_token . '&limit=10000';
             }
             $data = CURLHelper::simple($url);
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             $data = ['error' => "Can't provide query"];
         }
         return $data;
@@ -118,11 +107,9 @@ class Hybrid_Providers_Deezer extends Hybrid_Provider_Model_OAuth2
     /**
      * begin login step
      */
-    function loginBegin()
+    public function loginBegin()
     {
         // redirect the user to the provider authentication url
         Hybrid_Auth::redirect($this->api->authorizeUrl(array("perms" => $this->scope)));
     }
-
-
 }

@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Provider;
@@ -13,73 +13,71 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * 
+ *
  */
 final class Mailru  extends OAuth2
 {
-	/**
-	* {@inheritdoc}
-	*/
-	protected $apiBaseUrl = 'http://www.appsmail.ru/platform/api';
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiBaseUrl = 'http://www.appsmail.ru/platform/api';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $authorizeUrl = 'https://connect.mail.ru/oauth/authorize';
+    /**
+    * {@inheritdoc}
+    */
+    protected $authorizeUrl = 'https://connect.mail.ru/oauth/authorize';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenUrl = 'https://connect.mail.ru/oauth/token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenUrl = 'https://connect.mail.ru/oauth/token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenName = 'session_key';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenName = 'session_key';
 
-	/**
-	* Mailru requires extra signature when requesting protected resources 
-	*
-	* Omit session_key from url. parent::apiRequest() will append the access token anyway.
-	*
-	* {@inheritdoc}
-	*/
-	function apiRequest(  $url, $method = 'GET', $parameters = [], $headers = [] )
-	{
-		$signature = md5( 'client_id=' . $this->clientId . 'format=jsonmethod=' . $url . 'secure=1session_key='. $this->token( 'access_token' ) . $this->clientSecret );
+    /**
+    * Mailru requires extra signature when requesting protected resources
+    *
+    * Omit session_key from url. parent::apiRequest() will append the access token anyway.
+    *
+    * {@inheritdoc}
+    */
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
+    {
+        $signature = md5('client_id=' . $this->clientId . 'format=jsonmethod=' . $url . 'secure=1session_key='. $this->token('access_token') . $this->clientSecret);
 
-		$url = 'format=json&client_id=' . $this->clientId . '&method=' . $url . '&secure=1&sig=' .$signature;
+        $url = 'format=json&client_id=' . $this->clientId . '&method=' . $url . '&secure=1&sig=' .$signature;
 
-		return parent::apiRequest(  $url, $method, $parameters, $headers );
-	}
+        return parent::apiRequest($url, $method, $parameters, $headers);
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function getUserProfile()
-	{
-		$response = $this->apiRequest( 'users.getInfo' );
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserProfile()
+    {
+        $response = $this->apiRequest('users.getInfo');
 
-		$data = new Data\Collection( $response[0] );
+        $data = new Data\Collection($response[0]);
 
-		if( ! $data->exists( 'uid' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if (! $data->exists('uid')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		$userProfile->identifier    = $data->get( 'uid' );
-		$userProfile->firstName     = $data->get( 'first_name' );
-		$userProfile->lastName      = $data->get( 'last_name' );
-		$userProfile->displayName   = $data->get( 'nick' );
-		$userProfile->photoURL      = $data->get( 'pic' );
-		$userProfile->profileURL    = $data->get( 'link' );
-		$userProfile->gender        = $data->get( 'sex' ); 
-		$userProfile->email         = $data->get( 'email' );
-		$userProfile->emailVerified = $data->get( 'email' );
+        $userProfile->identifier    = $data->get('uid');
+        $userProfile->firstName     = $data->get('first_name');
+        $userProfile->lastName      = $data->get('last_name');
+        $userProfile->displayName   = $data->get('nick');
+        $userProfile->photoURL      = $data->get('pic');
+        $userProfile->profileURL    = $data->get('link');
+        $userProfile->gender        = $data->get('sex');
+        $userProfile->email         = $data->get('email');
+        $userProfile->emailVerified = $data->get('email');
 
-		return $userProfile;
-	}
+        return $userProfile;
+    }
 }
-

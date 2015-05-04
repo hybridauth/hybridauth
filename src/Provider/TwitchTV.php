@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Provider;
@@ -13,60 +13,59 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * 
+ *
  */
 final class TwitchTV  extends OAuth2
 {
-	/**
-	* {@inheritdoc}
-	*/
-	protected $scope = 'user_read channel_read';
+    /**
+    * {@inheritdoc}
+    */
+    protected $scope = 'user_read channel_read';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $apiBaseUrl = 'https://api.twitch.tv/kraken/';
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiBaseUrl = 'https://api.twitch.tv/kraken/';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $authorizeUrl = 'https://api.twitch.tv/kraken/oauth2/authorize';
+    /**
+    * {@inheritdoc}
+    */
+    protected $authorizeUrl = 'https://api.twitch.tv/kraken/oauth2/authorize';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenUrl = 'https://api.twitch.tv/kraken/oauth2/token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenUrl = 'https://api.twitch.tv/kraken/oauth2/token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenName = 'oauth_token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenName = 'oauth_token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	function getUserProfile()
-	{
-		$response = $this->apiRequest( 'user' );
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserProfile()
+    {
+        $response = $this->apiRequest('user');
 
-		$data = new Data\Collection( $response );
+        $data = new Data\Collection($response);
 
-		if( ! $data->exists( 'id' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if (! $data->exists('id')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		$userProfile->identifier  = $data->get( 'id' );
-		$userProfile->displayName = $data->get( 'display_name' );
-		$userProfile->photoURL    = $data->get( 'logo' );
-		$userProfile->email       = $data->get( 'email' );
+        $userProfile->identifier  = $data->get('id');
+        $userProfile->displayName = $data->get('display_name');
+        $userProfile->photoURL    = $data->get('logo');
+        $userProfile->email       = $data->get('email');
 
-		$userProfile->profileURL = 'http://www.twitch.tv/' . $data->get( 'name' );
+        $userProfile->profileURL = 'http://www.twitch.tv/' . $data->get('name');
 
-		$userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get( 'name' );
+        $userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get('name');
 
-		return $userProfile;
-	}
+        return $userProfile;
+    }
 }

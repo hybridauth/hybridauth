@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Data;
@@ -13,75 +13,72 @@ namespace Hybridauth\Data;
  * This class is used to parse plain text into objects. It's used by hybriauth adapters to converts
  * providers api responses to a more 'manageable' format.
  */
-final class Parser 
+final class Parser
 {
-	/**
-	* Decodes a string into an object. 
-	*
-	* This method will first attempt to parse data as a JSON string (since most providers use this format)
-	* then parse_str.
-	*
-	* @param string $raw
-	*
-	* @return mixed
-	*/
-	function parse( $raw = null )
-	{
-		$data = $this->parseJson( $raw );
+    /**
+    * Decodes a string into an object.
+    *
+    * This method will first attempt to parse data as a JSON string (since most providers use this format)
+    * then parse_str.
+    *
+    * @param string $raw
+    *
+    * @return mixed
+    */
+    public function parse($raw = null)
+    {
+        $data = $this->parseJson($raw);
 
-		if( ! $data )
-		{
-			$data = $this->parseQueryString( $raw );
-		}
+        if (! $data) {
+            $data = $this->parseQueryString($raw);
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
-	/**
-	* Decodes a JSON string
-	*
-	* @param $result
-	*
-	* @return mixed
-	*/
-	function parseJson( $result )
-	{
-		return json_decode( $result );
-	}
+    /**
+    * Decodes a JSON string
+    *
+    * @param $result
+    *
+    * @return mixed
+    */
+    public function parseJson($result)
+    {
+        return json_decode($result);
+    }
 
-	/**
-	* Parses a string into variables
-	*
-	* @param $result
-	*
-	* @return StdClass
-	*/
-	function parseQueryString( $result )
-	{
-		parse_str( $result, $output );
+    /**
+    * Parses a string into variables
+    *
+    * @param $result
+    *
+    * @return StdClass
+    */
+    public function parseQueryString($result)
+    {
+        parse_str($result, $output);
 
-		if( ! is_array( $output ) )
-		{
-			return $result;
-		}
+        if (! is_array($output)) {
+            return $result;
+        }
 
-		$result = new \StdClass();
+        $result = new \StdClass();
 
-		foreach( $output as $k => $v )
-		{
-			$result->$k = $v;
-		}
+        foreach ($output as $k => $v) {
+            $result->$k = $v;
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
-	/**
-	* needs to be improved
-	*/
-	function parseBirthday( $birthday, $seperator  )
-	{
-		$birthday = date_parse( $birthday );
+    /**
+    * needs to be improved
+    */
+    public function parseBirthday($birthday, $seperator)
+    {
+        $birthday = date_parse($birthday);
 
-		return [ $birthday['year'], $birthday['month'], $birthday['day'] ];
-	}
+        return [ $birthday['year'], $birthday['month'], $birthday['day'] ];
+    }
 }

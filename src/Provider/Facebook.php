@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Provider;
@@ -20,248 +20,230 @@ use Hybridauth\User;
  */
 final class Facebook extends OAuth2
 {
-	/**
-	* {@inheritdoc}
-	*/
-	protected $scope = 'email, public_profile, user_friends';
+    /**
+    * {@inheritdoc}
+    */
+    protected $scope = 'email, public_profile, user_friends';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $apiBaseUrl = 'https://graph.facebook.com/v2.2/';
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiBaseUrl = 'https://graph.facebook.com/v2.2/';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $authorizeUrl = 'https://www.facebook.com/dialog/oauth';
+    /**
+    * {@inheritdoc}
+    */
+    protected $authorizeUrl = 'https://www.facebook.com/dialog/oauth';
 
-	/**
-	* {@inheritdoc}
-	*/
-	protected $accessTokenUrl = 'https://graph.facebook.com/oauth/access_token';
+    /**
+    * {@inheritdoc}
+    */
+    protected $accessTokenUrl = 'https://graph.facebook.com/oauth/access_token';
 
-	/**
-	* {@inheritdoc}
-	*/
-	function getUserProfile( $callback = null )
-	{
-		$response = $this->apiRequest( 'me' );
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserProfile($callback = null)
+    {
+        $response = $this->apiRequest('me');
 
-		$data = new Data\Collection( $response );
+        $data = new Data\Collection($response);
 
-		if( ! $data->exists( 'id' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if (! $data->exists('id')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		$userProfile->identifier  = $data->get( 'id' );
-		$userProfile->displayName = $data->get( 'name' );
-		$userProfile->firstName   = $data->get( 'first_name' );
-		$userProfile->lastName    = $data->get( 'last_name' );
-		$userProfile->profileURL  = $data->get( 'link' );
-		$userProfile->webSiteURL  = $data->get( 'website' );
-		$userProfile->gender      = $data->get( 'gender' );
-		$userProfile->language    = $data->get( 'locale' );
-		$userProfile->description = $data->get( 'about' );
-		$userProfile->email       = $data->get( 'email' ); 
+        $userProfile->identifier  = $data->get('id');
+        $userProfile->displayName = $data->get('name');
+        $userProfile->firstName   = $data->get('first_name');
+        $userProfile->lastName    = $data->get('last_name');
+        $userProfile->profileURL  = $data->get('link');
+        $userProfile->webSiteURL  = $data->get('website');
+        $userProfile->gender      = $data->get('gender');
+        $userProfile->language    = $data->get('locale');
+        $userProfile->description = $data->get('about');
+        $userProfile->email       = $data->get('email');
 
-		$userProfile->region = $data->filter( 'hometown' )->get( 'name' );
+        $userProfile->region = $data->filter('hometown')->get('name');
 
-		$userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . "/picture?width=150&height=150";
+        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . "/picture?width=150&height=150";
 
-		$userProfile->emailVerified = $data->get( 'verified' ) == 1 ? $userProfile->email : ''; 
+        $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
 
-		$userProfile = $this->fetchUserRegion( $userProfile, $userProfile  );
+        $userProfile = $this->fetchUserRegion($userProfile, $userProfile);
 
-		$userProfile = $this->fetchBirthday( $userProfile, $data->get( 'birthday' ) );
+        $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
 
-		return $userProfile;
- 	}
+        return $userProfile;
+    }
 
-	/**
-	*
-	*/
-	protected function fetchUserRegion( $userProfile )
-	{
-		if( ! empty( $userProfile->region ) )
-		{
-			$regionArr = explode( ',', $userProfile->region );
+    /**
+    *
+    */
+    protected function fetchUserRegion($userProfile)
+    {
+        if (! empty($userProfile->region)) {
+            $regionArr = explode(',', $userProfile->region);
 
-			if( count($regionArr) > 1 )
-			{
-				$userProfile->city    = trim( $regionArr[0] );
-				$userProfile->country = trim( $regionArr[1] );
-			}
-		}
+            if (count($regionArr) > 1) {
+                $userProfile->city    = trim($regionArr[0]);
+                $userProfile->country = trim($regionArr[1]);
+            }
+        }
 
-		return $userProfile;
- 	}
+        return $userProfile;
+    }
 
-	/**
-	*
-	*/
-	protected function fetchBirthday( $userProfile, $birthday )
-	{
-		$result = ( new Data\Parser() )->parseBirthday( $birthday, '/' );
+    /**
+    *
+    */
+    protected function fetchBirthday($userProfile, $birthday)
+    {
+        $result = (new Data\Parser())->parseBirthday($birthday, '/');
 
-		$userProfile->birthDay   = (int) $result[0];
-		$userProfile->birthMonth = (int) $result[1];
-		$userProfile->birthYear  = (int) $result[2];
+        $userProfile->birthDay   = (int) $result[0];
+        $userProfile->birthMonth = (int) $result[1];
+        $userProfile->birthYear  = (int) $result[2];
 
-		return $userProfile;
- 	}
+        return $userProfile;
+    }
 
-	/**
-	* /v2.0/me/friends only returns the user's friends who also use the app. 
-	* In the cases where you want to let people tag their friends in stories published by your app, 
-	* you can use the Taggable Friends API.
-	*
-	* https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
-	*/
-	function getUserContacts()
-	{
-		// $apiUrl = 'me/friends?fields=link,name';
-		$contacts = [];
+    /**
+    * /v2.0/me/friends only returns the user's friends who also use the app.
+    * In the cases where you want to let people tag their friends in stories published by your app,
+    * you can use the Taggable Friends API.
+    *
+    * https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
+    */
+    public function getUserContacts()
+    {
+        // $apiUrl = 'me/friends?fields=link,name';
+        $contacts = [];
 
-		// @fixme: delete this line. I'm using graph api v1 just for tests.
-		$apiUrl = 'https://graph.facebook.com/me/friends?fields=link,name';
+        // @fixme: delete this line. I'm using graph api v1 just for tests.
+        $apiUrl = 'https://graph.facebook.com/me/friends?fields=link,name';
 
-		do
-		{
-			$response = $this->apiRequest( $apiUrl ); 
+        do {
+            $response = $this->apiRequest($apiUrl);
 
-			$data = new Data\Collection( $response );
+            $data = new Data\Collection($response);
 
-			if( ! $data->exists( 'data' ) )
-			{
-				throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-			}
+            if (! $data->exists('data')) {
+                throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            }
 
-			if( $data->filter('data')->isEmpty() )
-			{
-				$pagedList = false;
+            if ($data->filter('data')->isEmpty()) {
+                $pagedList = false;
 
-				continue;
-			}
+                continue;
+            }
 
-			foreach( $data->filter('data')->all() as $item )
-			{
-				$contacts[] = $this->fetchUserContacts( $item );
-			}
+            foreach ($data->filter('data')->all() as $item) {
+                $contacts[] = $this->fetchUserContacts($item);
+            }
 
-			if( $data->filter( 'paging' )->exists( 'next' ) )
-			{
-				$apiUrl = $data->filter( 'paging' )->get( 'next' );
+            if ($data->filter('paging')->exists('next')) {
+                $apiUrl = $data->filter('paging')->get('next');
 
-				$pagedList = true;
-			}
-			else
-			{
-				$pagedList = false;
-			}
-		}
-		while( $pagedList );
+                $pagedList = true;
+            } else {
+                $pagedList = false;
+            }
+        } while ($pagedList);
 
-		return $contacts;
- 	}
+        return $contacts;
+    }
 
-	/**
-	*
-	*/
-	protected function fetchUserContacts( $item )
-	{
-		$userContact = new User\Contact();
+    /**
+    *
+    */
+    protected function fetchUserContacts($item)
+    {
+        $userContact = new User\Contact();
 
-		$userContact->identifier  = $item->get( 'id' );
-		$userContact->displayName = $item->get( 'name' );
+        $userContact->identifier  = $item->get('id');
+        $userContact->displayName = $item->get('name');
 
-		$userContact->profileURL = $item->exists( 'link' ) ? $item->get( 'link' ) : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
+        $userContact->profileURL = $item->exists('link') ? $item->get('link') : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
 
-		$userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . "/picture?width=150&height=150";
+        $userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . "/picture?width=150&height=150";
 
-		return $userContact;
- 	}
+        return $userContact;
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function setUserStatus( $status )
-	{
-		$status = is_string( $status ) ? [ 'message' => $status ] : $status;
+    /**
+    * {@inheritdoc}
+    */
+    public function setUserStatus($status)
+    {
+        $status = is_string($status) ? [ 'message' => $status ] : $status;
 
-		$response = $this->apiRequest( '/me/feed', 'POST', $status );
+        $response = $this->apiRequest('/me/feed', 'POST', $status);
 
-		return $response;
-	}
+        return $response;
+    }
 
-	/**
-	* {@inheritdoc}
-	*/
-	function getUserActivity( $stream )
-	{
-		$activities = [];
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserActivity($stream)
+    {
+        $activities = [];
 
-		$apiUrl = $stream == 'me' ? '/me/feed' : '/me/home';
+        $apiUrl = $stream == 'me' ? '/me/feed' : '/me/home';
 
-		$response = $this->apiRequest( $apiUrl ); 
+        $response = $this->apiRequest($apiUrl);
 
-		$data = new Data\Collection( $response );
+        $data = new Data\Collection($response);
 
-		if( ! $data->exists( 'data' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if (! $data->exists('data')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
 
-		if( $data->filter( 'data' )->isEmpty() )
-		{
-			return $activities;
-		}
+        if ($data->filter('data')->isEmpty()) {
+            return $activities;
+        }
 
-		foreach( $data->filter( 'data' )->all() as $item )
-		{
-			$activities[] = $this->fetchUserActivity( $item );
-		}
+        foreach ($data->filter('data')->all() as $item) {
+            $activities[] = $this->fetchUserActivity($item);
+        }
 
-		return $activities;
- 	}
+        return $activities;
+    }
 
-	/**
-	*
-	*/
-	protected function fetchUserActivity( $item )
-	{
-		$userActivity = new User\Activity();
+    /**
+    *
+    */
+    protected function fetchUserActivity($item)
+    {
+        $userActivity = new User\Activity();
 
-		$userActivity->id   = $item->get( 'id' );
-		$userActivity->date = $item->get( 'created_time' );
+        $userActivity->id   = $item->get('id');
+        $userActivity->date = $item->get('created_time');
 
-		if( 'video' == $item->get( 'type' ) || 'link' == $item->get( 'type' ) )
-		{
-			$userActivity->text = $item->get( 'link' );
-		}
+        if ('video' == $item->get('type') || 'link' == $item->get('type')) {
+            $userActivity->text = $item->get('link');
+        }
 
-		if( empty( $userActivity->text ) && $item->exists( 'story' )  )
-		{
-			$userActivity->text = $item->get( 'link' );
-		}
+        if (empty($userActivity->text) && $item->exists('story')) {
+            $userActivity->text = $item->get('link');
+        }
 
-		if( empty( $userActivity->text ) && $item->exists( 'message' ) )
-		{
-			$userActivity->text = $item->get( 'message' );
-		}
+        if (empty($userActivity->text) && $item->exists('message')) {
+            $userActivity->text = $item->get('message');
+        }
 
-		if( ! empty( $userActivity->text ) )
-		{
-			$userActivity->user->identifier   = $item->filter( 'from' )->get( 'id' );
-			$userActivity->user->displayName  = $item->get( 'name' );
+        if (! empty($userActivity->text)) {
+            $userActivity->user->identifier   = $item->filter('from')->get('id');
+            $userActivity->user->displayName  = $item->get('name');
 
-			$userActivity->user->profileURL   = 'https://www.facebook.com/profile.php?id=' . $userActivity->user->identifier;
+            $userActivity->user->profileURL   = 'https://www.facebook.com/profile.php?id=' . $userActivity->user->identifier;
 
-			$userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier . "/picture?width=150&height=150";
-		}
+            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier . "/picture?width=150&height=150";
+        }
 
-		return $userActivity;
- 	}
+        return $userActivity;
+    }
 }

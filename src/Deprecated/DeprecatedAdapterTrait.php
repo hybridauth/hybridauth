@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 namespace Hybridauth\Deprecated;
@@ -14,23 +14,23 @@ namespace Hybridauth\Deprecated;
  */
 trait DeprecatedAdapterTrait
 {
-	/**
-	* Alias for disconnect(). kept for backward compatibility.
-	*
-	* @deprecated 
-	*/
-	function logout()
-	{
-		$this->disconnect();
-	}
+    /**
+    * Alias for disconnect(). kept for backward compatibility.
+    *
+    * @deprecated
+    */
+    public function logout()
+    {
+        $this->disconnect();
+    }
 
-	/**
-	* Alias for isAuthorized(). kept for backward compatibility.
-	*
-	* @deprecated 
-	*/ 
-	function isUserConnected()
-	{
-		return $this->isAuthorized();
-	}
+    /**
+    * Alias for isAuthorized(). kept for backward compatibility.
+    *
+    * @deprecated
+    */
+    public function isUserConnected()
+    {
+        return $this->isAuthorized();
+    }
 }
