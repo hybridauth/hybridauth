@@ -13,31 +13,31 @@ namespace Hybridauth\Logger;
 interface LoggerInterface
 {
     /**
-    * Info
-    *
-    * @param string $message
-    *
-    * @return boolean
-    */
+     * Info
+     *
+     * @param string $message
+     *
+     * @return boolean
+     */
     public function info($message);
 
     /**
-    * Debug
-    *
-    * @param string $message
-    * @param mixed  $object
-    *
-    * @return boolean
-    */
+     * Debug
+     *
+     * @param string $message
+     * @param mixed  $object
+     *
+     * @return boolean
+     */
     public function debug($message, $object = null);
 
     /**
-    * Error
-    *
-    * @param string $message
-    * @param mixed  $object
-    *
-    * @return boolean
-    */
+     * Error
+     *
+     * @param string $message
+     * @param mixed  $object
+     *
+     * @return boolean
+     */
     public function error($message, $object = null);
 }

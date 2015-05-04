@@ -29,103 +29,104 @@ use Hybridauth\Thirdparty\OAuth\OAuthUtil;
 abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 {
     /**
-    * Base URL to provider API
-    *
-    * This var will be used to build urls when sending signed requests
-    *
-    * @var string
-    */
+     * Base URL to provider API
+     *
+     * This var will be used to build urls when sending signed requests
+     *
+     * @var string
+     */
     protected $apiBaseUrl = '';
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     protected $authorizeUrl = '';
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     protected $requestTokenUrl = '';
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     protected $accessTokenUrl = '';
 
     /**
-    * OAuth Version
-    *
-    *  '1.0' OAuth Core 1.0
-    * '1.0a' OAuth Core 1.0 Revision A
-    *
-    * @var string
-    */
+     * OAuth Version
+     *
+     *  '1.0' OAuth Core 1.0
+     * '1.0a' OAuth Core 1.0 Revision A
+     *
+     * @var string
+     */
     protected $oauth1Version = '1.0a';
 
     /**
-    * @var object
-    */
+     * @var object
+     */
     protected $consumerKey = null;
 
     /**
-    * @var object
-    */
+     * @var object
+     */
     protected $sha1Method = null;
 
     /**
-    * @var object
-    */
+     * @var object
+     */
     protected $consumerToken = null;
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     protected $requestTokenMethod = 'POST';
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $requestTokenParameters = [];
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $requestTokenHeaders = [];
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     protected $tokenExchangeMethod = 'POST';
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $tokenExchangeParameters = [];
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $tokenExchangeHeaders = [];
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $apiRequestParameters = [];
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $apiRequestHeaders = [];
 
     /**
-    * Adapter initializer
-    *
-    * @throws InvalidApplicationCredentialsException
-    */
+     * Adapter initializer
+     *
+     * @throws InvalidApplicationCredentialsException
+     */
     protected function initialize()
     {
-        if (! $this->config->filter('keys')->get('key') || ! $this->config->filter('keys')->get('secret')) {
-            throw new InvalidApplicationCredentialsException('Your consumer key and secret are required in order to connect to ' . $this->providerId);
+        if (!$this->config->filter('keys')->get('key') || !$this->config->filter('keys')->get('secret')) {
+            throw new InvalidApplicationCredentialsException('Your consumer key and secret are required in order to connect to '.
+                                                             $this->providerId);
         }
 
         if ($this->config->exists('tokens')) {
@@ -133,22 +134,24 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         }
 
         /**
-        * Set up OAuth Signature and Consumer
-        *
-        * OAuth Core: All Token requests and Protected Resources requests MUST be signed
-        * by the Consumer and verified by the Service Provider.
-        *
-        * The protocol defines three signature methods: HMAC-SHA1, RSA-SHA1, and PLAINTEXT..
-        *
-        * The Consumer declares a signature method in the oauth_signature_method parameter..
-        *
-        * http://oauth.net/core/1.0a/#signing_process
-        */
+         * Set up OAuth Signature and Consumer
+         *
+         * OAuth Core: All Token requests and Protected Resources requests MUST be signed
+         * by the Consumer and verified by the Service Provider.
+         *
+         * The protocol defines three signature methods: HMAC-SHA1, RSA-SHA1, and PLAINTEXT..
+         *
+         * The Consumer declares a signature method in the oauth_signature_method parameter..
+         *
+         * http://oauth.net/core/1.0a/#signing_process
+         */
         $this->sha1Method  = new OAuthSignatureMethodHMACSHA1();
-        $this->consumerKey = new OAuthConsumer($this->config->filter('keys')->get('key'), $this->config->filter('keys')->get('secret'));
+        $this->consumerKey =
+            new OAuthConsumer($this->config->filter('keys')->get('key'), $this->config->filter('keys')->get('secret'));
 
         if ($this->token('request_token')) {
-            $this->consumerToken = new OAuthConsumer($this->token('request_token'), $this->token('request_token_secret'));
+            $this->consumerToken =
+                new OAuthConsumer($this->token('request_token'), $this->token('request_token_secret'));
         }
 
         if ($this->token('access_token')) {
@@ -159,8 +162,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function authenticate()
     {
         if ($this->isAuthorized()) {
@@ -168,9 +171,9 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         }
 
         try {
-            if (! $this->token('request_token')) {
+            if (!$this->token('request_token')) {
                 $this->authenticateBegin();
-            } elseif (! $this->token('access_token')) {
+            } elseif (!$this->token('access_token')) {
                 $this->authenticateFinish();
             }
         } catch (\Exception $exception) {
@@ -181,12 +184,12 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Initiate the authorization protocol
-    *
-    * 1. Obtaining an Unauthorized Request Token
-    * 2. Build Authorization URL for Authorization Request and redirect the user-agent to the
-    *    Authorization Server.
-    */
+     * Initiate the authorization protocol
+     *
+     * 1. Obtaining an Unauthorized Request Token
+     * 2. Build Authorization URL for Authorization Request and redirect the user-agent to the
+     *    Authorization Server.
+     */
     public function authenticateBegin()
     {
         $response = $this->requestAuthToken();
@@ -199,11 +202,11 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Finalize the authorization process
-    *
-    * @throws AuthorizationDeniedException
-    * @throws InvalidOauthTokenException
-    */
+     * Finalize the authorization process
+     *
+     * @throws AuthorizationDeniedException
+     * @throws InvalidOauthTokenException
+     */
     public function authenticateFinish()
     {
         $data = new Data\Collection($_GET);
@@ -214,14 +217,16 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         $oauth_verifier = $data->get('oauth_verifier');
 
         if ($denied) {
-            throw new AuthorizationDeniedException('User denied access request. Provider returned a denied token: ' . htmlentities($denied));
+            throw new AuthorizationDeniedException('User denied access request. Provider returned a denied token: '.
+                                                   htmlentities($denied));
         }
 
         if ($oauth_problem) {
-            throw new InvalidOauthTokenException('Provider returned an invalid oauth_token. oauth_problem: ' . htmlentities($oauth_problem));
+            throw new InvalidOauthTokenException('Provider returned an invalid oauth_token. oauth_problem: '.
+                                                 htmlentities($oauth_problem));
         }
 
-        if (! $oauth_token) {
+        if (!$oauth_token) {
             throw new InvalidOauthTokenException('Expecting a non-null oauth_token to continue the authorization flow.');
         }
 
@@ -233,43 +238,43 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Build Authorization URL for Authorization Request
-    *
-    * @param array $parameters
-    *
-    * @return string
-    */
+     * Build Authorization URL for Authorization Request
+     *
+     * @param array $parameters
+     *
+     * @return string
+     */
     protected function getAuthorizeUrl($parameters = [])
     {
         $defaults = [
             'oauth_token' => $this->token('request_token')
         ];
 
-        $parameters = array_replace($defaults, (array) $parameters);
+        $parameters = array_replace($defaults, (array)$parameters);
 
-        return $this->authorizeUrl . '?' . http_build_query($parameters, '', '&');
+        return $this->authorizeUrl.'?'.http_build_query($parameters, '', '&');
     }
 
     /**
-    * Unauthorized Request Token
-    *
-    * OAuth Core: The Consumer obtains an unauthorized Request Token by asking the Service Provider
-    * to issue a Token. The Request Token's sole purpose is to receive User approval and can only
-    * be used to obtain an Access Token.
-    *
-    * http://oauth.net/core/1.0/#auth_step1
-    * 6.1.1. Consumer Obtains a Request Token
-    *
-    * @return string Raw Provider API response
-    */
+     * Unauthorized Request Token
+     *
+     * OAuth Core: The Consumer obtains an unauthorized Request Token by asking the Service Provider
+     * to issue a Token. The Request Token's sole purpose is to receive User approval and can only
+     * be used to obtain an Access Token.
+     *
+     * http://oauth.net/core/1.0/#auth_step1
+     * 6.1.1. Consumer Obtains a Request Token
+     *
+     * @return string Raw Provider API response
+     */
     protected function requestAuthToken()
     {
         /**
-        * OAuth Core 1.0 Revision A: oauth_callback: An absolute URL to which the Service Provider will redirect
-        * the User back when the Obtaining User Authorization step is completed.
-        *
-        * http://oauth.net/core/1.0a/#auth_step1
-        */
+         * OAuth Core 1.0 Revision A: oauth_callback: An absolute URL to which the Service Provider will redirect
+         * the User back when the Obtaining User Authorization step is completed.
+         *
+         * http://oauth.net/core/1.0a/#auth_step1
+         */
         if ('1.0a' == $this->oauth1Version) {
             $this->requestTokenParameters['oauth_callback'] = $this->endpoint;
         }
@@ -285,50 +290,50 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Validate Unauthorized Request Token Response
-    *
-    * OAuth Core: The Service Provider verifies the signature and Consumer Key. If successful,
-    * it generates a Request Token and Token Secret and returns them to the Consumer in the HTTP
-    * response body.
-    *
-    * http://oauth.net/core/1.0/#auth_step1
-    * 6.1.2. Service Provider Issues an Unauthorized Request Token
-    *
-    * @param string $response
-    *
-    * @return \Hybridauth\Data\Collection
-    * @throws InvalidOauthTokenException
-    */
+     * Validate Unauthorized Request Token Response
+     *
+     * OAuth Core: The Service Provider verifies the signature and Consumer Key. If successful,
+     * it generates a Request Token and Token Secret and returns them to the Consumer in the HTTP
+     * response body.
+     *
+     * http://oauth.net/core/1.0/#auth_step1
+     * 6.1.2. Service Provider Issues an Unauthorized Request Token
+     *
+     * @param string $response
+     *
+     * @return \Hybridauth\Data\Collection
+     * @throws InvalidOauthTokenException
+     */
     protected function validateAuthTokenRequest($response)
     {
         /**
-        * The response contains the following parameters:
-        *
-        *    - oauth_token               The Request Token.
-        *    - oauth_token_secret        The Token Secret.
-        *    - oauth_callback_confirmed  MUST be present and set to true.
-        *
-        * http://oauth.net/core/1.0/#auth_step1
-        * 6.1.2. Service Provider Issues an Unauthorized Request Token
-        *
-        * Example of a successful response:
-        *
-        *  HTTP/1.1 200 OK
-        *  Content-Type: text/html; charset=utf-8
-        *  Cache-Control: no-store
-        *  Pragma: no-cache
-        *
-        *  oauth_token=80359084-clg1DEtxQF3wstTcyUdHF3wsdHM&oauth_token_secret=OIF07hPmJB:P
-        *  6qiHTi1znz6qiH3tTcyUdHnz6qiH3tTcyUdH3xW3wsDvV08e&example_parameter=example_value
-        *
-        * OAuthUtil::parse_parameters will attempt to decode the raw response into an array.
-        */
+         * The response contains the following parameters:
+         *
+         *    - oauth_token               The Request Token.
+         *    - oauth_token_secret        The Token Secret.
+         *    - oauth_callback_confirmed  MUST be present and set to true.
+         *
+         * http://oauth.net/core/1.0/#auth_step1
+         * 6.1.2. Service Provider Issues an Unauthorized Request Token
+         *
+         * Example of a successful response:
+         *
+         *  HTTP/1.1 200 OK
+         *  Content-Type: text/html; charset=utf-8
+         *  Cache-Control: no-store
+         *  Pragma: no-cache
+         *
+         *  oauth_token=80359084-clg1DEtxQF3wstTcyUdHF3wsdHM&oauth_token_secret=OIF07hPmJB:P
+         *  6qiHTi1znz6qiH3tTcyUdHnz6qiH3tTcyUdH3xW3wsDvV08e&example_parameter=example_value
+         *
+         * OAuthUtil::parse_parameters will attempt to decode the raw response into an array.
+         */
         $tokens = OAuthUtil::parse_parameters($response);
 
         $collection = new Data\Collection($tokens);
 
-        if (! $collection->exists('oauth_token')) {
-            throw new InvalidOauthTokenException('Provider returned an invalid access_token: ' . htmlentities($response));
+        if (!$collection->exists('oauth_token')) {
+            throw new InvalidOauthTokenException('Provider returned an invalid access_token: '.htmlentities($response));
         }
 
         $this->consumerToken = new OAuthConsumer($tokens['oauth_token'], $tokens['oauth_token_secret']);
@@ -340,28 +345,28 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Requests an Access Token
-    *
-    * OAuth Core: The Request Token and Token Secret MUST be exchanged for an Access Token and Token Secret.
-    *
-    * http://oauth.net/core/1.0a/#auth_step3
-    * 6.3.1. Consumer Requests an Access Token
-    *
-    * @param string $oauth_token
-    * @param string $oauth_verifier
-    *
-    * @return string Raw Provider API response
-    */
+     * Requests an Access Token
+     *
+     * OAuth Core: The Request Token and Token Secret MUST be exchanged for an Access Token and Token Secret.
+     *
+     * http://oauth.net/core/1.0a/#auth_step3
+     * 6.3.1. Consumer Requests an Access Token
+     *
+     * @param string $oauth_token
+     * @param string $oauth_verifier
+     *
+     * @return string Raw Provider API response
+     */
     protected function exchangeAuthTokenForAccessToken($oauth_token, $oauth_verifier = '')
     {
         $this->tokenExchangeParameters['oauth_token'] = $oauth_token;
 
         /**
-        * OAuth Core 1.0 Revision A: oauth_verifier: The verification code received from the Service Provider
-        * in the "Service Provider Directs the User Back to the Consumer" step.
-        *
-        * http://oauth.net/core/1.0a/#auth_step3
-        */
+         * OAuth Core 1.0 Revision A: oauth_verifier: The verification code received from the Service Provider
+         * in the "Service Provider Directs the User Back to the Consumer" step.
+         *
+         * http://oauth.net/core/1.0a/#auth_step3
+         */
         if ('1.0a' == $this->oauth1Version) {
             $this->tokenExchangeParameters['oauth_verifier'] = $oauth_verifier;
         }
@@ -377,52 +382,54 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Validate Access Token Response
-    *
-    * OAuth Core: If successful, the Service Provider generates an Access Token and Token Secret and returns
-    * them in the HTTP response body.
-    *
-    * The Access Token and Token Secret are stored by the Consumer and used when signing Protected Resources requests.
-    *
-    * http://oauth.net/core/1.0a/#auth_step3
-    * 6.3.2. Service Provider Grants an Access Token
-    *
-    * @param string $response
-    *
-    * @return \Hybridauth\Data\Collection
-    * @throws InvalidAccessTokenException
-    */
+     * Validate Access Token Response
+     *
+     * OAuth Core: If successful, the Service Provider generates an Access Token and Token Secret and returns
+     * them in the HTTP response body.
+     *
+     * The Access Token and Token Secret are stored by the Consumer and used when signing Protected Resources requests.
+     *
+     * http://oauth.net/core/1.0a/#auth_step3
+     * 6.3.2. Service Provider Grants an Access Token
+     *
+     * @param string $response
+     *
+     * @return \Hybridauth\Data\Collection
+     * @throws InvalidAccessTokenException
+     */
     protected function validateAccessTokenExchange($response)
     {
         /**
-        * The response contains the following parameters:
-        *
-        *    - oauth_token         The Access Token.
-        *    - oauth_token_secret  The Token Secret.
-        *
-        * http://oauth.net/core/1.0/#auth_step3
-        * 6.3.2. Service Provider Grants an Access Token
-        *
-        * Example of a successful response:
-        *
-        *  HTTP/1.1 200 OK
-        *  Content-Type: text/html; charset=utf-8
-        *  Cache-Control: no-store
-        *  Pragma: no-cache
-        *
-        *  oauth_token=sHeLU7Far428zj8PzlWR75&oauth_token_secret=fXb30rzoG&oauth_callback_confirmed=true
-        *
-        * OAuthUtil::parse_parameters will attempt to decode the raw response into an array.
-        */
+         * The response contains the following parameters:
+         *
+         *    - oauth_token         The Access Token.
+         *    - oauth_token_secret  The Token Secret.
+         *
+         * http://oauth.net/core/1.0/#auth_step3
+         * 6.3.2. Service Provider Grants an Access Token
+         *
+         * Example of a successful response:
+         *
+         *  HTTP/1.1 200 OK
+         *  Content-Type: text/html; charset=utf-8
+         *  Cache-Control: no-store
+         *  Pragma: no-cache
+         *
+         *  oauth_token=sHeLU7Far428zj8PzlWR75&oauth_token_secret=fXb30rzoG&oauth_callback_confirmed=true
+         *
+         * OAuthUtil::parse_parameters will attempt to decode the raw response into an array.
+         */
         $tokens = OAuthUtil::parse_parameters($response);
 
         $collection = new Data\Collection($tokens);
 
-        if (! $collection->exists('oauth_token')) {
-            throw new InvalidAccessTokenException('Provider returned an invalid access_token: ' . htmlentities($response));
+        if (!$collection->exists('oauth_token')) {
+            throw new InvalidAccessTokenException('Provider returned an invalid access_token: '.
+                                                  htmlentities($response));
         }
 
-        $this->consumerToken = new OAuthConsumer($collection->get('oauth_token'), $collection->get('oauth_token_secret'));
+        $this->consumerToken =
+            new OAuthConsumer($collection->get('oauth_token'), $collection->get('oauth_token_secret'));
 
         $this->token('access_token', $collection->get('oauth_token'));
         $this->token('access_token_secret', $collection->get('oauth_token_secret'));
@@ -434,27 +441,27 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Send a signed request to provider API
-    *
-    * Note: Since the specifics of error responses is beyond the scope of RFC6749 and OAuth specifications,
-    * Hybridauth will consider any HTTP status code that is different than '200 OK' as an ERROR.
-    *
-    * @param string $url
-    * @param string $method
-    * @param array  $parameters
-    * @param array  $headers
-    *
-    * @return object
-    */
+     * Send a signed request to provider API
+     *
+     * Note: Since the specifics of error responses is beyond the scope of RFC6749 and OAuth specifications,
+     * Hybridauth will consider any HTTP status code that is different than '200 OK' as an ERROR.
+     *
+     * @param string $url
+     * @param string $method
+     * @param array  $parameters
+     * @param array  $headers
+     *
+     * @return object
+     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
-            $url = $this->apiBaseUrl . $url;
+            $url = $this->apiBaseUrl.$url;
         }
 
-        $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
+        $parameters = array_replace($this->apiRequestParameters, (array)$parameters);
 
-        $headers = array_replace($this->apiRequestHeaders, (array) $headers);
+        $headers = array_replace($this->apiRequestHeaders, (array)$headers);
 
         $response = $this->oauthRequest($url, $method, $parameters, $headers);
 
@@ -464,27 +471,28 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Setup and Send a Signed Oauth Request
-    *
-    * This method uses OAuth Library.
-    *
-    * @param string $uri
-    * @param string $method
-    * @param array  $parameters
-    * @param array  $headers
-    *
-    * @return string Raw Provider API response
-    */
+     * Setup and Send a Signed Oauth Request
+     *
+     * This method uses OAuth Library.
+     *
+     * @param string $uri
+     * @param string $method
+     * @param array  $parameters
+     * @param array  $headers
+     *
+     * @return string Raw Provider API response
+     */
     protected function oauthRequest($uri, $method = 'GET', $parameters = [], $headers = [])
     {
-        $request = OAuthRequest::from_consumer_and_token($this->consumerKey, $this->consumerToken, $method, $uri, $parameters);
+        $request =
+            OAuthRequest::from_consumer_and_token($this->consumerKey, $this->consumerToken, $method, $uri, $parameters);
 
         $request->sign_request($this->sha1Method, $this->consumerKey, $this->consumerToken);
 
         $uri        = $request->get_normalized_http_url();
         $parameters = $request->parameters;
-        $headers    = array_replace($request->to_header(), (array) $headers);
-        
+        $headers    = array_replace($request->to_header(), (array)$headers);
+
         $response = $this->httpClient->request(
             $uri,
             $method,

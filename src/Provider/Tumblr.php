@@ -15,35 +15,35 @@ use Hybridauth\User;
 final class Tumblr extends OAuth1
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'http://api.tumblr.com/v2/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'http://www.tumblr.com/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $requestTokenUrl = 'http://www.tumblr.com/oauth/request_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'http://www.tumblr.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user/info');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('response')) {
+        if (!$data->exists('response')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -71,13 +71,13 @@ final class Tumblr extends OAuth1
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function setUserStatus($status)
     {
-        $status = is_string($status) ? [ 'type' => 'text', 'body' => $status ] : $status;
+        $status = is_string($status) ? ['type' => 'text', 'body' => $status] : $status;
 
-        $response = $this->apiRequest('blog/' . $this->token('primary_blog') . '/post', 'POST', $status);
+        $response = $this->apiRequest('blog/'.$this->token('primary_blog').'/post', 'POST', $status);
 
         return $response;
     }

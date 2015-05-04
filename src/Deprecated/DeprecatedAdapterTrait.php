@@ -15,20 +15,20 @@ namespace Hybridauth\Deprecated;
 trait DeprecatedAdapterTrait
 {
     /**
-    * Alias for disconnect(). kept for backward compatibility.
-    *
-    * @deprecated
-    */
+     * Alias for disconnect(). kept for backward compatibility.
+     *
+     * @deprecated
+     */
     public function logout()
     {
         $this->disconnect();
     }
 
     /**
-    * Alias for isAuthorized(). kept for backward compatibility.
-    *
-    * @deprecated
-    */
+     * Alias for isAuthorized(). kept for backward compatibility.
+     *
+     * @deprecated
+     */
     public function isUserConnected()
     {
         return $this->isAuthorized();

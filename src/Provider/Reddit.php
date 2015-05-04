@@ -21,28 +21,28 @@ use Hybridauth\User;
 final class Reddit extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = "identity";
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://oauth.reddit.com/api/v1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://ssl.reddit.com/api/v1/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://ssl.reddit.com/api/v1/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -54,38 +54,38 @@ final class Reddit extends OAuth2
         ];
 
         $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId .  ':' . $this->clientSecret)
+            'Authorization' => 'Basic '.base64_encode($this->clientId.':'.$this->clientSecret)
         ];
 
         $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->token('access_token')
+            'Authorization' => 'Bearer '.$this->token('access_token')
         ];
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function getAuthorizeUrl($parameters = [])
     {
         $addtionals = [
             'duration' => 'temporary'
         ];
 
-        $parameters = array_replace($parameters, (array) $addtionals);
+        $parameters = array_replace($parameters, (array)$addtionals);
 
         return parent::getAuthorizeUrl($parameters);
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('me.json');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -93,7 +93,7 @@ final class Reddit extends OAuth2
 
         $userProfile->identifier  = $data->get('id');
         $userProfile->displayName = $data->get('name');
-        $userProfile->profileURL  = 'https://www.reddit.com/user/' . $data->get('name') . '/';
+        $userProfile->profileURL  = 'https://www.reddit.com/user/'.$data->get('name').'/';
 
         return $userProfile;
     }

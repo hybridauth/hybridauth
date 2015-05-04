@@ -10,6 +10,6 @@ namespace Hybridauth\Exception;
 /**
  *
  */
-class UnsupportedFeatureException  extends BadMethodCallException implements ExceptionInterface
+class UnsupportedFeatureException extends BadMethodCallException implements ExceptionInterface
 {
 }

@@ -15,12 +15,12 @@ namespace Hybridauth\Deprecated;
 trait DeprecatedStorageTrait
 {
     /**
-    * Get the storage session data into an array
-    *
-    * @return string|null
-    *
-    * @deprecated kept for backward compatibility sake
-    */
+     * Get the storage session data into an array
+     *
+     * @return string|null
+     *
+     * @deprecated kept for backward compatibility sake
+     */
     public function getSessionData()
     {
         if (isset($_SESSION["HA::STORE"])) {
@@ -29,12 +29,12 @@ trait DeprecatedStorageTrait
     }
 
     /**
-    * Restore the storage back into session from an array
-    *
-    * @param string $sessiondata
-    *
-    * @deprecated kept for backward compatibility sake
-    */
+     * Restore the storage back into session from an array
+     *
+     * @param string $sessiondata
+     *
+     * @deprecated kept for backward compatibility sake
+     */
     public function restoreSessionData($sessiondata)
     {
         $_SESSION["HA::STORE"] = unserialize($sessiondata);

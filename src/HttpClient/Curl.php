@@ -13,14 +13,14 @@ namespace Hybridauth\HttpClient;
 class Curl implements HttpClientInterface
 {
     /**
-    * Default curl options
-    *
-    * These defaults options can be overwritten when sending requests.
-    *
-    * See setCurlOptions()
-    *
-    * @var array
-    */
+     * Default curl options
+     *
+     * These defaults options can be overwritten when sending requests.
+     *
+     * See setCurlOptions()
+     *
+     * @var array
+     */
     protected $curlOptions = [
         CURLOPT_TIMEOUT        => 30,
         CURLOPT_CONNECTTIMEOUT => 30,
@@ -34,19 +34,19 @@ class Curl implements HttpClientInterface
     ];
 
     /**
-    * Method request() arguments
-    *
-    * This is used for debugging.
-    *
-    * @var array
-    */
+     * Method request() arguments
+     *
+     * This is used for debugging.
+     *
+     * @var array
+     */
     protected $requestArguments = [];
 
     /**
-    * Default request headers
-    *
-    * @var array
-    */
+     * Default request headers
+     *
+     * @var array
+     */
     protected $requestHeader = [
         'Accept'        => '*/*',
         'Cache-Control' => 'max-age=0',
@@ -56,53 +56,54 @@ class Curl implements HttpClientInterface
     ];
 
     /**
-    * Raw response returned by server
-    *
-    * @var string
-    */
+     * Raw response returned by server
+     *
+     * @var string
+     */
     protected $responseBody = '';
 
     /**
-    * Headers returned in the response
-    *
-    * @var array
-    */
+     * Headers returned in the response
+     *
+     * @var array
+     */
     protected $responseHeader = [];
 
     /**
-    * Response HTTP status code
-    *
-    * @var integer
-    */
+     * Response HTTP status code
+     *
+     * @var integer
+     */
     protected $responseHttpCode = 0;
 
     /**
-    * Last curl error number
-    *
-    * @var mixed
-    */
+     * Last curl error number
+     *
+     * @var mixed
+     */
     protected $responseClientError = null;
 
     /**
-    * Information about the last transfer
-    *
-    * @var array
-    */
+     * Information about the last transfer
+     *
+     * @var array
+     */
     protected $responseClientInfo = [];
 
     /**
-    * Hybridauth logger instance
-    *
-    * @var object
-    */
+     * Hybridauth logger instance
+     *
+     * @var object
+     */
     protected $logger = null;
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function request($uri, $method = 'GET', $parameters = [], $headers = [])
     {
-        $this->requestArguments = [ 'uri' => $uri, 'method' => $method, 'parameters' => $parameters, 'headers' => $headers ];
+        $this->requestArguments =
+            ['uri' => $uri, 'method' => $method, 'parameters' => $parameters, 'headers' => $headers];
 
         $curl = curl_init();
 
@@ -110,7 +111,7 @@ class Curl implements HttpClientInterface
             unset($this->curlOptions[CURLOPT_POST]);
             unset($this->curlOptions[CURLOPT_POSTFIELDS]);
 
-            $uri = $uri . (strpos($uri, '?') ? '&' : '?') . http_build_query($parameters);
+            $uri = $uri.(strpos($uri, '?') ? '&' : '?').http_build_query($parameters);
         }
 
         if ('POST' == $method) {
@@ -124,7 +125,7 @@ class Curl implements HttpClientInterface
 
         $this->curlOptions[CURLOPT_URL]            = $uri;
         $this->curlOptions[CURLOPT_HTTPHEADER]     = $this->prepareRequestHeaders();
-        $this->curlOptions[CURLOPT_HEADERFUNCTION] = [ $this, 'fetchResponseHeader' ];
+        $this->curlOptions[CURLOPT_HEADERFUNCTION] = [$this, 'fetchResponseHeader'];
 
         foreach ($this->curlOptions as $opt => $value) {
             curl_setopt($curl, $opt, $value);
@@ -141,7 +142,8 @@ class Curl implements HttpClientInterface
             $this->logger->debug("HttpClient\Curl::request( $uri, $method ), response:", $this->getResponse());
 
             if (false === $response) {
-                $this->logger->error("HttpClient\Curl::request( $uri, $method ), curl_exec error: ", $this->responseClientError);
+                $this->logger->error("HttpClient\Curl::request( $uri, $method ), curl_exec error: ",
+                    $this->responseClientError);
             }
         }
 
@@ -151,8 +153,8 @@ class Curl implements HttpClientInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponse()
     {
         $curlOptions = $this->curlOptions;
@@ -165,8 +167,8 @@ class Curl implements HttpClientInterface
                 'headers' => $this->getResponseHeader(),
                 'body'    => $this->getResponseBody(),
             ],
-            'request' => $this->getRequestArguments(),
-            'client' => [
+            'request'  => $this->getRequestArguments(),
+            'client'   => [
                 'error' => $this->getResponseClientError(),
                 'info'  => $this->getResponseClientInfo(),
                 'opts'  => $curlOptions,
@@ -175,113 +177,113 @@ class Curl implements HttpClientInterface
     }
 
     /**
-    * Reset curl options
-    *
-    * @param array $curlOptions
-    */
+     * Reset curl options
+     *
+     * @param array $curlOptions
+     */
     public function setCurlOptions($curlOptions)
     {
         foreach ($curlOptions as $opt => $value) {
-            $this->curlOptions[ $opt ] = $value;
+            $this->curlOptions[$opt] = $value;
         }
     }
 
     /**
-    * Set logger instance
-    *
-    * @param object $logger
-    */
+     * Set logger instance
+     *
+     * @param object $logger
+     */
     public function setLogger($logger)
     {
         $this->logger = $logger;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseBody()
     {
         return $this->responseBody;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseHeader()
     {
         return $this->responseHeader;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseHttpCode()
     {
         return $this->responseHttpCode;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseClientError()
     {
         return $this->responseClientError;
     }
 
     /**
-    * @return array
-    */
+     * @return array
+     */
     protected function getResponseClientInfo()
     {
         return $this->responseClientInfo;
     }
 
     /**
-    * Returns method request() arguments
-    *
-    * This is used for debugging.
-    *
-    * @return array
-    */
+     * Returns method request() arguments
+     *
+     * This is used for debugging.
+     *
+     * @return array
+     */
     protected function getRequestArguments()
     {
         return $this->requestArguments;
     }
- 
+
     /**
-    * Fetch server response headers
-    *
-    * @param mixed  $curl
-    * @param string $header
-    *
-    * @return integer
-    */
+     * Fetch server response headers
+     *
+     * @param mixed  $curl
+     * @param string $header
+     *
+     * @return integer
+     */
     protected function fetchResponseHeader($curl, $header)
     {
         $pos = strpos($header, ':');
 
-        if (! empty($pos)) {
-            $key   = str_replace('-', '_', strtolower(substr($header, 0, $pos)));
+        if (!empty($pos)) {
+            $key = str_replace('-', '_', strtolower(substr($header, 0, $pos)));
 
             $value = trim(substr($header, $pos + 2));
 
-            $this->responseHeader[ $key ] = $value;
+            $this->responseHeader[$key] = $value;
         }
 
         return strlen($header);
     }
 
     /**
-    * Convert request headers to the expect curl format
-    *
-    * @return array
-    */
+     * Convert request headers to the expect curl format
+     *
+     * @return array
+     */
     protected function prepareRequestHeaders()
     {
         $headers = [];
 
         foreach ($this->requestHeader as $header => $value) {
-            $headers[] = trim($header) .': '. trim($value);
+            $headers[] = trim($header).': '.trim($value);
         }
 
         return $headers;

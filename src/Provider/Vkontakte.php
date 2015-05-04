@@ -15,28 +15,28 @@ use Hybridauth\User;
 /**
  *
  */
-final class Vkontakte  extends OAuth2
+final class Vkontakte extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.vk.com/method/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'http://api.vk.com/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.vk.com/oauth/token';
 
     /**
-    * Need to store user_id as token for later use
-    *
-    * {@inheritdoc}
-    */
+     * Need to store user_id as token for later use
+     *
+     * {@inheritdoc}
+     */
     protected function validateAccessTokenExchange($response)
     {
         $data = parent::validateAccessTokenExchange($response);
@@ -46,8 +46,8 @@ final class Vkontakte  extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $parameters = [
@@ -59,7 +59,7 @@ final class Vkontakte  extends OAuth2
 
         $data = new Data\Collection($response->response[0]);
 
-        if (! $data->exists('uid')) {
+        if (!$data->exists('uid')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -72,12 +72,16 @@ final class Vkontakte  extends OAuth2
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('photo_max_orig');
 
-        $userProfile->profileURL  = $data->get('screen_name') ? 'http://vk.com/' . $data->get('screen_name') : '';
+        $userProfile->profileURL = $data->get('screen_name') ? 'http://vk.com/'.$data->get('screen_name') : '';
 
         if ($data->exists('sex')) {
             switch ($data->get('sex')) {
-                case 1: $userProfile->gender = 'female'; break;
-                case 2: $userProfile->gender =   'male'; break;
+                case 1:
+                    $userProfile->gender = 'female';
+                    break;
+                case 2:
+                    $userProfile->gender = 'male';
+                    break;
             }
         }
 
