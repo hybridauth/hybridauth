@@ -15,40 +15,40 @@ namespace Hybridauth\Deprecated;
 trait DeprecatedHybridauthTrait
 {
     /**
-    * Check if the current user is connected to a given provider
-    *
-    * @deprecated
-    */
+     * Check if the current user is connected to a given provider
+     *
+     * @deprecated
+     */
     public static function isConnectedWith($providerId)
     {
         return $this->getAdapter($providerId)->isAuthorized();
     }
 
     /**
-    * A generic function to logout all connected provider at once
-    *
-    * @deprecated
-    */
+     * A generic function to logout all connected provider at once
+     *
+     * @deprecated
+     */
     public static function logoutAllProviders()
     {
         $this->storage->clear();
     }
 
     /**
-    *  Get the storage session data into an array
-    *
-    * @deprecated
-    */
+     *  Get the storage session data into an array
+     *
+     * @deprecated
+     */
     public function getSessionData()
     {
         return $this->storage->getSessionData();
     }
 
     /**
-    * Restore the storage back into session from an array
-    *
-    * @deprecated
-    */
+     * Restore the storage back into session from an array
+     *
+     * @deprecated
+     */
     public function restoreSessionData($sessiondata)
     {
         $this->storage->restoreSessionData($sessiondata);

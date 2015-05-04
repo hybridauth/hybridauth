@@ -12,11 +12,11 @@
 class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 {
     public $http_code = 0;
-    public $http_info = array();
+    public $http_info = [];
 
     /**
-    * IDp wrappers initializer
-    */
+     * IDp wrappers initializer
+     */
     public function initialize()
     {
         parent::initialize();
@@ -27,18 +27,18 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
         $this->api->token_url       = "http://api.odnoklassniki.ru/oauth/token.do";
         $this->api->sign_token_name = "access_token";
     }
-  
-    private function request($url, $params=array(), $type="GET")
+
+    private function request($url, $params = [], $type = "GET")
     {
         Hybrid_Logger::info("Enter OAuth2Client::request( $url )");
         Hybrid_Logger::debug("OAuth2Client::request(). dump request params: ", serialize($params));
 
         if ($type == "GET") {
-            $url = $url . (strpos($url, '?') ? '&' : '?') . http_build_query($params, '', '&');
+            $url = $url.(strpos($url, '?') ? '&' : '?').http_build_query($params, '', '&');
         }
 
-        $this->http_info = array();
-        $ch = curl_init();
+        $this->http_info = [];
+        $ch              = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -76,7 +76,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 
         parse_str($result, $output);
 
-        if (! is_array($output)) {
+        if (!is_array($output)) {
             return $result;
         }
 
@@ -88,35 +88,37 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 
         return $result;
     }
-  
+
     public function authodnoklass($code)
     {
-        $params = array(
+        $params = [
             "client_id"     => $this->api->client_id,
             "client_secret" => $this->api->client_secret,
             "grant_type"    => "authorization_code",
             "redirect_uri"  => $this->api->redirect_uri,
             "code"          => $code
-        );
-    
-        $response = $this->request($this->api->token_url, http_build_query($params, '', '&'), $this->api->curl_authenticate_method);
-        
+        ];
+
+        $response =
+            $this->request($this->api->token_url, http_build_query($params, '', '&'),
+                $this->api->curl_authenticate_method);
+
         $response = $this->parseRequestResult($response);
 
-        if (! $response || ! isset($response->access_token)) {
-            throw new Exception("The Authorization Service has return: " . $response->error);
+        if (!$response || !isset($response->access_token)) {
+            throw new Exception("The Authorization Service has return: ".$response->error);
         }
 
         if (isset($response->access_token)) {
-            $this->api->access_token            = $response->access_token;
+            $this->api->access_token = $response->access_token;
         }
         if (isset($response->refresh_token)) {
-            $this->api->refresh_token           = $response->refresh_token;
+            $this->api->refresh_token = $response->refresh_token;
         }
         if (isset($response->expires_in)) {
             $this->api->access_token_expires_in = $response->expires_in;
         }
-        
+
         // calculate when the access token expire
         // At this moment Odnoklassniki does not return expire time in response.
         // 30 minutes expire time staten in dev docs http://apiok.ru/wiki/pages/viewpage.action?pageId=42476652
@@ -128,10 +130,10 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 
         return $response;
     }
-  
+
     public function loginFinish()
     {
-        $error = (array_key_exists('error', $_REQUEST))?$_REQUEST['error']:"";
+        $error = (array_key_exists('error', $_REQUEST)) ? $_REQUEST['error'] : "";
 
         // check for errors
         if ($error) {
@@ -139,7 +141,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
         }
 
         // try to authenticate user
-        $code = (array_key_exists('code', $_REQUEST))?$_REQUEST['code']:"";
+        $code = (array_key_exists('code', $_REQUEST)) ? $_REQUEST['code'] : "";
 
         try {
             $this->authodnoklass($code);
@@ -148,7 +150,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
         }
 
         // check if authenticated
-        if (! $this->api->access_token) {
+        if (!$this->api->access_token) {
             throw new Exception("Authentication failed! {$this->providerId} returned an invalid access token.", 5);
         }
 
@@ -163,33 +165,38 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
     }
 
     /**
-    * load the user profile from the IDp api client
-    */
+     * load the user profile from the IDp api client
+     */
     public function getUserProfile()
     {
-        $sig = md5('application_key=' . $this->config['keys']['key'] . 'method=users.getCurrentUser' . md5($this->api->access_token . $this->api->client_secret));
-        $response = $this->api->api('?application_key=' . $this->config['keys']['key'] . '&method=users.getCurrentUser&sig=' .$sig);
-        if (! isset($response->uid)) {
+        $sig      =
+            md5('application_key='.
+                $this->config['keys']['key'].
+                'method=users.getCurrentUser'.
+                md5($this->api->access_token.$this->api->client_secret));
+        $response =
+            $this->api->api('?application_key='.$this->config['keys']['key'].'&method=users.getCurrentUser&sig='.$sig);
+        if (!isset($response->uid)) {
             throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
         }
 
-        $this->user->profile->identifier    = (property_exists($response, 'uid'))?$response->uid:"";
-        $this->user->profile->firstName     = (property_exists($response, 'first_name'))?$response->first_name:"";
-        $this->user->profile->lastName      = (property_exists($response, 'last_name'))?$response->last_name:"";
-        $this->user->profile->displayName   = (property_exists($response, 'name'))?$response->name:"";
-        $this->user->profile->photoURL      = (property_exists($response, 'pic_1'))?$response->pic_1:"";
-        $this->user->profile->photoBIG      = (property_exists($response, 'pic_2'))?$response->pic_2:"";
-        $this->user->profile->profileURL    = (property_exists($response, 'link'))?$response->link:"";
-        $this->user->profile->gender        = (property_exists($response, 'gender'))?$response->gender:"";
-        $this->user->profile->email         = (property_exists($response, 'email'))?$response->email:"";
-        $this->user->profile->emailVerified = (property_exists($response, 'email'))?$response->email:"";
+        $this->user->profile->identifier    = (property_exists($response, 'uid')) ? $response->uid : "";
+        $this->user->profile->firstName     = (property_exists($response, 'first_name')) ? $response->first_name : "";
+        $this->user->profile->lastName      = (property_exists($response, 'last_name')) ? $response->last_name : "";
+        $this->user->profile->displayName   = (property_exists($response, 'name')) ? $response->name : "";
+        $this->user->profile->photoURL      = (property_exists($response, 'pic_1')) ? $response->pic_1 : "";
+        $this->user->profile->photoBIG      = (property_exists($response, 'pic_2')) ? $response->pic_2 : "";
+        $this->user->profile->profileURL    = (property_exists($response, 'link')) ? $response->link : "";
+        $this->user->profile->gender        = (property_exists($response, 'gender')) ? $response->gender : "";
+        $this->user->profile->email         = (property_exists($response, 'email')) ? $response->email : "";
+        $this->user->profile->emailVerified = (property_exists($response, 'email')) ? $response->email : "";
 
         if (property_exists($response, 'birthday')) {
             list($birthday_year, $birthday_month, $birthday_day) = explode('-', $response->birthday);
 
-            $this->user->profile->birthDay   = (int) $birthday_day;
-            $this->user->profile->birthMonth = (int) $birthday_month;
-            $this->user->profile->birthYear  = (int) $birthday_year;
+            $this->user->profile->birthDay   = (int)$birthday_day;
+            $this->user->profile->birthMonth = (int)$birthday_month;
+            $this->user->profile->birthYear  = (int)$birthday_year;
         }
 
         return $this->user->profile;

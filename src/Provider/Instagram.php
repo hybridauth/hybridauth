@@ -18,35 +18,35 @@ use Hybridauth\User;
 final class Instagram extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = 'basic';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.instagram.com/v1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://api.instagram.com/oauth/authorize/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.instagram.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users/self/');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 

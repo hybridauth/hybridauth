@@ -6,13 +6,13 @@
 */
 
 /**
-* Hybrid_Providers_Goodreads
-*/
+ * Hybrid_Providers_Goodreads
+ */
 class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
 {
     /**
-    * IDp wrappers initializer
-    */
+     * IDp wrappers initializer
+     */
     public function initialize()
     {
         parent::initialize();
@@ -28,12 +28,12 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
     }
 
     /**
-    * finish login step
-    */
+     * finish login step
+     */
     public function loginFinish()
     {
         // in case we get authorize=0
-        if (! isset($_REQUEST['oauth_token']) || (isset($_REQUEST['authorize']) && $_REQUEST['authorize'] == "0")) {
+        if (!isset($_REQUEST['oauth_token']) || (isset($_REQUEST['authorize']) && $_REQUEST['authorize'] == "0")) {
             throw new Exception("Authentication failed! The user denied your request.", 5);
         }
 
@@ -48,11 +48,12 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception("Authentication failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus($this->api->http_code), 5);
+            throw new Exception("Authentication failed! {$this->providerId} returned an error. ".
+                                $this->errorMessageByStatus($this->api->http_code), 5);
         }
 
         // we should have an access_token, or else, something has gone wrong
-        if (! isset($tokens["oauth_token"])) {
+        if (!isset($tokens["oauth_token"])) {
             throw new Exception("Authentication failed! {$this->providerId} returned an invalid access token.", 5);
         }
 
@@ -67,28 +68,29 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
         // set user as logged in to the current provider
         $this->setUserConnected();
     }
-    
+
     /**
-    * load the user profile from the IDp api client
-    */
+     * load the user profile from the IDp api client
+     */
     public function getUserProfile()
     {
         $response = $this->api->get('http://www.goodreads.com/api/auth_user');
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception("User profile request failed! {$this->providerId} returned an error: " . $this->errorMessageByStatus($this->api->http_code), 6);
+            throw new Exception("User profile request failed! {$this->providerId} returned an error: ".
+                                $this->errorMessageByStatus($this->api->http_code), 6);
         }
 
         // parse the response
         $response = @ new SimpleXMLElement($response);
 
-        $this->user->profile->identifier  = (string) $response->user['id'];
-        $this->user->profile->displayName = (string) $response->user->name;
-        $this->user->profile->profileURL  = (string) $response->user->link;
+        $this->user->profile->identifier  = (string)$response->user['id'];
+        $this->user->profile->displayName = (string)$response->user->name;
+        $this->user->profile->profileURL  = (string)$response->user->link;
 
         // try to grab more information about the user if possible
-        $response = $this->api->get('http://www.goodreads.com/user/show/' . $this->user->profile->identifier . '.xml');
+        $response = $this->api->get('http://www.goodreads.com/user/show/'.$this->user->profile->identifier.'.xml');
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
@@ -98,13 +100,13 @@ class Hybrid_Providers_Goodreads extends Hybrid_Provider_Model_OAuth1
         // parse the response
         $response = @ new SimpleXMLElement($response);
 
-        $this->user->profile->photoURL    = (string) $response->user->image_url;
-        $this->user->profile->webSiteURL  = (string) $response->user->website;
-        $this->user->profile->description = (string) $response->user->about;
-        $this->user->profile->country     = (string) $response->user->location;
-        $this->user->profile->gender      = (string) $response->user->gender;
-        $this->user->profile->age         = (string) $response->user->age;
-        
+        $this->user->profile->photoURL    = (string)$response->user->image_url;
+        $this->user->profile->webSiteURL  = (string)$response->user->website;
+        $this->user->profile->description = (string)$response->user->about;
+        $this->user->profile->country     = (string)$response->user->location;
+        $this->user->profile->gender      = (string)$response->user->gender;
+        $this->user->profile->age         = (string)$response->user->age;
+
         return $this->user->profile;
     }
 }

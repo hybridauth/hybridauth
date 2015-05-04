@@ -12,7 +12,7 @@ use Hybridauth\Adapter\OpenID;
 final class AOL extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'http://openid.aol.com/';
 }

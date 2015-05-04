@@ -33,8 +33,8 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
     }
 
     /**
-    * for Murmur we need to override loginBegin() as the auth url is: $tokens['xoauth_request_auth_url']
-    */
+     * for Murmur we need to override loginBegin() as the auth url is: $tokens['xoauth_request_auth_url']
+     */
     /*function loginBegin()
     {
         // Get a new request token
@@ -52,19 +52,23 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
     }*/
 
     /**
-    * load the user profile from the IDp api client
-    */
+     * load the user profile from the IDp api client
+     */
     public function getUserProfile()
     {
         $response = $this->api->get('account/verify_credentials.json');
-        
+
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception('User profile request failed! ' . $this->providerId . ' returned an error. ' . $this->errorMessageByStatus($this->api->http_code), 6);
+            throw new Exception('User profile request failed! '.
+                                $this->providerId.
+                                ' returned an error. '.
+                                $this->errorMessageByStatus($this->api->http_code), 6);
         }
 
-        if (! is_object($response) || ! isset($response->id)) {
-            throw new Exception('User profile request failed! ' . $this->providerId . ' api returned an invalid response.', 6);
+        if (!is_object($response) || !isset($response->id)) {
+            throw new Exception('User profile request failed! '.$this->providerId.' api returned an invalid response.',
+                6);
         }
 
         $this->user->profile->identifier  = @ $response->id;
@@ -72,7 +76,7 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
         $this->user->profile->description = @ $response->description;
         $this->user->profile->firstName   = @ $response->name;
         $this->user->profile->photoURL    = @ $response->profile_image_url;
-        $this->user->profile->profileURL  = 'http://murmur.tw/' . $response->screen_name;
+        $this->user->profile->profileURL  = 'http://murmur.tw/'.$response->screen_name;
         $this->user->profile->webSiteURL  = @ $response->url;
         $this->user->profile->region      = @ $response->location;
         $this->user->profile->city        = @ $response->location;
@@ -81,55 +85,61 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
 
         return $this->user->profile;
     }
-    
+
     /**
      * load the user contacts
      */
     public function getUserContacts()
     {
         $response = $this->api->get('statuses/friends.json');
-        
+
         if ($this->api->http_code != 200) {
-            throw new Exception('User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus($this->api->http_code));
+            throw new Exception('User contacts request failed! '.
+                                $this->providerId.
+                                ' returned an error: '.
+                                $this->errorMessageByStatus($this->api->http_code));
         }
 
         if (!$response) {
-            return array();
+            return [];
         }
-        
-        $contacts = array();
-        
+
+        $contacts = [];
+
         foreach ($response as $item) {
             $uc = new Hybrid_User_Contact();
 
-            $uc->identifier   = @ $item->id;
-            $uc->displayName  = @ $item->name;
-            $uc->profileURL   = 'http://murmur.tw/' . $response->screen_name;
-            $uc->photoURL     = @ $item->profile_image_url;
+            $uc->identifier  = @ $item->id;
+            $uc->displayName = @ $item->name;
+            $uc->profileURL  = 'http://murmur.tw/'.$response->screen_name;
+            $uc->photoURL    = @ $item->profile_image_url;
 
             $contacts[] = $uc;
         }
-        
+
         return $contacts;
     }
-    
+
     /**
      * update user status
      */
     public function setUserStatus($status)
     {
-        $parameters = array();
+        $parameters           = [];
         $parameters['status'] = $status;
 
         $response = $this->api->post('statuses/update.json', $parameters);
-        
+
         if ($this->api->http_code != 200) {
-            throw new Exception('Update user status failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus($this->api->http_code));
+            throw new Exception('Update user status failed! '.
+                                $this->providerId.
+                                ' returned an error: '.
+                                $this->errorMessageByStatus($this->api->http_code));
         }
-        
+
         return $response;
     }
-    
+
     /**
      * load the user latest activity
      *    - timeline : all the stream
@@ -142,49 +152,52 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
         } else {
             $url = 'statuses/friends.json';
         }
-        
+
         $response = $this->api->get($url);
-        
+
         if ($this->api->http_code != 200) {
-            throw new Exception('User activity stream request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus($this->api->http_code));
+            throw new Exception('User activity stream request failed! '.
+                                $this->providerId.
+                                ' returned an error: '.
+                                $this->errorMessageByStatus($this->api->http_code));
         }
-        
-        if (! $response) {
-            return array();
+
+        if (!$response) {
+            return [];
         }
-            
-        $activities = array();
-        
+
+        $activities = [];
+
         if ($stream == 'me') {
             foreach ($response as $item) {
-                $ua = new Hybrid_User_Activity();
-                $ua->id                 = @ $item->id;
-                $ua->date               = @ $item->timestamp;
-                $ua->text               = @ $item->text;
-                $ua->user->identifier   = @ $item->user->id;
-                $ua->user->displayName  = @ $item->user->name;
-                $ua->user->profileURL   = 'http://murmur.tw/' . $item->user->screen_name;
-                $ua->user->photoURL     = @ $item->user->profile_image_url;
-                
+                $ua                    = new Hybrid_User_Activity();
+                $ua->id                = @ $item->id;
+                $ua->date              = @ $item->timestamp;
+                $ua->text              = @ $item->text;
+                $ua->user->identifier  = @ $item->user->id;
+                $ua->user->displayName = @ $item->user->name;
+                $ua->user->profileURL  = 'http://murmur.tw/'.$item->user->screen_name;
+                $ua->user->photoURL    = @ $item->user->profile_image_url;
+
                 $activities[] = $ua;
             }
         } else {
             foreach ($response->news as $item) {
                 if ($item->content_type == 'blog') {
-                    $ua = new Hybrid_User_Activity();
-                    $ua->id                 = @ $item->status->id;
-                    $ua->date               = @ $item->status->public_at;
-                    $ua->text               = @ $item->status->text;
-                    $ua->user->identifier   = @ $item->id;
-                    $ua->user->displayName  = @ $item->name;
-                    $ua->user->profileURL   = 'http://murmur.tw/' . $item->screen_name;
-                    $ua->user->photoURL     = @ $item->profile_image_url;
-                    
+                    $ua                    = new Hybrid_User_Activity();
+                    $ua->id                = @ $item->status->id;
+                    $ua->date              = @ $item->status->public_at;
+                    $ua->text              = @ $item->status->text;
+                    $ua->user->identifier  = @ $item->id;
+                    $ua->user->displayName = @ $item->name;
+                    $ua->user->profileURL  = 'http://murmur.tw/'.$item->screen_name;
+                    $ua->user->photoURL    = @ $item->profile_image_url;
+
                     $activities[] = $ua;
                 }
             }
         }
-        
+
         return $activities;
     }
 }

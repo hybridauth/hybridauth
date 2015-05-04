@@ -8,9 +8,9 @@
 /**
  * Hybrid_Providers_QQ provider adapter based on OAuth2 protocol
  *
- * @version		0.5   QQ.php  add by 韦维 2014-09-27 16:48
- * @author		韦维<weivain@qq.com>www.weiva.com
- * @link		http://www.weiva.com
+ * @version        0.5   QQ.php  add by 韦维 2014-09-27 16:48
+ * @author         韦维<weivain@qq.com>www.weiva.com
+ * @link           http://www.weiva.com
  *
  * 本代码是在 hybridauth 项目中通过 OAuth2 实现腾讯 QQ 登录，方便在其他 php 项目中提高用户体
  * 验。在开发过程中，参考了 hybridauth 项目的其他模块、腾讯官方开发文档、AlloVince 开
@@ -34,8 +34,8 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
     public $scope = "get_user_info";//其他 aip 请参考官方开发手册
 
     /**
-    * IDp wrappers initializer
-    */
+     * IDp wrappers initializer
+     */
     public function initialize()
     {
         parent::initialize();
@@ -44,71 +44,69 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
         $this->api->authorize_url  = "https://graph.qq.com/oauth2.0/authorize";
         $this->api->token_url      = "https://graph.qq.com/oauth2.0/token";
         $this->api->token_info_url = "https://graph.qq.com/user/get_user_info";
-        
+
         // Override the redirect uri when it's set in the config parameters. This way we prevent
         // redirect uri mismatches when authenticating with Tencent.
-        if (isset($this->config['redirect_uri']) && ! empty($this->config['redirect_uri'])) {
+        if (isset($this->config['redirect_uri']) && !empty($this->config['redirect_uri'])) {
             $this->api->redirect_uri = $this->config['redirect_uri'];
         }
     }
 
-      /**
-       * 开始登录步骤
-       */
-      public function loginBegin()
-      {
-          $extra_params = array();
-          if (!isset($this->state)) {
-              $this->state = md5(uniqid(rand(), true));
-          }
-          $session_var_name = 'state_' . $this->api->client_id;
-          $_SESSION[$session_var_name] = $this->state;
-          $extra_params = array();
-          $extra_params['state'] = $this->state;
-          $extra_params['response_type'] = "code";
+    /**
+     * 开始登录步骤
+     */
+    public function loginBegin()
+    {
+        $extra_params = [];
+        if (!isset($this->state)) {
+            $this->state = md5(uniqid(rand(), true));
+        }
+        $session_var_name              = 'state_'.$this->api->client_id;
+        $_SESSION[$session_var_name]   = $this->state;
+        $extra_params                  = [];
+        $extra_params['state']         = $this->state;
+        $extra_params['response_type'] = "code";
 
-          if (isset($this->scope)) {
-              $extra_params['scope'] = $this->scope;
-          }
+        if (isset($this->scope)) {
+            $extra_params['scope'] = $this->scope;
+        }
 
-          Hybrid_Auth::redirect($this->api->authorizeUrl($extra_params));
-      }
-
-
-      /**
-       * set proper headers before posting
-       * 设置主机头信息
-       */
-      public function post($url)
-      {
-          $this->api->curl_header =
-          array(
-            'Authorization: Bearer ' . $this->api->access_token,
-            'Content-Type: application/x-www-form-urlencoded',
-            'Accept: application/json',
-            );
-          $response = $this->api->post($url);
-          return $response;
-      }
+        Hybrid_Auth::redirect($this->api->authorizeUrl($extra_params));
+    }
 
     /**
-    * load the user profile from the IDp api client
-    * 取得用户信息
-    */
+     * set proper headers before posting
+     * 设置主机头信息
+     */
+    public function post($url)
+    {
+        $this->api->curl_header =
+            [
+                'Authorization: Bearer '.$this->api->access_token,
+                'Content-Type: application/x-www-form-urlencoded',
+                'Accept: application/json',
+            ];
+        $response               = $this->api->post($url);
+        return $response;
+    }
+
+    /**
+     * load the user profile from the IDp api client
+     * 取得用户信息
+     */
     public function getUserProfile()
     {
         // refresh tokens if needed
         $this->refreshToken();
 
-
         // get user profile
-        $response = $this->api->api('https://graph.qq.com/user/get_user_info?'. http_build_query(
-            array(
-                    'openid'=>$this->getOpenId(),
-                    'oauth_consumer_key'=>$this->api->client_id,
-                    'access_token'=>$this->api->access_token
-            )
-        ));
+        $response = $this->api->api('https://graph.qq.com/user/get_user_info?'.http_build_query(
+                [
+                    'openid'             => $this->getOpenId(),
+                    'oauth_consumer_key' => $this->api->client_id,
+                    'access_token'       => $this->api->access_token
+                ]
+            ));
         //var_dump($response);
         if (!isset($response->nickname)) {
             throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
@@ -116,9 +114,10 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
 
         // match the fields of the returned data with
         // the standard fields of the hybridauth profile
-        $this->user->profile->identifier    = $this->getOpenId();
-        $this->user->profile->displayName   = (property_exists($response, 'nickname'))?$response->nickname:"";
-        $this->user->profile->photoURL      = (property_exists($response, 'figureurl_qq_1'))?$response->figureurl_qq_1:"";
+        $this->user->profile->identifier  = $this->getOpenId();
+        $this->user->profile->displayName = (property_exists($response, 'nickname')) ? $response->nickname : "";
+        $this->user->profile->photoURL    =
+            (property_exists($response, 'figureurl_qq_1')) ? $response->figureurl_qq_1 : "";
         //$this->user->profile->email         = (property_exists($response,'mail'))?$response->mail:"";
         //$this->user->profile->emailVerified = (property_exists($response,'mail'))?$response->mail:"";
         //$this->user->profile->language      = (property_exists($response,'language'))?$response->language:"";
@@ -130,26 +129,27 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
         return $this->user->profile;
     }
 
-      /**
-       * finish login step
-       * 完成登录步骤
-       */
-      public function loginFinish()
-      {
-          // check that the CSRF state token is the same as the one provided
-        $session_var_name = 'state_' . $this->api->client_id;
-          if (isset($_SESSION[$session_var_name])) {
-              $state = $_SESSION[$session_var_name];
-          }
-          if (!isset($state) || !isset($_REQUEST['state'])
-        || $state !== $_REQUEST['state']) {
-              throw new Exception('Authentication failed! CSRF state token does not match the one provided.');
-          }
-          unset($_SESSION[$session_var_name]);
+    /**
+     * finish login step
+     * 完成登录步骤
+     */
+    public function loginFinish()
+    {
+        // check that the CSRF state token is the same as the one provided
+        $session_var_name = 'state_'.$this->api->client_id;
+        if (isset($_SESSION[$session_var_name])) {
+            $state = $_SESSION[$session_var_name];
+        }
+        if (!isset($state) || !isset($_REQUEST['state'])
+            || $state !== $_REQUEST['state']
+        ) {
+            throw new Exception('Authentication failed! CSRF state token does not match the one provided.');
+        }
+        unset($_SESSION[$session_var_name]);
 
         // call the parent function
         parent::loginFinish();
-      }
+    }
 
     public function getOpenId()
     {
@@ -164,6 +164,7 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
 
     /**
      * 请求URL地址，得到返回字符串
+     *
      * @param string $url qq提供的api接口地址
      * */
     public function visit_url($url)
@@ -177,11 +178,11 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
         } else {
             //是否可以使用cURL
             if (function_exists('curl_init')) {
-                $str = $this->curl($url);
+                $str   = $this->curl($url);
                 $cache = 1;
                 //是否可以使用openssl
-            } elseif (function_exists('openssl_open') && ini_get("allow_fopen_url")=="1") {
-                $str = $this->openssl($url);
+            } elseif (function_exists('openssl_open') && ini_get("allow_fopen_url") == "1") {
+                $str   = $this->openssl($url);
                 $cache = 2;
             } else {
                 throw new Exception('请开启php配置中的php_curl或php_openssl');
@@ -192,7 +193,9 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
     /**
      * 将字符串转换为可以进行json_decode的格式
      * 将转换后的参数值赋值给成员属性$this->client_id,$this->openid
+     *
      * @param string $str 返回的callback字符串
+     *
      * @return string
      * */
     protected function change_callback($str)
@@ -201,17 +204,17 @@ class Hybrid_Providers_QQ extends Hybrid_Provider_Model_OAuth2
             //将字符串修改为可以json解码的格式
             $lpos = strpos($str, "(");
             $rpos = strrpos($str, ")");
-            $json  = substr($str, $lpos + 1, $rpos - $lpos -1);
+            $json = substr($str, $lpos + 1, $rpos - $lpos - 1);
             //转化json
-            $result = json_decode($json, true);
+            $result          = json_decode($json, true);
             $this->client_id = $result['client_id'];
-            $this->openid = $result['openid'];
+            $this->openid    = $result['openid'];
             return $result;
         }
-        
+
         return null;
     }
-     /**
+    /**
      * 通过curl取得页面返回值
      * 需要打开配置中的php_curl
      * */

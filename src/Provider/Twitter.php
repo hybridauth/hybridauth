@@ -13,40 +13,40 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
-* Hybrid_Providers_Twitter provider adapter based on OAuth1 protocol
-*/
+ * Hybrid_Providers_Twitter provider adapter based on OAuth1 protocol
+ */
 final class Twitter extends OAuth1
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.twitter.com/1.1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://api.twitter.com/oauth/authenticate';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $requestTokenUrl = 'https://api.twitter.com/oauth/request_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.twitter.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('account/verify_credentials.json');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -59,26 +59,28 @@ final class Twitter extends OAuth1
         $userProfile->webSiteURL  = $data->get('url');
         $userProfile->region      = $data->get('location');
 
-        $userProfile->profileURL  = $data->exists('screen_name')       ? ('http://twitter.com/' . $data->get('screen_name'))         : '';
-        $userProfile->photoURL    = $data->exists('profile_image_url') ? str_replace('_normal', '', $data->get('profile_image_url')) : '';
+        $userProfile->profileURL =
+            $data->exists('screen_name') ? ('http://twitter.com/'.$data->get('screen_name')) : '';
+        $userProfile->photoURL   =
+            $data->exists('profile_image_url') ? str_replace('_normal', '', $data->get('profile_image_url')) : '';
 
         return $userProfile;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserContacts()
     {
         $contacts = [];
 
-        $parameters = [ 'cursor' => '-1' ];
+        $parameters = ['cursor' => '-1'];
 
         $response = $this->apiRequest('friends/ids.json', 'GET', $parameters);
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('ids')) {
+        if (!$data->exists('ids')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -87,14 +89,14 @@ final class Twitter extends OAuth1
         }
 
         // 75 id per time should be okey
-        $contactsIds = array_chunk((array) $data->get('ids'), 75);
+        $contactsIds = array_chunk((array)$data->get('ids'), 75);
 
         foreach ($contactsIds as $chunk) {
-            $parameters = [ 'user_id' => implode(',', $chunk) ];
+            $parameters = ['user_id' => implode(',', $chunk)];
 
             try {
                 $response = $this->apiRequest('users/lookup.json', 'GET', $parameters);
-                
+
                 $data = (new Parser($response))->toCollection();
             } catch (Exception $e) {
                 continue;
@@ -109,8 +111,8 @@ final class Twitter extends OAuth1
     }
 
     /**
-    *
-    */
+     *
+     */
     protected function fetchUserContacts($item)
     {
         $userContact = new User\Contact();
@@ -120,29 +122,31 @@ final class Twitter extends OAuth1
         $userContact->photoURL    = $item->get('profile_image_url');
         $userContact->description = $item->get('description');
 
-        $userContact->profileURL  = $item->exists('screen_name') ? ('http://twitter.com/' . $item->get('screen_name')) : '';
+        $userContact->profileURL =
+            $item->exists('screen_name') ? ('http://twitter.com/'.$item->get('screen_name')) : '';
 
         return $userContact;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function setUserStatus($status)
     {
-        if (is_array($status) && isset($status[ 'message' ]) && isset($status[ 'picture' ])) {
+        if (is_array($status) && isset($status['message']) && isset($status['picture'])) {
             // @fixme;
-            return $this->apiRequest('statuses/update_with_media.json', 'POST', array( 'status' => $status[ 'message' ], 'media[]' => file_get_contents($status[ 'picture' ]) ));
+            return $this->apiRequest('statuses/update_with_media.json', 'POST',
+                ['status' => $status['message'], 'media[]' => file_get_contents($status['picture'])]);
         }
-        
-        $response = $this->apiRequest('statuses/update.json', 'POST', [ 'status' => $status ]);
+
+        $response = $this->apiRequest('statuses/update.json', 'POST', ['status' => $status]);
 
         return $response;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserActivity($stream)
     {
         $activities = [];
@@ -165,8 +169,8 @@ final class Twitter extends OAuth1
     }
 
     /**
-    *
-    */
+     *
+     */
     protected function fetchUserActivity($item)
     {
         $userActivity = new User\Activity();
@@ -175,11 +179,13 @@ final class Twitter extends OAuth1
         $userActivity->date = $item->get('created_at');
         $userActivity->text = $item->get('text');
 
-        $userActivity->user->identifier   = $item->filter('user')->get('id');
-        $userActivity->user->displayName  = $item->filter('user')->get('name');
-        $userActivity->user->photoURL     = $item->filter('user')->get('profile_image_url');
+        $userActivity->user->identifier  = $item->filter('user')->get('id');
+        $userActivity->user->displayName = $item->filter('user')->get('name');
+        $userActivity->user->photoURL    = $item->filter('user')->get('profile_image_url');
 
-        $userActivity->user->profileURL   = $item->filter('user')->get('screen_name') ? ('http://twitter.com/' . $item->filter('user')->get('screen_name')) : '';
+        $userActivity->user->profileURL =
+            $item->filter('user')->get('screen_name') ?
+                ('http://twitter.com/'.$item->filter('user')->get('screen_name')) : '';
 
         return $userActivity;
     }

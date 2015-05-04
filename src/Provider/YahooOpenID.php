@@ -12,23 +12,23 @@ use Hybridauth\Adapter\OpenID;
 final class YahooOpenID extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function authenticateFinish()
     {
         parent::authenticateFinish();
 
-        $userProfile = $this->storage->get($this->providerId . '.user');
+        $userProfile = $this->storage->get($this->providerId.'.user');
 
         $userProfile->identifier    = $userProfile->email;
         $userProfile->emailVerified = $userProfile->email;
 
         // re store the user profile
-        $this->storage->set($this->providerId . '.user', $userProfile);
+        $this->storage->set($this->providerId.'.user', $userProfile);
     }
 }

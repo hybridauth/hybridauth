@@ -14,7 +14,7 @@ spl_autoload_register(
     function ($class) {
         $prefix = 'Hybridauth\\';         // < only kick in for Hybridauth namespace
 
-        $base_dir = __DIR__ . '/../src/'; // < change this path if necessary
+        $base_dir = __DIR__.'/../src/'; // < change this path if necessary
 
         $len = strlen($prefix);
 
@@ -24,7 +24,7 @@ spl_autoload_register(
 
         $relative_class = substr($class, $len);
 
-        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+        $file = $base_dir.str_replace('\\', '/', $relative_class).'.php';
 
         if (file_exists($file)) {
             require $file;

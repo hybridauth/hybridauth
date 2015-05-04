@@ -19,169 +19,169 @@ namespace Hybridauth\User;
 final class Profile
 {
     /**
-    * The Unique user's ID on the connected provider
-    *
-    * @var integer
-    */
+     * The Unique user's ID on the connected provider
+     *
+     * @var integer
+     */
     public $identifier = null;
 
     /**
-    * User website, blog, web page
-    *
-    * @var string
-    */
+     * User website, blog, web page
+     *
+     * @var string
+     */
     public $webSiteURL = null;
 
     /**
-    * URL link to profile page on the IDp web site
-    *
-    * @var string
-    */
+     * URL link to profile page on the IDp web site
+     *
+     * @var string
+     */
     public $profileURL = null;
 
     /**
-    * URL link to user photo or avatar
-    *
-    * @var string
-    */
+     * URL link to user photo or avatar
+     *
+     * @var string
+     */
     public $photoURL = null;
 
     /**
-    * User displayName provided by the IDp or a concatenation of first and last name.
-    *
-    * @var string
-    */
+     * User displayName provided by the IDp or a concatenation of first and last name.
+     *
+     * @var string
+     */
     public $displayName = null;
 
     /**
-    * A short about_me
-    *
-    * @var string
-    */
+     * A short about_me
+     *
+     * @var string
+     */
     public $description = null;
 
     /**
-    * User's first name
-    *
-    * @var string
-    */
+     * User's first name
+     *
+     * @var string
+     */
     public $firstName = null;
 
     /**
-    * User's last name
-    *
-    * @var string
-    */
+     * User's last name
+     *
+     * @var string
+     */
     public $lastName = null;
 
     /**
-    * male or female
-    *
-    * @var string
-    */
+     * male or female
+     *
+     * @var string
+     */
     public $gender = null;
 
     /**
-    * Language
-    *
-    * @var string
-    */
+     * Language
+     *
+     * @var string
+     */
     public $language = null;
 
     /**
-    * User age, we don't calculate it. we return it as is if the IDp provide it.
-    *
-    * @var integer
-    */
+     * User age, we don't calculate it. we return it as is if the IDp provide it.
+     *
+     * @var integer
+     */
     public $age = null;
 
     /**
-    * User birth Day
-    *
-    * @var integer
-    */
+     * User birth Day
+     *
+     * @var integer
+     */
     public $birthDay = null;
 
     /**
-    * User birth Month
-    *
-    * @var integer
-    */
+     * User birth Month
+     *
+     * @var integer
+     */
     public $birthMonth = null;
 
     /**
-    * User birth Year
-    *
-    * @var integer
-    */
+     * User birth Year
+     *
+     * @var integer
+     */
     public $birthYear = null;
 
     /**
-    * User email. Note: not all of IDp grant access to the user email
-    *
-    * @var string
-    */
+     * User email. Note: not all of IDp grant access to the user email
+     *
+     * @var string
+     */
     public $email = null;
 
     /**
-    * Verified user email. Note: not all of IDp grant access to verified user email
-    *
-    * @var string
-    */
+     * Verified user email. Note: not all of IDp grant access to verified user email
+     *
+     * @var string
+     */
     public $emailVerified = null;
 
     /**
-    * Phone number
-    *
-    * @var string
-    */
+     * Phone number
+     *
+     * @var string
+     */
     public $phone = null;
 
     /**
-    * Complete user address
-    *
-    * @var string
-    */
+     * Complete user address
+     *
+     * @var string
+     */
     public $address = null;
 
     /**
-    * User country
-    *
-    * @var string
-    */
+     * User country
+     *
+     * @var string
+     */
     public $country = null;
 
     /**
-    * Region
-    *
-    * @var string
-    */
+     * Region
+     *
+     * @var string
+     */
     public $region = null;
 
     /**
-    * City
-    *
-    * @var string
-    */
+     * City
+     *
+     * @var string
+     */
     public $city = null;
 
     /**
-    * Postal code
-    *
-    * @var string
-    */
+     * Postal code
+     *
+     * @var string
+     */
     public $zip = null;
 
     /**
-    * Prevent the providers adapters from adding new fields.
-    *
-    * @var string $name
-    * @var mixed  $value
-    *
-    * @throws \LogicException
-    */
+     * Prevent the providers adapters from adding new fields.
+     *
+     * @var string $name
+     * @var mixed  $value
+     *
+     * @throws \LogicException
+     */
     public function __set($name, $value)
     {
-        throw new \LogicException('Adding new properties to ' . __CLASS__ . ' is not allowed.');
+        throw new \LogicException('Adding new properties to '.__CLASS__.' is not allowed.');
     }
 }

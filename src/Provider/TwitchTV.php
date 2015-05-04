@@ -15,43 +15,43 @@ use Hybridauth\User;
 /**
  *
  */
-final class TwitchTV  extends OAuth2
+final class TwitchTV extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = 'user_read channel_read';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.twitch.tv/kraken/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://api.twitch.tv/kraken/oauth2/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.twitch.tv/kraken/oauth2/token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenName = 'oauth_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -62,7 +62,7 @@ final class TwitchTV  extends OAuth2
         $userProfile->photoURL    = $data->get('logo');
         $userProfile->email       = $data->get('email');
 
-        $userProfile->profileURL = 'http://www.twitch.tv/' . $data->get('name');
+        $userProfile->profileURL = 'http://www.twitch.tv/'.$data->get('name');
 
         $userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get('name');
 

@@ -18,10 +18,10 @@ class Session implements StorageInterface
     use DeprecatedStorageTrait;
 
     /**
-    * Initiate a new session
-    *
-    * @throws RuntimeException
-    */
+     * Initiate a new session
+     *
+     * @throws RuntimeException
+     */
     public function __construct()
     {
         if (session_id()) {
@@ -32,17 +32,17 @@ class Session implements StorageInterface
             throw new RuntimeException('Hybridauth wasn\'t able to start PHP session. HTTP headers already sent.');
         }
 
-        if (! session_start()) {
+        if (!session_start()) {
             throw new RuntimeException('PHP session failed to start.');
         }
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function get($key)
     {
-        $key = 'hauth_session.' . strtolower($key);
+        $key = 'hauth_session.'.strtolower($key);
 
         if (isset($_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key])) {
             return unserialize($_SESSION["HA::STORE"][$key]);
@@ -52,29 +52,29 @@ class Session implements StorageInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function set($key, $value)
     {
-        $key = 'hauth_session.' . strtolower($key);
+        $key = 'hauth_session.'.strtolower($key);
 
         $_SESSION["HA::STORE"][$key] = serialize($value);
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function clear()
     {
         $_SESSION["HA::STORE"] = [];
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function delete($key)
     {
-        $key = 'hauth_session.' . strtolower($key);
+        $key = 'hauth_session.'.strtolower($key);
 
         if (isset($_SESSION["HA::STORE"], $_SESSION["HA::STORE"][$key])) {
             $tmp = $_SESSION['HA::STORE'];
@@ -86,18 +86,18 @@ class Session implements StorageInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function deleteMatch($key)
     {
-        $key = 'hauth_session.' . strtolower($key);
+        $key = 'hauth_session.'.strtolower($key);
 
         if (isset($_SESSION["HA::STORE"]) && count($_SESSION["HA::STORE"])) {
             $tmp = $_SESSION['HA::STORE'];
 
             foreach ($tmp as $k => $v) {
                 if (strstr($k, $key)) {
-                    unset($tmp[ $k ]);
+                    unset($tmp[$k]);
                 }
             }
 

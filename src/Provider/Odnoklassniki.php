@@ -18,7 +18,6 @@ class Odnoklassniki extends OAuth2
      */
     protected $apiBaseUrl = 'http://api.odnoklassniki.ru/fb.do';
 
-
     /**
      * {@inheritdoc}
      */
@@ -35,13 +34,18 @@ class Odnoklassniki extends OAuth2
 
     public function getUserProfile()
     {
-        $sig = md5('application_key=' . $this->config->get('keys')['key'] . 'fields=uid,locale,first_name,last_name,name,gender,age,birthday,has_email,current_status,current_status_id,current_status_date,online,photo_id,pic_1,pic_2,pic1024x768,location,email' . 'method=users.getCurrentUser' . md5($this->token('access_token') . $this->config->get('keys')['secret']));
+        $sig =
+            md5('application_key='.
+                $this->config->get('keys')['key'].
+                'fields=uid,locale,first_name,last_name,name,gender,age,birthday,has_email,current_status,current_status_id,current_status_date,online,photo_id,pic_1,pic_2,pic1024x768,location,email'.
+                'method=users.getCurrentUser'.
+                md5($this->token('access_token').$this->config->get('keys')['secret']));
 
         $parameters = [
             'application_key' => $this->config->get('keys')['key'],
-            'method' => 'users.getCurrentUser',
-            'fields' => 'uid,locale,first_name,last_name,name,gender,age,birthday,has_email,current_status,current_status_id,current_status_date,online,photo_id,pic_1,pic_2,pic1024x768,location,email',
-            'sig' => $sig,
+            'method'          => 'users.getCurrentUser',
+            'fields'          => 'uid,locale,first_name,last_name,name,gender,age,birthday,has_email,current_status,current_status_id,current_status_date,online,photo_id,pic_1,pic_2,pic1024x768,location,email',
+            'sig'             => $sig,
         ];
 
         $response = $this->apiRequest('', 'GET', $parameters);
@@ -53,15 +57,14 @@ class Odnoklassniki extends OAuth2
 
         $userProfile = new User\Profile();
 
-
-        $userProfile->identifier = $data->get('uid');
-        $userProfile->email = $data->get('email');
-        $userProfile->firstName = $data->get('first_name');
-        $userProfile->lastName = $data->get('last_name');
+        $userProfile->identifier  = $data->get('uid');
+        $userProfile->email       = $data->get('email');
+        $userProfile->firstName   = $data->get('first_name');
+        $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('name');
-        $userProfile->photoURL = $data->get('pic1024x768');
+        $userProfile->photoURL    = $data->get('pic1024x768');
 
-        $userProfile->profileURL = 'http://ok.ru/profile/' . $data->get('uid');
+        $userProfile->profileURL = 'http://ok.ru/profile/'.$data->get('uid');
 
         return $userProfile;
     }

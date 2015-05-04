@@ -12,7 +12,7 @@ use Hybridauth\Adapter\OpenID;
 final class Stackoverflow extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'https://openid.stackexchange.com/';
 }

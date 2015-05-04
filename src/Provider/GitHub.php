@@ -18,35 +18,35 @@ use Hybridauth\User;
 final class GitHub extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public $scope = 'user:email';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.github.com/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://github.com/login/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://github.com/login/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -71,28 +71,26 @@ final class GitHub extends OAuth2
     }
 
     /**
-    *
-    * https://developer.github.com/v3/users/emails/
-    */
+     *
+     * https://developer.github.com/v3/users/emails/
+     */
     protected function requestUserEmail($userProfile)
     {
         try {
             $response = $this->apiRequest('user/emails');
 
             foreach ($response as $idx => $item) {
-                if (! empty($item->primary) && $item->primary == 1) {
+                if (!empty($item->primary) && $item->primary == 1) {
                     $userProfile->email = $item->email;
 
-                    if (! empty($item->verified) && $item->verified == 1) {
+                    if (!empty($item->verified) && $item->verified == 1) {
                         $userProfile->emailVerified = $userProfile->email;
                     }
 
                     break;
                 }
             }
-        }
-
-        // user email is not mandatory so we keep it quite
+        } // user email is not mandatory so we keep it quite
         catch (Exception $e) {
         }
 

@@ -16,20 +16,20 @@ namespace Hybridauth\Data;
 final class Parser
 {
     /**
-    * Decodes a string into an object.
-    *
-    * This method will first attempt to parse data as a JSON string (since most providers use this format)
-    * then parse_str.
-    *
-    * @param string $raw
-    *
-    * @return mixed
-    */
+     * Decodes a string into an object.
+     *
+     * This method will first attempt to parse data as a JSON string (since most providers use this format)
+     * then parse_str.
+     *
+     * @param string $raw
+     *
+     * @return mixed
+     */
     public function parse($raw = null)
     {
         $data = $this->parseJson($raw);
 
-        if (! $data) {
+        if (!$data) {
             $data = $this->parseQueryString($raw);
         }
 
@@ -37,29 +37,29 @@ final class Parser
     }
 
     /**
-    * Decodes a JSON string
-    *
-    * @param $result
-    *
-    * @return mixed
-    */
+     * Decodes a JSON string
+     *
+     * @param $result
+     *
+     * @return mixed
+     */
     public function parseJson($result)
     {
         return json_decode($result);
     }
 
     /**
-    * Parses a string into variables
-    *
-    * @param $result
-    *
-    * @return StdClass
-    */
+     * Parses a string into variables
+     *
+     * @param $result
+     *
+     * @return StdClass
+     */
     public function parseQueryString($result)
     {
         parse_str($result, $output);
 
-        if (! is_array($output)) {
+        if (!is_array($output)) {
             return $result;
         }
 
@@ -73,12 +73,12 @@ final class Parser
     }
 
     /**
-    * needs to be improved
-    */
+     * needs to be improved
+     */
     public function parseBirthday($birthday, $seperator)
     {
         $birthday = date_parse($birthday);
 
-        return [ $birthday['year'], $birthday['month'], $birthday['day'] ];
+        return [$birthday['year'], $birthday['month'], $birthday['day']];
     }
 }

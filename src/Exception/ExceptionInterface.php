@@ -12,24 +12,24 @@ namespace Hybridauth\Exception;
  */
 interface ExceptionInterface
 {
-/*
-    ExceptionInterface
-        Exception
-            RuntimeException
-                UnexpectedValueException
-                    AuthorizationDeniedException
-                    HttpClientFailureException
-                    HttpRequestFailedException
-                    InvalidAuthorizationCodeException
-                    InvalidAuthorizationStateException
-                    InvalidOauthTokenException
-                    InvalidAccessTokenException
+    /*
+        ExceptionInterface
+            Exception
+                RuntimeException
+                    UnexpectedValueException
+                        AuthorizationDeniedException
+                        HttpClientFailureException
+                        HttpRequestFailedException
+                        InvalidAuthorizationCodeException
+                        InvalidAuthorizationStateException
+                        InvalidOauthTokenException
+                        InvalidAccessTokenException
 
-                BadMethodCallException
-                    UnsupportedFeatureException
+                    BadMethodCallException
+                        UnsupportedFeatureException
 
-                InvalidArgumentException
-                    InvalidApplicationCredentialsException
-                    InvalidOpenidIdentifierException
-*/
+                    InvalidArgumentException
+                        InvalidApplicationCredentialsException
+                        InvalidOpenidIdentifierException
+    */
 }

@@ -10,13 +10,13 @@
 */
 
 /**
-* Hybrid_Providers_Skyrock provider adapter based on OAuth1 protocol
-*/
+ * Hybrid_Providers_Skyrock provider adapter based on OAuth1 protocol
+ */
 class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
 {
     /**
-    * IDp wrappers initializer
-    */
+     * IDp wrappers initializer
+     */
     public function initialize()
     {
         parent::initialize();
@@ -27,33 +27,35 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
         $this->api->request_token_url = "https://api.skyrock.com/v2/oauth/initiate";
         $this->api->access_token_url  = "https://api.skyrock.com/v2/oauth/token";
 
-        $this->api->curl_auth_header  = false;
+        $this->api->curl_auth_header = false;
     }
 
     /**
-    * load the user profile from the IDp api client
-    */
+     * load the user profile from the IDp api client
+     */
     public function getUserProfile()
     {
         $response = $this->api->get('user/get.json');
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception("User profile request failed! {$this->providerId} returned an error: " . $this->errorMessageByStatus($this->api->http_code), 6);
+            throw new Exception("User profile request failed! {$this->providerId} returned an error: ".
+                                $this->errorMessageByStatus($this->api->http_code), 6);
         }
 
-        if (! is_object($response) || ! isset($response->id_user)) {
-            throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response.", 6);
+        if (!is_object($response) || !isset($response->id_user)) {
+            throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response.",
+                6);
         }
 
         # store the user profile.
-        $this->user->profile->identifier    = (property_exists($response, 'id_user'))?$response->id_user:"";
-        $this->user->profile->displayName   = (property_exists($response, 'username'))?$response->username:"";
-        $this->user->profile->profileURL    = (property_exists($response, 'user_url'))?$response->user_url:"";
-        $this->user->profile->photoURL      = (property_exists($response, 'avatar_url'))?$response->avatar_url:"";
+        $this->user->profile->identifier  = (property_exists($response, 'id_user')) ? $response->id_user : "";
+        $this->user->profile->displayName = (property_exists($response, 'username')) ? $response->username : "";
+        $this->user->profile->profileURL  = (property_exists($response, 'user_url')) ? $response->user_url : "";
+        $this->user->profile->photoURL    = (property_exists($response, 'avatar_url')) ? $response->avatar_url : "";
 
-        $this->user->profile->firstName     = (property_exists($response, 'firstname'))?$response->firstname:"";
-        $this->user->profile->lastName      = (property_exists($response, 'name'))?$response->name:"";
+        $this->user->profile->firstName = (property_exists($response, 'firstname')) ? $response->firstname : "";
+        $this->user->profile->lastName  = (property_exists($response, 'name')) ? $response->name : "";
 
         if (property_exists($response, 'gender')) {
             if ($response->gender == 1) {
@@ -65,53 +67,55 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
             }
         }
 
-        $this->user->profile->language    = (property_exists($response, 'lang'))?$response->lang:"";
+        $this->user->profile->language = (property_exists($response, 'lang')) ? $response->lang : "";
 
         if (property_exists($response, 'birth_date') && $response->birth_date) {
-            $birthday = date_parse($response->birth_date);
+            $birthday                        = date_parse($response->birth_date);
             $this->user->profile->birthDay   = $birthday["day"];
             $this->user->profile->birthMonth = $birthday["month"];
             $this->user->profile->birthYear  = $birthday["year"];
         }
 
-        $this->user->profile->email         = (property_exists($response, 'email'))?$response->email:"";
-        $this->user->profile->emailVerified = (property_exists($response, 'email'))?$response->email:"";
-        $this->user->profile->address       = (property_exists($response, 'address1'))?$response->address1:"";
-        $this->user->profile->address      .= (property_exists($response, 'address2'))?$response->address2:"";
-        $this->user->profile->country       = (property_exists($response, 'country'))?$response->country:"";
-        $this->user->profile->city          = (property_exists($response, 'city'))?$response->city:"";
-        $this->user->profile->zip           = (property_exists($response, 'postalcode'))?$response->postalcode:"";
+        $this->user->profile->email         = (property_exists($response, 'email')) ? $response->email : "";
+        $this->user->profile->emailVerified = (property_exists($response, 'email')) ? $response->email : "";
+        $this->user->profile->address       = (property_exists($response, 'address1')) ? $response->address1 : "";
+        $this->user->profile->address .= (property_exists($response, 'address2')) ? $response->address2 : "";
+        $this->user->profile->country = (property_exists($response, 'country')) ? $response->country : "";
+        $this->user->profile->city    = (property_exists($response, 'city')) ? $response->city : "";
+        $this->user->profile->zip     = (property_exists($response, 'postalcode')) ? $response->postalcode : "";
 
         return $this->user->profile;
     }
 
     /**
-    * load the current user contacts
-    */
+     * load the current user contacts
+     */
     public function getUserContacts()
     {
-        $parameters = array( 'page' => 1 );
-        $response  = $this->api->get('user/list_friends.json', $parameters);
+        $parameters = ['page' => 1];
+        $response   = $this->api->get('user/list_friends.json', $parameters);
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception("User contacts request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus($this->api->http_code));
+            throw new Exception("User contacts request failed! {$this->providerId} returned an error. ".
+                                $this->errorMessageByStatus($this->api->http_code));
         }
 
-        if (! $response || ! count($response->friends)) {
-            return array();
+        if (!$response || !count($response->friends)) {
+            return [];
         }
 
-        $contacts = array();
+        $contacts = [];
 
-        $max_page = (property_exists($response, 'max_page'))?$response->max_page:1;
-        for ($i = 0; $i<$max_page; $i++) {
+        $max_page = (property_exists($response, 'max_page')) ? $response->max_page : 1;
+        for ($i = 0; $i < $max_page; $i++) {
             if ($i > 0) {
-                $parameters = array( 'page' => $i );
-                $response  = $this->api->get('user/list_friends.json', $parameters);
+                $parameters = ['page' => $i];
+                $response   = $this->api->get('user/list_friends.json', $parameters);
                 // check the last HTTP status code returned
                 if ($this->api->http_code != 200) {
-                    throw new Exception("User contacts request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus($this->api->http_code));
+                    throw new Exception("User contacts request failed! {$this->providerId} returned an error. ".
+                                        $this->errorMessageByStatus($this->api->http_code));
                 }
             }
 
@@ -119,10 +123,10 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
                 foreach ($response->friends as $item) {
                     $uc = new Hybrid_User_Contact();
 
-                    $uc->identifier   = (property_exists($item, 'id_user'))?$item->id_user:"";
-                    $uc->displayName  = (property_exists($item, 'username'))?$item->username:"";
-                    $uc->profileURL   = (property_exists($item, 'user_url'))?$item->user_url:"";
-                    $uc->photoURL     = (property_exists($item, 'avatar_url'))?$item->avatar_url:"";
+                    $uc->identifier  = (property_exists($item, 'id_user')) ? $item->id_user : "";
+                    $uc->displayName = (property_exists($item, 'username')) ? $item->username : "";
+                    $uc->profileURL  = (property_exists($item, 'user_url')) ? $item->user_url : "";
+                    $uc->photoURL    = (property_exists($item, 'avatar_url')) ? $item->avatar_url : "";
 
                     $contacts[] = $uc;
                 }
@@ -133,39 +137,40 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
     }
 
     /**
-    * return the user activity stream
-    */
+     * return the user activity stream
+     */
     public function getUserActivity($stream)
     {
         if ($stream == "me") {
-            $response  = $this->api->get('newsfeed/list_events.json?events_category=own');
+            $response = $this->api->get('newsfeed/list_events.json?events_category=own');
         } else {
-            $response  = $this->api->get('newsfeed/list_events.json?events_category=friends');
+            $response = $this->api->get('newsfeed/list_events.json?events_category=friends');
         }
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception("User activity stream request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus($this->api->http_code));
+            throw new Exception("User activity stream request failed! {$this->providerId} returned an error. ".
+                                $this->errorMessageByStatus($this->api->http_code));
         }
 
-        if (! $response) {
-            return array();
+        if (!$response) {
+            return [];
         }
 
-        $activities = array();
+        $activities = [];
 
         foreach ($response as $item) {
             $ua = new Hybrid_User_Activity();
 
-            $ua->id                 = (property_exists($item, 'id_event'))?$item->id_event:"";
-            $ua->date               = (property_exists($item, 'timestamp'))?$item->timestamp:"";
-            $ua->text               = (property_exists($item, 'content'))?$item->content:"";
-            $ua->text               = ($ua->text)?trim(strip_tags($ua->text)):"";
+            $ua->id   = (property_exists($item, 'id_event')) ? $item->id_event : "";
+            $ua->date = (property_exists($item, 'timestamp')) ? $item->timestamp : "";
+            $ua->text = (property_exists($item, 'content')) ? $item->content : "";
+            $ua->text = ($ua->text) ? trim(strip_tags($ua->text)) : "";
 
-            $ua->user->identifier   = (property_exists($item->from, 'id_user'))?$item->from->id_user:"";
-            $ua->user->displayName  = (property_exists($item->from, 'username'))?$item->from->username:"";
-            $ua->user->profileURL   = (property_exists($item->from, 'user_url'))?$item->from->user_url:"";
-            $ua->user->photoURL     = (property_exists($item->from, 'avatar_url'))?$item->from->avatar_url:"";
+            $ua->user->identifier  = (property_exists($item->from, 'id_user')) ? $item->from->id_user : "";
+            $ua->user->displayName = (property_exists($item->from, 'username')) ? $item->from->username : "";
+            $ua->user->profileURL  = (property_exists($item->from, 'user_url')) ? $item->from->user_url : "";
+            $ua->user->photoURL    = (property_exists($item->from, 'avatar_url')) ? $item->from->avatar_url : "";
 
             $activities[] = $ua;
         }
@@ -173,20 +178,20 @@ class Hybrid_Providers_Skyrock extends Hybrid_Provider_Model_OAuth1
         return $activities;
     }
 
-
     /**
-    * update user status
-    */
+     * update user status
+     */
     public function setUserStatus($status)
     {
-        $parameters = array( 'message' => $status );
-        $response  = $this->api->post('mood/set_mood.json', $parameters);
+        $parameters = ['message' => $status];
+        $response   = $this->api->post('mood/set_mood.json', $parameters);
 
         // check the last HTTP status code returned
         if ($this->api->http_code != 200) {
-            throw new Exception("Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus($this->api->http_code));
+            throw new Exception("Update user status failed! {$this->providerId} returned an error. ".
+                                $this->errorMessageByStatus($this->api->http_code));
         }
-                
+
         return $response;
     }
 }
