@@ -16,8 +16,14 @@ Before we look into how, here are the guidelines. If your Pull Requests fail to 
 ### PHP Style
 
 * Readable code come first.
-* Clear indentation come second. Please use tabs (not 4 spaces and definitely not 2 spaces).
-* For the rest simply try to follow the existing style.
+* HybridAuth follows [PSR-1](http://www.php-fig.org/psr/psr-1/) and [PSR-2](http://www.php-fig.org/psr/psr-2/).
+ 
+To be sure of PSR standards respect, please run this command before commit your modifications:
+
+```bash
+# On the project folder
+php vendor/bin/php-cs-fixer fix --verbose --level=psr2 .
+```
 
 ### Compatibility
 
