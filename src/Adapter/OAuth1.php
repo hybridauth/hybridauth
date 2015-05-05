@@ -14,7 +14,6 @@ use Hybridauth\Exception\InvalidOauthTokenException;
 use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
-
 use Hybridauth\Thirdparty\OAuth\OAuthConsumer;
 use Hybridauth\Thirdparty\OAuth\OAuthRequest;
 use Hybridauth\Thirdparty\OAuth\OAuthSignatureMethodHMACSHA1;

@@ -17,7 +17,6 @@ use Hybridauth\Logger\Logger;
 use Hybridauth\HttpClient\HttpClientInterface;
 use Hybridauth\HttpClient\Curl as HttpClient;
 use Hybridauth\Provider\ProviderAdapter;
-
 use Hybridauth\Deprecated\DeprecatedHybridauthTrait;
 
 /**

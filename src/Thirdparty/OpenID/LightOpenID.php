@@ -31,8 +31,8 @@ class LightOpenID
     , $cainfo = null
     , $data
     ,                $oauth                                                      = [];
-    private          $identity, $claimed_id;
-    protected        $server, $version, $trustRoot, $aliases, $identifier_select = false
+    private $identity, $claimed_id;
+    protected $server, $version, $trustRoot, $aliases, $identifier_select = false
     ,                $ax                                                         = false, $sreg = false, $setup_url = null, $headers = [], $proxy = null
     ,                $xrds_override_pattern                                      = null, $xrds_override_replacement = null;
     protected static $ax_to_sreg                                                 = [
