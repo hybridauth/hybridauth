@@ -15,7 +15,6 @@ use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
 use Hybridauth\User;
-
 use Hybridauth\Thirdparty\OpenID\LightOpenID;
 
 /**

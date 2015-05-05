@@ -13,7 +13,7 @@ class OAuthRequest
     public $http_method;
     public $http_url;
     // for debug purposes
-    public        $base_string;
+    public $base_string;
     public static $version    = '1.0';
     public static $POST_INPUT = 'php://input';
 
