@@ -1,0 +1,30 @@
+#### ToDo
+
+- [ ] Improve this todo list #451 issuecomment-96178499
+- [ ] Fix eventual bugs (priority to stability issues)
+- [x] Make hybridauth PSR-4 compliant
+- [x] Replace hybridauth examples with basic and simple ones.
+- [x] Move additional-providers inside core.
+- [x] Remove static vars and methods.
+- [x] Restructure hybridauth directories and files.
+- [x] normalize configuration files (one set of rules for extra arguments). 
+- [x] Add a HttpClient and eventually support externals libs (i.g., Guzzle)
+- [x] Give more consistent and readable errors when requests fails. 
+- [x] Optimize how hybridauth use php sessions - it store a lot of data
+    - [x] Do not store empty tokens
+    - [x] Remove unused configs and params when initiating auth protocols
+    - [x] No longer serialize exceptions in session.
+- [x] Rework OAuth1 and OAuth2 templates
+    - [x] Merge OAuth1Client with Model_OAuth1
+    - [x] Merge OAuth2Client with Model_OAuth2
+- [x] Rework Exceptions
+- [x] Implement Data parser and Data Collection. 
+- [ ] Upgrading supported providers to 3.0.
+    - [x] Remove introduced methods and users profile fields. 
+    - [x] Drop support for few additional providers, due to either external dependencies
+    - [x] Attempt to create non dependent Facebook adapter (Using Model_OAuth2 instead of SDK).
+    - [ ] Attempt to create non dependent Linkedin adapter (Using Model_OAuth1 instead of simple-linkedinphp. simple-linkedinphp seems to be abandoned). 
+    - [ ] Reduce the supported providers code complexity.
+- [ ] Improve internal code comments. 
+- [ ] Introduce unit testing
+- [ ] ..

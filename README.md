@@ -1,45 +1,13 @@
-## [HybridAuth](http://hybridauth.sourceforge.net/) 3.0.0-Remake [![Build Status](https://travis-ci.org/miled/hybridauth.svg?branch=master)](https://travis-ci.org/miled/hybridauth) [![Code Climate](https://codeclimate.com/github/miled/hybridauth/badges/gpa.svg)](https://codeclimate.com/github/miled/hybridauth)
+## [Hybridauth](http://hybridauth.sourceforge.net/) 3.0.0-Remake
 
-    Important: This is a work in progress and subject to changes at any time.
+[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=3.0.0-Remake)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=3.0.0-Remake)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=3.0.0-Remake) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Latest Unstable Version](https://poser.pugx.org/hybridauth/hybridauth/v/unstable.svg)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth) [![License](https://poser.pugx.org/hybridauth/hybridauth/license.svg)](https://packagist.org/packages/hybridauth/hybridauth) 
+[![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-#### ToDo..
 
-- [ ] Fix eventual bugs (priority to stability issues)
-- [x] Make hybridauth PSR-4 compliant
-- [x] Replace hybridauth examples with basic and simple ones.
-- [x] Move additional-providers inside core.
-- [x] Remove static vars and methods.
-- [x] Restructure hybridauth directories and files.
-- [x] normalize configuration files (one set of rules for extra arguments). 
-- [x] Add a HttpClient and eventually support externals libs (i.g., Guzzle)
-- [x] Give more consistent and readable errors when requests fails. 
-- [x] Optimize how hybridauth use php sessions - it store a lot of data
-    - [x] Do not store empty tokens
-    - [x] Remove unused configs and params when initiating auth protocols
-    - [x] No longer serialize exceptions in session.
-- [x] Rework OAuth1 and OAuth2 templates
-    - [x] Merge OAuth1Client with Model_OAuth1
-    - [x] Merge OAuth2Client with Model_OAuth2
-- [x] Rework Exceptions
-- [x] Implement Data parser and Data Collection. 
-- [ ] Upgrading supported providers to 3.0.
-    - [x] Remove introduced methods and users profile fields. 
-    - [x] Drop support for few additional providers, due to either external dependencies
-    - [x] Attempt to create non dependent Facebook adapter (Using Model_OAuth2 instead of SDK).
-    - [ ] Attempt to create non dependent Linkedin adapter (Using Model_OAuth1 instead of simple-linkedinphp. simple-linkedinphp seems to be abandoned). 
-    - [ ] Reduce the supported providers code complexity.
-- [ ] Improve internal code comments. 
-- [ ] Introduce unit testing
-- [ ] ..
-
-Notes: 
-
+    Notes:
+    This is a work in progress and subject to changes at any time.
     Below is probably what going to be the new readme file.
     Update, changes and remakes are welcome.
-
-## [Hybridauth](http://hybridauth.sourceforge.net/) 3.x.z 
-
-[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Code Climate](https://codeclimate.com/github/hybridauth/hybridauth/badges/gpa.svg)](https://codeclimate.com/github/hybridauth/hybridauth) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Latest Unstable Version](https://poser.pugx.org/hybridauth/hybridauth/v/unstable.svg)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth) [![License](https://poser.pugx.org/hybridauth/hybridauth/license.svg)](https://packagist.org/packages/hybridauth/hybridauth)
 
 Hybridauth enables developers to easily build social applications and tools to engage websites visitors and customers on a social level by implementing social sign-in, social sharing, users profiles, friends list, activities stream, status updates and more.
 
