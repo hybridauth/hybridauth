@@ -23,7 +23,7 @@ class Hybrid_Providers_Box extends Hybrid_Provider_Model_OAuth2
 		// Provider apis end-points
 		$this->api->api_base_url  = "https://api.box.com/2.0";
 		$this->api->authorize_url = "https://app.box.com/api/oauth2/authorize";
-		$this->api->token_url     = "https://api.box.com/oauth2";
+		$this->api->token_url     = "https://api.box.com/oauth2/token";
 
 	}
 
