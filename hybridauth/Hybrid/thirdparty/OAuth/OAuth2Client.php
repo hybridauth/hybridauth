@@ -125,13 +125,14 @@ class OAuth2Client
 	/**
 	* Format and sign an oauth for provider api
 	*/
-	public function api( $url, $method = "GET", $parameters = array() )
+	public function api( $url, $method = "GET", $parameters = array(), $signed = true )
 	{
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
 		}
-
-		$parameters[$this->sign_token_name] = $this->access_token;
+		if ($signed){
+			$parameters[$this->sign_token_name] = $this->access_token;
+		}
 		$response = null;
 
 		switch( $method ){
