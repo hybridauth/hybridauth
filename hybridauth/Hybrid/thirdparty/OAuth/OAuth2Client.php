@@ -220,6 +220,8 @@ class OAuth2Client
 			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query($params, '', '&') );
 		}
 
+		Hybrid_Logger::debug( "OAuth2Client::request(). dump request url: ", serialize( $url ) );
+
 		$response = curl_exec($ch);
 		if( $response === FALSE ) {
 				Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
