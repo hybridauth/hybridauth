@@ -9,6 +9,8 @@
  * Hybrid_Providers_Vkontakte provider adapter based on OAuth2 protocol
  *
  * added by guiltar | https://github.com/guiltar
+ *
+ * @property OAuth2Client $api
  */
 
 class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
@@ -24,7 +26,8 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		parent::initialize();
 
 		// Provider api end-points
-		$this->api->authorize_url  = "http://api.vk.com/oauth/authorize";
+		$this->api->api_base_url   = 'https://api.vk.com/method/';
+		$this->api->authorize_url  = "https://api.vk.com/oauth/authorize";
 		$this->api->token_url      = "https://api.vk.com/oauth/token";
 		//$this->api->token_info_url
 	}
@@ -79,8 +82,8 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		$params['uid'] = Hybrid_Auth::storage()->get( "hauth_session.{$this->providerId}.user_id" );
 		$params['fields'] = 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big,home_town';
 		// ask vkontakte api for user infos
-		$response = $this->api->api( "https://api.vk.com/method/getProfiles" , 'GET', $params);
 
+		$response = $this->api->api( 'getProfiles' , 'GET', $params);
 
 		if (!isset( $response->response[0] ) || !isset( $response->response[0]->uid ) || isset( $response->error ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
@@ -102,6 +105,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 				case 1: $this->user->profile->gender = 'female'; break;
 				case 2: $this->user->profile->gender = 'male'; break;
 				default: $this->user->profile->gender = ''; break;
+		$response = $this->api->api('friends.get','GET',$params);
 			}
 		}
 
@@ -135,7 +139,6 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 			'fields' => 'nickname, domain, sex, bdate, city, country, timezone, photo_200_orig'
 		);
 
-		$response = $this->api->api('https://api.vk.com/method/friends.get','GET',$params);
 
 		if(!$response || !count($response->response)){
 			return array();
