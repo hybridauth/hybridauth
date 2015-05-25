@@ -88,7 +88,12 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		// store user id. it is required for api access to Vkontakte
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_id", $response->user_id );
-		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user_email", $response->email );
+		Hybrid_Auth::storage()->set(
+			"hauth_session.{$this->providerId}.user_email",
+			property_exists($response, 'email')
+				? $response->email
+				: null
+		);
 
 		// set user connected locally
 		$this->setUserConnected();
