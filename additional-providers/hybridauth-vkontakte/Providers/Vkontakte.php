@@ -28,16 +28,17 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 		'gender'      => 'sex',
 		'photoURL'    => 'photo_big',
 		'home_town'   => 'home_town',
+		'profileURL'  => 'domain',      // Will be converted in getUserByResponse()
 		// New
 		'nickname'    => 'nickname',
 		'bdate'       => 'bdate',
 		'timezone'    => 'timezone',
 		'photo_rec'   => 'photo_rec',
-		'city'        => 'city',
-		'country'     => 'country',
 		'domain'      => 'domain',
 		'photo_max'   => 'photo_max',
 		'home_phone'  => 'home_phone',
+		'city'        => 'city',        // Will be converted in getUserByResponse()
+		'country'     => 'country',     // Will be converted in getUserByResponse()
 	);
 
 	/**
