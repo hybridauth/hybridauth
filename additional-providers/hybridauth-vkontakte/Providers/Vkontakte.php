@@ -20,22 +20,24 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 	// default user fields map
 	public $fields = array(
+		// Old that saved for backward-compability
 		'identifier'  => 'uid',
 		'firstName'   => 'first_name',
 		'lastName'    => 'last_name',
-		'gender'      => 'sex',
 		'displayName' => 'screen_name',
-		'city'        => 'city',
-		'country'     => 'country',
-		'bdate'       => 'bdate',
-		'photoURL'    => 'photo_max_orig',
+		'gender'      => 'sex',
+		'photoURL'    => 'photo_big',
+		'home_town'   => 'home_town',
+		// New
 		'nickname'    => 'nickname',
-		'domain'      => 'domain',
+		'bdate'       => 'bdate',
 		'timezone'    => 'timezone',
 		'photo_rec'   => 'photo_rec',
+		'city'        => 'city',
+		'country'     => 'country',
+		'domain'      => 'domain',
 		'photo_max'   => 'photo_max',
 		'home_phone'  => 'home_phone',
-		'home_town'   => 'home_town',
 	);
 
 	/**
