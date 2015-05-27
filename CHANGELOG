@@ -1,10 +1,20 @@
 Hybridauth Change log
 =====================
-2.4.2 -
+2.4.2 - [not yet released]
       New:
         #444 + #445 - Slack provider
+        $474 - WarGaming OpenID provider
+        #454 - xuite's oauth provider
       Fixes:
         #438 + #445 - [LinkedIn] getusercontacts error
+        #446 + #447 - [Steam] xml parsing error
+        #340 + #476 - Ensure session is saved before sending response
+        #472 - [Facebook] Obsolete 'read_friendlists' FB permission was changed to 'read_custom_friendlists'
+        #453 - [Vkontakte] fix Undefined property: stdClass::$email
+      Changes:
+        #477 - [Vkontakte] Move Vkontakte fields to configuration
+      Removed:
+        #455 - Viadeo connect not existing anymore
 
 2.4.1 - April 11 2015
       Fixes:
