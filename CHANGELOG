@@ -5,6 +5,7 @@ Hybridauth Change log
         #444 + #445 - Slack provider
         $474 - WarGaming OpenID provider
         #454 - xuite's oauth provider
+        #480 - Improved inline documentation for IDE support
       Fixes:
         #438 + #445 - [LinkedIn] getusercontacts error
         #446 + #447 - [Steam] xml parsing error
