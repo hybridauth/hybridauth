@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\User;
@@ -17,36 +17,36 @@ namespace Hybridauth\User;
 final class Activity
 {
     /**
-     * activity id on the provider side, usually given as integer
-     *
-     * @var string
-     */
+    * activity id on the provider side, usually given as integer
+    *
+    * @var string
+    */
     public $id = null;
 
     /**
-     * activity date of creation
-     *
-     * @var string
-     */
+    * activity date of creation
+    *
+    * @var string
+    */
     public $date = null;
 
     /**
-     * activity content as a string
-     *
-     * @var string
-     */
+    * activity content as a string
+    *
+    * @var string
+    */
     public $text = null;
 
     /**
-     * user who created the activity
-     *
-     * @var object
-     */
+    * user who created the activity
+    *
+    * @var object
+    */
     public $user = null;
 
     /**
-     *
-     */
+    *
+    */
     public function __construct()
     {
         $this->user = new \stdClass();
@@ -59,15 +59,15 @@ final class Activity
     }
 
     /**
-     * Prevent the providers adapters from adding new fields.
-     *
-     * @var string $name
-     * @var mixed  $value
-     *
-     * @throws \LogicException
-     */
+    * Prevent the providers adapters from adding new fields.
+    *
+    * @var string $name
+    * @var mixed  $value
+    *
+    * @throws \LogicException
+    */
     public function __set($name, $value)
     {
-        throw new \LogicException('Adding new properties to '.__CLASS__.' is not allowed.');
+        throw new \LogicException('Adding new properties to ' . __CLASS__ . ' is not allowed.');
     }
 }

@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -15,38 +15,38 @@ use Hybridauth\User;
 /**
  *
  */
-final class GitHub extends OAuth2
+class GitHub extends OAuth2
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public $scope = 'user:email';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'https://api.github.com/';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://github.com/login/oauth/authorize';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://github.com/login/oauth/access_token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('id')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -71,27 +71,29 @@ final class GitHub extends OAuth2
     }
 
     /**
-     *
-     * https://developer.github.com/v3/users/emails/
-     */
+    *
+    * https://developer.github.com/v3/users/emails/
+    */
     protected function requestUserEmail($userProfile)
     {
         try {
             $response = $this->apiRequest('user/emails');
 
             foreach ($response as $idx => $item) {
-                if (!empty($item->primary) && $item->primary == 1) {
+                if (! empty($item->primary) && $item->primary == 1) {
                     $userProfile->email = $item->email;
 
-                    if (!empty($item->verified) && $item->verified == 1) {
+                    if (! empty($item->verified) && $item->verified == 1) {
                         $userProfile->emailVerified = $userProfile->email;
                     }
 
                     break;
                 }
             }
-        } // user email is not mandatory so we keep it quite
-        catch (Exception $e) {
+        }
+
+        // user email is not mandatory so keep it quite
+        catch (\Exception $e) {
         }
 
         return $userProfile;

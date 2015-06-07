@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -15,33 +15,33 @@ use Hybridauth\User;
 /**
  *
  */
-final class Dribbble extends OAuth2
+class Dribbble  extends OAuth2
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'https://api.dribbble.com/v1/';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://dribbble.com/oauth/authorize';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://dribbble.com/oauth/token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('id')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -53,10 +53,10 @@ final class Dribbble extends OAuth2
         $userProfile->description = $data->get('bio');
         $userProfile->region      = $data->get('location');
         $userProfile->displayName = $data->get('name');
-
+        
         $userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get('username');
 
-        $userProfile->webSiteURL = $data->filter('links')->get('web');
+        $userProfile->webSiteURL  = $data->filter('links')->get('web');
 
         return $userProfile;
     }

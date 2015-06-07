@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -18,38 +18,38 @@ use Hybridauth\User;
  * ! This is an attempt to replace FACEBOOK SDK.
  * ! Methods tested so far: getUserProfile, getUserContacts, getUserActivity
  */
-final class Facebook extends OAuth2
+class Facebook extends OAuth2
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $scope = 'email, public_profile, user_friends';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'https://graph.facebook.com/v2.2/';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://www.facebook.com/dialog/oauth';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://graph.facebook.com/oauth/access_token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserProfile($callback = null)
     {
         $response = $this->apiRequest('me');
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('id')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -68,7 +68,7 @@ final class Facebook extends OAuth2
 
         $userProfile->region = $data->filter('hometown')->get('name');
 
-        $userProfile->photoURL = $this->apiBaseUrl.$userProfile->identifier."/picture?width=150&height=150";
+        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . '/picture?width=150&height=150';
 
         $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
 
@@ -80,11 +80,11 @@ final class Facebook extends OAuth2
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchUserRegion($userProfile)
     {
-        if (!empty($userProfile->region)) {
+        if (! empty($userProfile->region)) {
             $regionArr = explode(',', $userProfile->region);
 
             if (count($regionArr) > 1) {
@@ -97,26 +97,26 @@ final class Facebook extends OAuth2
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchBirthday($userProfile, $birthday)
     {
         $result = (new Data\Parser())->parseBirthday($birthday, '/');
 
-        $userProfile->birthDay   = (int)$result[0];
-        $userProfile->birthMonth = (int)$result[1];
-        $userProfile->birthYear  = (int)$result[2];
+        $userProfile->birthDay   = (int) $result[0];
+        $userProfile->birthMonth = (int) $result[1];
+        $userProfile->birthYear  = (int) $result[2];
 
         return $userProfile;
     }
 
     /**
-     * /v2.0/me/friends only returns the user's friends who also use the app.
-     * In the cases where you want to let people tag their friends in stories published by your app,
-     * you can use the Taggable Friends API.
-     *
-     * https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
-     */
+    * /v2.0/me/friends only returns the user's friends who also use the app.
+    * In the cases where you want to let people tag their friends in stories published by your app,
+    * you can use the Taggable Friends API.
+    *
+    * https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
+    */
     public function getUserContacts()
     {
         // $apiUrl = 'me/friends?fields=link,name';
@@ -130,7 +130,7 @@ final class Facebook extends OAuth2
 
             $data = new Data\Collection($response);
 
-            if (!$data->exists('data')) {
+            if (! $data->exists('data')) {
                 throw new UnexpectedValueException('Provider API returned an unexpected response.');
             }
 
@@ -157,8 +157,8 @@ final class Facebook extends OAuth2
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchUserContacts($item)
     {
         $userContact = new User\Contact();
@@ -166,21 +166,19 @@ final class Facebook extends OAuth2
         $userContact->identifier  = $item->get('id');
         $userContact->displayName = $item->get('name');
 
-        $userContact->profileURL =
-            $item->exists('link') ? $item->get('link') :
-                'https://www.facebook.com/profile.php?id='.$userContact->identifier;
+        $userContact->profileURL = $item->exists('link') ? $item->get('link') : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
 
-        $userContact->photoURL = $this->apiBaseUrl.$userContact->identifier."/picture?width=150&height=150";
+        $userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . "/picture?width=150&height=150";
 
         return $userContact;
     }
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function setUserStatus($status)
     {
-        $status = is_string($status) ? ['message' => $status] : $status;
+        $status = is_string($status) ? [ 'message' => $status ] : $status;
 
         $response = $this->apiRequest('/me/feed', 'POST', $status);
 
@@ -188,8 +186,8 @@ final class Facebook extends OAuth2
     }
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserActivity($stream)
     {
         $activities = [];
@@ -200,7 +198,7 @@ final class Facebook extends OAuth2
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('data')) {
+        if (! $data->exists('data')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -216,8 +214,8 @@ final class Facebook extends OAuth2
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchUserActivity($item)
     {
         $userActivity = new User\Activity();
@@ -237,15 +235,13 @@ final class Facebook extends OAuth2
             $userActivity->text = $item->get('message');
         }
 
-        if (!empty($userActivity->text)) {
-            $userActivity->user->identifier  = $item->filter('from')->get('id');
-            $userActivity->user->displayName = $item->get('name');
+        if (! empty($userActivity->text)) {
+            $userActivity->user->identifier   = $item->filter('from')->get('id');
+            $userActivity->user->displayName  = $item->get('name');
 
-            $userActivity->user->profileURL =
-                'https://www.facebook.com/profile.php?id='.$userActivity->user->identifier;
+            $userActivity->user->profileURL   = 'https://www.facebook.com/profile.php?id=' . $userActivity->user->identifier;
 
-            $userActivity->user->photoURL =
-                $this->apiBaseUrl.$userActivity->user->identifier."/picture?width=150&height=150";
+            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier . "/picture?width=150&height=150";
         }
 
         return $userActivity;

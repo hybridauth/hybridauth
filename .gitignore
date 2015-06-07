@@ -4,3 +4,6 @@
 *.json
 *.lock
 /vendor
+
+check.php
+/examples

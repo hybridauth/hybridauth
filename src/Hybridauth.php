@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth;
@@ -28,57 +28,53 @@ class Hybridauth
     use DeprecatedHybridauthTrait;
 
     /**
-     * Hybridauth version
-     *
-     * @var string
-     */
-    protected $version = '3.0.0-Remake';
+    * Hybridauth version
+    *
+    * @var string
+    */
+    public static $version = '3.0.0-Remake';
 
     /**
-     * Hybridauth config
-     *
-     * @var array
-     */
+    * Hybridauth config
+    *
+    * @var array
+    */
     protected $config = [];
 
     /**
-     * Storage
-     *
-     * @var object
-     */
+    * Storage
+    *
+    * @var object
+    */
     protected $storage = null;
 
     /**
-     * HttpClient
-     *
-     * @var object
-     */
+    * HttpClient
+    *
+    * @var object
+    */
     protected $httpClient = null;
 
     /**
-     * Logger
-     *
-     * @var object
-     */
+    * Logger
+    *
+    * @var object
+    */
     protected $logger = null;
 
     /**
-     * @param array $config
-     * @param HttpClientInterface $httpClient
-     * @param StorageInterface $storage
-     * @param LoggerInterface $logger
-     *
-     * @throws InvalidArgumentException
-     */
-    public function __construct(
-        $config = [],
-        HttpClientInterface $httpClient = null,
-        StorageInterface $storage = null,
-        LoggerInterface $logger = null
-    ) {
+    * @param array               $config
+    * @param HttpClientInterface $httpClient
+    * @param StorageInterface    $storage
+    * @param LoggerInterface     $logger
+    *
+    * @throws InvalidArgumentException
+    */
+    public function __construct($config = [], HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null)
+    {
         if (is_string($config) && file_exists($config)) {
             $config = include $config;
-        } elseif (!is_array($config)) {
+        } elseif (! is_array($config)) {
             throw new InvalidArgumentException('Hybriauth config does not exist on the given path.');
         }
 
@@ -103,29 +99,30 @@ class Hybridauth
     }
 
     /**
-     * Instantiate the given provider and authentication or authorization protocol.
-     *
-     * If user not authenticated yet, the user will be redirected to the authorization Service
-     * to authorize the application.
-     *
-     * @param string $providerId Provider ID (canse insensitive)
-     *
-     * @throws Exception
-     * @throws RuntimeException
-     * @throws UnexpectedValueException
-     * @throws InvalidArgumentException
-     * @throws AuthorizationDeniedException
-     * @throws HttpClientFailureException
-     * @throws HttpRequestFailedException
-     * @throws InvalidAccessTokenException
-     * @throws InvalidApplicationCredentialsException
-     * @throws InvalidAuthorizationCodeException
-     * @throws InvalidAuthorizationStateException
-     * @throws InvalidOauthTokenException
-     * @throws InvalidOpenidIdentifierException
-     *
-     * @return object|null
-     */
+    * Instantiate the given provider and authentication or authorization protocol.
+    *
+    * If user not authenticated yet, the user will be redirected to the authorization Service
+    * to authorize the application.
+    *
+    * @param string $providerId Provider ID (canse insensitive)
+    *
+    * @throws Exception
+    * @throws RuntimeException
+    * @throws UnexpectedValueException
+    * @throws InvalidArgumentException
+    * @throws AuthorizationDeniedException
+    * @throws HttpClientFailureException
+    * @throws HttpRequestFailedException
+    * @throws InvalidAccessTokenException
+    * @throws InvalidApplicationCredentialsException
+    * @throws InvalidAuthorizationCodeException
+    * @throws InvalidAuthorizationStateException
+    * @throws InvalidOauthTokenException
+    * @throws InvalidOpenidIdentifierException
+    *
+    * @return object|null
+    */
+
     public function authenticate($providerId)
     {
         $this->logger->info("Enter Hybridauth::authenticate( $providerId )");
@@ -138,15 +135,15 @@ class Hybridauth
     }
 
     /**
-     * Instantiate and returns the given provider adapter.
-     *
-     * @return object
-     */
+    * Instantiate and returns the given provider adapter.
+    *
+    * @return object
+    */
     public function getAdapter($providerId)
     {
         $config = $this->getProviderConfigById($providerId);
 
-        $adapter = 'Hybridauth\\Provider\\'.$providerId;
+        $adapter = 'Hybridauth\\Provider\\' . $providerId;
 
         $instance = new $adapter($config, $this->httpClient, $this->storage, $this->logger);
 
@@ -154,12 +151,12 @@ class Hybridauth
     }
 
     /**
-     * Get provider config by ID
-     *
-     * @param string $id Provider ID (canse insensitive)
-     *
-     * @return array
-     */
+    * Get provider config by ID
+    *
+    * @param string $id Provider ID (canse insensitive)
+    *
+    * @return array
+    */
     protected function getProviderConfigById($id)
     {
         $id = $this->validateProviderID($id);
@@ -174,27 +171,27 @@ class Hybridauth
     }
 
     /**
-     * Get provider real provider ID. (case sensitive)
-     *
-     * @param string $providerId Provider ID (canse insensitive)
-     *
-     * @throws InvalidArgumentException
-     * @throws UnexpectedValueException
-     * @return string $id
-     */
+    * Get provider real provider ID. (case sensitive)
+    *
+    * @param string $providerId Provider ID (canse insensitive)
+    *
+    * @throws InvalidArgumentException
+    * @throws UnexpectedValueException
+    * @return string $id
+    */
     protected function validateProviderID($providerId)
     {
-        foreach ($this->config["providers"] as $idpId => $config) {
+        foreach ($this->config['providers'] as $idpId => $config) {
             if (strtolower($idpId) == strtolower($providerId)) {
                 $providerId = $idpId;
             }
         }
 
-        if (!isset($this->config['providers'][$providerId])) {
+        if (! isset($this->config['providers'][$providerId])) {
             throw new InvalidArgumentException('Unknown Provider.');
         }
 
-        if (!$this->config['providers'][$providerId]['enabled']) {
+        if (! $this->config['providers'][$providerId]['enabled']) {
             throw new UnexpectedValueException('Disabled Provider.');
         }
 

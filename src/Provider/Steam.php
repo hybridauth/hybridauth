@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -11,36 +11,37 @@ use Hybridauth\Adapter\OpenID;
 use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\User;
 
-final class Steam extends OpenID
+class Steam extends OpenID
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $openidIdentifier = 'http://steamcommunity.com/openid';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function loginFinish()
     {
         parent::loginFinish();
 
-        $userProfile = $this->storage->get($this->providerId.'.user');
+        $userProfile = $this->storage->get($this->providerId . '.user');
 
-        $userProfile->identifier = str_ireplace("http://steamcommunity.com/openid/id/", "", $userProfile->identifier);
+        $userProfile->identifier = str_ireplace('http://steamcommunity.com/openid/id/', '', $userProfile->identifier);
 
-        if (!$userProfile->identifier) {
+        if (! $userProfile->identifier) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
-        $result = [];
+        $result = array();
 
         // if api key is provided, we attempt to use steam web api
 
         if ($this->config->filter('keys')->exists('secret')) {
-            $result =
-                $this->getUserProfileWebAPI($this->config->filter('keys')->get('secret'), $userProfile->identifier);
-        } // otherwise we fallback to community data
+            $result = $this->getUserProfileWebAPI($this->config->filter('keys')->get('secret'), $userProfile->identifier);
+        }
+
+        // otherwise we fallback to community data
         else {
             $result = $this->getUserProfileLegacyAPI($userProfile->identifier);
         }
@@ -51,26 +52,26 @@ final class Steam extends OpenID
         }
 
         // store user profile
-        $this->storage->set($this->providerId.'.user', $userProfile);
+        $this->storage->set($this->providerId . '.user', $userProfile);
     }
 
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
-        $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='.$apiKey.'&steamids='.$steam64;
+        $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . $apiKey . '&steamids=' . $steam64;
 
         $response = $this->httpClient->request($apiUrl);
-        $data     = json_decode($response);
+        $data = json_decode($response);
 
         // not sure if correct
         $data = isset($data->response->players[0]) ? $data->response->players[0] : null;
 
-        $userProfile = [];
+        $userProfile = array();
 
-        $userProfile['displayName'] = property_exists($data, 'personaname') ? $data->personaname : '';
-        $userProfile['firstName']   = property_exists($data, 'realname') ? $data->realname : '';
-        $userProfile['photoURL']    = property_exists($data, 'avatarfull') ? $data->avatarfull : '';
-        $userProfile['profileURL']  = property_exists($data, 'profileurl') ? $data->profileurl : '';
-        $userProfile['country']     = property_exists($data, 'loccountrycode') ? $data->loccountrycode : '';
+        $userProfile['displayName'] = property_exists($data, 'personaname') ? $data->personaname    : '';
+        $userProfile['firstName'  ] = property_exists($data, 'realname') ? $data->realname       : '';
+        $userProfile['photoURL'   ] = property_exists($data, 'avatarfull') ? $data->avatarfull     : '';
+        $userProfile['profileURL' ] = property_exists($data, 'profileurl') ? $data->profileurl     : '';
+        $userProfile['country'    ] = property_exists($data, 'loccountrycode') ? $data->loccountrycode : '';
 
         return $userProfile;
     }
@@ -79,24 +80,26 @@ final class Steam extends OpenID
     {
         libxml_use_internal_errors(false);
 
-        $apiUrl = 'http://steamcommunity.com/profiles/'.$steam64.'/?xml=1';
+        $apiUrl = 'http://steamcommunity.com/profiles/' . $steam64 . '/?xml=1';
 
         $response = $this->httpClient->request($apiUrl);
 
-        $userProfile = [];
+        $userProfile = array();
 
         try {
             $data = new \SimpleXMLElement($response);
 
-            $userProfile['displayName'] = property_exists($data, 'steamID') ? (string)$data->steamID : '';
-            $userProfile['firstName']   = property_exists($data, 'realname') ? (string)$data->realname : '';
-            $userProfile['photoURL']    = property_exists($data, 'avatarFull') ? (string)$data->avatarFull : '';
-            $userProfile['description'] = property_exists($data, 'summary') ? (string)$data->summary : '';
-            $userProfile['region']      = property_exists($data, 'location') ? (string)$data->location : '';
-            $userProfile['profileURL']  = property_exists($data, 'customURL')
+            $userProfile['displayName' ] = property_exists($data, 'steamID') ? (string) $data->steamID     : '';
+            $userProfile['firstName'   ] = property_exists($data, 'realname') ? (string) $data->realname    : '';
+            $userProfile['photoURL'    ] = property_exists($data, 'avatarFull') ? (string) $data->avatarFull  : '';
+            $userProfile['description' ] = property_exists($data, 'summary') ? (string) $data->summary     : '';
+            $userProfile['region'      ] = property_exists($data, 'location') ? (string) $data->location    : '';
+            $userProfile['profileURL'  ] = property_exists($data, 'customURL')
                 ? "http://steamcommunity.com/id/{$data->customURL}/"
                 : "http://steamcommunity.com/profiles/{$userProfile->identifier}/";
-        } // these data are not mandatory so we keep it quite
+        }
+
+        // these data are not mandatory so we keep it quite
         catch (\Exception $e) {
         }
 

@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -15,61 +15,54 @@ use Hybridauth\User;
 /**
  *
  */
-final class Mailru extends OAuth2
+class Mailru  extends OAuth2
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'http://www.appsmail.ru/platform/api';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://connect.mail.ru/oauth/authorize';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://connect.mail.ru/oauth/token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenName = 'session_key';
 
     /**
-     * Mailru requires extra signature when requesting protected resources
-     *
-     * Omit session_key from url. parent::apiRequest() will append the access token anyway.
-     *
-     * {@inheritdoc}
-     */
+    * Mailru requires extra signature when requesting protected resources
+    *
+    * Omit session_key from url. parent::apiRequest() will append the access token anyway.
+    *
+    * {@inheritdoc}
+    */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
-        $signature =
-            md5('client_id='.
-                $this->clientId.
-                'format=jsonmethod='.
-                $url.
-                'secure=1session_key='.
-                $this->token('access_token').
-                $this->clientSecret);
+        $signature = md5('client_id=' . $this->clientId . 'format=jsonmethod=' . $url . 'secure=1session_key='. $this->token('access_token') . $this->clientSecret);
 
-        $url = 'format=json&client_id='.$this->clientId.'&method='.$url.'&secure=1&sig='.$signature;
+        $url = 'format=json&client_id=' . $this->clientId . '&method=' . $url . '&secure=1&sig=' .$signature;
 
         return parent::apiRequest($url, $method, $parameters, $headers);
     }
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users.getInfo');
 
         $data = new Data\Collection($response[0]);
 
-        if (!$data->exists('uid')) {
+        if (! $data->exists('uid')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 

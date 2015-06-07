@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Exception;
@@ -13,10 +13,10 @@ namespace Hybridauth\Exception;
 class Exception extends \Exception implements ExceptionInterface
 {
     /**
-     * Shamelessly Borrowed from Slimframework
-     *
-     * @param $object
-     */
+    * Shamelessly Borrowed from Slimframework
+    *
+    * @param $object
+    */
     public function debug($object)
     {
         $title   = 'Hybridauth Exception';
@@ -26,7 +26,7 @@ class Exception extends \Exception implements ExceptionInterface
         $line    = $this->getLine();
         $trace   = $this->getTraceAsString();
 
-        $html = sprintf('<h1>%s</h1>', $title);
+        $html  = sprintf('<h1>%s</h1>', $title);
         $html .= '<p>HybridAuth has encountered the following error:</p>';
         $html .= '<h2>Details</h2>';
 
@@ -50,8 +50,7 @@ class Exception extends \Exception implements ExceptionInterface
             var_dump($object);
             $var_dump = ob_get_clean();
 
-            $html .= sprintf('<b>'.get_class($object).'</b> extends <b>'.get_parent_class($object).'</b><pre>%s</pre>',
-                $var_dump);
+            $html .= sprintf('<b>' . get_class($object) . '</b> extends <b>' . get_parent_class($object) . '</b><pre>%s</pre>', $var_dump);
         }
 
         $html .= '<h2>Session</h2>';
@@ -62,7 +61,6 @@ class Exception extends \Exception implements ExceptionInterface
 
         $html .= sprintf('<pre>%s</pre>', $var_dump);
 
-        echo sprintf("<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:75px;}</style></head><body>%s</body></html>",
-            $title, $html);
+        echo sprintf("<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:75px;}</style></head><body>%s</body></html>", $title, $html);
     }
 }

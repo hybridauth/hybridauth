@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -10,16 +10,16 @@ namespace Hybridauth\Provider;
 use Hybridauth\Adapter\OpenID;
 use Hybridauth\HttpClient;
 
-final class PaypalOpenID extends OpenID
+class PaypalOpenID extends OpenID
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $openidIdentifier = 'https://www.sandbox.paypal.com/webapps/auth/server';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function authenticateBegin()
     {
         $this->openIdClient->identity  = $this->openidIdentifier;

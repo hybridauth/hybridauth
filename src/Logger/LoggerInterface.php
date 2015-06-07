@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Logger;
@@ -13,31 +13,31 @@ namespace Hybridauth\Logger;
 interface LoggerInterface
 {
     /**
-     * Info
-     *
-     * @param string $message
-     *
-     * @return boolean
-     */
+    * Info
+    *
+    * @param string $message
+    *
+    * @return boolean
+    */
     public function info($message);
 
     /**
-     * Debug
-     *
-     * @param string $message
-     * @param mixed  $object
-     *
-     * @return boolean
-     */
+    * Debug
+    *
+    * @param string $message
+    * @param mixed  $object
+    *
+    * @return boolean
+    */
     public function debug($message, $object = null);
 
     /**
-     * Error
-     *
-     * @param string $message
-     * @param mixed  $object
-     *
-     * @return boolean
-     */
+    * Error
+    *
+    * @param string $message
+    * @param mixed  $object
+    *
+    * @return boolean
+    */
     public function error($message, $object = null);
 }

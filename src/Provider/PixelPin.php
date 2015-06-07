@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -15,38 +15,38 @@ use Hybridauth\User;
 /**
  *
  */
-final class PixelPin extends OAuth2
+class PixelPin extends OAuth2
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'https://ws3.pixelpin.co.uk/index.php/api/';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://login.pixelpin.co.uk/OAuth2/FLogin.aspx';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://ws3.pixelpin.co.uk/index.php/api/token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenName = 'oauth_token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('userdata');
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('id')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 

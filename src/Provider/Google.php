@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -15,38 +15,38 @@ use Hybridauth\User;
 /**
  *
  */
-final class Google extends OAuth2
+class Google extends OAuth2
 {
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public $scope = 'profile https://www.googleapis.com/auth/plus.profile.emails.read';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'https://www.googleapis.com/plus/v1/';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://accounts.google.com/o/oauth2/auth';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://accounts.google.com/o/oauth2/token';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('people/me');
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('id')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -68,7 +68,7 @@ final class Google extends OAuth2
         $userProfile->zip         = $data->get('zip');
 
         if ($data->filter('image')->exists('url')) {
-            $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2). 150;
+            $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2) . 150;
         }
 
         $userProfile = $this->fetchUserEmail($userProfile, $data);
@@ -83,8 +83,8 @@ final class Google extends OAuth2
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchUserEmail($userProfile, $data)
     {
         foreach ($data->get('emails') as $email) {
@@ -94,13 +94,13 @@ final class Google extends OAuth2
                 break;
             }
         }
-
+        
         return $userProfile;
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchUserProfileUrl($userProfile, $data)
     {
         foreach ($data->filter('urls')->all() as $url) {
@@ -115,26 +115,26 @@ final class Google extends OAuth2
     }
 
     /**
-     *
-     */
+    *
+    */
     protected function fetchBirthday($userProfile, $birthday)
     {
         $result = (new Data\Parser())->parseBirthday($birthday, '-');
 
-        $userProfile->birthDay   = (int)$result[0];
-        $userProfile->birthMonth = (int)$result[1];
-        $userProfile->birthYear  = (int)$result[2];
+        $userProfile->birthDay   = (int) $result[0];
+        $userProfile->birthMonth = (int) $result[1];
+        $userProfile->birthYear  = (int) $result[2];
 
         return $userProfile;
     }
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     public function getUserContacts()
     {
         // @fixme
-        $extraParams = ["max-results" => 500];
+        $extraParams = array( "max-results" => 500 );
 
         // Google Gmail and Android contacts
         if (false !== strpos($this->scope, '/m8/feeds/')) {
@@ -148,17 +148,15 @@ final class Google extends OAuth2
     }
 
     /**
-     * Retrieve Gmail contacts
-     *
-     *  ..
-     */
+    * Retrieve Gmail contacts
+    *
+    *  ..
+    */
     protected function getGmailContacts($extraParams)
     {
         $contacts = [];
 
-        $url =
-            'https://www.google.com/m8/feeds/contacts/default/full?'.
-            http_build_query(array_merge(['alt' => 'json', 'v' => '3.0'], $extraParams));
+        $url = 'https://www.google.com/m8/feeds/contacts/default/full?' . http_build_query(array_merge([ 'alt' => 'json', 'v' => '3.0' ], $extraParams));
 
         $response = $this->apiRequest($url);
 
@@ -178,15 +176,15 @@ final class Google extends OAuth2
     }
 
     /**
-     * Retrieve Google plus contacts
-     *
-     *  ..
-     */
+    * Retrieve Google plus contacts
+    *
+    *  ..
+    */
     protected function getGplusContacts($extraParams)
     {
         $contacts = [];
 
-        $url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?'.http_build_query($extraParams);
+        $url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?' . http_build_query($extraParams);
 
         $response = $this->apiRequest($url);
 

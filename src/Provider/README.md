@@ -11,7 +11,7 @@ use Hybridauth\Adapter\OpenID;
 
 final class Stackoverflow extends OpenID
 {
-	protected $openidIdentifier = 'https://openid.stackexchange.com/';
+    protected $openidIdentifier = 'https://openid.stackexchange.com/';
 }
 ```
 
@@ -32,97 +32,97 @@ use Hybridauth\User;
 
 final class MyCustomProvider extends OAuth2
 {
-	/**
-	* Defaults scope to requests 
-	*/
-	protected $scope = 'email, ...';
+    /**
+    * Defaults scope to requests 
+    */
+    protected $scope = 'email, ...';
 
-	/**
-	* Default Base URL to provider API
-	*/
-	protected $apiBaseUrl = 'https://api.provider.ltd/version/';
+    /**
+    * Default Base URL to provider API
+    */
+    protected $apiBaseUrl = 'https://api.provider.ltd/version/';
 
-	/**
-	* Default Authorization Endpoint
-	*/
-	protected $authorizeUrl = 'https://api.provider.ltd/oauth/authorize';
+    /**
+    * Default Authorization Endpoint
+    */
+    protected $authorizeUrl = 'https://api.provider.ltd/oauth/authorize';
 
-	/**
-	* Default Access Token Endpoint
-	*/
-	protected $accessTokenUrl = 'https://api.provider.ltd/oauth/access_token';
+    /**
+    * Default Access Token Endpoint
+    */
+    protected $accessTokenUrl = 'https://api.provider.ltd/oauth/access_token';
 
-	/* optional: set any extra parameters or settings */
-	protected function initialize()
-	{
-		parent::initialize();
+    /* optional: set any extra parameters or settings */
+    protected function initialize()
+    {
+        parent::initialize();
 
-		/* optional: determine how exchange Authorization Code with an Access Token */
-		$this->tokenExchangeParameters = [
-			"client_id"     => $this->clientId,
-			"grant_type"    => "authorization_code",
-			"redirect_uri"  => $this->endpoint
-		];
-		$this->tokenExchangeMethod  = 'POST';
-		$this->tokenExchangeHeaders = [ 'Authorization' => 'Basic ' . base64_encode( $this->clientId .  ':' . $this->clientSecret ) ];
+        /* optional: determine how exchange Authorization Code with an Access Token */
+        $this->tokenExchangeParameters = [
+            'client_id'     => $this->clientId,
+            'grant_type'    => "authorization_code",
+            'redirect_uri'  => $this->endpoint
+        ];
+        $this->tokenExchangeMethod  = 'POST';
+        $this->tokenExchangeHeaders = [ 'Authorization' => 'Basic ' . base64_encode( $this->clientId .  ':' . $this->clientSecret ) ];
 
-		/* optional: add any extra parameters or headers when sending signed requests */
-		$this->apiRequestParameters = [ 'access_token'  => $this->token( "access_token" ) ];
-		$this->apiRequestHeaders    = [ 'Authorization' => 'Bearer ' . $this->token( "access_token" ) ];
-	} 
+        /* optional: add any extra parameters or headers when sending signed requests */
+        $this->apiRequestParameters = [ 'access_token'  => $this->token( 'access_token' ) ];
+        $this->apiRequestHeaders    = [ 'Authorization' => 'Bearer ' . $this->token( "access_token" ) ];
+    } 
 
-	function getUserProfile()
-	{
-		/* now we use apiRequest() for signed requests. */
-		$response = $this->apiRequest( 'user/profile', 'GET', [], [ 'Authorization' => .. ] );
+    function getUserProfile()
+    {
+        /* now we use apiRequest() for signed requests. */
+        $response = $this->apiRequest( 'user/profile', 'GET', [], [ 'Authorization' => .. ] );
 
-		/* example of how to instantiate a user profile and how to use data collection, assuming user/profile returns this response:
+        /* example of how to instantiate a user profile and how to use data collection, assuming user/profile returns this response:
 
-			{
-				"id": "98131543",
-				"firstName": "John",
-				"lastName": "Smith",
-				"age": 25,
-				"emails : "John.Smith@domain.ltd",
-				"address": {
-					"streetAddress": "21 2nd Street",
-					"city": "New York",
-					"state": "NY",
-					"postalCode": "10021-3100"
-				}
-			}
-		*/
+            {
+                "id": "98131543",
+                "firstName": "John",
+                "lastName": "Smith",
+                "age": 25,
+                "emails : "John.Smith@domain.ltd",
+                "address": {
+                    "streetAddress": "21 2nd Street",
+                    "city": "New York",
+                    "state": "NY",
+                    "postalCode": "10021-3100"
+                }
+            }
+        */
 
-		$collection = new Data\Collection( $response );
+        $collection = new Data\Collection( $response );
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		if( ! $data->exists( 'id' ) )
-		{
-			throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
-		}
+        if( ! $data->exists( 'id' ) )
+        {
+            throw new UnexpectedValueException( 'Provider API returned an unexpected response.' );
+        }
 
-		$userProfile->identifier = $collection->get( 'id' );
+        $userProfile->identifier = $collection->get( 'id' );
 
-		$userProfile->email = $collection->get( 'email' );
+        $userProfile->email = $collection->get( 'email' );
 
-		$userProfile->displayName = $data->get( 'firstName' ) . ' ' . $data->get( 'lastName' ) ;
+        $userProfile->displayName = $data->get( 'firstName' ) . ' ' . $data->get( 'lastName' ) ;
 
-		if( $collection->exists( 'image' ) )
-		{
-			$userProfile->photoURL = 'http://provider.ltd/users/' . $collection->get( 'image' );
-		}
+        if( $collection->exists( 'image' ) )
+        {
+            $userProfile->photoURL = 'http://provider.ltd/users/' . $collection->get( 'image' );
+        }
 
-		$userProfile->address = $collection->filter( 'address' )->get( 'streetAddress' );
+        $userProfile->address = $collection->filter( 'address' )->get( 'streetAddress' );
 
-		$userProfile->city = $collection->filter( 'address' )->get( 'city' );
+        $userProfile->city = $collection->filter( 'address' )->get( 'city' );
 
-		// ...
+        // ...
 
-		return $userProfile;
-	}
+        return $userProfile;
+    }
 
-	//..
+    //..
 }
 ```
 
@@ -140,47 +140,47 @@ use Hybridauth\User;
 
 final class MyCustomProvider extends OAuth1
 {
-	/**
-	* Default Base URL to provider API
-	*/
-	protected $apiBaseUrl = 'https://api.provider.ltd/version/';
+    /**
+    * Default Base URL to provider API
+    */
+    protected $apiBaseUrl = 'https://api.provider.ltd/version/';
 
-	/**
-	* Default Authorization Endpoint
-	*/
-	protected $authorizeUrl = 'https://api.provider.ltd/oauth/authorize';
+    /**
+    * Default Authorization Endpoint
+    */
+    protected $authorizeUrl = 'https://api.provider.ltd/oauth/authorize';
 
-	/**
-	* Unauthorized Request Token Endpoint
-	*/
-	protected $requestTokenUrl = 'https://api.provider.ltd/oauth/request_token';
+    /**
+    * Unauthorized Request Token Endpoint
+    */
+    protected $requestTokenUrl = 'https://api.provider.ltd/oauth/request_token';
 
-	/**
-	* Default Access Token Endpoint
-	*/
-	protected $accessTokenUrl = 'https://api.provider.ltd/oauth/access_token';
+    /**
+    * Default Access Token Endpoint
+    */
+    protected $accessTokenUrl = 'https://api.provider.ltd/oauth/access_token';
 
-	/* optional: set any extra parameters or settings */
-	protected function initialize()
-	{
-		parent::initialize();
+    /* optional: set any extra parameters or settings */
+    protected function initialize()
+    {
+        parent::initialize();
 
-		/* optional: define a how request Unauthorized OAuth Token */
-		$this->requestTokenMethod     = 'GET'; 
-		$this->requestTokenParameters = [ .. ];
-		$this->requestTokenHeaders    = [ .. ]; 
+        /* optional: define a how request Unauthorized OAuth Token */
+        $this->requestTokenMethod     = 'GET'; 
+        $this->requestTokenParameters = [ .. ];
+        $this->requestTokenHeaders    = [ .. ]; 
 
-		/* optional: determine how the exchange Unauthorized OAuth Token with an Access Token */
-		$this->tokenExchangeMethod     = 'POST'; 
-		$this->tokenExchangeParameters = [ .. ]; 
-		$this->tokenExchangeHeaders    = [ .. ];
+        /* optional: determine how the exchange Unauthorized OAuth Token with an Access Token */
+        $this->tokenExchangeMethod     = 'POST'; 
+        $this->tokenExchangeParameters = [ .. ]; 
+        $this->tokenExchangeHeaders    = [ .. ];
 
-		/* optional: add any extra parameters or headers when sending signed requests */
-		$this->apiRequestParameters = [ 'access_token' => $this->token( "access_token" ) ];
-		$this->apiRequestHeaders    = [ 'Accept-Encoding' => 'compress, gzip' ];
-	}
+        /* optional: add any extra parameters or headers when sending signed requests */
+        $this->apiRequestParameters = [ 'access_token' => $this->token( 'access_token' ) ];
+        $this->apiRequestHeaders    = [ 'Accept-Encoding' => 'compress, gzip' ];
+    }
 
-	//..
+    //..
 }
 ```
 
