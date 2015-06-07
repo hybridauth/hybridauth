@@ -59,9 +59,7 @@
                 ),
                  $html
             );
-            
-            file_put_contents( 'out/' . $basename, $html );
-            
+
             echo $html;
         }
     }
