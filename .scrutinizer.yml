@@ -5,7 +5,6 @@ filter:
         - tests/*
         - examples/*
         - src/Deprecated/*
-        - src/Provider/WIP/*
         - src/Thirdparty/*
 
 tools:
@@ -16,7 +15,7 @@ tools:
 checks:
     php:
         code_rating: true
-        duplication: true    
+        duplication: false    
         avoid_multiple_statements_on_same_line: true
         avoid_fixme_comments: true
         avoid_todo_comments: true

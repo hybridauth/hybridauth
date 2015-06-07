@@ -1,30 +1,82 @@
-#### ToDo
+Hybridauth V3.1 TODO list
+=========================
 
-- [ ] Improve this todo list #451 issuecomment-96178499
-- [ ] Fix eventual bugs (priority to stability issues)
-- [x] Make hybridauth PSR-4 compliant
-- [x] Replace hybridauth examples with basic and simple ones.
-- [x] Move additional-providers inside core.
-- [x] Remove static vars and methods.
-- [x] Restructure hybridauth directories and files.
-- [x] normalize configuration files (one set of rules for extra arguments). 
-- [x] Add a HttpClient and eventually support externals libs (i.g., Guzzle)
-- [x] Give more consistent and readable errors when requests fails. 
-- [x] Optimize how hybridauth use php sessions - it store a lot of data
-    - [x] Do not store empty tokens
-    - [x] Remove unused configs and params when initiating auth protocols
-    - [x] No longer serialize exceptions in session.
-- [x] Rework OAuth1 and OAuth2 templates
-    - [x] Merge OAuth1Client with Model_OAuth1
-    - [x] Merge OAuth2Client with Model_OAuth2
-- [x] Rework Exceptions
-- [x] Implement Data parser and Data Collection. 
-- [ ] Upgrading supported providers to 3.0.
-    - [x] Remove introduced methods and users profile fields. 
-    - [x] Drop support for few additional providers, due to either external dependencies
-    - [x] Attempt to create non dependent Facebook adapter (Using Model_OAuth2 instead of SDK).
-    - [ ] Attempt to create non dependent Linkedin adapter (Using Model_OAuth1 instead of simple-linkedinphp. simple-linkedinphp seems to be abandoned). 
-    - [ ] Reduce the supported providers code complexity.
-- [ ] Improve internal code comments. 
-- [ ] Introduce unit testing
-- [ ] ..
+### Required:
+
+[X] **Core**
+
+Hybridauth core has been entirely implemented and while new modification may occur in the future, the design is most likely
+will stay the same.
+
+[ ] **OAuth 1/2 Providers**
+
+For the first releases of Hybridauth V3, we'll focusing on the major providers (i.g, facebook, google, twitter, etc.)
+
+The following IDPs are based on either OAuth 1 or 2 specifications. While most of them are already implemented to work with
+Hybridauth V3, they still need some tweaking and testing.
+
+More information on how to implement IDPs into Hybridauth V3 can be found at 
+http://hybridauth.github.io/developer-ref-extend-hybridauth.html
+
+Provider      | Implemented? | Working?    | Notes
+------------- | ------------ |------------ | ------------------------------------------------------------------------------
+Facebook      |  [X]         | [ ]         | 
+Twitter       |  [X]         | [ ]         | 
+Google        |  [X]         | [ ]         | 
+Yahoo         |  [ ]         | [ ]         | Not implemented yet.
+Windows Live  |  [ ]         | [ ]         | Not implemented yet.
+LinkedIn      |  [ ]         | [ ]         | Not implemented yet.
+Foursquare    |  [X]         | [ ]         | 
+Disqus        |  [X]         | [ ]         | 
+Dribbble      |  [X]         | [ ]         | 
+GitHub        |  [X]         | [ ]         | 
+Instagram     |  [X]         | [ ]         | 
+Reddit        |  [X]         | [X]         | 
+WordPress     |  [X]         | [X]         | 
+Tumblr        |  [X]         | [ ]         | 
+TwitchTV      |  [X]         | [ ]         | 
+Vkontakte     |  [X]         | [ ]         |
+Mailru        |  [X]         | [ ]         |
+Odnoklassniki |  [X]         | [ ]         |
+
+
+[ ] **OpenID Providers**
+
+The following IDPs are based on OpenID specifications. 
+
+Provider      | Implemented? | Working?    | Notes
+------------- | ------------ |------------ | ------------------------------------------------------------------------------
+OpenID        |  [X]         | [X]         | Generic OpenID Adapter. Implemented and Working.
+AOL           |  [X]         | [ ]         | Does the AOL still a thing? We may drop it otherwise.
+PaypalOpenID  |  [X]         | [ ]         | Implemented but needs someone to confirm it's a working as expected.
+Stackoverflow |  [X]         | [X]         | All good.
+YahooOpenID   |  [X]         | [X]         | All good.
+Steam         |  [X]         | [X]         | Steam Adapter is a mix of OpenID and a Proprietary API.
+
+
+### Optional:
+
+The following tasks are not required in order to release Hybridauth 3 but they're nice to have.
+
+[ ] **Peer review**
+
+Hybridauth V3 is a complete rewrite of the current V2, and given the sensitive topic it deals with (i.e, users authentication),
+it would be extremely valuable to have the entire code base examined and reviewed for safety and security purposes.
+
+[ ] **Additional providers**
+
+As mentioned above, for the first releases of Hybridauth 3, we'll focusing on the major providers. If there's a social networks
+that you care for and you wish it to be included sooner, then feel free to port it from the V2 repository.
+
+V2 additional IDPs can be found at: 
+
+https://github.com/hybridauth/hybridauth/tree/master/additional-providers
+
+Documentation on how to upgrade these providers to V3 can be found at:
+
+http://hybridauth.github.io/developer-ref-extend-hybridauth.html
+
+[ ] **Unit tests**
+
+This one has been on the project's wishlist for as long as Hybridauth library existed. If you feel adventurous enough to take
+on this task, then please give it a shot.

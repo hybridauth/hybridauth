@@ -2,7 +2,7 @@ Except where otherwise noted in the source code (i.e., LightOpenID and OAuth
 Library, which are covered by similar licences but with different Copyright
 notices) all the files are:
 
- Copyright (C) 2009-2014, HybridAuth authors. All Rights Reserved.
+ Copyright (C) 2009-2015, HybridAuth authors. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

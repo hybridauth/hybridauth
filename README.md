@@ -1,6 +1,6 @@
-## [Hybridauth](http://hybridauth.sourceforge.net/) 3.0.0-Remake
+## [Hybridauth](http://hybridauth.github.io/) 3.0.0-Remake
 
-[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=3.0.0-Remake)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=3.0.0-Remake)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=3.0.0-Remake) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Latest Unstable Version](https://poser.pugx.org/hybridauth/hybridauth/v/unstable.svg)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth) [![License](https://poser.pugx.org/hybridauth/hybridauth/license.svg)](https://packagist.org/packages/hybridauth/hybridauth) 
+[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=3.0.0-Remake)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=3.0.0-Remake)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=3.0.0-Remake) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth) [![License](https://poser.pugx.org/hybridauth/hybridauth/license.svg)](https://packagist.org/packages/hybridauth/hybridauth) 
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
@@ -144,13 +144,11 @@ $ php composer.phar install
 
 Hybridauth is a community driven project and accepts contributions of code and documentation from the community. 
 
-For more information, see [CONTRIBUTING.md](https://github.com/hybridauth/hybridauth/blob/master/CONTRIBUTING.md). 
+For more information, see http://hybridauth.github.io/getinvolved.html. 
 
 #### Questions, Help and Support?
 
-For general questions (i.e, "how-to" questions), consider using [StackOverflow](https://stackoverflow.com/questions/tagged/hybridauth). 
-
-We also have a mailing list at [Google Groups](http://groups.google.com/group/hybridauth).
+For general questions (i.e, "how-to" questions), please consider using [StackOverflow](https://stackoverflow.com/questions/tagged/hybridauth) instead of the Github issues tracker. For convenience, we also have a [low-activity] mailing list at [Google Groups](http://groups.google.com/group/hybridauth) and a [Gitter channel](https://gitter.im/hybridauth/hybridauth) if you want to get help directly from the community.
 
 #### Project maintainers
 
