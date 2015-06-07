@@ -3,12 +3,12 @@ Hybridauth V3.1 TODO list
 
 ### Required:
 
-[X] **Core**
+- [X] **Core**
 
 Hybridauth core has been entirely implemented and while new modification may occur in the future, the design is most likely
 will stay the same.
 
-[ ] **OAuth 1/2 Providers**
+- [ ] **OAuth 1/2 Providers**
 
 For the first releases of Hybridauth V3, we'll focusing on the major providers (i.g, facebook, google, twitter, etc.)
 
@@ -58,12 +58,12 @@ Steam         |  [X]         | [X]         | Steam Adapter is a mix of OpenID an
 
 The following tasks are not required in order to release Hybridauth 3 but they're nice to have.
 
-[ ] **Peer review**
+- [ ] **Peer review**
 
 Hybridauth V3 is a complete rewrite of the current V2, and given the sensitive topic it deals with (i.e, users authentication),
 it would be extremely valuable to have the entire code base examined and reviewed for safety and security purposes.
 
-[ ] **Additional providers**
+- [ ] **Additional providers**
 
 As mentioned above, for the first releases of Hybridauth 3, we'll focusing on the major providers. If there's a social networks
 that you care for and you wish it to be included sooner, then feel free to port it from the V2 repository.
@@ -76,7 +76,7 @@ Documentation on how to upgrade these providers to V3 can be found at:
 
 http://hybridauth.github.io/developer-ref-extend-hybridauth.html
 
-[ ] **Unit tests**
+- [ ] **Unit tests**
 
 This one has been on the project's wishlist for as long as Hybridauth library existed. If you feel adventurous enough to take
 on this task, then please give it a shot.
