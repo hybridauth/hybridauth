@@ -1,11 +1,12 @@
 User Contacts
 =============
 
+**Important** Currently only Facebook, Twitter and LinkedIn do support this feature. Others providers will throw an
+exception (`NotImplementedException`: Provider does not support this feature), when `getUserContacts()` is called.
 
-**Important :** Currently only <strong>Facebook, Twitter, Identica, LinkedIn, QQ, Sina, Murmur, Pixnet and Plurk</strong> do support this feature. Others providers will throw an exception (#8 "Provider does not support this feature"), when <code>getUserContacts()</code> is called. Please refer to the user guide to know more about each adapters capabilities.
 
-
-Same with the user's profile, after authenfication, HybridAuth can provide the connected user contact list's in a rich, simple and **standardized structur** across all the social APIs.
+Same with the user's profile, after authentication, HybridAuth can provide the connected user contact list's in a rich,
+simple and **standardized structure** across all the social APIs.
 
 **Sample :**
 
@@ -34,10 +35,10 @@ This class represents the ....
 
 Field Name    | Type     | Short description
 ------------- | ---------| -------------------------------------------------------
-identifier    | String   | The Unique contact's ID on the connected provider. Usually an interger.
+identifier    | String   | The Unique contact's ID on the connected provider. Usually an integer.
 profileURL    | String   | URL link to profile page on the IDp web site
 webSiteURL    | String   | User website, blog, web page, etc.
 photoURL      | String   | URL link to user photo or avatar
 displayName   | String   | User dispalyName provided by the IDp or a concatenation of first and last name.
 description   | String   | A short about_me or the last contact status
-email         | String   | User email. *Not all of IDp garant access to the user email*
+email         | String   | User email. *Not all of IDp grant access to the user email*

@@ -14,14 +14,13 @@ Welcome to Hybridauth documentation. As a good start we recommend to ...
 ### Developer References
 
 . | .
---------------------------------------------------------------- | ------------------------------------------------------------
+--------------------------------------------------------------- | ---------------------------------------------------------
 [Authenticating a user](developer-ref-user-authentication.html) |
 [Access user profile](developer-ref-user-profile.html)          |
 [Access user contacts](developer-ref-user-contacts.html)        |
 [Update user status](developer-ref-user-status.html)            |
 [Access providers APIs](developer-ref-providers-apis.html)      |
-[Exception handling](developer-ref-exceptions.html)      |
-[Full API documentation](developer-ref-full-api.html)           |
+[Exception handling](developer-ref-exceptions.html)             |
 [Extending Hybridauth](developer-ref-extend-hybridauth.html)    |
 [Migrating to 3.0+](developer-ref-migrating.html)               |
 

@@ -1,11 +1,13 @@
 User profile
 ============
 
-After authentication, HybridAuth provide the connected user profile's in a rich, simple and **standardized structure** across all the social APIs.
+After authentication, HybridAuth provide the connected user profile's in a rich, simple and **standardized structure**
+across all the social APIs.
 
 Also, keep in mind that not all social APIs will provide all the user data to third-party.
 
-The `Hybridauth\User\Profile` object will be populated with as much information about the user as HybridAuth was able to pull from the given API or authentication provider.
+The `Hybridauth\User\Profile` object will be populated with as much information about the user as HybridAuth was able
+to pull from the given API or authentication provider.
 
 **Sample :**
 
@@ -13,7 +15,7 @@ The `Hybridauth\User\Profile` object will be populated with as much information 
 // Instantiate Github Adapter
 $github = new Hybridauth\Provider\GitHub($config);
 
-// Aauthenticate with the user
+// Authenticate with the user
 $github->authenticate();
 
 // Retrieve Users Profiles
@@ -24,7 +26,8 @@ echo 'Hi '.$userProfile->displayName;
 
 ### Class Hybridauth\User\Profile
 
-It represents the current logged in user profile. list of fields available in the normalized user profile structure used by HybridAuth. 
+It represents the current logged in user profile. list of fields available in the normalized user profile structure used by
+HybridAuth. 
 
 **Data Members :**
 

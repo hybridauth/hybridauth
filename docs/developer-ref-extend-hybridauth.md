@@ -19,7 +19,8 @@ final class Stackoverflow extends OpenID
 
 OAuth2Client and Model_OAuth2 are now merged together into a new abstract class to simplify the authorization flow.
 
-Subclasses (i.e., providers adapters) can either use the already provided methods by the new OAuth2 class, override them, or create new ones when needed.
+Subclasses (i.e., providers adapters) can either use the already provided methods by the new OAuth2 class, override them,
+or create new ones when needed.
 
 ```php
 namespace Hybridauth\Provider;
