@@ -12,7 +12,7 @@
  */
 spl_autoload_register(
     function ($class) {
-        $prefix = 'Hybridauth\\';         // < only kick in for Hybridauth namespace
+        $prefix = 'Hybridauth\\';       // < only kick in for Hybridauth namespace
 
         $base_dir = __DIR__.'/../src/'; // < change this path if necessary
 

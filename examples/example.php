@@ -49,6 +49,37 @@ $config = [
     'callback' => 'https://path/to/hybridauth/examples/example.php',
     'keys'     => ['id' => 'your-app-id', 'secret' => 'your-app-secret'],
     'scope'    => ['user:email']
+
+    /* optional
+        // You can also set it to
+        // - false To disable logging
+        // - true To enable logging
+        // - 'error' To log only error messages. Useful in production
+        // - 'info' To log info and error messages (ignore debug messages] 
+        'debug_mode' => true,
+        // 'debug_mode' => 'info',
+        // 'debug_mode' => 'error',
+
+        // Path to file writable by the web server. Required if 'debug_mode' is not false
+        'debug_file' => __FILE__ . '.log', */
+
+    /* optional
+        // tweak default Http client curl settings
+        // http://www.php.net/manual/fr/function.curl-setopt.php  
+        'curl_options' => [
+            // setting custom certificates
+            // http://curl.haxx.se/docs/caextract.html
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_CAINFO         => dirname(__FILE__) . '/tests/ca-bundle.crt',
+
+            // setting proxies 
+            # CURLOPT_PROXY          => '*.*.*.*:*',
+
+            // custom user agent
+            # CURLOPT_USERAGENT      => '', 
+
+            // etc..
+        ], */
 ];
 
 /**
@@ -113,29 +144,34 @@ $github->disconnect();
 
 try {
     $github->getUserProfile();
-} /**
- * Catch Curl Errors
- *
- * This kind of error may happen when:
- *     - Your internet connection is so bad.
- *     - Your server configuration is also bad.
- *     - We kidding. The full list of curl errors that may happen can be found at
- *       http://curl.haxx.se/libcurl/c/libcurl-errors.html
- */
+}
+
+/**
+* Catch Curl Errors
+*
+* This kind of error may happen when:
+*     - Internet or Networks issues.
+*     - Your server configuration is not setup correctly.
+* The full list of curl errors that may happen can be found at http://curl.haxx.se/libcurl/c/libcurl-errors.html
+*/
 catch (Hybridauth\Exception\HttpClientFailureException $e) {
     echo 'Curl text error message : '.$github->getHttpClient()->getResponseClientError();
-} /**
- * Catch API Requests Errors
- *
- * This usually happen when requesting a:
- *     - Wrong URI or a mal-formatted http request.
- *     - Protected resource without providing a valid access token.
- */
+}
+
+/**
+* Catch API Requests Errors
+*
+* This usually happen when requesting a:
+*     - Wrong URI or a mal-formatted http request.
+*     - Protected resource without providing a valid access token.
+*/
 catch (Hybridauth\Exception\HttpRequestFailedException $e) {
     echo 'Raw API Response: '.$github->getHttpClient()->getResponseBody();
-} /**
- * I catch everything else
- */
+}
+
+/**
+* I catch everything else
+*/
 catch (\Exception $e) {
-    echo 'Oops! We ran into an issue: '.$e->getMessage();
+    echo 'Oops! We ran into an unknown issue: '.$e->getMessage();
 }
