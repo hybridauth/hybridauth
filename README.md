@@ -4,10 +4,7 @@
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-    Notes:
-    This is a work in progress and subject to changes at any time.
-    Below is probably what going to be the new readme file.
-    Update, changes and remakes are welcome.
+    IMPORTANT: This is a work in progress and subject to changes at any time.
 
 Hybridauth enables developers to easily build social applications and tools to engage websites visitors and customers on a social level by implementing social sign-in, social sharing, users profiles, friends list, activities stream, status updates and more.
 
@@ -24,86 +21,60 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 ##### New way of doing things :
 
 ```php
-<?php
+    require 'vendor/autoload.php';
 
-	require 'vendor/autoload.php';
+    $config = [
+        'callback' => 'http://localhost/hybridauth/examples/twitter.php',
 
-	$config = [
-		'callback' => 'http://localhost/hybridauth/examples/twitter.php',
+        'keys' => [ 'key'    => 'your-consumer-key', 'secret' => 'your-consumer-secret' ]
+    ];
 
-		'keys' => [
-			'key'    => 'your-consumer-key',
-			'secret' => 'your-consumer-secret'
-		],
+    $twitter = new Hybridauth\Provider\Twitter( $config );
 
-	/*
-		OPTIONAL: Connect with a pair of access tokens
-			'tokens' => [
-				'access_token'        => 'your-access-token',
-				'access_token_secret' => 'your-access-token-secret',
-			],
+    try {
+        $twitter->authenticate();
 
-		OPTIONAL: Redefine providers endpoints
-			'endpoints' => [
-				'api_base_url'      => 'https://api.twitter.com/1.1/',
-				'authorize_url'     => 'https://api.twitter.com/oauth/authenticate',
-				'request_token_url' => 'https://api.twitter.com/oauth/request_token',
-				'access_token_url'  => 'https://api.twitter.com/oauth/access_token',
-			]
-	*/
-	];
+        $userProfile = $twitter->getUserProfile();
 
-	$twitter = new Hybridauth\Provider\Twitter( $config );
+        $accessToken = $twitter->getAccessToken();
 
-	try {
-		$twitter->authenticate();
-
-		$userProfile = $twitter->getUserProfile();
-
-		$accessToken = $twitter->getAccessToken();
-
-		$apiResponse = $twitter->apiRequest( 'statuses/home_timeline.json' );
-	}
-	catch( Exception $e ){
-		echo "Ooophs, we ran into an issue! " . $e->getMessage();
-	}
-?>
+        $apiResponse = $twitter->apiRequest( 'statuses/home_timeline.json' );
+    }
+    catch( Exception $e ){
+        echo "Ooophs, we ran into an issue! " . $e->getMessage();
+    }
 ```
 
 ##### Legacy way (Compatible with Hybridauth 2.x)
 
-Please refer to [Upgrade guide](https://github.com/hybridauth/hybridauth/blob/master/UPGRADING.md) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
+Please refer to [Upgrade guide](http://hybridauth.github.io/developer-ref-migrating.html) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
 
 ```php
-<?php
+    require 'hybridauth_autoload.php';
 
-	require 'hybridauth_autoload.php';
+    $config = array(
+        'base_url'  => 'http://localhost/hybridauth/examples/callback.php',
 
-	$config = array(
-		'base_url'  => 'http://localhost/hybridauth/examples/callback.php',
+        'providers' => array(
+            'GitHub' => array(
+                'enabled' => true,
+                'keys'    => array ( 'id' => '', 'secret' => '' ),
+            )
+        )
+    );
 
-		'providers' => array(
-			'GitHub' => array(
-				'enabled' => true,
-				'keys'    => array ( 'id' => '', 'secret' => '' ),
-			)
-		)
-	);
+    $hybridauth = new Hybridauth( $config );
 
-	$hybridauth = new Hybridauth( $config );
+    try{
+        $github = $hybridauth->authenticate( "GitHub" );
 
-	try{
-		$github = $hybridauth->authenticate( "GitHub" );
+        $user_profile = $github->getUserProfile();
 
-		$user_profile = $github->getUserProfile();
-
-		echo "Hi there " . $user_profile->displayName;
-	}
-	catch( Exception $e ){
-		echo "Ooophs, we ran into an issue! " . $e->getMessage();
-	}
-
-?>
+        echo "Hi there " . $user_profile->displayName;
+    }
+    catch( Exception $e ){
+        echo "Ooophs, we ran into an issue! " . $e->getMessage();
+    }
 ```
 
 #### Requirements
@@ -129,7 +100,7 @@ When using Composer, you have to add Hybridauth to your project dependencies:
 
 ```
 "require": {
-	"hybridauth/hybridauth": "3.0.*"
+    "hybridauth/hybridauth": "3.0.*"
 }
 ```
 

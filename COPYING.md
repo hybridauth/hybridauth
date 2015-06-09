@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-                            ==============
+-----------------------
 
 
 HybridAuth includes a copy of LightOpenID, licensed as follows:
@@ -49,7 +49,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-                            ==============
+-----------------------
 
 
 HybridAuth includes a modified copy of OAuth PHP Library, licensed as follows:

@@ -16,11 +16,11 @@ otherwise we will be left in the dark about the problem you having. Thank you fo
 <br />
 
 <p style="text-align:center">
-	<a href="https://stackoverflow.com/questions/tagged/hybridauth" target="_blank" class="btn btn-default btn-lg"><i class="fa fa-stack-overflow"></i> StackOverflow Q&A</a>
-	&nbsp;
-	<a href="https://gitter.im/hybridauth/hybridauth" target="_blank" class="btn btn-default btn-lg"><i class="fa fa-comment"></i> Gitter channel</a> 
-	&nbsp;
-	<a href="https://github.com/hybridauth/hybridauth/issues" target="_blank" class="btn btn-default btn-lg"><i class="fa fa-github"></i> Github issues tracker</a> 
+    <a href="https://stackoverflow.com/questions/tagged/hybridauth" target="_blank" class="btn btn-default btn-lg"><i class="fa fa-stack-overflow"></i> StackOverflow Q&A</a>
+    &nbsp;
+    <a href="https://gitter.im/hybridauth/hybridauth" target="_blank" class="btn btn-default btn-lg"><i class="fa fa-comment"></i> Gitter channel</a> 
+    &nbsp;
+    <a href="https://github.com/hybridauth/hybridauth/issues" target="_blank" class="btn btn-default btn-lg"><i class="fa fa-github"></i> Github issues tracker</a> 
 </p>
 
 

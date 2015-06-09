@@ -10,7 +10,9 @@
             'index.html',
             'documentation.html',
             'license.html',
+            'support.html',
             'getinvolved.html',
+            'search.html',
 
             'install.html',
             'providers.html',
