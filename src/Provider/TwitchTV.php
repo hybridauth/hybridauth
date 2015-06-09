@@ -64,7 +64,9 @@ class TwitchTV  extends OAuth2
 
         $userProfile->profileURL = 'http://www.twitch.tv/' . $data->get('name');
 
-        $userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get('name');
+        $userProfile->displayName = $userProfile->displayName
+                                        ? $userProfile->displayName
+                                        : $data->get('name');
 
         return $userProfile;
     }

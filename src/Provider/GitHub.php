@@ -61,7 +61,9 @@ class GitHub extends OAuth2
         $userProfile->webSiteURL  = $data->get('blog');
         $userProfile->region      = $data->get('location');
 
-        $userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get('login');
+        $userProfile->displayName = $userProfile->displayName 
+                                        ? $userProfile->displayName 
+                                        : $data->get('login');
 
         if (empty($userProfile->email) && strpos($this->scope, 'user:email') !== false) {
             $userProfile = $this->requestUserEmail($userProfile);

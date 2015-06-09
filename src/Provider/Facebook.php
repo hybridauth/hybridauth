@@ -166,9 +166,11 @@ class Facebook extends OAuth2
         $userContact->identifier  = $item->get('id');
         $userContact->displayName = $item->get('name');
 
-        $userContact->profileURL = $item->exists('link') ? $item->get('link') : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
+        $userContact->profileURL = $item->exists('link')
+                                        ? $item->get('link') 
+                                        : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
 
-        $userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . "/picture?width=150&height=150";
+        $userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . '/picture?width=150&height=150';
 
         return $userContact;
     }
@@ -236,12 +238,12 @@ class Facebook extends OAuth2
         }
 
         if (! empty($userActivity->text)) {
-            $userActivity->user->identifier   = $item->filter('from')->get('id');
-            $userActivity->user->displayName  = $item->get('name');
+            $userActivity->user->identifier  = $item->filter('from')->get('id');
+            $userActivity->user->displayName = $item->get('name');
 
-            $userActivity->user->profileURL   = 'https://www.facebook.com/profile.php?id=' . $userActivity->user->identifier;
+            $userActivity->user->profileURL  = 'https://www.facebook.com/profile.php?id=' . $userActivity->user->identifier;
 
-            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier . "/picture?width=150&height=150";
+            $userActivity->user->photoURL    = $this->apiBaseUrl . $userActivity->user->identifier . '/picture?width=150&height=150';
         }
 
         return $userActivity;

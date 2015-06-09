@@ -5,11 +5,16 @@
 * (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
 */
 
-namespace Hybridauth\Exception;
+namespace Hybridauth\Provider;
+
+use Hybridauth\Adapter\OAuth2;
+use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Data;
+use Hybridauth\User;
 
 /**
  *
  */
-class UnsupportedFeatureException  extends BadMethodCallException implements ExceptionInterface
+class Yahoo extends OAuth1
 {
 }

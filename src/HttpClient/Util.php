@@ -39,20 +39,20 @@ class Util
         $protocol = 'http://';
 
         if (
-            $collection->exists('HTTPS') && ($collection->get('HTTPS') == 'on' || $collection->get('HTTPS') == 1)
-        ||     $collection->exists('HTTP_X_FORWARDED_PROTO') && $collection->get('HTTP_X_FORWARDED_PROTO') == 'https'
+                $collection->exists('HTTPS') 
+            &&  ($collection->get('HTTPS') == 'on' || $collection->get('HTTPS') == 1)
+            ||  $collection->exists('HTTP_X_FORWARDED_PROTO') 
+            &&  $collection->get('HTTP_X_FORWARDED_PROTO') == 'https'
         ) {
             $protocol = 'https://';
         }
 
-        $url = $protocol . $collection->get('HTTP_HOST');
+        $basUrl = $protocol . $collection->get('HTTP_HOST');
 
         if ($requestUri) {
-            $url .= $collection->get('REQUEST_URI');
-        } else {
-            $url .= $collection->get('PHP_SELF');
+            return $basUrl . $collection->get('REQUEST_URI');
         }
 
-        return $url;
+        return $basUrl . $collection->get('PHP_SELF');
     }
 }

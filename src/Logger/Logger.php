@@ -121,7 +121,7 @@ class Logger implements LoggerInterface
         $datetime = new \DateTime();
         $datetime =  $datetime->format(DATE_ATOM);
 
-        $content  = $level . " -- " . $_SERVER['REMOTE_ADDR'] . ' -- ' . $datetime . ' -- ' . $message . ' -- ';
+        $content  = $level . ' -- ' . $_SERVER['REMOTE_ADDR'] . ' -- ' . $datetime . ' -- ' . $message . ' -- ';
         $content .= ($object ? print_r($object, true) : '');
         $content .= "\n";
 

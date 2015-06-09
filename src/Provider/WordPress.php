@@ -66,8 +66,13 @@ class WordPress  extends OAuth2
         $userProfile->email       = $data->get('email');
         $userProfile->language    = $data->get('language');
 
-        $userProfile->displayName   = $userProfile->displayName ? $userProfile->displayName : $data->get('username');
-        $userProfile->emailVerified = (1 == $data->get('email_verified')) ? $data->get('email') : '';
+        $userProfile->displayName = $userProfile->displayName
+                                        ? $userProfile->displayName
+                                        : $data->get('username');
+
+        $userProfile->emailVerified = (1 == $data->get('email_verified'))
+                                        ? $data->get('email')
+                                        : '';
 
         return $userProfile;
     }

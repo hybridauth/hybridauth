@@ -59,8 +59,13 @@ class Twitter extends OAuth1
         $userProfile->webSiteURL  = $data->get('url');
         $userProfile->region      = $data->get('location');
 
-        $userProfile->profileURL  = $data->exists('screen_name')       ? ('http://twitter.com/' . $data->get('screen_name'))         : '';
-        $userProfile->photoURL    = $data->exists('profile_image_url') ? str_replace('_normal', '', $data->get('profile_image_url')) : '';
+        $userProfile->profileURL  = $data->exists('screen_name')
+                                        ? ('http://twitter.com/' . $data->get('screen_name'))
+                                        : '';
+
+        $userProfile->photoURL    = $data->exists('profile_image_url')
+                                        ? str_replace('_normal', '', $data->get('profile_image_url'))
+                                        : '';
 
         return $userProfile;
     }
@@ -120,7 +125,9 @@ class Twitter extends OAuth1
         $userContact->photoURL    = $item->get('profile_image_url');
         $userContact->description = $item->get('description');
 
-        $userContact->profileURL  = $item->exists('screen_name') ? ('http://twitter.com/' . $item->get('screen_name')) : '';
+        $userContact->profileURL  = $item->exists('screen_name')
+                                        ? ('http://twitter.com/' . $item->get('screen_name'))
+                                        : '';
 
         return $userContact;
     }
@@ -132,7 +139,14 @@ class Twitter extends OAuth1
     {
         if (is_array($status) && isset($status[ 'message' ]) && isset($status[ 'picture' ])) {
             // @fixme;
-            return $this->apiRequest('statuses/update_with_media.json', 'POST', array( 'status' => $status[ 'message' ], 'media[]' => file_get_contents($status[ 'picture' ]) ));
+            return $this->apiRequest(
+                'statuses/update_with_media.json', 
+                'POST', 
+                [ 
+                    'status' => $status[ 'message' ], 
+                    'media[]' => file_get_contents($status[ 'picture' ])
+                ]
+            );
         }
         
         $response = $this->apiRequest('statuses/update.json', 'POST', [ 'status' => $status ]);
@@ -147,7 +161,9 @@ class Twitter extends OAuth1
     {
         $activities = [];
 
-        $apiUrl = $stream == 'me' ? 'statuses/user_timeline.json' : 'statuses/home_timeline.json';
+        $apiUrl = ($stream == 'me')
+                    ? 'statuses/user_timeline.json'
+                    : 'statuses/home_timeline.json';
 
         $response = $this->apiRequest($apiUrl);
 
@@ -179,7 +195,9 @@ class Twitter extends OAuth1
         $userActivity->user->displayName  = $item->filter('user')->get('name');
         $userActivity->user->photoURL     = $item->filter('user')->get('profile_image_url');
 
-        $userActivity->user->profileURL   = $item->filter('user')->get('screen_name') ? ('http://twitter.com/' . $item->filter('user')->get('screen_name')) : '';
+        $userActivity->user->profileURL   = $item->filter('user')->get('screen_name')
+                                                ? ('http://twitter.com/' . $item->filter('user')->get('screen_name'))
+                                                : '';
 
         return $userActivity;
     }

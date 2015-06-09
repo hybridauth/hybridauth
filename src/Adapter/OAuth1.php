@@ -123,8 +123,14 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     protected function initialize()
     {
-        if (! $this->config->filter('keys')->get('key') || ! $this->config->filter('keys')->get('secret')) {
-            throw new InvalidApplicationCredentialsException('Your consumer key and secret are required in order to connect to ' . $this->providerId);
+        if (
+                ! $this->config->filter('keys')->get('key')
+            || 
+                ! $this->config->filter('keys')->get('secret')
+        ) {
+            throw new InvalidApplicationCredentialsException(
+                'Your consumer key and secret are required in order to connect to ' . $this->providerId
+            );
         }
 
         if ($this->config->exists('tokens')) {
@@ -144,14 +150,24 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         * http://oauth.net/core/1.0a/#signing_process
         */
         $this->sha1Method  = new OAuthSignatureMethodHMACSHA1();
-        $this->consumerKey = new OAuthConsumer($this->config->filter('keys')->get('key'), $this->config->filter('keys')->get('secret'));
+
+        $this->consumerKey = new OAuthConsumer(
+            $this->config->filter('keys')->get('key'),
+            $this->config->filter('keys')->get('secret')
+        );
 
         if ($this->token('request_token')) {
-            $this->consumerToken = new OAuthConsumer($this->token('request_token'), $this->token('request_token_secret'));
+            $this->consumerToken = new OAuthConsumer(
+                $this->token('request_token'),
+                $this->token('request_token_secret')
+            );
         }
 
         if ($this->token('access_token')) {
-            $this->consumerToken = new OAuthConsumer($this->token('access_token'), $this->token('access_token_secret'));
+            $this->consumerToken = new OAuthConsumer(
+                $this->token('access_token'),
+                $this->token('access_token_secret')
+            );
         }
 
         $this->overrideEndpoints();
@@ -213,15 +229,21 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         $oauth_verifier = $data->get('oauth_verifier');
 
         if ($denied) {
-            throw new AuthorizationDeniedException('User denied access request. Provider returned a denied token: ' . htmlentities($denied));
+            throw new AuthorizationDeniedException(
+                'User denied access request. Provider returned a denied token: ' . htmlentities($denied)
+            );
         }
 
         if ($oauth_problem) {
-            throw new InvalidOauthTokenException('Provider returned an invalid oauth_token. oauth_problem: ' . htmlentities($oauth_problem));
+            throw new InvalidOauthTokenException(
+                'Provider returned an invalid oauth_token. oauth_problem: ' . htmlentities($oauth_problem)
+            );
         }
 
         if (! $oauth_token) {
-            throw new InvalidOauthTokenException('Expecting a non-null oauth_token to continue the authorization flow.');
+            throw new InvalidOauthTokenException(
+                'Expecting a non-null oauth_token to continue the authorization flow.'
+            );
         }
 
         $response = $this->exchangeAuthTokenForAccessToken($oauth_token, $oauth_verifier);
@@ -327,12 +349,17 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         $collection = new Data\Collection($tokens);
 
         if (! $collection->exists('oauth_token')) {
-            throw new InvalidOauthTokenException('Provider returned an invalid access_token: ' . htmlentities($response));
+            throw new InvalidOauthTokenException(
+                'Provider returned an invalid access_token: ' . htmlentities($response)
+            );
         }
 
-        $this->consumerToken = new OAuthConsumer($tokens['oauth_token'], $tokens['oauth_token_secret']);
+        $this->consumerToken = new OAuthConsumer(
+            $tokens['oauth_token'],
+            $tokens['oauth_token_secret']
+        );
 
-        $this->token('request_token', $tokens['oauth_token']);
+        $this->token('request_token'       , $tokens['oauth_token']);
         $this->token('request_token_secret', $tokens['oauth_token_secret']);
 
         return $collection;
@@ -418,12 +445,17 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         $collection = new Data\Collection($tokens);
 
         if (! $collection->exists('oauth_token')) {
-            throw new InvalidAccessTokenException('Provider returned an invalid access_token: ' . htmlentities($response));
+            throw new InvalidAccessTokenException(
+                'Provider returned an invalid access_token: ' . htmlentities($response)
+            );
         }
 
-        $this->consumerToken = new OAuthConsumer($collection->get('oauth_token'), $collection->get('oauth_token_secret'));
+        $this->consumerToken = new OAuthConsumer(
+            $collection->get('oauth_token'),
+            $collection->get('oauth_token_secret')
+        );
 
-        $this->token('access_token', $collection->get('oauth_token'));
+        $this->token('access_token'       , $collection->get('oauth_token'));
         $this->token('access_token_secret', $collection->get('oauth_token_secret'));
 
         $this->deleteToken('request_token');
@@ -476,14 +508,24 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     protected function oauthRequest($uri, $method = 'GET', $parameters = [], $headers = [])
     {
-        $request = OAuthRequest::from_consumer_and_token($this->consumerKey, $this->consumerToken, $method, $uri, $parameters);
+        $request = OAuthRequest::from_consumer_and_token(
+            $this->consumerKey,
+            $this->consumerToken,
+            $method,
+            $uri,
+            $parameters
+        );
 
-        $request->sign_request($this->sha1Method, $this->consumerKey, $this->consumerToken);
+        $request->sign_request(
+            $this->sha1Method,
+            $this->consumerKey,
+            $this->consumerToken
+        );
 
         $uri        = $request->get_normalized_http_url();
         $parameters = $request->parameters;
         $headers    = array_replace($request->to_header(), (array) $headers);
-        
+
         $response = $this->httpClient->request(
             $uri,
             $method,

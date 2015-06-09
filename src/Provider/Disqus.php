@@ -20,7 +20,7 @@ class Disqus extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected $scope = 'read, email';
+    protected $scope = 'read,email';
 
     /**
     * {@inheritdoc}
@@ -76,7 +76,9 @@ class Disqus extends OAuth2
 
         $userProfile->photoURL    = $data->filter('avatar')->get('permalink');
 
-        $userProfile->displayName = $userProfile->displayName ? $userProfile->displayName : $data->get('username');
+        $userProfile->displayName = $userProfile->displayName
+                                        ? $userProfile->displayName
+                                        : $data->get('username');
 
         return $userProfile;
     }

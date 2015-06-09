@@ -196,9 +196,12 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $userProfile->displayName = $data->get('namePerson');
 
         $userProfile->displayName = $userProfile->displayName
-                ? $userProfile->displayName : $data->get('namePerson/friendly');
+                                        ? $userProfile->displayName
+                                        : $data->get('namePerson/friendly');
+
         $userProfile->displayName = $userProfile->displayName
-                ? $userProfile->displayName : trim($userProfile->firstName . ' ' . $userProfile->lastName);
+                                        ? $userProfile->displayName
+                                        : trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         return $userProfile;
     }
@@ -208,15 +211,17 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     */
     protected function fetchUserGender($userProfile, $gender)
     {
-        if ('f' == strtolower($gender)) {
+        $gender = strtolower($gender);
+
+        if ('f' == $gender) {
             $gender = 'female';
         }
 
-        if ('m' == strtolower($gender)) {
+        if ('m' == $gender) {
             $gender = 'male';
         }
 
-        $userProfile->gender = strtolower($gender);
+        $userProfile->gender = $gender;
 
         return $userProfile;
     }

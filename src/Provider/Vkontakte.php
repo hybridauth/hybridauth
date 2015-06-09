@@ -52,7 +52,8 @@ class Vkontakte  extends OAuth2
     {
         $parameters = [
             'uid'    => $this->token('user_id'),
-            'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big,photo_max_orig'
+            'fields' => 'first_name,last_name,nickname,screen_name,sex,' . 
+                            'bdate,timezone,photo_rec,photo_big,photo_max_orig'
         ];
 
         $response = $this->apiRequest('users.get', 'GET', $parameters);
@@ -72,7 +73,9 @@ class Vkontakte  extends OAuth2
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('photo_max_orig');
 
-        $userProfile->profileURL  = $data->get('screen_name') ? 'http://vk.com/' . $data->get('screen_name') : '';
+        $userProfile->profileURL  = $data->get('screen_name')
+                                        ? 'http://vk.com/' . $data->get('screen_name')
+                                        : '';
 
         if ($data->exists('sex')) {
             switch ($data->get('sex')) {

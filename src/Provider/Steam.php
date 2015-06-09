@@ -55,6 +55,9 @@ class Steam extends OpenID
         $this->storage->set($this->providerId . '.user', $userProfile);
     }
 
+    /**
+    *
+    */
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
         $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . $apiKey . '&steamids=' . $steam64;
@@ -67,15 +70,18 @@ class Steam extends OpenID
 
         $userProfile = array();
 
-        $userProfile['displayName'] = property_exists($data, 'personaname') ? $data->personaname    : '';
-        $userProfile['firstName'  ] = property_exists($data, 'realname') ? $data->realname       : '';
-        $userProfile['photoURL'   ] = property_exists($data, 'avatarfull') ? $data->avatarfull     : '';
-        $userProfile['profileURL' ] = property_exists($data, 'profileurl') ? $data->profileurl     : '';
+        $userProfile['displayName'] = property_exists($data, 'personaname')    ? $data->personaname    : '';
+        $userProfile['firstName'  ] = property_exists($data, 'realname')       ? $data->realname       : '';
+        $userProfile['photoURL'   ] = property_exists($data, 'avatarfull')     ? $data->avatarfull     : '';
+        $userProfile['profileURL' ] = property_exists($data, 'profileurl')     ? $data->profileurl     : '';
         $userProfile['country'    ] = property_exists($data, 'loccountrycode') ? $data->loccountrycode : '';
 
         return $userProfile;
     }
 
+    /**
+    *
+    */
     public function getUserProfileLegacyAPI($steam64)
     {
         libxml_use_internal_errors(false);
@@ -89,17 +95,17 @@ class Steam extends OpenID
         try {
             $data = new \SimpleXMLElement($response);
 
-            $userProfile['displayName' ] = property_exists($data, 'steamID') ? (string) $data->steamID     : '';
-            $userProfile['firstName'   ] = property_exists($data, 'realname') ? (string) $data->realname    : '';
+            $userProfile['displayName' ] = property_exists($data, 'steamID')    ? (string) $data->steamID     : '';
+            $userProfile['firstName'   ] = property_exists($data, 'realname')   ? (string) $data->realname    : '';
             $userProfile['photoURL'    ] = property_exists($data, 'avatarFull') ? (string) $data->avatarFull  : '';
-            $userProfile['description' ] = property_exists($data, 'summary') ? (string) $data->summary     : '';
-            $userProfile['region'      ] = property_exists($data, 'location') ? (string) $data->location    : '';
+            $userProfile['description' ] = property_exists($data, 'summary')    ? (string) $data->summary     : '';
+            $userProfile['region'      ] = property_exists($data, 'location')   ? (string) $data->location    : '';
             $userProfile['profileURL'  ] = property_exists($data, 'customURL')
-                ? "http://steamcommunity.com/id/{$data->customURL}/"
-                : "http://steamcommunity.com/profiles/{$userProfile->identifier}/";
+                                                ? "http://steamcommunity.com/id/{$data->customURL}/"
+                                                : "http://steamcommunity.com/profiles/{$userProfile->identifier}/";
         }
 
-        // these data are not mandatory so we keep it quite
+        // these data are not mandatory, so keep it quite
         catch (\Exception $e) {
         }
 

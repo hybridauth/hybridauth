@@ -20,40 +20,51 @@ use Hybridauth\User;
 class Odnoklassniki extends OAuth2 {
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $apiBaseUrl = 'http://api.odnoklassniki.ru/fb.do';
 
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $authorizeUrl = 'https://www.odnoklassniki.ru/oauth/authorize';
 
     /**
-     * {@inheritdoc}
-     */
+    * {@inheritdoc}
+    */
     protected $accessTokenUrl = 'https://api.odnoklassniki.ru/oauth/token.do';
 
     /**
-     * load the user profile from the IDp api client
-     */
-
-    function getUserProfile(){
-
-        $sig = md5('application_key=' . $this->config->get('keys')['key'] . 'fields=uid,locale,first_name,last_name,name,gender,age,birthday,has_email,current_status,current_status_id,current_status_date,online,photo_id,pic_1,pic_2,pic1024x768,location,email' . 'method=users.getCurrentUser' . md5($this->token('access_token') . $this->config->get('keys')['secret']));
+    * {@inheritdoc}
+    */
+    function getUserProfile()
+    {
+        $fields = array(
+            'uid', 'locale', 'first_name', 'last_name', 'name', 'gender', 'age', 'birthday',
+            'has_email', 'current_status', 'current_status_id', 'current_status_date','online',
+            'photo_id', 'pic_1', 'pic_2', 'pic1024x768', 'location', 'email'
+        );
+    
+        $sig = md5(
+            'application_key=' . $this->config->get('keys')['key'] . 
+                'fields=' . implode( ',', $fields ) .
+                    'method=users.getCurrentUser' .
+                        md5($this->token('access_token') . $this->config->get('keys')['secret'])
+        );
 
         $parameters = [
             'application_key' => $this->config->get('keys')['key'],
-            'method' => 'users.getCurrentUser',
-            'fields' => 'uid,locale,first_name,last_name,name,gender,age,birthday,has_email,current_status,current_status_id,current_status_date,online,photo_id,pic_1,pic_2,pic1024x768,location,email',
-            'sig' => $sig,
+            'method'          => 'users.getCurrentUser',
+            'fields'          => implode( ',', $fields ),
+            'sig'             => $sig,
         ];
 
         $response = $this->apiRequest('', 'GET', $parameters);
 
         $data = new Data\Collection($response);
-        if(!$data->exists('uid')){
+
+        if(! $data->exists('uid')){
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 

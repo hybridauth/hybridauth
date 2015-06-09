@@ -12,7 +12,7 @@ use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
-class px500 extends OAuth1
+class Px500 extends OAuth1
 {
     /**
     * {@inheritdoc}

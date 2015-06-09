@@ -134,7 +134,7 @@ class Google extends OAuth2
     public function getUserContacts()
     {
         // @fixme
-        $extraParams = array( "max-results" => 500 );
+        $extraParams = array( 'max-results' => 500 );
 
         // Google Gmail and Android contacts
         if (false !== strpos($this->scope, '/m8/feeds/')) {
@@ -156,7 +156,8 @@ class Google extends OAuth2
     {
         $contacts = [];
 
-        $url = 'https://www.google.com/m8/feeds/contacts/default/full?' . http_build_query(array_merge([ 'alt' => 'json', 'v' => '3.0' ], $extraParams));
+        $url = 'https://www.google.com/m8/feeds/contacts/default/full?' 
+                    . http_build_query(array_merge([ 'alt' => 'json', 'v' => '3.0' ], $extraParams));
 
         $response = $this->apiRequest($url);
 
@@ -184,7 +185,8 @@ class Google extends OAuth2
     {
         $contacts = [];
 
-        $url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?' . http_build_query($extraParams);
+        $url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?' 
+                    . http_build_query($extraParams);
 
         $response = $this->apiRequest($url);
 

@@ -10,7 +10,7 @@ namespace Hybridauth\Data;
 /**
  * A very basic Data collection.
  */
-final class Collection implements \Iterator
+final class Collection
 {
     /**
     * Data collection

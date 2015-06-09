@@ -7,7 +7,7 @@
 
 namespace Hybridauth\Adapter;
 
-use Hybridauth\Exception\UnsupportedFeatureException;
+use Hybridauth\Exception\NotImplementedException;
 use Hybridauth\Exception\HttpClientFailureException;
 use Hybridauth\Exception\HttpRequestFailedException;
 use Hybridauth\Storage\StorageInterface;
@@ -83,8 +83,12 @@ abstract class AbstractAdapter implements AdapterInterface
     * @param StorageInterface    $storage
     * @param LoggerInterface     $logger
     */
-    public function __construct($config = [], HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null)
-    {
+    public function __construct(
+                            $config     = [],
+        HttpClientInterface $httpClient = null,
+        StorageInterface    $storage    = null,
+        LoggerInterface     $logger     = null
+    ) {
         $this->providerId = str_replace('Hybridauth\\Provider\\', '', get_class($this));
 
         $this->storage = $storage ? $storage : new Session();
@@ -127,7 +131,7 @@ abstract class AbstractAdapter implements AdapterInterface
     */
     public function getUserProfile()
     {
-        throw new UnsupportedFeatureException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.', 8);
     }
 
     /**
@@ -135,7 +139,7 @@ abstract class AbstractAdapter implements AdapterInterface
     */
     public function getUserContacts()
     {
-        throw new UnsupportedFeatureException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.', 8);
     }
 
     /**
@@ -143,7 +147,7 @@ abstract class AbstractAdapter implements AdapterInterface
     */
     public function setUserStatus($status)
     {
-        throw new UnsupportedFeatureException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.', 8);
     }
 
     /**
@@ -151,7 +155,7 @@ abstract class AbstractAdapter implements AdapterInterface
     */
     public function getUserActivity($stream)
     {
-        throw new UnsupportedFeatureException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.', 8);
     }
 
     /**
@@ -159,7 +163,7 @@ abstract class AbstractAdapter implements AdapterInterface
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
-        throw new UnsupportedFeatureException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.', 8);
     }
 
     /**
@@ -292,11 +296,21 @@ abstract class AbstractAdapter implements AdapterInterface
     protected function validateApiResponse()
     {
         if ($this->httpClient->getResponseClientError()) {
-            throw new HttpClientFailureException('HTTP client error: ' . $this->httpClient->getResponseClientError() . '.');
+            throw new HttpClientFailureException(
+                'HTTP client error: ' . 
+                    $this->httpClient->getResponseClientError() . 
+                        '.'
+            );
         }
 
         if (200 != $this->httpClient->getResponseHttpCode()) {
-            throw new HttpRequestFailedException('HTTP error ' . $this->httpClient->getResponseHttpCode() . '. Raw Provider API response: ' . $this->httpClient->getResponseBody() . '.');
+            throw new HttpRequestFailedException(
+                'HTTP error ' .
+                    $this->httpClient->getResponseHttpCode() .
+                        '. Raw Provider API response: ' .
+                            $this->httpClient->getResponseBody() . 
+                                '.'
+            );
         }
     }
 
@@ -307,8 +321,16 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         $endpoints = $this->config->filter('endpoints');
 
-        $this->apiBaseUrl     = $endpoints->exists('api_base_url') ? $endpoints->get('api_base_url') : $this->apiBaseUrl     ;
-        $this->authorizeUrl   = $endpoints->exists('authorize_url') ? $endpoints->get('authorize_url') : $this->authorizeUrl   ;
-        $this->accessTokenUrl = $endpoints->exists('access_token_url') ? $endpoints->get('access_token_url') : $this->accessTokenUrl ;
+        $this->apiBaseUrl = $endpoints->exists('api_base_url')
+                                ? $endpoints->get('api_base_url')
+                                : $this->apiBaseUrl;
+
+        $this->authorizeUrl = $endpoints->exists('authorize_url')
+                                ? $endpoints->get('authorize_url')
+                                : $this->authorizeUrl;
+
+        $this->accessTokenUrl = $endpoints->exists('access_token_url')
+                                ? $endpoints->get('access_token_url')
+                                : $this->accessTokenUrl;
     }
 }

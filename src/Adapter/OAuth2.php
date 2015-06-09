@@ -196,13 +196,17 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected function initialize()
     {
         if (! $this->config->filter('keys')->get('id')) {
-            throw new InvalidApplicationCredentialsException('Your application id is required in order to connect to ' . $this->providerId);
+            throw new InvalidApplicationCredentialsException(
+                'Your application id is required in order to connect to ' . $this->providerId
+            );
         }
 
         $this->clientId     = $this->config->filter('keys')->get('id');
         $this->clientSecret = $this->config->filter('keys')->get('secret');
 
-        $this->scope = $this->config->exists('scope') ? $this->config->get('scope') : $this->scope;
+        $this->scope = $this->config->exists('scope')
+                            ? $this->config->get('scope')
+                            : $this->scope;
 
         if ($this->config->exists('tokens')) {
             $this->setAccessToken($this->config->get('tokens'));
@@ -279,8 +283,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         *
         * http://tools.ietf.org/html/rfc6749#section-4.1.1
         */
-        if ($this->supportRequestState && $this->token('authorization_state') != $collection->get('state')) {
-            throw new InvalidAuthorizationStateException('The authorization state is either invalid or has been used.');
+        if (
+                $this->supportRequestState 
+            &&  $this->token('authorization_state') != $collection->get('state')
+        ) {
+            throw new InvalidAuthorizationStateException(
+                'The authorization state is either invalid or has been used.'
+            );
         }
 
         /**
@@ -293,7 +302,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
         */
         if ($collection->get('error')) {
-            throw new InvalidAuthorizationCodeException('Provider returned an error: ' . htmlentities($collection->get('error')));
+            throw new InvalidAuthorizationCodeException(
+                'Provider returned an error: ' . htmlentities($collection->get('error'))
+            );
         }
 
         /**
@@ -414,7 +425,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * http://tools.ietf.org/html/rfc6749#section-4.1.4
     *
-    * This method uses Data_Parser to attempt to decodes the raw $response (usually JSON) into a data collection.
+    * This method uses Data_Parser to attempt to decodes the raw $response (usually JSON)
+    * into a data collection.
     *
     * @param string $response
     *
@@ -428,13 +440,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $collection = new Data\Collection($data);
 
         if (! $collection->exists('access_token')) {
-            throw new InvalidAccessTokenException('Provider returned an invalid access_token: ' . htmlentities($response));
+            throw new InvalidAccessTokenException(
+                'Provider returned an invalid access_token: ' . htmlentities($response)
+            );
         }
 
-        $this->token('access_token', $collection->get('access_token'));
-        $this->token('token_type', $collection->get('token_type'));
+        $this->token('access_token' , $collection->get('access_token'));
+        $this->token('token_type'   , $collection->get('token_type'));
         $this->token('refresh_token', $collection->get('refresh_token'));
-        $this->token('expires_in', $collection->get('expires_in'));
+        $this->token('expires_in'   , $collection->get('expires_in'));
 
         // calculate when the access token expire
         if ($collection->exists('expires_in')) {
@@ -494,14 +508,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * RFC6749: If valid and authorized, the authorization server issues an access
     * token as described in Section 5.1.  If the request failed verification or is
-    * invalid, the authorization server returns an error response as described in Section 5.2.
+    * invalid, the authorization server returns an error response as described in
+    * Section 5.2.
     *
     * http://tools.ietf.org/html/rfc6749#section-6
     * http://tools.ietf.org/html/rfc6749#section-5.1
     * http://tools.ietf.org/html/rfc6749#section-5.2
     *
-    * This method simply use validateAccessTokenExchange(), however sub classes may redefine it
-    * when necessary.
+    * This method simply use validateAccessTokenExchange(), however sub classes may
+    * redefine it when necessary.
     *
     * @param $response
     *
@@ -520,8 +535,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * validate the access token and ensure that it has not expired and that its scope
     * covers the requested resource.
     *
-    * Note: Since the specifics of error responses is beyond the scope of RFC6749 and OAuth specifications,
-    * Hybridauth will consider any HTTP status code that is different than '200 OK' as an ERROR.
+    * Note: Since the specifics of error responses is beyond the scope of RFC6749 and
+    * OAuth specifications, Hybridauth will consider any HTTP status code that is different
+    * than '200 OK' as an ERROR.
     *
     * http://tools.ietf.org/html/rfc6749#section-7
     *

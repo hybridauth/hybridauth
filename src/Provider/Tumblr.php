@@ -75,7 +75,9 @@ class Tumblr extends OAuth1
     */
     public function setUserStatus($status)
     {
-        $status = is_string($status) ? [ 'type' => 'text', 'body' => $status ] : $status;
+        $status = is_string($status) 
+                    ? [ 'type' => 'text', 'body' => $status ]
+                    : $status;
 
         $response = $this->apiRequest('blog/' . $this->token('primary_blog') . '/post', 'POST', $status);
 

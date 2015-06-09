@@ -63,7 +63,7 @@ interface AdapterInterface
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
     * @throws UnexpectedValueException
-    * @throws UnsupportedFeatureException
+    * @throws NotImplementedException
     * @return array of \Hybridauth\User\Contact
     */
     public function getUserContacts();
@@ -76,7 +76,7 @@ interface AdapterInterface
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
     * @throws UnexpectedValueException
-    * @throws UnsupportedFeatureException
+    * @throws NotImplementedException
     * @return array of \Hybridauth\User\Activity
     */
     public function getUserActivity($stream);
@@ -89,7 +89,7 @@ interface AdapterInterface
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
     * @throws UnexpectedValueException
-    * @throws UnsupportedFeatureException
+    * @throws NotImplementedException
     * @return mixed API response
     */
     public function setUserStatus($status);
@@ -100,7 +100,7 @@ interface AdapterInterface
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
     * @throws UnexpectedValueException
-    * @throws UnsupportedFeatureException
+    * @throws NotImplementedException
     * @return \Hybridauth\User\Profile
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = []);

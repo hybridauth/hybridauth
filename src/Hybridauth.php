@@ -70,8 +70,12 @@ class Hybridauth
     *
     * @throws InvalidArgumentException
     */
-    public function __construct($config = [], HttpClientInterface $httpClient = null, StorageInterface $storage = null, LoggerInterface $logger = null)
-    {
+    public function __construct(
+                            $config     = [],
+        HttpClientInterface $httpClient = null,
+        StorageInterface    $storage    = null,
+        LoggerInterface     $logger     = null
+    ) {
         if (is_string($config) && file_exists($config)) {
             $config = include $config;
         } elseif (! is_array($config)) {
@@ -104,7 +108,7 @@ class Hybridauth
     * If user not authenticated yet, the user will be redirected to the authorization Service
     * to authorize the application.
     *
-    * @param string $providerId Provider ID (canse insensitive)
+    * @param string $providerId Provider ID (case insensitive)
     *
     * @throws Exception
     * @throws RuntimeException
@@ -153,7 +157,7 @@ class Hybridauth
     /**
     * Get provider config by ID
     *
-    * @param string $id Provider ID (canse insensitive)
+    * @param string $id Provider ID (case insensitive)
     *
     * @return array
     */
@@ -173,7 +177,7 @@ class Hybridauth
     /**
     * Get provider real provider ID. (case sensitive)
     *
-    * @param string $providerId Provider ID (canse insensitive)
+    * @param string $providerId Provider ID (case insensitive)
     *
     * @throws InvalidArgumentException
     * @throws UnexpectedValueException
