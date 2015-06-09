@@ -5,5 +5,4 @@
 *.lock
 /vendor
 
-check.php
 /examples
