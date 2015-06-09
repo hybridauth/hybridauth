@@ -84,10 +84,10 @@ abstract class AbstractAdapter implements AdapterInterface
     * @param LoggerInterface     $logger
     */
     public function __construct(
-                            $config     = [],
+        $config = [],
         HttpClientInterface $httpClient = null,
-        StorageInterface    $storage    = null,
-        LoggerInterface     $logger     = null
+        StorageInterface    $storage = null,
+        LoggerInterface     $logger = null
     ) {
         $this->providerId = str_replace('Hybridauth\\Provider\\', '', get_class($this));
 
@@ -297,19 +297,19 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         if ($this->httpClient->getResponseClientError()) {
             throw new HttpClientFailureException(
-                'HTTP client error: ' . 
-                    $this->httpClient->getResponseClientError() . 
-                        '.'
+                'HTTP client error: ' .
+                $this->httpClient->getResponseClientError() .
+                '.'
             );
         }
 
         if (200 != $this->httpClient->getResponseHttpCode()) {
             throw new HttpRequestFailedException(
                 'HTTP error ' .
-                    $this->httpClient->getResponseHttpCode() .
-                        '. Raw Provider API response: ' .
-                            $this->httpClient->getResponseBody() . 
-                                '.'
+                $this->httpClient->getResponseHttpCode() .
+                '. Raw Provider API response: ' .
+                $this->httpClient->getResponseBody() .
+                '.'
             );
         }
     }

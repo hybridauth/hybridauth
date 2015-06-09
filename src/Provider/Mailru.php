@@ -15,7 +15,7 @@ use Hybridauth\User;
 /**
  *
  */
-class Mailru  extends OAuth2
+class Mailru extends OAuth2
 {
     /**
     * {@inheritdoc}
@@ -46,7 +46,7 @@ class Mailru  extends OAuth2
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
-        $signature = md5('client_id=' . $this->clientId . 'format=jsonmethod=' . 
+        $signature = md5('client_id=' . $this->clientId . 'format=jsonmethod=' .
                             $url . 'secure=1session_key='. $this->token('access_token')
                                 . $this->clientSecret);
 

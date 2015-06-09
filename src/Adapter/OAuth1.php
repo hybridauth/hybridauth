@@ -123,9 +123,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     protected function initialize()
     {
-        if (
-                ! $this->config->filter('keys')->get('key')
-            || 
+        if (! $this->config->filter('keys')->get('key')
+            ||
                 ! $this->config->filter('keys')->get('secret')
         ) {
             throw new InvalidApplicationCredentialsException(
@@ -359,7 +358,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $tokens['oauth_token_secret']
         );
 
-        $this->token('request_token'       , $tokens['oauth_token']);
+        $this->token('request_token', $tokens['oauth_token']);
         $this->token('request_token_secret', $tokens['oauth_token_secret']);
 
         return $collection;
@@ -455,7 +454,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $collection->get('oauth_token_secret')
         );
 
-        $this->token('access_token'       , $collection->get('oauth_token'));
+        $this->token('access_token', $collection->get('oauth_token'));
         $this->token('access_token_secret', $collection->get('oauth_token_secret'));
 
         $this->deleteToken('request_token');

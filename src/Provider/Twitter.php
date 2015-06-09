@@ -140,10 +140,10 @@ class Twitter extends OAuth1
         if (is_array($status) && isset($status[ 'message' ]) && isset($status[ 'picture' ])) {
             // @fixme;
             return $this->apiRequest(
-                'statuses/update_with_media.json', 
-                'POST', 
-                [ 
-                    'status' => $status[ 'message' ], 
+                'statuses/update_with_media.json',
+                'POST',
+                [
+                    'status' => $status[ 'message' ],
                     'media[]' => file_get_contents($status[ 'picture' ])
                 ]
             );

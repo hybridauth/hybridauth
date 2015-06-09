@@ -10,6 +10,6 @@ namespace Hybridauth\Exception;
 /**
  *
  */
-class NotImplementedException  extends BadMethodCallException implements ExceptionInterface
+class NotImplementedException extends BadMethodCallException implements ExceptionInterface
 {
 }

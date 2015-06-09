@@ -61,9 +61,9 @@ class WindowsLive extends OAuth2
         $userProfile->email         = $data->filter('emails')->get('preferred');
         $userProfile->emailVerified = $data->filter('emails')->get('account');
 
-		$userProfile->birthDay      = $data->get('birth_day');
-		$userProfile->birthMonth    = $data->get('birth_month');
-		$userProfile->birthYear     = $data->get('birth_year');
+        $userProfile->birthDay      = $data->get('birth_day');
+        $userProfile->birthMonth    = $data->get('birth_month');
+        $userProfile->birthYear     = $data->get('birth_year');
 
         return $userProfile;
     }
@@ -86,9 +86,9 @@ class WindowsLive extends OAuth2
         foreach ($data->filter('data')->all() as $idx => $entry) {
             $userContact = new User\Contact();
 
-			$userContact->identifier  = $entry->get('id');
-			$userContact->displayName = $entry->get('name');
-			$userContact->email       = $entry->filter('emails')->get('preferred');
+            $userContact->identifier  = $entry->get('id');
+            $userContact->displayName = $entry->get('name');
+            $userContact->email       = $entry->filter('emails')->get('preferred');
             
             $contacts[] = $userContact;
         }

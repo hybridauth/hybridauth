@@ -71,10 +71,10 @@ class Hybridauth
     * @throws InvalidArgumentException
     */
     public function __construct(
-                            $config     = [],
+        $config = [],
         HttpClientInterface $httpClient = null,
-        StorageInterface    $storage    = null,
-        LoggerInterface     $logger     = null
+        StorageInterface    $storage = null,
+        LoggerInterface     $logger = null
     ) {
         if (is_string($config) && file_exists($config)) {
             $config = include $config;

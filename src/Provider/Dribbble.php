@@ -15,7 +15,7 @@ use Hybridauth\User;
 /**
  *
  */
-class Dribbble  extends OAuth2
+class Dribbble extends OAuth2
 {
     /**
     * {@inheritdoc}

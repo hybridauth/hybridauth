@@ -77,7 +77,7 @@ class LinkedIn extends OAuth2
         $userProfile->email       = $data->get('headline');
         $userProfile->bio         = $data->get('language');
 
-        $userProfile->displayName = trim( $userProfile->firstName . ' ' . $userProfile->lastName );
+        $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         return $userProfile;
     }

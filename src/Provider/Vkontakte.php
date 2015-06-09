@@ -15,7 +15,7 @@ use Hybridauth\User;
 /**
  *
  */
-class Vkontakte  extends OAuth2
+class Vkontakte extends OAuth2
 {
     /**
     * {@inheritdoc}
@@ -52,7 +52,7 @@ class Vkontakte  extends OAuth2
     {
         $parameters = [
             'uid'    => $this->token('user_id'),
-            'fields' => 'first_name,last_name,nickname,screen_name,sex,' . 
+            'fields' => 'first_name,last_name,nickname,screen_name,sex,' .
                             'bdate,timezone,photo_rec,photo_big,photo_max_orig'
         ];
 
@@ -79,8 +79,10 @@ class Vkontakte  extends OAuth2
 
         if ($data->exists('sex')) {
             switch ($data->get('sex')) {
-                case 1: $userProfile->gender = 'female'; break;
-                case 2: $userProfile->gender =   'male'; break;
+                case 1: $userProfile->gender = 'female';
+                    break;
+                case 2: $userProfile->gender =   'male';
+                    break;
             }
         }
 

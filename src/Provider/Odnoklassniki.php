@@ -17,7 +17,8 @@ use Hybridauth\User;
  * Hybrid_Providers_Odnoklassniki provider adapter based on OAuth2 protocol
  *
  */
-class Odnoklassniki extends OAuth2 {
+class Odnoklassniki extends OAuth2
+{
 
     /**
     * {@inheritdoc}
@@ -47,16 +48,16 @@ class Odnoklassniki extends OAuth2 {
         );
     
         $sig = md5(
-            'application_key=' . $this->config->get('keys')['key'] . 
-                'fields=' . implode( ',', $fields ) .
-                    'method=users.getCurrentUser' .
-                        md5($this->token('access_token') . $this->config->get('keys')['secret'])
+            'application_key=' . $this->config->get('keys')['key'] .
+            'fields=' . implode(',', $fields) .
+            'method=users.getCurrentUser' .
+            md5($this->token('access_token') . $this->config->get('keys')['secret'])
         );
 
         $parameters = [
             'application_key' => $this->config->get('keys')['key'],
             'method'          => 'users.getCurrentUser',
-            'fields'          => implode( ',', $fields ),
+            'fields'          => implode(',', $fields),
             'sig'             => $sig,
         ];
 
@@ -64,7 +65,7 @@ class Odnoklassniki extends OAuth2 {
 
         $data = new Data\Collection($response);
 
-        if(! $data->exists('uid')){
+        if (! $data->exists('uid')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
@@ -82,5 +83,4 @@ class Odnoklassniki extends OAuth2 {
 
         return $userProfile;
     }
-
 }
