@@ -31,27 +31,27 @@ http://hybridauth.github.io/developer-ref-extend-hybridauth.html
 
 Provider      | Specs    | Implemented? | Working?    | Notes
 ------------- | -------- | ------------ |------------ | ------------------------------------------------------------------------------
-Facebook      | OAuth 2  |  [X]         |             | Authentication and getUserProfile are working. 
-Twitter       | OAuth 1  |  [X]         |             | Authentication and getUserProfile are working. 
-Google        | OAuth 2  |  [X]         |             | Authentication and getUserProfile are working.
-Yahoo         | OAuth 2  |              |             | Not implemented yet.
-Windows Live  | OAuth 2  |  [X]         |             |
-LinkedIn      | OAuth 2  |  [X]         |             | We no longer use OAauth1. Only authentication and getUserProfile are implemented.
-Foursquare    | OAuth 2  |  [X]         |             | 
-Disqus        | OAuth 2  |  [X]         |             | 
-Dribbble      | OAuth 2  |  [X]         |             | 
-GitHub        | OAuth 2  |  [X]         | [X]         | 
-Instagram     | OAuth 2  |  [X]         |             | 
-Reddit        | OAuth 2  |  [X]         | [X]         | 
-WordPress     | OAuth 2  |  [X]         | [X]         | 
-Tumblr        | OAuth 1  |  [X]         |             | 
-TwitchTV      | OAuth 2  |  [X]         |             | 
-Px500         | OAuth 1  |  [X]         |             | No clue how important this idp is, but was easy to port, so i did it.
-Freeagent     | OAuth 2  |  [X]         |             |     //
-PixelPin      | OAuth 2  |  [X]         |             |     //
-Vkontakte     | OAuth 2  |  [X]         |             | Russian idp.
-Mailru        | OAuth 2  |  [X]         |             |     //
-Odnoklassniki | OAuth 2  |  [X]         |             |     //
+Facebook      | OAuth2   |  [X]         |             | Authentication and getUserProfile are working. 
+Twitter       | OAuth1   |  [X]         |             | Authentication and getUserProfile are working. 
+Google        | OAuth2   |  [X]         |             | Authentication and getUserProfile are working.
+Yahoo         | OAuth2   |              |             | Not implemented yet.
+Windows Live  | OAuth2   |  [X]         |             |
+LinkedIn      | OAuth2   |  [X]         |             | We no longer use OAauth1. Only authentication and getUserProfile are implemented.
+Foursquare    | OAuth2   |  [X]         |             | 
+Disqus        | OAuth2   |  [X]         |             | 
+Dribbble      | OAuth2   |  [X]         |             | 
+GitHub        | OAuth2   |  [X]         | [X]         | 
+Instagram     | OAuth2   |  [X]         |             | 
+Reddit        | OAuth2   |  [X]         | [X]         | 
+WordPress     | OAuth2   |  [X]         | [X]         | 
+Tumblr        | OAuth1   |  [X]         |             | 
+TwitchTV      | OAuth2   |  [X]         |             | 
+Px500         | OAuth1   |  [X]         |             | No clue how important this idp is, but was easy to port, so i did it.
+Freeagent     | OAuth2   |  [X]         |             |     //
+PixelPin      | OAuth2   |  [X]         |             |     //
+Vkontakte     | OAuth2   |  [X]         |             | Russian idp.
+Mailru        | OAuth2   |  [X]         |             |     //
+Odnoklassniki | OAuth2   |  [X]         |             |     //
 OpenID        | OpenID   |  [X]         | [X]         | Generic OpenID Adapter. Implemented and Working.
 AOL           | OpenID   |  [X]         |             | Does the AOL still a thing? We may drop it otherwise.
 PaypalOpenID  | OpenID   |  [X]         |             | Implemented but needs someone to confirm it's a working as expected.
