@@ -39,9 +39,7 @@ class Steam extends OpenID
 
         if ($this->config->filter('keys')->exists('secret')) {
             $result = $this->getUserProfileWebAPI($this->config->filter('keys')->get('secret'), $userProfile->identifier);
-        }
-
-        // otherwise we fallback to community data
+        } // otherwise we fallback to community data
         else {
             $result = $this->getUserProfileLegacyAPI($userProfile->identifier);
         }
@@ -103,9 +101,7 @@ class Steam extends OpenID
             $userProfile['profileURL'  ] = property_exists($data, 'customURL')
                                                 ? "http://steamcommunity.com/id/{$data->customURL}/"
                                                 : "http://steamcommunity.com/profiles/{$userProfile->identifier}/";
-        }
-
-        // these data are not mandatory, so keep it quite
+        } // these data are not mandatory, so keep it quite
         catch (\Exception $e) {
         }
 

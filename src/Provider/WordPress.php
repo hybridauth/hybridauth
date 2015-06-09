@@ -15,7 +15,7 @@ use Hybridauth\User;
 /**
  *
  */
-class WordPress  extends OAuth2
+class WordPress extends OAuth2
 {
     /**
     * {@inheritdoc}

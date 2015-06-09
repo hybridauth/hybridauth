@@ -61,8 +61,8 @@ class GitHub extends OAuth2
         $userProfile->webSiteURL  = $data->get('blog');
         $userProfile->region      = $data->get('location');
 
-        $userProfile->displayName = $userProfile->displayName 
-                                        ? $userProfile->displayName 
+        $userProfile->displayName = $userProfile->displayName
+                                        ? $userProfile->displayName
                                         : $data->get('login');
 
         if (empty($userProfile->email) && strpos($this->scope, 'user:email') !== false) {
@@ -92,9 +92,7 @@ class GitHub extends OAuth2
                     break;
                 }
             }
-        }
-
-        // user email is not mandatory so keep it quite
+        } // user email is not mandatory so keep it quite
         catch (\Exception $e) {
         }
 

@@ -75,7 +75,7 @@ class Tumblr extends OAuth1
     */
     public function setUserStatus($status)
     {
-        $status = is_string($status) 
+        $status = is_string($status)
                     ? [ 'type' => 'text', 'body' => $status ]
                     : $status;
 

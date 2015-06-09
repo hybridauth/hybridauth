@@ -283,8 +283,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         *
         * http://tools.ietf.org/html/rfc6749#section-4.1.1
         */
-        if (
-                $this->supportRequestState 
+        if ($this->supportRequestState
             &&  $this->token('authorization_state') != $collection->get('state')
         ) {
             throw new InvalidAuthorizationStateException(
@@ -445,10 +444,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             );
         }
 
-        $this->token('access_token' , $collection->get('access_token'));
-        $this->token('token_type'   , $collection->get('token_type'));
+        $this->token('access_token', $collection->get('access_token'));
+        $this->token('token_type', $collection->get('token_type'));
         $this->token('refresh_token', $collection->get('refresh_token'));
-        $this->token('expires_in'   , $collection->get('expires_in'));
+        $this->token('expires_in', $collection->get('expires_in'));
 
         // calculate when the access token expire
         if ($collection->exists('expires_in')) {
@@ -561,8 +560,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $headers = array_merge($this->apiRequestHeaders, (array) $headers);
 
         $response = $this->httpClient->request(
-            $url,        //
-            $method,     // HTTP Request Method. Defaults to GET.
+            $url, //
+            $method, // HTTP Request Method. Defaults to GET.
             $parameters, // Request Parameters
             $headers     // Request Headers
         );

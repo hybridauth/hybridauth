@@ -15,7 +15,7 @@ use Hybridauth\User;
 /**
  *
  */
-class TwitchTV  extends OAuth2
+class TwitchTV extends OAuth2
 {
     /**
     * {@inheritdoc}

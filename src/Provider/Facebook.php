@@ -167,7 +167,7 @@ class Facebook extends OAuth2
         $userContact->displayName = $item->get('name');
 
         $userContact->profileURL = $item->exists('link')
-                                        ? $item->get('link') 
+                                        ? $item->get('link')
                                         : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
 
         $userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . '/picture?width=150&height=150';
