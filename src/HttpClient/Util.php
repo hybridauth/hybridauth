@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\HttpClient;
@@ -35,7 +35,7 @@ class Util
     public static function getCurrentUrl($requestUri = false)
     {
         $collection = new Data\Collection($_SERVER);
-        
+
         $protocol = 'http://';
 
         if ($collection->exists('HTTPS')

@@ -1,7 +1,7 @@
 <?php
     // a tiny nonsense piece of code used to generate hybridauth documentation websites
     // from a bunch of texts files and SHALL be removed before we hit 3.1-stable.
-    // 
+    //
     // parsing engine used: https://michelf.ca/projects/php-markdown/extra/
 
     function generate()
@@ -45,8 +45,8 @@
             $body = MarkdownExtra::defaultTransform( $markdown );
 
             $footer =  file_get_contents( 'common/footer.html' );
-            
-            $html = $header . $body . $footer ; 
+
+            $html = $header . $body . $footer ;
 
             $html = str_replace(
                 array(
@@ -57,7 +57,7 @@
                 array(
                     ucfirst( trim( str_replace( array( 'developer-ref-', '-', '.html' ), ' ', $basename ) ) ),
                     $basename,
-                    'http://hybridauth.github.io/hybridauth/' . $basename,
+                    'https://hybridauth.github.io/hybridauth/' . $basename,
                 ),
                  $html
             );

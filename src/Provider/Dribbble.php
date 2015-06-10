@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -53,7 +53,7 @@ class Dribbble extends OAuth2
         $userProfile->description = $data->get('bio');
         $userProfile->region      = $data->get('location');
         $userProfile->displayName = $data->get('name');
-        
+
         $userProfile->displayName = $userProfile->displayName
                                         ? $userProfile->displayName
                                         : $data->get('username');

@@ -2,7 +2,7 @@
     "name": "hybridauth/hybridauth",
     "description": "Open source social sign on PHP library.",
     "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter"],
-    "homepage": "http://hybridauth.github.io",
+    "homepage": "https://hybridauth.github.io",
     "type": "library",
     "license": "MIT",
     "authors": [

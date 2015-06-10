@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\HttpClient;
@@ -97,7 +97,7 @@ class Guzzle implements HttpClientInterface
     * @var object
     */
     protected $client = null;
-    
+
     /**
     * ..
     */
@@ -130,7 +130,7 @@ class Guzzle implements HttpClientInterface
         // guess this will do it for now
         catch (\Exception $e) {
             $response = $e->getResponse();
-      
+
             $this->responseClientError = $e->getMessage();
         }
 

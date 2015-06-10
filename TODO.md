@@ -27,7 +27,7 @@ While most of the providers listed below are already implemented, they still not
 fixing and enhancement.
 
 More information on how to implement IDPs into Hybridauth 3 can be found at 
-http://hybridauth.github.io/developer-ref-extend-hybridauth.html
+https://hybridauth.github.io/developer-ref-extend-hybridauth.html
 
 Provider      | Specs    | Implemented? | Working?    | Notes
 ------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------

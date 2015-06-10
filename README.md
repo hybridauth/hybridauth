@@ -1,4 +1,4 @@
-## [Hybridauth](http://hybridauth.github.io/) 3.0.0-Remake
+## [Hybridauth](https://hybridauth.github.io/) 3.0.0-Remake
 
 [![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=3.0.0-Remake)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=3.0.0-Remake)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=3.0.0-Remake) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Total Downloads](https://poser.pugx.org/hybridauth/hybridauth/downloads.png)](https://packagist.org/packages/hybridauth/hybridauth) [![License](https://poser.pugx.org/hybridauth/hybridauth/license.svg)](https://packagist.org/packages/hybridauth/hybridauth) 
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -47,7 +47,7 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 
 ##### Legacy way (Similar to Hybridauth 2.x)
 
-Please refer to [Upgrade guide](http://hybridauth.github.io/developer-ref-migrating.html) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
+Please refer to [Upgrade guide](https://hybridauth.github.io/developer-ref-migrating.html) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
 
 ```php
     require 'hybridauth_autoload.php';
@@ -115,7 +115,7 @@ $ php composer.phar install
 
 Hybridauth is a community driven project and accepts contributions of code and documentation from the community. 
 
-For more information, see http://hybridauth.github.io/getinvolved.html. 
+For more information, see https://hybridauth.github.io/getinvolved.html. 
 
 #### Questions, Help and Support?
 
