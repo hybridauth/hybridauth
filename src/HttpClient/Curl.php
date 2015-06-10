@@ -147,7 +147,7 @@ class Curl implements HttpClientInterface
 
         curl_close($curl);
 
-        return $response;
+        return $this->responseBody;
     }
 
     /**

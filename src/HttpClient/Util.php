@@ -32,7 +32,7 @@ class Util
     *
     * @return string
     */
-    public static function getCurrentUrl($requestUri = true)
+    public static function getCurrentUrl($requestUri = false)
     {
         $collection = new Data\Collection($_SERVER);
         
