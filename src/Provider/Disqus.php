@@ -58,7 +58,7 @@ class Disqus extends OAuth2
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (! $data->filter('response')->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
