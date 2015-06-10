@@ -37,7 +37,7 @@ class LightOpenID
             , $ax = false, $sreg = false, $setup_url = null, $headers = array()
             , $proxy = null, $user_agent = 'LightOpenID'
             , $xrds_override_pattern = null, $xrds_override_replacement = null;
-    static protected $ax_to_sreg = array(
+    protected static $ax_to_sreg = array(
         'namePerson/friendly'     => 'nickname',
         'contact/email'           => 'email',
         'namePerson'              => 'fullname',
@@ -49,7 +49,7 @@ class LightOpenID
         'pref/timezone'           => 'timezone',
         );
 
-    function __construct($host, $proxy = null)
+    public function __construct($host, $proxy = null)
     {
         $this->set_realm($host);
         $this->set_proxy($proxy);
@@ -64,12 +64,12 @@ class LightOpenID
         }
     }
     
-    function __isset($name)
+    public function __isset($name)
     {
         return in_array($name, array('identity', 'trustRoot', 'realm', 'xrdsOverride', 'mode'));
     }
 
-    function __set($name, $value)
+    public function __set($name, $value)
     {
         switch ($name) {
             case 'identity':
@@ -101,7 +101,7 @@ class LightOpenID
         }
     }
 
-    function __get($name)
+    public function __get($name)
     {
         switch ($name) {
             case 'identity':
@@ -117,7 +117,7 @@ class LightOpenID
         }
     }
     
-    function set_proxy($proxy)
+    public function set_proxy($proxy)
     {
         if (!empty($proxy)) {
             // When the proxy is a string - try to parse it.
@@ -149,7 +149,7 @@ class LightOpenID
      * @param $url url to check
      * @return true, if the server exists; false otherwise
      */
-    function hostExists($url)
+    public function hostExists($url)
     {
         if (strpos($url, '/') === false) {
             $server = $url;
@@ -331,7 +331,7 @@ class LightOpenID
         }
 
         $params = http_build_query($params, '', '&');
-        switch($method) {
+        switch ($method) {
             case 'GET':
                 $opts = array(
                 'http' => array(
@@ -543,7 +543,7 @@ class LightOpenID
      * @return String OP Endpoint (i.e. OpenID provider address).
      * @throws ErrorException
      */
-    function discover($url)
+    public function discover($url)
     {
         if (!$url) {
             throw new ErrorException('No identity supplied.');
@@ -750,7 +750,7 @@ class LightOpenID
             $counts   = array();
             $required = array();
             $optional = array();
-            foreach (array('required','optional') as $type) {
+            foreach (array('required', 'optional') as $type) {
                 foreach ($this->$type as $alias => $field) {
                     if (is_int($alias)) {
                         $alias = strtr($field, '/', '_');
@@ -851,7 +851,7 @@ class LightOpenID
      * @param String $select_identifier Whether to request OP to select identity for an user in OpenID 2. Does not affect OpenID 1.
      * @throws ErrorException
      */
-    function authUrl($immediate = false)
+    public function authUrl($immediate = false)
     {
         if ($this->setup_url && !$immediate) {
             return $this->setup_url;
@@ -871,7 +871,7 @@ class LightOpenID
      * @return Bool Whether the verification was successful.
      * @throws ErrorException
      */
-    function validate()
+    public function validate()
     {
         # If the request was using immediate mode, a failure may be reported
         # by presenting user_setup_url (for 1.1) or reporting
@@ -923,7 +923,6 @@ class LightOpenID
             # use it when magic_quotes is off.
             $value = $this->data['openid_' . str_replace('.', '_', $item)];
             $params['openid.' . $item] = function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() ? stripslashes($value) : $value;
-
         }
 
         $params['openid.mode'] = 'check_authentication';
@@ -1007,7 +1006,7 @@ class LightOpenID
      *     * @return Array Array of attributes with keys being the AX schema names, e.g. 'contact/email'
      * @see http://www.axschema.org/types/
      */
-    function getAttributes()
+    public function getAttributes()
     {
         if (isset($this->data['openid_ns'])
             && $this->data['openid_ns'] == 'http://specs.openid.net/auth/2.0'
@@ -1030,7 +1029,7 @@ class LightOpenID
      *
      * @return string|bool OAuth request token on success, FALSE if no token was provided.
      */
-    function getOAuthRequestToken()
+    public function getOAuthRequestToken()
     {
         $alias = $this->getNamespaceAlias('http://specs.openid.net/extensions/oauth/1.0');
         
