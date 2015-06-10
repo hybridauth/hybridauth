@@ -10,7 +10,7 @@ Hybridauth enables developers to easily build social applications and tools to e
 
 The main goal of Hybridauth is to act as an abstract API between your application and various social apis and identities providers such as Facebook, Twitter and Google.
 
-You can find complete Hybridauth documentation at ...
+You can find complete Hybridauth documentation at https://hybridauth.github.io
 
 #### Usage
 
@@ -45,7 +45,7 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
     }
 ```
 
-##### Legacy way (Compatible with Hybridauth 2.x)
+##### Legacy way (Similar to Hybridauth 2.x)
 
 Please refer to [Upgrade guide](http://hybridauth.github.io/developer-ref-migrating.html) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
 
