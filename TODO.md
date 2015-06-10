@@ -1,15 +1,15 @@
 Hybridauth 3 Todo List
 ======================
 
-#### overview
+#### Overview
 
 task                  | .
 --------------------- | ----------
 Core components       |  Completed
 Implemented providers |      26/27
-Working providers     |       7/27
+Working providers     |      13/27
 Documentation         |       ~70%
-Code coverage         |          0
+Code coverage         |         ~0
 
 -----------------------
 
@@ -30,34 +30,34 @@ More information on how to implement IDPs into Hybridauth 3 can be found at
 http://hybridauth.github.io/developer-ref-extend-hybridauth.html
 
 Provider      | Specs    | Implemented? | Working?    | Notes
-------------- | -------- | ------------ |------------ | ------------------------------------------------------------------------------
-Facebook      | OAuth2   |  [X]         |             | Authentication and getUserProfile are working. 
-Twitter       | OAuth1   |  [X]         |             | Authentication and getUserProfile are working. 
-Google        | OAuth2   |  [X]         |             | Authentication and getUserProfile are working.
-Yahoo         | OAuth2   |              |             | Not implemented yet.
-Windows Live  | OAuth2   |  [X]         |             |
-LinkedIn      | OAuth2   |  [X]         |             | We no longer use OAauth1. Only authentication and getUserProfile are implemented.
+------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------
+Facebook      | OAuth2   |  [X]         |  [X]        | Authentication and getUserProfile are working.
+Twitter       | OAuth1   |  [X]         |  [X]        | Authentication and getUserProfile are working.
+Google        | OAuth2   |  [X]         |  [X]        | Authentication and getUserProfile are working.
+GitHub        | OAuth2   |  [X]         |  [X]        | 
+Reddit        | OAuth2   |  [X]         |  [X]        | 
+WordPress     | OAuth2   |  [X]         |  [X]        | 
+Tumblr        | OAuth1   |  [X]         |  [X]        | 
+Disqus        | OAuth2   |  [X]         |  [X]        | 
+Dribbble      | OAuth2   |  [X]         |  [X]        | 
+Windows Live  | OAuth2   |  [X]         |             | 
 Foursquare    | OAuth2   |  [X]         |             | 
-Disqus        | OAuth2   |  [X]         |             | 
-Dribbble      | OAuth2   |  [X]         |             | 
-GitHub        | OAuth2   |  [X]         | [X]         | 
 Instagram     | OAuth2   |  [X]         |             | 
-Reddit        | OAuth2   |  [X]         | [X]         | 
-WordPress     | OAuth2   |  [X]         | [X]         | 
-Tumblr        | OAuth1   |  [X]         |             | 
 TwitchTV      | OAuth2   |  [X]         |             | 
+LinkedIn      | OAuth2   |  [X]         |             | We no longer use OAauth1. Only authentication and getUserProfile are implemented.
+Yahoo         | OAuth2   |              |             | Not implemented yet.
 Px500         | OAuth1   |  [X]         |             | No clue how important this idp is, but was easy to port, so i did it.
 Freeagent     | OAuth2   |  [X]         |             |     //
 PixelPin      | OAuth2   |  [X]         |             |     //
 Vkontakte     | OAuth2   |  [X]         |             | Russian idp.
 Mailru        | OAuth2   |  [X]         |             |     //
 Odnoklassniki | OAuth2   |  [X]         |             |     //
-OpenID        | OpenID   |  [X]         | [X]         | Generic OpenID Adapter. Implemented and Working.
+OpenID        | OpenID   |  [X]         |  [X]        | Generic OpenID Adapter. Implemented and Working.
 AOL           | OpenID   |  [X]         |             | Does the AOL still a thing? We may drop it otherwise.
 PaypalOpenID  | OpenID   |  [X]         |             | Implemented but needs someone to confirm it's a working as expected.
-Stackoverflow | OpenID   |  [X]         | [X]         | All good.
-YahooOpenID   | OpenID   |  [X]         | [X]         | All good.
-Steam         | Hybrid   |  [X]         | [X]         | Steam Adapter is a mix of OpenID and a Proprietary API.
+Stackoverflow | OpenID   |  [X]         |  [X]        | All good.
+YahooOpenID   | OpenID   |  [X]         |  [X]        | All good.
+Steam         | Hybrid   |  [X]         |  [X]        | Steam Adapter is a mix of OpenID and a Proprietary API.
 
 -----------------------
 
