@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -11,35 +12,38 @@ use Hybridauth\Exception\RuntimeException;
 use Hybridauth\Exception\InvalidArgumentException;
 
 /**
- * Debugging and Logging utility
+ * Debugging and Logging utility.
  */
 class Logger implements LoggerInterface
 {
     /**
-    * Debug level
-    *
-    * If you want to enable logging, set 'debug_mode' to:
-    *
-    *     false  Disable logging.
-    *      true  Enable logging. When set to TRUE, all logging levels will be saved in log file.
-    *   "error"  Only log error messages.
-    *    "info"  Log info and error messages (ignore debug messages).
-    *
-    * @var mixed
-    */
+     * Debug level.
+     *
+     * If you want to enable logging, set 'debug_mode' to:
+     *
+     *     false  Disable logging.
+     *      true  Enable logging. When set to TRUE, all logging levels will be saved in log file.
+     *   "error"  Only log error messages.
+     *    "info"  Log info and error messages (ignore debug messages).
+     *
+     * @var mixed
+     */
     protected $mode = false;
 
     /**
-    * Path to file writeable by the web server. Required if 'debug_mode' is not false.
-    *
-    * @var string
-    */
+     * Path to file writeable by the web server. Required if 'debug_mode' is not false.
+     *
+     * @var string
+     */
     protected $file = '';
 
     /**
-    * @param $mode
-    * @param $file
-    */
+     * @param bool|string $mode false Disable logging.<br>
+     *                          true  Enable logging. When set to TRUE, all logging levels will be saved in log file.<br>
+     *                          "error"  Only log error messages.
+     *                          "info"  Log info and error messages (ignore debug messages).
+     * @param string      $file
+     */
     public function __construct($mode, $file)
     {
         if ($mode) {
@@ -51,29 +55,29 @@ class Logger implements LoggerInterface
     }
 
     /**
-    * @param string $debug_file
-    *
-    * @throws InvalidArgumentException
-    * @throws RuntimeException
-    */
+     * @param string $debug_file
+     *
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
     protected function initialize($file)
     {
-        if (! $file) {
+        if (!$file) {
             throw new InvalidArgumentException("'debug_mode' is set to 'true' but the log file path 'debug_file' is not given.");
         }
 
-        if (! file_exists($file) && ! touch($file)) {
+        if (!file_exists($file) && !touch($file)) {
             throw new RuntimeException("'debug_mode' is set to 'true', but the file 'debug_file' in 'debug_file' can not be created.");
         }
 
-        if (! is_writable($file)) {
+        if (!is_writable($file)) {
             throw new RuntimeException("'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writeable.");
         }
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function info($message)
     {
         if ('error' === $this->mode) {
@@ -84,8 +88,8 @@ class Logger implements LoggerInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function debug($message, $object = null)
     {
         if (true !== $this->mode) {
@@ -96,32 +100,32 @@ class Logger implements LoggerInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function error($message, $object = null)
     {
         $this->_write('ERROR', $message, $object);
     }
 
     /**
-    * Write a message to log file and return TRUE if entry was written to log.
-    *
-    * @param string $level Error level
-    * @param string $message Error message
-    * @param mixed  $object
-    *
-    * @return boolean
-    */
+     * Write a message to log file and return TRUE if entry was written to log.
+     *
+     * @param string $level   Error level
+     * @param string $message Error message
+     * @param mixed  $object
+     *
+     * @return bool
+     */
     private function _write($level, $message, $object = null)
     {
-        if (! $this->mode) {
+        if (!$this->mode) {
             return false;
         }
 
         $datetime = new \DateTime();
-        $datetime =  $datetime->format(DATE_ATOM);
+        $datetime = $datetime->format(DATE_ATOM);
 
-        $content  = $level . ' -- ' . $_SERVER['REMOTE_ADDR'] . ' -- ' . $datetime . ' -- ' . $message . ' -- ';
+        $content = $level.' -- '.$_SERVER['REMOTE_ADDR'].' -- '.$datetime.' -- '.$message.' -- ';
         $content .= ($object ? print_r($object, true) : '');
         $content .= "\n";
 
