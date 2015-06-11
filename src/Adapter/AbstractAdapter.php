@@ -321,8 +321,8 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         $endpoints = $this->config->filter('endpoints');
 
-        $this->apiBaseUrl     = $endpoints->exists('api_base_url')     ?: $this->apiBaseUrl;
-        $this->authorizeUrl   = $endpoints->exists('authorize_url')    ?: $this->authorizeUrl;
-        $this->accessTokenUrl = $endpoints->exists('access_token_url') ?: $this->accessTokenUrl;
+        $this->apiBaseUrl     = $endpoints->get('api_base_url')     ?: $this->apiBaseUrl;
+        $this->authorizeUrl   = $endpoints->get('authorize_url')    ?: $this->authorizeUrl;
+        $this->accessTokenUrl = $endpoints->get('access_token_url') ?: $this->accessTokenUrl;
     }
 }
