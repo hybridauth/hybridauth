@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Adapter;
@@ -182,7 +182,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $userProfile->birthYear   = $data->get('birthDate/birthDate');
 
         $userProfile = $this->fetchUserGender($userProfile, $data->get('person/gender'));
-        
+
         $userProfile = $this->fetchUserDisplayName($userProfile, $data);
 
         return $userProfile;

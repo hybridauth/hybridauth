@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -99,7 +99,7 @@ class Twitter extends OAuth1
 
             try {
                 $response = $this->apiRequest('users/lookup.json', 'GET', $parameters);
-                
+
                 $data = (new Parser($response))->toCollection();
             } catch (Exception $e) {
                 continue;
@@ -148,7 +148,7 @@ class Twitter extends OAuth1
                 ]
             );
         }
-        
+
         $response = $this->apiRequest('statuses/update.json', 'POST', [ 'status' => $status ]);
 
         return $response;

@@ -2,8 +2,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html 
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -46,7 +46,7 @@ class Odnoklassniki extends OAuth2
             'has_email', 'current_status', 'current_status_id', 'current_status_date','online',
             'photo_id', 'pic_1', 'pic_2', 'pic1024x768', 'location', 'email'
         );
-    
+
         $sig = md5(
             'application_key=' . $this->config->get('keys')['key'] .
             'fields=' . implode(',', $fields) .

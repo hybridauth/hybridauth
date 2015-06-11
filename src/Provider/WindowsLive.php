@@ -1,8 +1,8 @@
 <?php
 /*!
 * HybridAuth
-* http://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | http://hybridauth.github.io/license.html
+* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
+* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -74,7 +74,7 @@ class WindowsLive extends OAuth2
     protected function getUserContacts()
     {
         $contacts = [];
-        
+
         $response = $this->apiRequest('me/contacts');
 
         if ($data->get('errcode')) {
@@ -89,7 +89,7 @@ class WindowsLive extends OAuth2
             $userContact->identifier  = $entry->get('id');
             $userContact->displayName = $entry->get('name');
             $userContact->email       = $entry->filter('emails')->get('preferred');
-            
+
             $contacts[] = $userContact;
         }
 
