@@ -141,7 +141,7 @@ class Curl implements HttpClientInterface
             $this->logger->debug("HttpClient\Curl::request( $uri, $method ), response:", $this->getResponse());
 
             if (false === $response) {
-                $this->logger->error("HttpClient\Curl::request( $uri, $method ), curl_exec error: ", $this->responseClientError);
+                $this->logger->error("HttpClient\Curl::request( $uri, $method ), curl_exec error: ", [$this->responseClientError]);
             }
         }
 
