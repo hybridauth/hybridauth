@@ -85,7 +85,7 @@ class Hybridauth
         $this->storage = $storage ?: new Session();
 
         $this->logger = $logger ?: new Logger(
-            isset($config['debug_mode']) && $config['debug_mode'],
+            isset($config['debug_mode']) ? $config['debug_mode'] : false,
             isset($config['debug_file']) ? $config['debug_file'] : ''
         );
 
