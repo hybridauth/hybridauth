@@ -44,7 +44,7 @@ class Foursquare extends OAuth2
     {
         parent::initialize();
 
-        $apiVersion = $this->config->exists('api_version') ?: '20120610';
+        $apiVersion = $this->config->get('api_version') ?: '20120610';
 
         $this->apiRequestParameters = [ 'v' => $apiVersion ];
     }
