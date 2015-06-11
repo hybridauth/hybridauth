@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -46,7 +46,7 @@ class Steam extends OpenID
 
         // fetch user profile
         foreach ($result as $k => $v) {
-            $userProfile->$k = $v ? $v : $userProfile->$k;
+            $userProfile->$k = $v ?: $userProfile->$k;
         }
 
         // store user profile

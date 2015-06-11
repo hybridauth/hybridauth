@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Adapter;
@@ -123,9 +123,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     protected function initialize()
     {
-        if (! $this->config->filter('keys')->get('key')
-            ||
-                ! $this->config->filter('keys')->get('secret')
+        if (! $this->config->filter('keys')->get('key') || ! $this->config->filter('keys')->get('secret')
         ) {
             throw new InvalidApplicationCredentialsException(
                 'Your consumer key and secret are required in order to connect to ' . $this->providerId

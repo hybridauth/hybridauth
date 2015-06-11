@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -44,9 +44,7 @@ class Foursquare extends OAuth2
     {
         parent::initialize();
 
-        $apiVersion = $this->config->exists('api_version')
-                        ? $this->config->get('api_version')
-                        : '20120610';
+        $apiVersion = $this->config->exists('api_version') ?: '20120610';
 
         $this->apiRequestParameters = [ 'v' => $apiVersion ];
     }

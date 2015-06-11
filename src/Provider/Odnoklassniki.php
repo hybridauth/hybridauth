@@ -1,9 +1,8 @@
 <?php
-<?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -19,7 +18,6 @@ use Hybridauth\User;
  */
 class Odnoklassniki extends OAuth2
 {
-
     /**
     * {@inheritdoc}
     */
@@ -39,7 +37,7 @@ class Odnoklassniki extends OAuth2
     /**
     * {@inheritdoc}
     */
-    function getUserProfile()
+    public function getUserProfile()
     {
         $fields = array(
             'uid', 'locale', 'first_name', 'last_name', 'name', 'gender', 'age', 'birthday',
@@ -72,14 +70,13 @@ class Odnoklassniki extends OAuth2
         $userProfile = new User\Profile();
 
 
-        $userProfile->identifier = $data->get('uid');
-        $userProfile->email = $data->get('email');
-        $userProfile->firstName = $data->get('first_name');
-        $userProfile->lastName = $data->get('last_name');
+        $userProfile->identifier  = $data->get('uid');
+        $userProfile->email       = $data->get('email');
+        $userProfile->firstName   = $data->get('first_name');
+        $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('name');
-        $userProfile->photoURL = $data->get('pic1024x768');
-
-        $userProfile->profileURL = 'http://ok.ru/profile/' . $data->get('uid');
+        $userProfile->photoURL    = $data->get('pic1024x768');
+        $userProfile->profileURL  = 'http://ok.ru/profile/' . $data->get('uid');
 
         return $userProfile;
     }

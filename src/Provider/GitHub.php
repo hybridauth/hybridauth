@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -61,9 +61,7 @@ class GitHub extends OAuth2
         $userProfile->webSiteURL  = $data->get('blog');
         $userProfile->region      = $data->get('location');
 
-        $userProfile->displayName = $userProfile->displayName
-                                        ? $userProfile->displayName
-                                        : $data->get('login');
+        $userProfile->displayName = $userProfile->displayName ?: $data->get('login');
 
         if (empty($userProfile->email) && strpos($this->scope, 'user:email') !== false) {
             $userProfile = $this->requestUserEmail($userProfile);

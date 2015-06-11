@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -60,7 +60,6 @@ class WindowsLive extends OAuth2
         $userProfile->profileURL    = $data->get('link');
         $userProfile->email         = $data->filter('emails')->get('preferred');
         $userProfile->emailVerified = $data->filter('emails')->get('account');
-
         $userProfile->birthDay      = $data->get('birth_day');
         $userProfile->birthMonth    = $data->get('birth_month');
         $userProfile->birthYear     = $data->get('birth_year');

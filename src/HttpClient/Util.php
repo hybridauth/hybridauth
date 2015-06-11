@@ -1,9 +1,8 @@
 <?php
-
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\HttpClient;
@@ -13,17 +12,17 @@ use Hybridauth\Data;
 class Util
 {
     /**
-     * Exit handler.
-     *
-     * @var callable|null
-     */
+    * Exit handler.
+    *
+    * @var callable|null
+    */
     protected static $exitHandler;
 
     /**
-     * Redirect to a given URL.
-     *
-     * @param string $url
-     */
+    * Redirect to a given URL.
+    *
+    * @param string $url
+    */
     public static function redirect($url)
     {
         header("Location: $url");
@@ -36,22 +35,22 @@ class Util
     }
 
     /**
-     * Exit handler will be called instead of regular exit() when calling Util::redirect() method.
-     *
-     * @param callable $callback
-     */
+    * Exit handler will be called instead of regular exit() when calling Util::redirect() method.
+    *
+    * @param callable $callback
+    */
     public static function setExitHandler(callable $callback)
     {
         self::$exitHandler = $callback;
     }
 
     /**
-     * Returns the Current URL.
-     *
-     * @param bool $requestUri TRUE to use $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
-     *
-     * @return string
-     */
+    * Returns the Current URL.
+    *
+    * @param bool $requestUri TRUE to use $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
+    *
+    * @return string
+    */
     public static function getCurrentUrl($requestUri = false)
     {
         $collection = new Data\Collection($_SERVER);

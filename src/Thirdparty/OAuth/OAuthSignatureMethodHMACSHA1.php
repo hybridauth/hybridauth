@@ -2,7 +2,7 @@
 /*!
 * This file is part of the OAuth PHP Library (https://code.google.com/p/oauth/)
 *
-* OAuth PHP Library is an open source software available under the MIT License.
+* OAuth `PHP' Library is an open source software available under the MIT License.
 */
 
 namespace Hybridauth\Thirdparty\OAuth;
@@ -19,10 +19,7 @@ class OAuthSignatureMethodHMACSHA1 extends OAuthSignatureMethod
         $base_string = $request->get_signature_base_string();
         $request->base_string = $base_string;
 
-        $key_parts = array(
-            $consumer->secret,
-            ($token) ? $token->secret : ""
-        );
+        $key_parts = array( $consumer->secret, $token ? $token->secret : '' );
 
         $key_parts = OAuthUtil::urlencode_rfc3986($key_parts);
         $key = implode('&', $key_parts);

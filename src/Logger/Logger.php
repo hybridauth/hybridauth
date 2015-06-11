@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Logger;
@@ -27,26 +27,26 @@ class Logger implements LoggerInterface
     *
     * @var mixed
     */
-    protected $debug_mode = false;
+    protected $mode = false;
 
     /**
     * Path to file writeable by the web server. Required if 'debug_mode' is not false.
     *
     * @var string
     */
-    protected $debug_file = '';
+    protected $file = '';
 
     /**
-    * @param $debug_mode
-    * @param $debug_file
+    * @param $mode
+    * @param $file
     */
-    public function __construct($debug_mode, $debug_file)
+    public function __construct($mode, $file)
     {
-        if ($debug_mode) {
-            $this->initialize($debug_file);
+        if ($mode) {
+            $this->initialize($file);
 
-            $this->debug_mode = $debug_mode;
-            $this->debug_file = $debug_file;
+            $this->mode = $mode;
+            $this->file = $file;
         }
     }
 
@@ -56,17 +56,17 @@ class Logger implements LoggerInterface
     * @throws InvalidArgumentException
     * @throws RuntimeException
     */
-    protected function initialize($debug_file)
+    protected function initialize($file)
     {
-        if (! $debug_file) {
+        if (! $file) {
             throw new InvalidArgumentException("'debug_mode' is set to 'true' but the log file path 'debug_file' is not given.");
         }
 
-        if (! file_exists($debug_file) && ! touch($debug_file)) {
+        if (! file_exists($file) && ! touch($file)) {
             throw new RuntimeException("'debug_mode' is set to 'true', but the file 'debug_file' in 'debug_file' can not be created.");
         }
 
-        if (! is_writable($debug_file)) {
+        if (! is_writable($file)) {
             throw new RuntimeException("'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writeable.");
         }
     }
@@ -76,7 +76,7 @@ class Logger implements LoggerInterface
     */
     public function info($message)
     {
-        if ('error' === $this->debug_mode) {
+        if ('error' === $this->mode) {
             return false;
         }
 
@@ -88,7 +88,7 @@ class Logger implements LoggerInterface
     */
     public function debug($message, $object = null)
     {
-        if (true !== $this->debug_mode) {
+        if (true !== $this->mode) {
             return false;
         }
 
@@ -114,7 +114,7 @@ class Logger implements LoggerInterface
     */
     private function _write($level, $message, $object = null)
     {
-        if (! $this->debug_mode) {
+        if (! $this->mode) {
             return false;
         }
 
@@ -125,6 +125,6 @@ class Logger implements LoggerInterface
         $content .= ($object ? print_r($object, true) : '');
         $content .= "\n";
 
-        file_put_contents($this->debug_file, $content, FILE_APPEND);
+        file_put_contents($this->file, $content, FILE_APPEND);
     }
 }

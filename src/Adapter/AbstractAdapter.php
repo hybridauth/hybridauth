@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Adapter;
@@ -321,16 +321,8 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         $endpoints = $this->config->filter('endpoints');
 
-        $this->apiBaseUrl = $endpoints->exists('api_base_url')
-                                ? $endpoints->get('api_base_url')
-                                : $this->apiBaseUrl;
-
-        $this->authorizeUrl = $endpoints->exists('authorize_url')
-                                ? $endpoints->get('authorize_url')
-                                : $this->authorizeUrl;
-
-        $this->accessTokenUrl = $endpoints->exists('access_token_url')
-                                ? $endpoints->get('access_token_url')
-                                : $this->accessTokenUrl;
+        $this->apiBaseUrl     = $endpoints->exists('api_base_url')     ?: $this->apiBaseUrl;
+        $this->authorizeUrl   = $endpoints->exists('authorize_url')    ?: $this->authorizeUrl;
+        $this->accessTokenUrl = $endpoints->exists('access_token_url') ?: $this->accessTokenUrl;
     }
 }

@@ -2,7 +2,7 @@
 /*!
 * This file is part of the OAuth PHP Library (https://code.google.com/p/oauth/)
 *
-* OAuth PHP Library is an open source software available under the MIT License.
+* OAuth `PHP' Library is an open source software available under the MIT License.
 */
 
 namespace Hybridauth\Thirdparty\OAuth;
@@ -90,7 +90,7 @@ class OAuthUtil
         }
         return $out;
     }
-    
+
     // This function takes a input like a=b&a=c&d=e and returns the parsed
     // parameters like this
     // array('a' => array('b','c'), 'd' => 'e')
@@ -127,7 +127,7 @@ class OAuthUtil
         }
         return $parsed_parameters;
     }
-    
+
     public static function build_http_query($params)
     {
         if (!$params) {

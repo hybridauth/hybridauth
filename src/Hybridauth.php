@@ -1,9 +1,8 @@
 <?php
-
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth;
@@ -27,48 +26,48 @@ class Hybridauth
     use DeprecatedHybridauthTrait;
 
     /**
-     * Hybridauth version.
-     *
-     * @var string
-     */
+    * Hybridauth version.
+    *
+    * @var string
+    */
     public static $version = '3.0.0-Remake';
 
     /**
-     * Hybridauth config.
-     *
-     * @var array
-     */
+    * Hybridauth config.
+    *
+    * @var array
+    */
     protected $config;
 
     /**
-     * Storage.
-     *
-     * @var StorageInterface
-     */
+    * Storage.
+    *
+    * @var StorageInterface
+    */
     protected $storage;
 
     /**
-     * HttpClient.
-     *
-     * @var HttpClientInterface
-     */
+    * HttpClient.
+    *
+    * @var HttpClientInterface
+    */
     protected $httpClient;
 
     /**
-     * Logger.
-     *
-     * @var LoggerInterface
-     */
+    * Logger.
+    *
+    * @var LoggerInterface
+    */
     protected $logger;
 
     /**
-     * @param array|string        $config     Array with configuration or path to PHP file that will return array
-     * @param HttpClientInterface $httpClient
-     * @param StorageInterface    $storage
-     * @param LoggerInterface     $logger
-     *
-     * @throws InvalidArgumentException
-     */
+    * @param array|string        $config     Array with configuration or path to PHP file that will return array
+    * @param HttpClientInterface $httpClient
+    * @param StorageInterface    $storage
+    * @param LoggerInterface     $logger
+    *
+    * @throws InvalidArgumentException
+    */
     public function __construct(
         $config = [],
         HttpClientInterface $httpClient = null,
@@ -77,7 +76,7 @@ class Hybridauth
     ) {
         if (is_string($config) && file_exists($config)) {
             $config = include $config;
-        } elseif (!is_array($config)) {
+        } elseif (! is_array($config)) {
             throw new InvalidArgumentException('Hybriauth config does not exist on the given path.');
         }
 
@@ -102,29 +101,29 @@ class Hybridauth
     }
 
     /**
-     * Instantiate the given provider and authentication or authorization protocol.
-     *
-     * If user not authenticated yet, the user will be redirected to the authorization Service
-     * to authorize the application.
-     *
-     * @param string $provider Provider (case insensitive)
-     *
-     * @throws Exception\Exception
-     * @throws Exception\RuntimeException
-     * @throws Exception\UnexpectedValueException
-     * @throws Exception\InvalidArgumentException
-     * @throws Exception\AuthorizationDeniedException
-     * @throws Exception\HttpClientFailureException
-     * @throws Exception\HttpRequestFailedException
-     * @throws Exception\InvalidAccessTokenException
-     * @throws Exception\InvalidApplicationCredentialsException
-     * @throws Exception\InvalidAuthorizationCodeException
-     * @throws Exception\InvalidAuthorizationStateException
-     * @throws Exception\InvalidOauthTokenException
-     * @throws Exception\InvalidOpenidIdentifierException
-     *
-     * @return Adapter\AdapterInterface
-     */
+    * Instantiate the given provider and authentication or authorization protocol.
+    *
+    * If user not authenticated yet, the user will be redirected to the authorization Service
+    * to authorize the application.
+    *
+    * @param string $provider Provider (case insensitive)
+    *
+    * @throws Exception\Exception
+    * @throws Exception\RuntimeException
+    * @throws Exception\UnexpectedValueException
+    * @throws Exception\InvalidArgumentException
+    * @throws Exception\AuthorizationDeniedException
+    * @throws Exception\HttpClientFailureException
+    * @throws Exception\HttpRequestFailedException
+    * @throws Exception\InvalidAccessTokenException
+    * @throws Exception\InvalidApplicationCredentialsException
+    * @throws Exception\InvalidAuthorizationCodeException
+    * @throws Exception\InvalidAuthorizationStateException
+    * @throws Exception\InvalidOauthTokenException
+    * @throws Exception\InvalidOpenidIdentifierException
+    *
+    * @return Adapter\AdapterInterface
+    */
     public function authenticate($provider)
     {
         $this->logger->info("Enter Hybridauth::authenticate( $provider )");
@@ -137,15 +136,15 @@ class Hybridauth
     }
 
     /**
-     * Instantiate and returns the given provider adapter.
-     *
-     * @param string $provider Provider (case insensitive)
-     *
-     * @throws Exception\UnexpectedValueException
-     * @throws Exception\InvalidArgumentException
-     *
-     * @return Adapter\AdapterInterface
-     */
+    * Instantiate and returns the given provider adapter.
+    *
+    * @param string $provider Provider (case insensitive)
+    *
+    * @throws Exception\UnexpectedValueException
+    * @throws Exception\InvalidArgumentException
+    *
+    * @return Adapter\AdapterInterface
+    */
     public function getAdapter($provider)
     {
         $config = $this->getProviderConfig($provider);
@@ -156,32 +155,32 @@ class Hybridauth
     }
 
     /**
-     * Get provider config by name.
-     *
-     * @param string $provider Provider (case insensitive)
-     *
-     * @throws Exception\UnexpectedValueException
-     * @throws Exception\InvalidArgumentException
-     *
-     * @return array
-     */
+    * Get provider config by name.
+    *
+    * @param string $provider Provider (case insensitive)
+    *
+    * @throws Exception\UnexpectedValueException
+    * @throws Exception\InvalidArgumentException
+    *
+    * @return array
+    */
     protected function getProviderConfig($provider)
     {
         $provider = strtolower($provider);
 
         $providersConfig = array_change_key_case($this->config['providers'], CASE_LOWER);
 
-        if (!isset($providersConfig[$provider])) {
+        if (! isset($providersConfig[$provider])) {
             throw new InvalidArgumentException('Unknown Provider.');
         }
 
-        if (!$providersConfig[$provider]['enabled']) {
+        if (! $providersConfig[$provider]['enabled']) {
             throw new UnexpectedValueException('Disabled Provider.');
         }
 
         $config = $providersConfig[$provider];
 
-        if (!isset($config['callback']) && isset($this->config['callback'])) {
+        if (! isset($config['callback']) && isset($this->config['callback'])) {
             $config['callback'] = $this->config['callback'];
         }
 

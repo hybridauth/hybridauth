@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -167,8 +167,7 @@ class Facebook extends OAuth2
         $userContact->displayName = $item->get('name');
 
         $userContact->profileURL = $item->exists('link')
-                                        ? $item->get('link')
-                                        : 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
+                                      ?: 'https://www.facebook.com/profile.php?id=' . $userContact->identifier;
 
         $userContact->photoURL = $this->apiBaseUrl . $userContact->identifier . '/picture?width=150&height=150';
 
