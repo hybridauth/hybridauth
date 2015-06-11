@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * HybridAuth
 * https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
@@ -12,7 +13,14 @@ use Hybridauth\Data;
 class Util
 {
     /**
-     * Redirect to a given URL
+     * Exit handler.
+     *
+     * @var callable|null
+     */
+    protected static $exitHandler;
+
+    /**
+     * Redirect to a given URL.
      *
      * @param string $url
      */
@@ -20,13 +28,27 @@ class Util
     {
         header("Location: $url");
 
-        exit(1);
+        if (static::$exitHandler) {
+            call_user_func(static::$exitHandler);
+        } else {
+            exit(1);
+        }
     }
 
     /**
-     * Returns the Current URL
+     * Exit handler will be called instead of regular exit() when calling Util::redirect() method.
      *
-     * @param boolean $requestUri TRUE to use $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
+     * @param callable $callback
+     */
+    public static function setExitHandler(callable $callback)
+    {
+        self::$exitHandler = $callback;
+    }
+
+    /**
+     * Returns the Current URL.
+     *
+     * @param bool $requestUri TRUE to use $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
      *
      * @return string
      */
