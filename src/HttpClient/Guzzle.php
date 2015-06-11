@@ -1,8 +1,8 @@
 <?php
 /*!
-* HybridAuth
-* https://hybridauth.github.io | http://github.com/hybridauth/hybridauth
-* (c) 2015 HybridAuth authors | https://hybridauth.github.io/license.html
+* Hybridauth
+* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\HttpClient;
@@ -20,7 +20,7 @@ use GuzzleHttp\Exception\TransferException;
  * Example:
  *
  * <code>
- *  $guzzle = new Hybridauth\HttpClient\Guzzle([
+ *  $guzzle = new Hybridauth\HttpClient\Guzzle( new GuzzleHttp\Client(), [
  *      'verify'  => '/path/to/ca-bundle.crt',
  *      'headers' => [ 'User-Agent' => '..' ]
  *      // 'proxy' => ...
