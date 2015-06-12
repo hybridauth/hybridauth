@@ -47,4 +47,45 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2
 
 		return $this->user->profile;
 	}
+	/**
+	*
+	*/
+	function getUserContacts() {
+		// refresh tokens if needed
+		$this->refreshToken();
+
+		//
+		$response = array();
+		$contacts = array();
+        $profile = ( ( isset( $this->user->profile->identifier ) )?( $this->user->profile ):( $this->getUserProfile() ) );
+		try {
+            $response = $this->api->api( "users/{$this->user->profile->identifier}/follows" );
+        } catch (LinkedInException $e) {
+            throw new Exception("User contacts request failed! {$this->providerId} returned an error: $e");
+        }
+        //
+
+		if ( isset( $response ) && $response->meta->code == 200 ) {
+			foreach ($response->data as $contact) {
+                try {
+                    $contactInfo = $this->api->api( "users/".$contact->id );
+                } catch (LinkedInException $e) {
+                    throw new Exception("Contact info request failed for user {$contact->username}! {$this->providerId} returned an error: $e");
+                }
+                //
+				$uc = new Hybrid_User_Contact();
+				//
+				$uc->identifier     = $contact->id;
+				$uc->profileURL     = "https://instagram.com/{$contact->username}";
+				$uc->webSiteURL     = @$contactInfo->data->website;
+				$uc->photoURL       = @$contact->profile_picture;
+				$uc->displayName    = @$contact->full_name;
+				$uc->description	= @$contactInfo->data->bio;
+				//$uc->email          = ;
+				//
+				$contacts[] = $uc;
+			}
+		}
+		return $contacts;
+	}
 }
