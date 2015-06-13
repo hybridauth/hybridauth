@@ -16,46 +16,45 @@ use Hybridauth\Exception\InvalidArgumentException;
  */
 class Logger implements LoggerInterface
 {
+    const NONE = 'none';
+    const ERROR = 'error';
+    const INFO = 'info';
+    const DEBUG = 'debug';
     /**
      * Debug level.
      *
-     * If you want to enable logging, set 'debug_mode' to:
-     *
-     *     false  Disable logging.
-     *      true  Enable logging. When set to TRUE, all logging levels will be saved in log file.
-     *   "error"  Only log error messages.
-     *    "info"  Log info and error messages (ignore debug messages).
-     *
-     * @var mixed
-     */
-    protected $mode = false;
-
-    /**
-     * Path to file writeable by the web server. Required if 'debug_mode' is not false.
+     * One of Logger::NONE, Logger::ERROR, Logger::INFO, Logger::DEBUG
      *
      * @var string
      */
-    protected $file = '';
+    protected $level;
 
     /**
-     * @param bool|string $mode false Disable logging.<br>
-     *                          true  Enable logging. When set to TRUE, all logging levels will be saved in log file.<br>
-     *                          "error"  Only log error messages.
-     *                          "info"  Log info and error messages (ignore debug messages).
-     * @param string      $file
+     * Path to file writeable by the web server. Required if $this->level !== Logger::NONE.
+     *
+     * @var string
      */
-    public function __construct($mode, $file)
+    protected $file;
+
+    /**
+     * @param bool|string $level One of Logger::NONE, Logger::ERROR, Logger::INFO, Logger::DEBUG
+     * @param string      $file  File where t write messages
+     *
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
+    public function __construct($level, $file)
     {
-        if ($mode) {
+        if ($level !== self::NONE) {
             $this->initialize($file);
 
-            $this->mode = $mode;
+            $this->level = $level;
             $this->file = $file;
         }
     }
 
     /**
-     * @param string $debug_file
+     * @param string $file
      *
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -63,70 +62,74 @@ class Logger implements LoggerInterface
     protected function initialize($file)
     {
         if (!$file) {
-            throw new InvalidArgumentException("'debug_mode' is set to 'true' but the log file path 'debug_file' is not given.");
+            throw new InvalidArgumentException('Log file is not specified.');
         }
 
         if (!file_exists($file) && !touch($file)) {
-            throw new RuntimeException("'debug_mode' is set to 'true', but the file 'debug_file' in 'debug_file' can not be created.");
+            throw new RuntimeException("Log file {$file} can not be created.");
         }
 
         if (!is_writable($file)) {
-            throw new RuntimeException("'debug_mode' is set to 'true', but the given log file path 'debug_file' is not a writeable.");
+            throw new RuntimeException("Log file {$file} is not writeable.");
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function info($message)
+    public function info($message, array $context = [])
     {
-        if ('error' === $this->mode) {
-            return false;
-        }
-
-        $this->_write('INFO', $message);
+        $this->log(self::INFO, $message, $context);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function debug($message, $object = null)
+    public function debug($message, array $context = [])
     {
-        if (true !== $this->mode) {
-            return false;
-        }
-
-        $this->_write('DEBUG', $message, $object);
+        $this->log(self::DEBUG, $message, $context);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function error($message, $object = null)
+    public function error($message, array $context = [])
     {
-        $this->_write('ERROR', $message, $object);
+        $this->log(self::ERROR, $message, $context);
     }
 
     /**
-     * Write a message to log file and return TRUE if entry was written to log.
-     *
-     * @param string $level   Error level
-     * @param string $message Error message
-     * @param mixed  $object
-     *
-     * @return bool
+     * @inheritdoc
      */
-    private function _write($level, $message, $object = null)
+    public function log($level, $message, array $context = [])
     {
-        if (!$this->mode) {
-            return false;
+        // We do not log anything if:
+        // 1) Logging disabled
+        // 2) Configured logging level is less detailed than $level
+        //
+        // Logging levels priority from less to more detailed, next level implies all previous
+        // * ERROR
+        // * INFO
+        // * DEBUG
+        if (
+            $this->level === self::NONE ||
+            (
+                $level === self::DEBUG &&
+                $this->level !== self::DEBUG
+            ) ||
+            (
+                $level === self::INFO &&
+                !in_array($this->level, [self::DEBUG, self::INFO], true)
+            )
+        ) {
+            return;
         }
 
         $datetime = new \DateTime();
         $datetime = $datetime->format(DATE_ATOM);
 
-        $content = $level.' -- '.$_SERVER['REMOTE_ADDR'].' -- '.$datetime.' -- '.$message.' -- ';
-        $content .= ($object ? print_r($object, true) : '');
+        $content = "$level -- $_SERVER[REMOTE_ADDR] -- $datetime -- $message -- ";
+        $content .= ($context ? print_r($context, true) : '');
         $content .= "\n";
 
         file_put_contents($this->file, $content, FILE_APPEND);
