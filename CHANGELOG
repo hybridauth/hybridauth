@@ -6,6 +6,8 @@ Hybridauth Change log
         $474 - WarGaming OpenID provider
         #454 - xuite's oauth provider
         #480 - Improved inline documentation for IDE support
+        #370 + #495 - [github] getUserContacts() implementation (followers & following)
+        #372 + #495 - [instagram] getUserContacts() implementation (follows & followed-by)
       Fixes:
         #438 + #445 - [LinkedIn] getusercontacts error
         #446 + #447 - [Steam] xml parsing error
@@ -15,7 +17,7 @@ Hybridauth Change log
       Changes:
         #477 - [Vkontakte] Move Vkontakte fields to configuration
       Removed:
-        #455 - Viadeo connect not existing anymore
+        #455 - [Viadeo] Viadeo connect not existing anymore
 
 2.4.1 - April 11 2015
       Fixes:
