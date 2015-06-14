@@ -80,18 +80,20 @@ class Hybridauth
             throw new InvalidArgumentException('Hybriauth config does not exist on the given path.');
         }
 
-        $this->config = $config;
+        $this->config = $config + [
+            'debug_mode' => Logger::NONE,
+            'debug_file' => '',
+            'curl_options' => null,
+            'providers' => []
+        ];
 
         $this->storage = $storage ?: new Session();
 
-        $this->logger = $logger ?: new Logger(
-            isset($config['debug_mode']) ? $config['debug_mode'] : Logger::NONE,
-            isset($config['debug_file']) ? $config['debug_file'] : ''
-        );
+        $this->logger = $logger ?: new Logger($this->config['debug_mode'], $this->config['debug_file']);
 
         $this->httpClient = $httpClient ?: new HttpClient();
 
-        if (isset($config['curl_options']) && method_exists($this->httpClient, 'setCurlOptions')) {
+        if ($this->config['curl_options'] && method_exists($this->httpClient, 'setCurlOptions')) {
             $this->httpClient->setCurlOptions($this->config['curl_options']);
         }
 
