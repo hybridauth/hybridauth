@@ -30,3 +30,6 @@ before_script:
 script:
   - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 ./src ./tests; fi"
+
+notifications:
+  email: false
