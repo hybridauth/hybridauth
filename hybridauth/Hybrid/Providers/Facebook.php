@@ -19,7 +19,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 	 * default permissions, and a lot of them. You can change them from the configuration by setting the scope to what you want/need
 	 * {@inheritdoc}
 	 */
-	public $scope = "email, user_about_me, user_birthday, user_hometown, user_website, read_stream, publish_actions, read_custom_friendlists";
+	public $scope = "email, user_about_me, user_birthday, user_hometown, user_location, user_website, read_stream, publish_actions, read_custom_friendlists";
 
 	/**
 	 * Provider API client
@@ -187,7 +187,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		$this->user->profile->description = (array_key_exists('about', $data)) ? $data['about'] : "";
 		$this->user->profile->email = (array_key_exists('email', $data)) ? $data['email'] : "";
 		$this->user->profile->emailVerified = (array_key_exists('email', $data)) ? $data['email'] : "";
-		$this->user->profile->region = (array_key_exists("hometown", $data) && array_key_exists("name", $data['hometown'])) ? $data['hometown']["name"] : "";
+		$this->user->profile->region = (array_key_exists("location", $data) && array_key_exists("name", $data['location'])) ? $data['location']["name"] : "";
 
 		if (!empty($this->user->profile->region)) {
 			$regionArr = explode(',', $this->user->profile->region);
