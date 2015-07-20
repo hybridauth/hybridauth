@@ -62,10 +62,15 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 	 * {@inheritdoc}
 	 */
 	function loginFinish() {
-		$oauth_token = $_REQUEST['oauth_token'];
-		$oauth_verifier = $_REQUEST['oauth_verifier'];
+        // in case we get oauth_problem=user_refused
+        if (isset($_REQUEST['oauth_problem']) && $_REQUEST['oauth_problem'] == "user_refused") {
+            throw new Exception("Authentication failed! The user denied your request.", 5);
+        }
 
-		if (!$oauth_verifier) {
+		$oauth_token = isset($_REQUEST['oauth_token']) ? $_REQUEST['oauth_token'] : null;
+		$oauth_verifier = isset($_REQUEST['oauth_verifier']) ? $_REQUEST['oauth_verifier'] : null;
+
+		if (!$oauth_token || !$oauth_verifier) {
 			throw new Exception("Authentication failed! {$this->providerId} returned an invalid Token.", 5);
 		}
 
