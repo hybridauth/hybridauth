@@ -178,7 +178,7 @@ class Hybrid_Endpoint {
 			$hauth->adapter->setUserUnconnected();
 		}
 
-		Hybrid_Logger::info("Endpoint: job done. retrun to callback url.");
+		Hybrid_Logger::info("Endpoint: job done. return to callback url.");
 
 		$hauth->returnToCallbackUrl();
 		die();
