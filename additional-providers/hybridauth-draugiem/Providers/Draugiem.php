@@ -98,7 +98,7 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 			throw new Exception( 'User profile request failed! ' . $this->providerId . ' api returned an invalid response.', 6 );
 		}
 
-		list($year, $month, $day) =explode("-",$response['birthday']);
+		list($year, $month, $day) =explode("-",@$response['birthday']);
 
 		$this->user->profile->identifier    = @ $response['uid'];
 		$this->user->profile->displayName  	= $response['name']. ' ' .$response['surname'];
