@@ -8,12 +8,17 @@ Hybridauth Change log
         #480 - Improved inline documentation for IDE support
         #370 + #495 - [github] getUserContacts() implementation (followers & following)
         #372 + #495 - [instagram] getUserContacts() implementation (follows & followed-by)
+        #519 - [Twitter] Add email option to Twitter API
       Fixes:
         #438 + #445 - [LinkedIn] getusercontacts error
         #446 + #447 - [Steam] xml parsing error
         #340 + #476 - Ensure session is saved before sending response
         #472 - [Facebook] Obsolete 'read_friendlists' FB permission was changed to 'read_custom_friendlists'
         #453 - [Vkontakte] fix Undefined property: stdClass::$email
+        #499 + #500 - [Facebook] Bug: treating hometown as current location
+        #523 - [Draugiem] API does not always return the birthday object
+        #525 - [Facebook] Fixes getUserProfile v2.4 compatibility
+        #532 + #533 [soundcloud] Provider doesn't implement getUserProfile() and getUserContacts()
       Changes:
         #477 - [Vkontakte] Move Vkontakte fields to configuration
       Removed:
