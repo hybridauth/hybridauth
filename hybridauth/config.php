@@ -35,7 +35,8 @@ return
 				),
 				"Twitter" => array(
 					"enabled" => true,
-					"keys" => array("key" => "", "secret" => "")
+					"keys" => array("key" => "", "secret" => ""),
+					"includeEmail" => false
 				),
 				// windows live
 				"Live" => array(
