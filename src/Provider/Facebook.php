@@ -45,7 +45,7 @@ class Facebook extends OAuth2
     */
     public function getUserProfile($callback = null)
     {
-        $response = $this->apiRequest('me');
+        $response = $this->apiRequest('me?fields=id,name,first_name,last_name,link,website,gender,locale,about,email,hometown,verified,birthday');
 
         $data = new Data\Collection($response);
 
