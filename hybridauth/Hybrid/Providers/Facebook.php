@@ -8,9 +8,9 @@
 
 /**
  * Hybrid_Providers_Facebook provider adapter based on OAuth2 protocol
- * 
+ *
  * Hybrid_Providers_Facebook use the Facebook PHP SDK created by Facebook
- * 
+ *
  * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Facebook.html
  */
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
@@ -23,7 +23,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
 	/**
 	 * Provider API client
-	 * @var Facebook 
+	 * @var Facebook
 	 */
 	public $api;
 
@@ -91,7 +91,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 			Hybrid_Auth::storage()->set('fb_auth_nonce', $parameters['auth_nonce']);
 		}
 
-		// get the login url 
+		// get the login url
 		$url = $this->api->getLoginUrl($parameters);
 
 		// redirect to facebook
@@ -136,7 +136,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 			}
 		}
 
-		// try to get the UID of the connected user from fb, should be > 0 
+		// try to get the UID of the connected user from fb, should be > 0
 		if (!$this->api->getUser()) {
 			throw new Exception("Authentication failed! {$this->providerId} returned an invalid user id.", 5);
 		}
@@ -144,7 +144,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		// set user as logged in
 		$this->setUserConnected();
 
-		// store facebook access token 
+		// store facebook access token
 		$this->token("access_token", $this->api->getAccessToken());
 	}
 
@@ -163,8 +163,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		// request user profile from fb api
 		try {
             $fields = array(
-                'id', 'name', 'first_name', 'last_name', 'link', 'website', 
-                'gender', 'locale', 'about', 'email', 'hometown', 'location'
+                'id', 'name', 'first_name', 'last_name', 'link', 'website',
+                'gender', 'locale', 'about', 'email', 'hometown', 'location',
+								'birthday'
             );
 
 			$data = $this->api->api('/me?fields=' . implode(',', $fields));
