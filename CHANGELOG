@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.4.2 - [not yet released]
+2.5.0 - [not yet released]
       New:
         #444 + #445 - Slack provider
         $474 - WarGaming OpenID provider
@@ -21,6 +21,7 @@ Hybridauth Change log
         #532 + #533 [soundcloud] Provider doesn't implement getUserProfile() and getUserContacts()
       Changes:
         #477 - [Vkontakte] Move Vkontakte fields to configuration
+        71531f2 - [Facebook] Adding birthday field to be retrieved
       Removed:
         #455 - [Viadeo] Viadeo connect not existing anymore
 
