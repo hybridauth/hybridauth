@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.5.0 - [not yet released]
+2.5.0 - September 7 2015
       New:
         #444 + #445 - Slack provider
         $474 - WarGaming OpenID provider
@@ -19,6 +19,7 @@ Hybridauth Change log
         #523 - [Draugiem] API does not always return the birthday object
         #525 - [Facebook] Fixes getUserProfile v2.4 compatibility
         #532 + #533 [soundcloud] Provider doesn't implement getUserProfile() and getUserContacts()
+        #535 - [Draugiem] API does not always return the birthday object
       Changes:
         #477 - [Vkontakte] Move Vkontakte fields to configuration
         71531f2 - [Facebook] Adding birthday field to be retrieved
