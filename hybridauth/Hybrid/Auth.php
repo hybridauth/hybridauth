@@ -15,7 +15,7 @@
  */
 class Hybrid_Auth {
 
-	public static $version = "2.4.2-dev";
+	public static $version = "2.5.0-dev";
 
 	/**
 	 * Configuration array
