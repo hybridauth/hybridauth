@@ -275,7 +275,7 @@ class Hybrid_Providers_XING extends Hybrid_Provider_Model_OAuth1
 
         for ($offset = 100; $offset <= $contactsCount; $offset += 100) {
             $requestParameters['offset'] = $offset;
-            $apiResponse = $this->api->get($requestEndpoint.$requestParameters);
+            $apiResponse = $this->api->get($requestEndpoint, $requestParameters);
             $apiContacts = array_merge($apiContacts, $apiResponse->contacts->users);
         }
 
