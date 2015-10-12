@@ -15,7 +15,7 @@
  */
 class Hybrid_Auth {
 
-	public static $version = "2.5.0-dev";
+	public static $version = "2.5.1";
 
 	/**
 	 * Configuration array
@@ -306,7 +306,7 @@ class Hybrid_Auth {
 
 	/**
 	 * Return array listing all enabled providers as well as a flag if you are connected
-	 * 
+	 *
 	 * <code>
 	 * array(
 	 *   'Facebook' => array(
@@ -390,7 +390,7 @@ class Hybrid_Auth {
 
 		$protocol = 'http://';
 
-		if ((isset($_SERVER['HTTPS']) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )) 
+		if ((isset($_SERVER['HTTPS']) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 ))
 				|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'))
 		{
 			$protocol = 'https://';

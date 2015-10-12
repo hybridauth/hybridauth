@@ -1,5 +1,14 @@
 Hybridauth Change log
 =====================
+2.5.1 - October 12 2015
+      Fixes:
+        #542 - [XING] updated provider to 1.1.0
+        #549 - Update Auth.php library version
+        #558 - [XING] Fix typo
+        #559 - [VKontakte] Fix warnings for getUserByResponse() for undefined City and Country
+        #560 - [Drupal module] Require OAuth.php only if not exist
+        #564 - Fix DateTime error in Logger
+
 2.5.0 - September 7 2015
       New:
         #444 + #445 - Slack provider

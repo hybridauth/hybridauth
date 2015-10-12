@@ -16,8 +16,7 @@ HybridAuth repository is made up of several projects:
 
 - **HybridAuth Core library** includes OpenID, Facebook, Twitter, LinkedIn, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** contains many others services
-  which you may want to use,
-- **Examples and demos** contains five examples for you to test,
+  which you may want to use.
 
 ## Getting Started
 
