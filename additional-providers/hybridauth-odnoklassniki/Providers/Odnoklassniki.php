@@ -91,8 +91,16 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		
 		$response = $this->parseRequestResult( $response );
 
-		if( ! $response || ! isset( $response->access_token ) ){
-			throw new Exception( "The Authorization Service has return: " . $response->error );
+		if ( ! $response ) {
+			throw new Exception( "Curl error fetching {$this->api->token_url}" );
+		}
+
+		if( ! isset( $response->access_token ) ){
+			if ( isset( $response->error ) ){
+				throw new Exception( "The Authorization Service has return error: " . $response->error );
+			} else {
+				throw new Exception( "The Authorization Service has return unknown data: " . json_encode( $response ) );
+			}
 		}
 
 		if( isset( $response->access_token  ) ) $this->api->access_token            = $response->access_token;
