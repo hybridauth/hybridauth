@@ -22,7 +22,9 @@ class LightOpenID
          , $capath = null
          , $cainfo = null
          , $data
-         , $oauth = array();
+         , $oauth = array()
+         , $curl_time_out = 30
+         , $curl_connect_time_out = 30;
     private $identity, $claimed_id;
     protected $server, $version, $trustRoot, $aliases, $identifier_select = false
             , $ax = false, $sreg = false, $setup_url = null, $headers = array(), $proxy = null
@@ -169,6 +171,8 @@ class LightOpenID
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
+        curl_setopt($curl, CURLOPT_TIMEOUT, $this->curl_time_out);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out);
         
         if (!empty($this->proxy)) {
             curl_setopt($curl, CURLOPT_PROXY, $this->proxy['host']);
