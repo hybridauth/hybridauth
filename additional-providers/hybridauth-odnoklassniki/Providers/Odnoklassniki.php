@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
 */
 
 /**
@@ -25,7 +25,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		$this->api->sign_token_name = "access_token";
 	}
   
-  private function request( $url, $params=false, $type="GET" )
+	private function request( $url, $params=false, $type="GET" )
 	{
 		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
@@ -77,7 +77,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		return $result;
 	}
   
-  function authodnoklass( $code )
+  	function authodnoklass( $code )
 	{
 		$params = array(
 			"client_id"     => $this->api->client_id,
@@ -91,8 +91,16 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		
 		$response = $this->parseRequestResult( $response );
 
-		if( ! $response || ! isset( $response->access_token ) ){
-			throw new Exception( "The Authorization Service has return: " . $response->error );
+		if ( ! $response ) {
+			throw new Exception( "Curl error fetching {$this->api->token_url}" );
+		}
+
+		if( ! isset( $response->access_token ) ){
+			if ( isset( $response->error ) ){
+				throw new Exception( "The Authorization Service has return error: " . $response->error );
+			} else {
+				throw new Exception( "The Authorization Service has return unknown data: " . json_encode( $response ) );
+			}
 		}
 
 		if( isset( $response->access_token  ) ) $this->api->access_token            = $response->access_token;
@@ -112,7 +120,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		return $response;  
 	}
   
-  function loginFinish()
+  	function loginFinish()
 	{
 		$error = (array_key_exists('error',$_REQUEST))?$_REQUEST['error']:"";
 
@@ -151,18 +159,18 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 	*/
 	function getUserProfile()
 	{
-    $sig = md5('application_key=' . $this->config['keys']['key'] . 'method=users.getCurrentUser' . md5($this->api->access_token . $this->api->client_secret));
-  	$response = $this->api->api( '?application_key=' . $this->config['keys']['key'] . '&method=users.getCurrentUser&sig=' .$sig); 
-    if ( ! isset( $response->uid ) ){
+    		$sig = md5('application_key=' . $this->config['keys']['key'] . 'method=users.getCurrentUser' . md5($this->api->access_token . $this->api->client_secret));
+  		$response = $this->api->api( '?application_key=' . $this->config['keys']['key'] . '&method=users.getCurrentUser&sig=' .$sig); 
+    		if ( ! isset( $response->uid ) ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
     
-    $this->user->profile->identifier    = (property_exists($response,'uid'))?$response->uid:"";
+    		$this->user->profile->identifier    = (property_exists($response,'uid'))?$response->uid:"";
 		$this->user->profile->firstName     = (property_exists($response,'first_name'))?$response->first_name:"";
 		$this->user->profile->lastName      = (property_exists($response,'last_name'))?$response->last_name:"";
 		$this->user->profile->displayName   = (property_exists($response,'name'))?$response->name:"";
-		$this->user->profile->photoURL      = (property_exists($response,'pic_1'))?$response->pic_1:"";
-		$this->user->profile->photoBIG      = (property_exists($response,'pic_2'))?$response->pic_2:"";
+		$this->user->profile->photoBIG      = (property_exists($response,'pic_1'))?$response->pic_1:""; // Get better size of user avatar
+		$this->user->profile->photoURL      = (property_exists($response,'pic_2'))?$response->pic_2:"";
 		$this->user->profile->profileURL    = (property_exists($response,'link'))?$response->link:"";
 		$this->user->profile->gender        = (property_exists($response,'gender'))?$response->gender:""; 
 		$this->user->profile->email         = (property_exists($response,'email'))?$response->email:"";

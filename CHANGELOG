@@ -1,5 +1,15 @@
 Hybridauth Change log
 =====================
+2.6.0 - [not released]
+      New providers:
+        #546 + #547 - GitLab OAuth2 provider
+      Updates:
+        Updated LightOpenID to 1.2.0
+      Changes:
+        #567 - [Odnoklassniki] Get better size of user avatar
+        #570 - [odnoklassniki] Improve error reporting
+        #571 - [Hybrid_Endpoint] Improve error reporting
+
 2.5.1 - October 12 2015
       Fixes:
         #542 - [XING] updated provider to 1.1.0
