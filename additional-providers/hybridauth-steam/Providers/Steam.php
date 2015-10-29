@@ -72,6 +72,12 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
 
 		# store the user profile.  
 		//$this->user->profile->identifier		=	"";
+		if (property_exists($data, 'customURL') && (string) $data->customURL != '') {
+      			$this->user->profile->profileURL = 'http://steamcommunity.com/id/' . (string) $data->customURL . '/';
+    		}
+    		else {
+      			$this->user->profile->profileURL = "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
+    		}
 		$this->user->profile->profileURL		=	property_exists($data, 'customURL') ? "http://steamcommunity.com/id/{$data->customURL}/" : "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
 		$this->user->profile->webSiteURL		=	"";
 		$this->user->profile->photoURL			=	property_exists($data, 'avatarFull') ? (string)$data->avatarFull : '';
