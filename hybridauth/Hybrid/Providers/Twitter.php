@@ -118,7 +118,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1 {
 		}
 
 		if (!is_object($response) || !isset($response->id)) {
-			throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response.", 6);
+			throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response: " . Hybrid_Logger::dumpData( $response ), 6);
 		}
 
 		# store the user profile.  

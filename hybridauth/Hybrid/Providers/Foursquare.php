@@ -51,7 +51,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2 {
 		$data = $this->api->api("users/self", "GET", Hybrid_Providers_Foursquare::$apiVersion);
 
 		if (!isset($data->response->user->id)) {
-			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
+			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response:" . Hybrid_Logger::dumpData( $data ), 6);
 		}
 
 		$data = $data->response->user;
@@ -83,7 +83,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2 {
 		try {
 			$response = $this->api->api("users/self/friends", "GET", Hybrid_Providers_Foursquare::$apiVersion);
 		} catch (LinkedInException $e) {
-			throw new Exception("User contacts request failed! {$this->providerId} returned an error: $e");
+			throw new Exception("User contacts request failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
 		}
 
 		if (isset($response) && $response->meta->code == 200) {

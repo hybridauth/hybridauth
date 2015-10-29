@@ -87,7 +87,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 
 		$response = $this->api->api("https://www.googleapis.com/plus/v1/people/me");
 		if (!isset($response->id) || isset($response->error)) {
-			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
+			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response:" . Hybrid_Logger::dumpData( $response ), 6);
 		}
 
 		$this->user->profile->identifier = (property_exists($verified, 'id')) ? $verified->id : ((property_exists($response, 'id')) ? $response->id : "");

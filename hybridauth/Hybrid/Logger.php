@@ -88,4 +88,15 @@ class Hybrid_Logger {
 		}
 	}
 
+    /**
+     * Dumps the data in the way suitable to be output in log files for debug purposes
+     *
+     * @param mixed $data
+     *
+     * @return string
+     */
+    public static function dumpData($data) {
+		return var_export($data, true);
+	}
+
 }

@@ -170,12 +170,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
 			$data = $this->api->api('/me?fields=' . implode(',', $fields));
 		} catch (FacebookApiException $e) {
-			throw new Exception("User profile request failed! {$this->providerId} returned an error: $e", 6);
+			throw new Exception("User profile request failed! {$this->providerId} returned an error: {$e->getMessage()}", 6, $e);
 		}
 
 		// if the provider identifier is not received, we assume the auth has failed
 		if (!isset($data["id"])) {
-			throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response.", 6);
+			throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response: " . Hybrid_Logger::dumpData( $data ), 6);
 		}
 
 		# store the user profile.
@@ -248,7 +248,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 			try {
 				$response = $this->api->api('/me/friends' . $apiCall);
 			} catch (FacebookApiException $e) {
-				throw new Exception('User contacts request failed! {$this->providerId} returned an error: $e');
+				throw new Exception("User contacts request failed! {$this->providerId} returned an error {$e->getMessage()}", 0, $e);
 			}
 
 			// Prepare the next call if paging links have been returned
@@ -316,7 +316,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		try {
 			$response = $this->api->api('/' . $pageid . '/feed', 'post', $status);
 		} catch (FacebookApiException $e) {
-			throw new Exception("Update user status failed! {$this->providerId} returned an error: $e");
+			throw new Exception("Update user status failed! {$this->providerId} returned an error {$e->getMessage()}", 0, $e);
 		}
 
 		return $response;
@@ -329,7 +329,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		try {
 			$postinfo = $this->api->api("/" . $postid);
 		} catch (FacebookApiException $e) {
-			throw new Exception("Cannot retrieve user status! {$this->providerId} returned an error: $e");
+			throw new Exception("Cannot retrieve user status! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
 		}
 
 		return $postinfo;
@@ -345,7 +345,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		try {
 			$pages = $this->api->api("/me/accounts", 'get');
 		} catch (FacebookApiException $e) {
-			throw new Exception("Cannot retrieve user pages! {$this->providerId} returned an error: $e");
+			throw new Exception("Cannot retrieve user pages! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
 		}
 
 		if (!isset($pages['data'])) {
@@ -380,7 +380,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 				$response = $this->api->api('/me/home');
 			}
 		} catch (FacebookApiException $e) {
-			throw new Exception("User activity stream request failed! {$this->providerId} returned an error: $e");
+			throw new Exception("User activity stream request failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
 		}
 
 		if (!$response || !count($response['data'])) {
