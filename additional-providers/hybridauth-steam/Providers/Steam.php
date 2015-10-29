@@ -78,7 +78,7 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
     		else {
       			$this->user->profile->profileURL = "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
     		}
-		$this->user->profile->profileURL		=	property_exists($data, 'customURL') ? "http://steamcommunity.com/id/{$data->customURL}/" : "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
+		
 		$this->user->profile->webSiteURL		=	"";
 		$this->user->profile->photoURL			=	property_exists($data, 'avatarFull') ? (string)$data->avatarFull : '';
 		$this->user->profile->displayName		=	property_exists($data, 'steamID') ? (string)$data->steamID : '';
