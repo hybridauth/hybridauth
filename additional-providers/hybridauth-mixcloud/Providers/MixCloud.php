@@ -69,7 +69,8 @@ class Hybrid_Providers_MixCloud extends Hybrid_Provider_Model_OAuth2
 
     /**
      * Returns user`s data
-     * @return null|string
+     * @param bool|false $metadata
+     * @return mixed
      */
     function getUser($metadata = false)
     {
