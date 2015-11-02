@@ -2,13 +2,17 @@ Hybridauth Change log
 =====================
 2.6.0 - [not released]
       New providers:
-        #546 + #547 - GitLab OAuth2 provider
+        #546 + #547 - GitLab OAuth2
+        #577 - MixCloud
       Updates:
         Updated LightOpenID to 1.2.0
+        #572 - Add cURL timeouts for OpenID
       Changes:
         #567 - [Odnoklassniki] Get better size of user avatar
         #570 - [odnoklassniki] Improve error reporting
         #571 - [Hybrid_Endpoint] Improve error reporting
+      Fixes:
+        #575 - [Steam] Fix Steam profileUrl
 
 2.5.1 - October 12 2015
       Fixes:
