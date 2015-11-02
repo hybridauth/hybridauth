@@ -21,7 +21,9 @@ class LightOpenID
          , $cainfo = null
          , $cnmatch = null
          , $data
-         , $oauth = array();
+         , $oauth = array()
+         , $curl_time_out = 30
+         , $curl_connect_time_out = 30;
     private $identity, $claimed_id;
     protected $server, $version, $trustRoot, $aliases, $identifier_select = false
             , $ax = false, $sreg = false, $setup_url = null, $headers = array()
@@ -192,6 +194,9 @@ class LightOpenID
         curl_setopt($curl, CURLOPT_USERAGENT, $this->user_agent);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $this->curl_time_out);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out);
+
 
         if ($method == 'POST') {
             curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded'));
