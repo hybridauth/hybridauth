@@ -13,6 +13,7 @@ Hybridauth Change log
         #571 - [Hybrid_Endpoint] Improve error reporting
       Fixes:
         #575 - [Steam] Fix Steam profileUrl
+        #578 - [Odnoklassniki] new link
 
 2.5.1 - October 12 2015
       Fixes:
