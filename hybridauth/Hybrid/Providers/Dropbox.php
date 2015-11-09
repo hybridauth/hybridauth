@@ -38,7 +38,7 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 
 		try{
 			$this->api->curl_header = array("Authorization: Bearer " . $this->api->access_token);
-			$response = $this->api->api( "users/get_current_account" );
+			$response = $this->api->api( "users/get_current_account", 'POST' );
 		}
 		catch( DropboxException $e ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
