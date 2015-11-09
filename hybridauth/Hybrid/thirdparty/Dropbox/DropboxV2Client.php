@@ -59,7 +59,7 @@ class DropboxV2Client extends OAuth2Client
     return $response;
   }
 
-  private function request( $url, $params=false, $type="GET" )
+  private function request( $url, $params=array(), $type="GET" )
 	{
 		Hybrid_Logger::info( "Enter DropboxV2Client::request( $url )" );
 		Hybrid_Logger::debug( "DropboxV2Client::request(). dump request params: ", serialize( $params ) );
@@ -79,19 +79,19 @@ class DropboxV2Client extends OAuth2Client
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , $this->curl_ssl_verifyhost );
-    if( $type == "POST" ){
-      $this->curl_header[] = 'Content-Type: application/json';
+    if( $type == "POST"){
+      curl_setopt($ch, CURLOPT_POST, 1);
+
+      if(!empty($params)){
+        $this->curl_header[] = 'Content-Type: application/json';
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( $params ));
+      }
     }
 		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
 
 		if($this->curl_proxy){
 			curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
 		}
-
-    if( $type == "POST" ){
-      curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( $params ));
-    }
 
 		Hybrid_Logger::debug( "DropboxV2Client::request(). dump request url: ", serialize( $url ) );
 
