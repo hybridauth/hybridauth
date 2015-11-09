@@ -2,8 +2,6 @@
 
 class DropboxV2Client extends OAuth2Client
 {
-  public $curl_header = array('Authorization: Bearer ' . $this->api->access_token);
-
 
 	// public function authenticate( $code )
 	// {
@@ -39,6 +37,7 @@ class DropboxV2Client extends OAuth2Client
 	{
 		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
+    $this->curl_header[] = 'Authorization: Bearer ' . $this->api->access_token;
 
 		if( $type == "GET" ){
 			$url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
@@ -84,3 +83,4 @@ class DropboxV2Client extends OAuth2Client
 
 		return $response;
 	}
+}
