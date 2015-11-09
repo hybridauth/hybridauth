@@ -37,7 +37,7 @@ class DropboxV2Client extends OAuth2Client
 	{
 		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
 		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
-    $this->curl_header[] = 'Authorization: Bearer ' . $this->api->access_token;
+    $this->curl_header[] = 'Authorization : Bearer ' . $this->api->access_token;
 
 		if( $type == "GET" ){
 			$url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
@@ -45,9 +45,6 @@ class DropboxV2Client extends OAuth2Client
 
 		$this->http_info = array();
 		$ch = curl_init();
-    if( $type == "POST" ){
-      $this->curl_header[] = 'Content-Type: application/json';
-    }
 
 		curl_setopt($ch, CURLOPT_URL            , $url );
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER , 1 );
@@ -56,6 +53,9 @@ class DropboxV2Client extends OAuth2Client
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , $this->curl_ssl_verifyhost );
+    if( $type == "POST" ){
+      $this->curl_header[] = 'Content-Type: application/json';
+    }
 		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
 
 		if($this->curl_proxy){
@@ -67,14 +67,14 @@ class DropboxV2Client extends OAuth2Client
       curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( $params ));
     }
 
-		Hybrid_Logger::debug( "OAuth2Client::request(). dump request url: ", serialize( $url ) );
+		Hybrid_Logger::debug( "DropboxV2Client::request(). dump request url: ", serialize( $url ) );
 
 		$response = curl_exec($ch);
 		if( $response === FALSE ) {
-				Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
+				Hybrid_Logger::error( "DropboxV2Client::request(). curl_exec error: ", curl_error($ch) );
 		}
-		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
-		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
+		Hybrid_Logger::debug( "DropboxV2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
+		Hybrid_Logger::debug( "DropboxV2Client::request(). dump request result: ", serialize( $response ) );
 
 		$this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$this->http_info = array_merge($this->http_info, curl_getinfo($ch));
