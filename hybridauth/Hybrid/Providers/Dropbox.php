@@ -16,9 +16,36 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 	/**
 	* IDp wrappers initializer
 	*/
+
 	function initialize()
 	{
-		parent::initialize();
+		if ( ! $this->config["keys"]["id"] || ! $this->config["keys"]["secret"] ){
+			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
+		}
+
+		// override requested scope
+		if( isset( $this->config["scope"] ) && ! empty( $this->config["scope"] ) ){
+			$this->scope = $this->config["scope"];
+		}
+
+		// include OAuth2 client
+		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth2Client.php";
+
+		// create a new OAuth2 client instance
+		$this->api = new DropboxV2Client( $this->config["keys"]["id"], $this->config["keys"]["secret"], $this->endpoint );
+
+		// If we have an access token, set it
+		if( $this->token( "access_token" ) ){
+			$this->api->access_token            = $this->token( "access_token" );
+			$this->api->refresh_token           = $this->token( "refresh_token" );
+			$this->api->access_token_expires_in = $this->token( "expires_in" );
+			$this->api->access_token_expires_at = $this->token( "expires_at" );
+		}
+
+		// Set curl proxy if exist
+		if( isset( Hybrid_Auth::$config["proxy"] ) ){
+			$this->api->curl_proxy = Hybrid_Auth::$config["proxy"];
+		}
 
 		// Provider apis end-points
 		$this->api->api_base_url  = "https://api.dropboxapi.com/2/";
@@ -27,6 +54,7 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 		$this->api->token_url     = "https://api.dropboxapi.com/1/oauth2/token";
 
 	}
+
 
 	/**
 	* load the user profile from the IDp api client
@@ -37,7 +65,11 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 		$this->refreshToken();
 
 		try{
-			$this->api->curl_header = array("Authorization: Bearer " . $this->api->access_token);
+			// $this->api->curl_header = array(
+	    // 'Authorization: Bearer ' . $this->api->access_token,
+	    // 'Content-Type: application/json',
+	    // // 'Accept: application/json',
+	    // );
 			$response = $this->api->api( "users/get_current_account", 'POST' );
 		}
 		catch( DropboxException $e ){
