@@ -21,9 +21,10 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 		parent::initialize();
 
 		// Provider apis end-points
-		$this->api->api_base_url  = "https://api.dropbox.com/2/";
+		$this->api->api_base_url  = "https://api.dropboxapi.com/2/";
 		$this->api->authorize_url = "https://www.dropbox.com/1/oauth2/authorize";
-		$this->api->token_url     = "https://api.dropbox.com/1/oauth2/token";
+		// $this->api->token_url     = "https://api.dropbox.com/1/oauth2/token";
+		$this->api->token_url     = "https://api.dropboxapi.com/1/oauth2/token";
 
 	}
 
@@ -36,7 +37,7 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 		$this->refreshToken();
 
 		try{
-			$response = $this->api->api( "account/info" );
+			$response = $this->api->api( "users/get_current_account" );
 		}
 		catch( DropboxException $e ){
 			throw new Exception( "User profile request failed! {$this->providerId} returned an error: $e", 6 );
@@ -51,14 +52,14 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( "User profile request failed! {$this->providerId} api returned an invalid response.", 6 );
 		}
 		# store the user profile.
-		$this->user->profile->identifier		=	(property_exists($response,'uid'))?$response->uid:"";
+		$this->user->profile->identifier		=	(property_exists($response,'account_id'))?$response->account_id:"";
 		$this->user->profile->profileURL		=	"";
 		$this->user->profile->webSiteURL		=	"";
 		$this->user->profile->photoURL			=	"";
-		$this->user->profile->displayName		=	(property_exists($response,'display_name'))?$response->display_name:"";
+		$this->user->profile->firstName			=	(property_exists($response,'name'))?(property_exists($response->name,'display_name'))?$response->name->display_name:"":"";
 		$this->user->profile->description		=	"";
-		$this->user->profile->firstName			=	(property_exists($response,'name_details'))?(property_exists($response->name_details,'given_name'))?$response->name_details->given_name:"":"";
-		$this->user->profile->lastName			=	(property_exists($response,'name_details'))?(property_exists($response->name_details,'surname'))?$response->name_details->surname:"":"";
+		$this->user->profile->firstName			=	(property_exists($response,'name'))?(property_exists($response->name,'given_name'))?$response->name->given_name:"":"";
+		$this->user->profile->lastName			=	(property_exists($response,'name'))?(property_exists($response->name,'surname'))?$response->name->surname:"":"";
 		$this->user->profile->gender				=	"";
 		$this->user->profile->language			=	"";
 		$this->user->profile->age						=	"";
