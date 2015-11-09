@@ -33,10 +33,36 @@ class DropboxV2Client extends OAuth2Client
 
 
 	// -- utilities
+
+  /**
+  * Format and sign an oauth for provider api
+  */
+  public function api( $url, $method = "GET", $parameters = array(), $signed = true )
+  {
+    if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
+      $url = $this->api_base_url . $url;
+    }
+    if ($signed){
+      $parameters[$this->sign_token_name] = $this->access_token;
+    }
+    $response = null;
+
+    switch( $method ){
+      case 'GET'  : $response = $this->request( $url, $parameters, "GET"  ); break;
+      case 'POST' : $response = $this->request( $url, $parameters, "POST" ); break;
+    }
+
+    if( $response && $this->decode_json ){
+      $response = json_decode( $response );
+    }
+
+    return $response;
+  }
+
   private function request( $url, $params=false, $type="GET" )
 	{
-		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
-		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
+		Hybrid_Logger::info( "Enter DropboxV2Client::request( $url )" );
+		Hybrid_Logger::debug( "DropboxV2Client::request(). dump request params: ", serialize( $params ) );
     $this->curl_header[] = 'Authorization : Bearer ' . $this->api->access_token;
 
 		if( $type == "GET" ){

@@ -65,11 +65,9 @@ class Hybrid_Providers_Dropbox extends Hybrid_Provider_Model_OAuth2
 		$this->refreshToken();
 
 		try{
-			// $this->api->curl_header = array(
-	    // 'Authorization: Bearer ' . $this->api->access_token,
-	    // 'Content-Type: application/json',
-	    // // 'Accept: application/json',
-	    // );
+			$this->api->curl_header = array(
+					'Authorization: Bearer '.$this->api->access_token,
+			);
 			$response = $this->api->api( "users/get_current_account", 'POST' );
 		}
 		catch( DropboxException $e ){
