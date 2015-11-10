@@ -20,8 +20,8 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 	{
 		parent::initialize();
 		// Provider apis end-points
-		$this->api->api_base_url    = "http://api.odnoklassniki.ru/fb.do";
-		$this->api->authorize_url   = "http://www.odnoklassniki.ru/oauth/authorize";
+		$this->api->api_base_url    = "http://api.ok.ru/fb.do";
+		$this->api->authorize_url   = "http://connect.ok.ru/oauth/authorize";
 		$this->api->token_url       = "http://api.odnoklassniki.ru/oauth/token.do"; 
 		$this->api->sign_token_name = "access_token";
 	}
@@ -82,23 +82,8 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 		$response = $this->request($this->api->token_url, http_build_query($params, '', '&'), $this->api->curl_authenticate_method);
 		$response = $this->parseRequestResult($response);
 		
-<<<<<<< HEAD
 		if (!$response || !isset($response->access_token)) {
 			throw new Exception("The Authorization Service has return: " . $response->error);
-=======
-		$response = $this->parseRequestResult( $response );
-
-		if ( ! $response ) {
-			throw new Exception( "Curl error fetching {$this->api->token_url}" );
-		}
-
-		if( ! isset( $response->access_token ) ){
-			if ( isset( $response->error ) ){
-				throw new Exception( "The Authorization Service has return error: " . $response->error );
-			} else {
-				throw new Exception( "The Authorization Service has return unknown data: " . json_encode( $response ) );
-			}
->>>>>>> refs/remotes/hybridauth/master
 		}
 		if (isset($response->access_token)) $this->api->access_token          = $response->access_token;
 		if (isset($response->refresh_token)) $this->api->refresh_token        = $response->refresh_token; 
