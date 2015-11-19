@@ -7,6 +7,7 @@ Hybridauth Change log
       Updates:
         Updated LightOpenID to 1.2.0
         #572 - Add cURL timeouts for OpenID
+        #582 - [Facebook] read_stream removed
       Changes:
         #567 - [Odnoklassniki] Get better size of user avatar
         #570 - [odnoklassniki] Improve error reporting
