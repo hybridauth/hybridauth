@@ -1,4 +1,4 @@
-# HybridAuth 2.5.0
+# HybridAuth 2.6.0-dev
 
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -16,8 +16,7 @@ HybridAuth repository is made up of several projects:
 
 - **HybridAuth Core library** includes OpenID, Facebook, Twitter, LinkedIn, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** contains many others services
-  which you may want to use,
-- **Examples and demos** contains five examples for you to test,
+  which you may want to use.
 
 ## Getting Started
 

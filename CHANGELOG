@@ -1,5 +1,30 @@
 Hybridauth Change log
 =====================
+2.6.0 - [not released]
+      New providers:
+        #546 + #547 - GitLab OAuth2
+        #577 - MixCloud
+      Updates:
+        Updated LightOpenID to 1.2.0
+        #572 - Add cURL timeouts for OpenID
+        #582 - [Facebook] read_stream removed
+      Changes:
+        #567 - [Odnoklassniki] Get better size of user avatar
+        #570 - [odnoklassniki] Improve error reporting
+        #571 - [Hybrid_Endpoint] Improve error reporting
+      Fixes:
+        #575 - [Steam] Fix Steam profileUrl
+        #578 - [Odnoklassniki] new link
+
+2.5.1 - October 12 2015
+      Fixes:
+        #542 - [XING] updated provider to 1.1.0
+        #549 - Update Auth.php library version
+        #558 - [XING] Fix typo
+        #559 - [VKontakte] Fix warnings for getUserByResponse() for undefined City and Country
+        #560 - [Drupal module] Require OAuth.php only if not exist
+        #564 - Fix DateTime error in Logger
+
 2.5.0 - September 7 2015
       New:
         #444 + #445 - Slack provider

@@ -77,8 +77,10 @@ class Hybrid_Provider_Model_OAuth1 extends Hybrid_Provider_Model {
 		}
 
 		// 2 - include OAuth lib and client
-		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth.php";
-		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth1Client.php";
+		if (! class_exists('OAuthConsumer') ) {
+          		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth.php";
+		}	
+        	require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth1Client.php";
 
 		// 3.1 - setup access_token if any stored
 		if ($this->token("access_token")) {
