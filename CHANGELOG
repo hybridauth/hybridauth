@@ -4,10 +4,12 @@ Hybridauth Change log
       New providers:
         #546 + #547 - GitLab OAuth2
         #577 - MixCloud
+        #568 + #589 - Digital Ocean
       Updates:
         Updated LightOpenID to 1.2.0
         #572 - Add cURL timeouts for OpenID
         #582 - [Facebook] read_stream removed
+        #588 - [BitBucket] Upgrade to OAuth2 protocol and patches
       Changes:
         #567 - [Odnoklassniki] Get better size of user avatar
         #570 - [odnoklassniki] Improve error reporting
