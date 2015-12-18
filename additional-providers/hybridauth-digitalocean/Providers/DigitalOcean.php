@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Hybrid_Providers_GitLab - DigitalOcean provider adapter based on the OAuth2 protocol.
+ * Hybrid_Providers_DigitalOcean - DigitalOcean provider adapter based on the OAuth2 protocol.
  */
 class Hybrid_Providers_DigitalOcean extends Hybrid_Provider_Model_OAuth2
 {
