@@ -37,10 +37,8 @@ class Hybrid_Providers_GitLab extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->displayName = @ $data->name;
 		$this->user->profile->description = @ $data->bio;
 		$this->user->profile->photoURL    = @ $data->avatar_url;
-		$this->user->profile->profileURL  = @ $data->html_url;
 		$this->user->profile->email       = @ $data->email;
-		$this->user->profile->webSiteURL  = @ $data->website_ur;
-		$this->user->profile->region      = @ $data->location;
+		$this->user->profile->webSiteURL  = @ $data->website_url;
 
 		if( empty($this->user->profile->displayName) ){
 			$this->user->profile->displayName = @ $data->username;
