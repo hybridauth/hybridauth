@@ -45,7 +45,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1 {
 		$response = $this->api->get('user/' . $userId . '/profile', $parameters);
 
 		if (!isset($response->profile)) {
-			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
+			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData( $response ), 6);
 		}
 
 		$data = $response->profile;
@@ -267,7 +267,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1 {
 		$response = $this->api->get('me/guid', $parameters);
 
 		if (!isset($response->guid->value)) {
-			throw new Exception("User id request failed! {$this->providerId} returned an invalid response.");
+			throw new Exception("User id request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData( $response ));
 		}
 
 		return $response->guid->value;
