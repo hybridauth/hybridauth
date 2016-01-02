@@ -6,7 +6,7 @@
 */
 
 /**
- * Hybrid_Providers_LastFM class, wrapper for Vimeo  
+ * Hybrid_Providers_LastFM class, wrapper for LastFM 
  */
 class Hybrid_Providers_LastFM extends Hybrid_Provider_Model
 { 
