@@ -197,6 +197,12 @@ class Hybrid_Endpoint {
 				if (!class_exists("Hybrid_Storage", false)) {
 					require_once realpath(dirname(__FILE__)) . "/Storage.php";
 				}
+				if (!class_exists("Hybrid_Exception", false)) {
+					require_once realpath(dirname(__FILE__)) . "/Exception.php";
+				}
+				if (!class_exists("Hybrid_Logger", false)) {
+					require_once realpath(dirname(__FILE__)) . "/Logger.php";
+				}
 
 				$storage = new Hybrid_Storage();
 
