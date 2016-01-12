@@ -115,7 +115,7 @@ class Hybrid_Providers_DigitalOcean extends Hybrid_Provider_Model_OAuth2
 		$this->user->profile->identifier  = @ $data->account->uuid;
 		$this->user->profile->displayName = @ $data->account->email; // No display name value from the API so we use email
 		$this->user->profile->email       = @ $data->account->email;
-		$this->user->profile->region      = @ $data->account->location;
+		//$this->user->profile->region      = @ $data->account->location;
 
     // Digital ocean returns a flag marking the email as verified or not
     // We compare this to the email in use and set the emailVerified

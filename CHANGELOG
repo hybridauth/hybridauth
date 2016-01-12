@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.6.0 - [not released]
+2.6.0 - January XX 2016
       New providers:
         #546 + #547 - GitLab OAuth2
         #577 - MixCloud
@@ -14,9 +14,12 @@ Hybridauth Change log
         #567 - [Odnoklassniki] Get better size of user avatar
         #570 - [odnoklassniki] Improve error reporting
         #571 - [Hybrid_Endpoint] Improve error reporting
+        #576 - Improve logging and error handling in main providers
+        #598 - Update GitLab API points, fix LastFM typo, refactor file/folder structure stack exchange
       Fixes:
         #575 - [Steam] Fix Steam profileUrl
         #578 - [Odnoklassniki] new link
+        #595 - [DigitalOcean] Removing location
 
 2.5.1 - October 12 2015
       Fixes:
