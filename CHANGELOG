@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.6.0 - January XX 2016
+2.6.0 - January 12 2016
       New providers:
         #546 + #547 - GitLab OAuth2
         #577 - MixCloud
@@ -10,6 +10,7 @@ Hybridauth Change log
         #572 - Add cURL timeouts for OpenID
         #582 - [Facebook] read_stream removed
         #588 - [BitBucket] Upgrade to OAuth2 protocol and patches
+        #607 + #240 - Gzip support added
       Changes:
         #567 - [Odnoklassniki] Get better size of user avatar
         #570 - [odnoklassniki] Improve error reporting
@@ -20,6 +21,8 @@ Hybridauth Change log
         #575 - [Steam] Fix Steam profileUrl
         #578 - [Odnoklassniki] new link
         #595 - [DigitalOcean] Removing location
+        #606 + #607 - [stackexchange] Bugs fixing and improvements
+
 
 2.5.1 - October 12 2015
       Fixes:
