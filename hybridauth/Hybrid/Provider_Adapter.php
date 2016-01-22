@@ -281,6 +281,12 @@ class Hybrid_Provider_Adapter {
 		// get the stored callback url
 		$callback_url = Hybrid_Auth::storage()->get("hauth_session.{$this->id}.hauth_return_to");
 
+		// if the user presses the back button in the browser and we already deleted the hauth_return_to from
+		// the session in the previous request, we will redirect to '/' instead of displaying a blank page.
+		if (!$callback_url) {
+			$callback_url = '/';
+		}
+
 		// remove some unneeded stored data
 		Hybrid_Auth::storage()->delete("hauth_session.{$this->id}.hauth_return_to");
 		Hybrid_Auth::storage()->delete("hauth_session.{$this->id}.hauth_endpoint");
