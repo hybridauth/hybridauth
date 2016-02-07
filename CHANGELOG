@@ -1,5 +1,9 @@
 Hybridauth Change log
 =====================
+2.7.0 - XXX
+      New:
+        #612 - [OAuth2Client][improvement] Be able to specify decode json step per each api call
+        
 2.6.0 - January 12 2016
       New providers:
         #546 + #547 - GitLab OAuth2
@@ -22,7 +26,6 @@ Hybridauth Change log
         #578 - [Odnoklassniki] new link
         #595 - [DigitalOcean] Removing location
         #606 + #607 - [stackexchange] Bugs fixing and improvements
-
 
 2.5.1 - October 12 2015
       Fixes:
