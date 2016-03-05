@@ -150,10 +150,10 @@ class OpenIDTemplate extends AbstractAdapter implements AdapterInterface
 		$profile->setGender( $gender );
 
 		if( ! $profile->getDisplayName() ){
-			$profile->setDisplayName(  $profile->setLastName() . " " . $profile->setFirstName() );
+			$profile->setDisplayName(  $profile->getLastName() . " " . $profile->getFirstName() );
 
 			if( $parser( 'namePerson/friendly' ) ){
-				$profile->setDisplayName(  $profile->setLastName() . " " . $profile->setFirstName() );
+				$profile->setDisplayName(  $profile->getLastName() . " " . $profile->getFirstName() );
 			}
 		}
 
