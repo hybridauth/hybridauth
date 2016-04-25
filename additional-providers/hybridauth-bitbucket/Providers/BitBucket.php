@@ -61,12 +61,13 @@ class Hybrid_Providers_BitBucket extends Hybrid_Provider_Model_OAuth2
         
             $username = $this->user->profile->username;
 
-            $emails = $this->api->api("users/$username/emails");
+            $emails = $this->api->api("user/emails");
             
-            foreach ($emails as $email) {
-                if ($email->primary) {
+            foreach ($emails->values as $email) {
+                if ($email->is_primary) {
+                    echo $email->email;
                     $this->user->profile->email = $email->email;
-                    $this->user->profile->emailVerified = (bool)$email->active;
+                    $this->user->profile->emailVerified = (bool)$email->is_confirmed;
                     break;
                 }
             }
@@ -79,8 +80,9 @@ class Hybrid_Providers_BitBucket extends Hybrid_Provider_Model_OAuth2
         } catch (\Exception $e) {
             throw new \Exception("User email request failed! {$this->providerId} returned an error: $e", 6);
         }
-
+        
         return $this->user->profile;
     }
     
 }
+
