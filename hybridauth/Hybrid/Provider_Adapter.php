@@ -173,7 +173,8 @@ class Hybrid_Provider_Adapter {
 		// move on
 		Hybrid_Logger::debug("Hybrid_Provider_Adapter::login( {$this->id} ), redirect the user to login_start URL.");
 
-		Hybrid_Auth::redirect($this->params["login_start"]);
+		// redirect
+		Hybrid_Auth::redirect($this->params["login_start"],(isset($this->params["redirect_mode"]))?$this->params["redirect_mode"]:'');
 	}
 
 	/**
