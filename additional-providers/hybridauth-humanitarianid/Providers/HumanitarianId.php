@@ -47,9 +47,9 @@ class Hybrid_Providers_HumanitarianId extends Hybrid_Provider_Model_OAuth2
     }
 
     // Provider api end-points
-    $this->api->api_base_url  = "http://auth.dev.humanitarian.id/";
-    $this->api->authorize_url = "http://auth.dev.humanitarian.id/oauth/authorize";
-    $this->api->token_url     = "http://auth.dev.humanitarian.id/oauth/access_token";
+    $this->api->api_base_url  = "https://auth.humanitarian.id/";
+    $this->api->authorize_url = "https://auth.humanitarian.id/oauth/authorize";
+    $this->api->token_url     = "https://auth.humanitarian.id/oauth/access_token";
     $this->api->curl_header = array('Content-Type: application/x-www-form-urlencoded');
   }
 
