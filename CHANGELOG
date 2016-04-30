@@ -1,9 +1,14 @@
 Hybridauth Change log
 =====================
 2.7.0 - XXX
+      New provider:
+        #639 - Humanitarian ID
       New:
         #612 - [OAuth2Client][improvement] Be able to specify decode json step per each api call
-        
+      Fixes:
+        #637 - [BitBucket] Fix fetch email
+        #610 - Fixes redirect in auth after user pushes the browser back button
+
 2.6.0 - January 12 2016
       New providers:
         #546 + #547 - GitLab OAuth2
