@@ -65,7 +65,6 @@ class Hybrid_Providers_BitBucket extends Hybrid_Provider_Model_OAuth2
             
             foreach ($emails->values as $email) {
                 if ($email->is_primary) {
-                    echo $email->email;
                     $this->user->profile->email = $email->email;
                     $this->user->profile->emailVerified = (bool)$email->is_confirmed;
                     break;
