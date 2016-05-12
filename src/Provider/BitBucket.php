@@ -20,7 +20,7 @@ class BitBucket extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'user:email';
+    public $scope = 'email';
 
     /**
     * {@inheritdoc}
@@ -53,7 +53,6 @@ class BitBucket extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier  = $data->get('uuid');
-        $userProfile->username    = $data->get('username');
         $userProfile->displayName = $data->get('display_name');
         $userProfile->email       = $data->get('email');
         $userProfile->webSiteURL  = $data->get('website');
@@ -61,7 +60,7 @@ class BitBucket extends OAuth2
 
         $userProfile->displayName = $userProfile->displayName ?: $data->get('username');
 
-        if (empty($userProfile->email) && strpos($this->scope, 'user:email') !== false) {
+        if (empty($userProfile->email) && strpos($this->scope, 'email') !== false) {
             $userProfile = $this->requestUserEmail($userProfile);
         }
 
@@ -76,12 +75,11 @@ class BitBucket extends OAuth2
     {
         try {
             $response = $this->apiRequest('user/emails');
-
-            foreach ($response as $idx => $item) {
-                if (! empty($item->primary) && $item->primary == 1) {
+            foreach ($response->values as $idx => $item) {
+                if (! empty($item->is_primary) && $item->is_primary == true) {
                     $userProfile->email = $item->email;
 
-                    if (! empty($item->verified) && $item->verified == 1) {
+                    if (! empty($item->is_confirmed) && $item->is_confirmed == true) {
                         $userProfile->emailVerified = $userProfile->email;
                     }
 
