@@ -50,8 +50,8 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2
 
 		// Provider api end-points
 		$this->api->api_base_url   = 'https://api.vk.com/method/';
-		$this->api->authorize_url  = "https://api.vk.com/oauth/authorize";
-		$this->api->token_url      = "https://api.vk.com/oauth/token";
+		$this->api->authorize_url  = "https://oauth.vk.com/authorize";
+		$this->api->token_url      = "https://oauth.vk.com/token";
 		if (!empty($this->config['fields']))
 			$this->fields = $this->config['fields'];
 	}
