@@ -55,7 +55,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 	}
 
 	function loginFinish() {
-		$error = (array_key_exists('error', $_REQUEST)) ? $_REQUEST['error'] : "";
+		$error = isset($_REQUEST['error']) ? $_REQUEST['error'] : "";
 
 		// check for errors
 		if ($error) {
@@ -63,7 +63,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		}
 
 		// try to authenticate user
-		$code = (array_key_exists('code', $_REQUEST)) ? $_REQUEST['code'] : "";
+		$code = isset($_REQUEST['code']) ? $_REQUEST['code'] : "";
 
 		try {
 			$response = $this->api->authenticate($code);
@@ -72,7 +72,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		}
 
 		// check if authenticated
-		if (!property_exists($response, 'user_id') || !$this->api->access_token) {
+		if (empty($response->user_id) || !$this->api->access_token) {
 			throw new Exception("Authentication failed! {$this->providerId} returned an invalid access token.", 5);
 		}
 
@@ -84,10 +84,8 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 
 		// store user id. it is required for api access to Vkontakte
 		Hybrid_Auth::storage()->set("hauth_session.{$this->providerId}.user_id", $response->user_id);
-		Hybrid_Auth::storage()->set(
-		  "hauth_session.{$this->providerId}.user_email",
-		  property_exists($response, 'email') ? $response->email : null
-		);
+		Hybrid_Auth::storage()
+		  ->set("hauth_session.{$this->providerId}.user_email", !empty($response->email) ? $response->email : null);
 
 		// set user connected locally
 		$this->setUserConnected();
@@ -156,14 +154,14 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		$user = new Hybrid_User_Contact();
 
 		foreach ($this->fields as $field => $map) {
-			$user->$field = (property_exists($response, $map)) ? $response->$map : null;
+			$user->$field = isset($response->$map) ? $response->$map : null;
 		}
 
-		if (property_exists($user, 'profileURL') && !empty($user->profileURL)) {
+		if (!empty($user->profileURL)) {
 			$user->profileURL = 'http://vk.com/' . $user->profileURL;
 		}
 
-		if (property_exists($user, 'gender')) {
+		if (isset($user->gender)) {
 			switch ($user->gender) {
 				case 1:
 					$user->gender = 'female';
@@ -179,7 +177,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 			}
 		}
 
-		if (property_exists($user, 'bdate')) {
+		if (!empty($user->bdate)) {
 			$birthday = explode('.', $user->bdate);
 			switch (count($birthday)) {
 				case 3:
@@ -195,7 +193,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 			}
 		}
 
-		if (property_exists($user, 'city') && $withAdditionalRequests) {
+		if (!empty($user->city) && $withAdditionalRequests) {
 			$params = array('city_ids' => $user->city);
 			$cities = $this->api->api('database.getCitiesById', 'GET', $params);
 			$city = reset($cities);
@@ -205,11 +203,11 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 			}
 
 			if (is_object($city) || is_string($city)) {
-				$user->city = property_exists($city, 'name') ? $city->name : null;
+				$user->city = isset($city->name) ? $city->name : null;
 			}
 		}
 
-		if (property_exists($user, 'country') && $withAdditionalRequests) {
+		if (!empty($user->country) && $withAdditionalRequests) {
 			$params = array('country_ids' => $user->country);
 			$countries = $this->api->api('database.getCountriesById', 'GET', $params);
 			$country = reset($countries);
@@ -219,7 +217,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 			}
 
 			if (is_object($country) || is_string($country)) {
-				$user->country = property_exists($country, 'name') ? $country->name : null;
+				$user->country = isset($country->name) ? $country->name : null;
 			}
 		}
 
