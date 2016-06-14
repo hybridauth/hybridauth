@@ -138,6 +138,8 @@ class OAuth2Client
     switch( $method ){
       case 'GET'  : $response = $this->request( $url, $parameters, "GET"  ); break;
       case 'POST' : $response = $this->request( $url, $parameters, "POST" ); break;
+      case 'DELETE' : $response = $this->request( $url, $parameters, "DELETE" ); break;
+      case 'PATCH'  : $response = $this->request( $url, $parameters, "PATCH" ); break;
     }
 
     if( $response && $decode_json ){
@@ -236,6 +238,11 @@ class OAuth2Client
     if( $type == "DELETE" ){
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
     }
+    if( $type == "PATCH" ){
+      curl_setopt($ch, CURLOPT_POST, 1);
+      if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+    }
     $response = curl_exec($ch);
     if( $response === false ) {
         Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
@@ -265,10 +272,17 @@ class OAuth2Client
     return $result;
   }
   /**
-	* DELETE wrapper for provider apis request
-	*/
-	function delete( $url, $parameters = array() )
-	{
-    return $this->api( $url, 'DELETE', $parameters );
-	}
+ * DELETE wrapper for provider apis request
+ */
+ function delete( $url, $parameters = array() )
+ {
+   return $this->api( $url, 'DELETE', $parameters );
+ }
+ /**
+ * PATCH wrapper for provider apis request
+ */
+ function patch( $url, $parameters = array() )
+ {
+    return $this->api( $url, 'PATCH', $parameters );
+ }
 }
