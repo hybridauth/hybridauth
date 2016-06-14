@@ -233,7 +233,9 @@ class OAuth2Client
       curl_setopt($ch, CURLOPT_POST, 1);
       if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
     }
-
+    if( $type == "DELETE" ){
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    }
     $response = curl_exec($ch);
     if( $response === false ) {
         Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
@@ -262,4 +264,11 @@ class OAuth2Client
 
     return $result;
   }
+  /**
+	* DELETE wrapper for provider apis request
+	*/
+	function delete( $url, $parameters = array() )
+	{
+    return $this->api( $url, 'DELETE', $parameters );
+	}
 }
