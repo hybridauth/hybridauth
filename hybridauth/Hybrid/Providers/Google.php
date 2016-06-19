@@ -163,7 +163,15 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 			if (property_exists($response->ageRange, 'min') && property_exists($response->ageRange, 'max')) {
 				$this->user->profile->age = $response->ageRange->min . ' - ' . $response->ageRange->max;
 			} else {
-				$this->user->profile->age = '> ' . $response->ageRange->min;
+				if (property_exists($response->ageRange, 'min')) {
+					$this->user->profile->age = '> ' . $response->ageRange->min;
+				} else {
+					if (property_exists($response->ageRange, 'max')) {
+						$this->user->profile->age = '< ' . $response->ageRange->max;
+					} else {
+						$this->user->profile->age = '';
+					}
+				}
 			}
 		} else {
 			$this->user->profile->age = '';
