@@ -352,6 +352,9 @@ class Hybrid_Auth {
 	 * @param string $mode PHP|JS
 	 */
 	public static function redirect($url, $mode = "PHP") {
+		if(!$mode){
+			$mode = 'PHP';	
+		}
 		Hybrid_Logger::info("Enter Hybrid_Auth::redirect( $url, $mode )");
 
 		// Ensure session is saved before sending response, see https://github.com/symfony/symfony/pull/12341
