@@ -31,12 +31,6 @@ class Hybrid_Providers_Dataporten extends Hybrid_Provider_Model_OAuth2 {
 
 		// Dataporten GET methods require an access_token in the header
 		$this->api->curl_header = array("Authorization: Bearer " . $this->api->access_token);
-
-		// Override the redirect uri when it's set in the config parameters. This way we prevent
-		// redirect uri mismatches when authenticating with Dataporten.
-		if (isset($this->config['redirect_uri']) && !empty($this->config['redirect_uri'])) {
-			$this->api->redirect_uri = $this->config['redirect_uri'];
-		}
 	}
 
 	/*
