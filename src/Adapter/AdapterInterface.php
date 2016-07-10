@@ -29,7 +29,7 @@ interface AdapterInterface
     * @throws InvalidOauthTokenException
     * @throws InvalidOpenidIdentifierException
     *
-    * @return boolean|null
+    * @return Result\AuthResult
     */
     public function authenticate();
 
