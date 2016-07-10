@@ -71,14 +71,16 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     public function authenticate()
     {
         if ($this->isAuthorized()) {
-            return true;
+            return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_SUCCESS, TRUE);
         }
 
         if (! isset($_GET['openid_mode'])) {
-            $this->authenticateBegin();
+            return $this->authenticateBegin();
         } else {
             return $this->authenticateFinish();
         }
+
+        return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_ERROR, 'Authentication failed');
     }
 
     /**
@@ -127,7 +129,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             'media/image/default'    ,
         ];
 
-        HttpClient\Util::redirect($this->openIdClient->authUrl());
+        return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_REDIRECT_REQUEST, $this->openIdClient->authUrl());
     }
 
     /**
@@ -156,6 +158,8 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
 
         /* with openid providers we only get user profiles once, so we store it */
         $this->storage->set($this->providerId . '.user', $userProfile);
+
+        return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_SUCCESS, TRUE);
     }
 
     /**

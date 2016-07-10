@@ -235,20 +235,22 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     public function authenticate()
     {
         if ($this->isAuthorized()) {
-            return true;
+            return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_SUCCESS, TRUE);
         }
 
         try {
             if (! isset($_GET['code'])) {
-                $this->authenticateBegin();
+                return $this->authenticateBegin();
             } else {
-                $this->authenticateFinish();
+                return $this->authenticateFinish();
             }
         } catch (\Exception $e) {
             $this->clearTokens();
 
             throw $e;
         }
+
+        return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_ERROR, 'Authentication failed');
     }
 
     /**
@@ -261,7 +263,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     {
         $authUrl = $this->getAuthorizeUrl();
 
-        HttpClient\Util::redirect($authUrl);
+        return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_REDIRECT_REQUEST, $authUrl);
     }
 
     /**
@@ -319,6 +321,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $this->validateAccessTokenExchange($response);
 
         $this->initialize();
+
+        return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_SUCCESS, TRUE);
     }
 
     /**
