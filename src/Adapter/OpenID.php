@@ -74,7 +74,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             return new Result\AuthResult(Result\AuthResult::RESULT_TYPE_SUCCESS, TRUE);
         }
 
-        if (! isset($_GET['openid_mode'])) {
+        if (!is_string(filter_input(INPUT_POST, 'openid_mode'))) {
             return $this->authenticateBegin();
         } else {
             return $this->authenticateFinish();

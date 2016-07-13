@@ -239,7 +239,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         try {
-            if (! isset($_GET['code'])) {
+            if (! is_string(filter_input(INPUT_GET, 'code'))) {
+                $url = $this->getAuthorizeUrl();
+
                 return $this->authenticateBegin();
             } else {
                 return $this->authenticateFinish();
