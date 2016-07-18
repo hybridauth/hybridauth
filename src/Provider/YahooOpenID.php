@@ -8,6 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
+use Hybridauth\Adapter\Result\AuthResult;
 
 class YahooOpenID extends OpenID
 {
@@ -21,7 +22,11 @@ class YahooOpenID extends OpenID
     */
     public function authenticateFinish()
     {
-        parent::authenticateFinish();
+        $result = parent::authenticateFinish();
+
+        if ($result->getType() != AuthResult::RESULT_TYPE_SUCCESS) {
+            return $result;
+        }
 
         $userProfile = $this->storage->get($this->providerId . '.user');
 
@@ -30,5 +35,7 @@ class YahooOpenID extends OpenID
 
         // re store the user profile
         $this->storage->set($this->providerId . '.user', $userProfile);
+
+        return new AuthResult(AuthResult::RESULT_TYPE_SUCCESS, TRUE);
     }
 }
