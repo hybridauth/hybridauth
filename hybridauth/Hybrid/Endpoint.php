@@ -27,7 +27,7 @@ class Hybrid_Endpoint {
 			// with /index.php?hauth.done={provider}?{args}...
 			// >here we need to parse $_SERVER[QUERY_STRING]
 			$request = $_REQUEST;
-			if (strrpos($_SERVER["QUERY_STRING"], '?')) {
+			if (isset($_SERVER["QUERY_STRING"]) && strrpos($_SERVER["QUERY_STRING"], '?')) {
 				$_SERVER["QUERY_STRING"] = str_replace("?", "&", $_SERVER["QUERY_STRING"]);
 				parse_str($_SERVER["QUERY_STRING"], $request);
 			}
