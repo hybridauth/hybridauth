@@ -17,7 +17,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 
 	/**
 	 * Provider API Wrapper
-	 * @var LinkedIn 
+	 * @var LinkedIn
 	 */
 	public $api;
 
@@ -28,6 +28,21 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 		if (!$this->config["keys"]["key"] || !$this->config["keys"]["secret"]) {
 			throw new Exception("Your application key and secret are required in order to connect to {$this->providerId}.", 4);
 		}
+
+		if (empty($this->config['fields'])) {
+			$this->config['fields'] = [
+				'id',
+				'first-name',
+				'last-name',
+				'public-profile-url',
+				'picture-url',
+				'email-address',
+				'date-of-birth',
+				'phone-numbers',
+				'summary',
+			];
+		}
+
 		if (!class_exists('OAuthConsumer', false)) {
 			require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth.php";
 		}
@@ -97,7 +112,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 	function getUserProfile() {
 		try {
 			// http://developer.linkedin.com/docs/DOC-1061
-			$response = $this->api->profile('~:(id,first-name,last-name,public-profile-url,picture-url,email-address,date-of-birth,phone-numbers,summary)');
+			$response = $this->api->profile('~:('. implode(',', $this->config['fields']) .')');
 		} catch (LinkedInException $e) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an error: {$e->getMessage()}", 6, $e);
 		}
@@ -117,7 +132,17 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 			$this->user->profile->email = (string) $data->{'email-address'};
 			$this->user->profile->emailVerified = (string) $data->{'email-address'};
 
-			$this->user->profile->photoURL = (string) $data->{'picture-url'};
+			if (isset($data->{'picture-url'})) {
+				$this->user->profile->photoURL = (string) $data->{'picture-url'};
+
+			} elseif (isset($data->{'picture-urls'})) {
+				// picture-urls::(original)
+				$this->user->profile->photoURL = (string) $data->{'picture-urls'}->{'picture-url'};
+
+			} else {
+				$this->user->profile->photoURL = "";
+			}
+
 			$this->user->profile->profileURL = (string) $data->{'public-profile-url'};
 			$this->user->profile->description = (string) $data->{'summary'};
 
