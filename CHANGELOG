@@ -1,20 +1,24 @@
 Hybridauth Change log
 =====================
-2.7.0 - XXX
+2.7.0 - September 4 2016
       New provider:
         #639 - Humanitarian ID
         #649 - Pinterest
         #653 - Weibo
+        #661 - Dataporten
       New:
         #612 - [OAuth2Client][improvement] Be able to specify decode json step per each api call
         #638 - Make use of the redirect mode
         #655 - [OAuth2Client][improvement] Can now make `DELETE` and `PATCH` calls.
+        #668 - [LinkedIn] Add ability to set fields
       Fixes:
         #637 - [BitBucket] Fix fetch email
         #610 - Fixes redirect in auth after user pushes the browser back button
         #634 - [Google+] correct age values
         #650 - [Vkontakte] Update URLs and small fixes with reformat
         #656 - [Sina] Remove duplicate expression
+        #657 - Fixed issue with empty redirect mode configuration preventing redirection
+        #669 - Fix PHP Notice when $_SERVER["QUERY_STRING"] is not defined
 
 2.6.0 - January 12 2016
       New providers:
