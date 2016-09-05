@@ -1,3 +1,5 @@
+<?php
+
 /**
  * Hybrid_Providers_Strava
  */
