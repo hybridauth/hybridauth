@@ -69,15 +69,28 @@
 		<div class="row">
 			<div class="col-md-12">
 
-				<p class="text-justify">
-					For MVC frameworks like CakePHP and CodeIgniter, developers usually prefer to drop the HybridAuth package inside the "public" directory.
-					However it's possible to fully intergrate HybridAuth Endpoint with the framework by rewrapping the endpoint.
+				<p>
+					Sometimes it's desirable to change the HybridAuth endpoint URL to something else than what's provided by default.<br />
+					For MVC frameworks like CakePHP and CodeIgniter, developers usually drop the <code>hybridauth</code> package inside the <code>public</code> directory.
+					This means the callback or return URL for a provider, (ex. Google) look something like this:
 				</p>
+				
+				<p><span style="color:green">http://mywebsite.com/hybridauth/index.php<strong>?hauth.done=Google</strong></span></p>
+
+				<p>However, it's possible to fully customize the HybridAuth Endpoint URL by rewrapping the endpoint. This means your endpoint URL could look something like (example #1):</p>
+
+				<p><span style="color:green">http://mywebsite.com/app/userscontroller/hybridauth_endpoint/<strong>?hauth.done=Google</strong></span></p>
+
+				<p>For the adventurous, it's even possible to completely change the start and done endpoints to something like this (example #2):</p>
+
+				<p><span style="color:green">http://mywebsite.com/app/userscontroller/hybridauth_endpoint/<strong>done/google</strong></span></p>
 
 				<hr />
 
+				<h3>Example #1</h3>
+
 				<p class="text-justify">
-					1. First drop HybridAuth package inside the <b>"third_party"</b> or <b>"vendors"</b> forder (depending on your frameworks).
+					1. First drop <code>hybridauth</code> package inside the <code>third_party</code> or <code>vendors</code> forder (depending on your frameworks).
 				</p>
 
 				<p class="text-justify">
@@ -87,31 +100,104 @@
 <pre class="prettyprint linenums">
 &lt;?php
 	class UsersAuthentication extends Controller {
-		 function hybridauth_endpoint() {
+		
+		function hybridauth_endpoint() {
 			 include "/path/to/framework/application/vendors/hybridauth/index.php";
-		 }
+		}
 
-		 function signin_with_hybridauth( $provider ) {
-			 $config = "/path/to/framework/application/vendors/hybridauth/config.php";
-			 include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
+		function signin_with_hybridauth( $provider ) {
+			 
+			$config = "/path/to/framework/application/vendors/hybridauth/config.php";
+			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
 
-			 $hybridauth = new Hybrid_Auth( $config );
-			 $adapter    = $hybridauth-&gt;authenticate( $provider );
+			$hybridauth = new Hybrid_Auth( $config );
+			$adapter    = $hybridauth-&gt;authenticate( $provider );
 
-			 /* etc. */
-		 }
+			/* etc. */
+		}
 
-		 function signin() {}
+		function signin() {}
 
-		 function signup() {}
+		function signup() {}
 
-		 /* ... */
+		/* ... */
+	}
+</pre>
+
+				<p>If we assume your website domain is <span style="color:green">http://mywebsite.com/</span> and your application url is <span style="color:green">http://mywebsite.com/<b>app/</b></span> then:</p>
+				<p>HybridAuth Endpoint will be (<code>base_url</code> on configuration):<br /><span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span></p>
+				<p>And you could provide it as callback url for your external applications. ex:<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>?hauth.done=Google</b></span></p>
+			
+				<hr />
+
+				<h3>Example #2 (advanced)</h3>
+
+				<p>
+					You should only use this approach if you really know what you are doing. Normally, you don't want to set custom
+					<code>login_start</code> or <code>login_done</code> params when you authenticate. However, this may come handy when you want complete
+					transparency of your endpoints, or cannot change the return/callback URL for a provider (when distributing your
+					code as a plugin, for example).
+				</p>
+
+				<p>
+					We'll need to manually adjust the <code>$_REQUEST</code> variable, since this is where HybridAuth looks for the
+					<code>hauth_start</code> and <code>hauth_done</code> keys, which it uses to determine if we are starting the auth 
+					process, or we have been redirected back from the service provider. It also tells HybridAuth which provider we are dealing with.
+				</p>
+
+				<p>
+					Additionally, we'll need to tell HybridAuth to use custom <code>login_start</code> and <code>login_done</code> params when
+					authenticating, so that HybridAuth knows where to redirect the user.
+				</p>
+
+<pre class="prettyprint linenums">
+&lt;?php
+	class UsersAuthentication extends Controller {
+		 
+		function hybridauth_endpoint( $action, $provider ) {
+			 
+			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
+			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Endpoint.php";
+
+			$key = 'hauth_' . $action; // either `hauth_start` or `hauth_done`
+
+			$_REQUEST[ $key ] = $provider; // provider will be something like `facebook` or `google`
+
+			Hybrid_Endpoint::process();
+		}
+
+		function signin_with_hybridauth( $provider ) {
+			 
+			$config = "/path/to/framework/application/vendors/hybridauth/config.php";
+			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
+
+			// you can more than likely get this URL programmatically in your app,
+			// we'll set it manually here just for demonstration purposes
+			$base_url = 'http://mywebsite.com/app/userscontroller/hybridauth_endpoint';
+
+			$hybridauth = new Hybrid_Auth( $config );
+
+			// we'll need to tell HybridAuth to use custom endpoint URLs
+			$adapter    = $hybridauth-&gt;authenticate( $provider, array(
+				'login_start' => $base_url . '/start/' . strtolower( $provider ),
+				'login_done'  => $base_url . '/done/'  . strtolower( $provider ),
+			) );
+
+			/* etc. */
+		}
+
+		function signin() {}
+
+		function signup() {}
+
+		/* ... */
 	}
 </pre>
 
 				<p class="text-justify">If we assume your website domain is <span style="color:green">http://mywebsite.com/</span> and your application url is <span style="color:green">http://mywebsite.com/<b>app/</b></span> then:</p>
-				<p>HybridAuth Endpoint will be (<b>"base_url"</b> on configuration):<br /><span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span></p>
-				<p>And you could provide it as callback url for yours external applications. ex:<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>?hauth.done=Google</b></span></p>
+				<p>HybridAuth Endpoint will be (<code>base_url</code> on configuration):<br /><span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span></p>
+				<p>HybridAuth will redirect users logging in via Google to (this will load the <code>Hybrid_Endpoint</code> and start the auth process):<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>start/google</b></span></p>
+				<p>And you could provide it as callback url for your external applications. ex:<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>done/google</b></span></p>
 			
 			</div><!-- //.col-md-12 -->
 		</div>
