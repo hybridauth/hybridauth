@@ -1,56 +1,56 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
-  <meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
-  <title>HybridAuth - How to change HybridAuth endpoint URL?</title>
+	<meta charset="utf-8">
+	<meta name="description" content="HybridAuth A PHP Library for authentication through Facebook, Twitter, Google, Yahoo, LinkedIn, AOL, Vimeo, FourSquare, OpenID and other Identity providers">
+	<meta name="keywords" content="HybridAuth, open source, web based, single-sign-on, sso, authentify, authentication, authorisation, Facebook, Twitter, Google, Yahoo, LinkedIn, AOL, Vimeo, FourSquare, OpenID">
+	<title>HybridAuth - How to change HybridAuth endpoint URL?</title>
 
-  <!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 
-  <link rel="stylesheet" type="text/css" href="../../assets/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="../../assets/css/prettify.css">
-  <link rel="stylesheet" type="text/css" href="../../assets/css/css.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <script type="text/javascript" src="../../assets/js/prettify.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../../assets/js/script.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/prettify.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/css.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../../assets/js/prettify.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../../assets/js/script.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
 
-      <div class="containter-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="../../index.html">HybridAuth</a>
-        </div>
-      </div>
+			<div class="containter-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="../../index.html">HybridAuth</a>
+				</div>
+			</div>
 
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li><a href="../../userguide.html">Documentation</a></li>
-          <li><a href="../../apidoc.html">API</a></li>
-          <li><a href="../../support.html">Help & Support</a></li>
-          <li><a href="../../plugins.html" style="color: orange;">Plugins</a></li>
-          <li><a href="../../download.html" style="color: gold;">Download</a></li>
-        </ul>
-        <form action="../../search.html" method="get" class="navbar-form navbar-right" role="search">
-          <div class="form-group">
-            <input type="text" name="q" placeholder="Search" class="form-control" />
-          </div>
-        </form>
-      </div>
+			<div class="collapse navbar-collapse" id="navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="../../userguide.html">Documentation</a></li>
+					<li><a href="../../apidoc.html">API</a></li>
+					<li><a href="../../support.html">Help &amp; Support</a></li>
+					<li><a href="../../plugins.html" style="color: orange;">Plugins</a></li>
+					<li><a href="../../download.html" style="color: gold;">Download</a></li>
+				</ul>
+				<form action="../../search.html" method="get" class="navbar-form navbar-right" role="search">
+					<div class="form-group">
+						<input type="text" name="q" placeholder="Search" class="form-control" />
+					</div>
+				</form>
+			</div>
 
-    </div>
-  </nav>
+		</div>
+	</nav>
 
 	<div id="page" class="container" >
 
@@ -63,78 +63,64 @@
 
 	<div id="content">
 	<div class="page-header">
-	  <h1>How to change HybridAuth Endpoint URL <small>(HybridAuth internal Callback URL)</small></h1>
+		<h1>How to change HybridAuth Endpoint URL <small>(HybridAuth internal Callback URL)</small></h1>
 	</div>
 
-
-
-        <div class="row">
+		<div class="row">
 			<div class="col-md-12">
 
-			<p class="text-justify">
-				For MVC frameworks like CakePHP and CodeIgniter, developers usually prefer to drop the hybridatuh package inside the "public" directory.
-				However its possible to fully intergatre HybridAuth Endpoint to the framework it self by rewrapping the endpoint.
-			</p>
+				<p class="text-justify">
+					For MVC frameworks like CakePHP and CodeIgniter, developers usually prefer to drop the HybridAuth package inside the "public" directory.
+					However it's possible to fully intergrate HybridAuth Endpoint with the framework by rewrapping the endpoint.
+				</p>
 
-			<hr />
+				<hr />
 
-			<p class="text-justify">
-				1. First drop hybridatuh package inside the <b>"third_party"</b> or <b>"vendors"</b> forder (depending on your frameworks).
-			</p>
+				<p class="text-justify">
+					1. First drop HybridAuth package inside the <b>"third_party"</b> or <b>"vendors"</b> forder (depending on your frameworks).
+				</p>
 
-			<p class="text-justify">
-				2. Then create a new method within your users authentication controlller:
-			</p>
+				<p class="text-justify">
+					2. Then create a new method within your users authentication controlller:
+				</p>
 
 <pre class="prettyprint linenums">
 &lt;?php
-  class UsersAuthentication extends Controller {
-     function hybridauth_endpoint() {
-       include "/path/to/framework/application/vendors/hybridauth/index.php";
-     }
+	class UsersAuthentication extends Controller {
+		 function hybridauth_endpoint() {
+			 include "/path/to/framework/application/vendors/hybridauth/index.php";
+		 }
 
-     function signin_with_hybridauth( $provider ) {
-       $config = "/path/to/framework/application/vendors/hybridauth/config.php";
-       include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
+		 function signin_with_hybridauth( $provider ) {
+			 $config = "/path/to/framework/application/vendors/hybridauth/config.php";
+			 include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
 
-       $hybridauth = new Hybrid_Auth( $config );
-       $adapter    = $hybridauth-&gt;authenticate( $provider );
+			 $hybridauth = new Hybrid_Auth( $config );
+			 $adapter    = $hybridauth-&gt;authenticate( $provider );
 
-       /* etc. */
-     }
+			 /* etc. */
+		 }
 
-     function signin() {}
+		 function signin() {}
 
-     function signup() {}
+		 function signup() {}
 
-     /* ... */
-  }
+		 /* ... */
+	}
 </pre>
 
-			<p class="text-justify">
-				If we assume your website domaine is <span style="color:green">http://mywebsite.com/</span> and your application url is <span style="color:green">http://mywebsite.com/<b>app/</b></span> then:
-				<br />
-				<br />
-				HybridAuth Endpoint will be (<b>"base_url"</b> on configuration):
-				<br />
-				<span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span>
-
-				<br />
-				<br />
-				And you could provide it as callback url for yours external applications. ex:
-				<br />
-				<span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>?hauth.done=Google</b></span>
-			</p>
-
-
-			</div>
-        </div>
+				<p class="text-justify">If we assume your website domain is <span style="color:green">http://mywebsite.com/</span> and your application url is <span style="color:green">http://mywebsite.com/<b>app/</b></span> then:</p>
+				<p>HybridAuth Endpoint will be (<b>"base_url"</b> on configuration):<br /><span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span></p>
+				<p>And you could provide it as callback url for yours external applications. ex:<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>?hauth.done=Google</b></span></p>
+			
+			</div><!-- //.col-md-12 -->
+		</div>
 	</div>
 
 	<br />
 
 	<div class="disqus">
-    <div class="row">
+		<div class="row">
 			<div class="col-md-12">
 				<div id="disqus_thread"></div>
 				<script type="text/javascript">
@@ -151,15 +137,15 @@
 						})();
 				</script>
 			</div>
-    </div>
+		</div>
 	</div>
 
-  <!-- Footer -->
-  <footer>
-    <p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.
-      <p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
-      <p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://github.com/">Github</a>.</p>
-    </footer>
+	<!-- Footer -->
+	<footer>
+		<p>HybridAuth Open Source PHP Social Sign On Library, &copy; 2009-2015.
+		<p>Code licensed under dual licence <a href="licenses.html">MIT and GPLv3</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+		<p>HybridAuth website was made using <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://github.com/">Github</a>.</p>
+	</footer>
 
 </div> <!-- /container -->
 <script type="text/javascript">
