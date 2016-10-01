@@ -28,21 +28,21 @@ class Hybrid_Providers_Amazon extends Hybrid_Provider_Model_OAuth2 {
 	 */
 	function initialize() {
 
-    if ( ! $this->config['keys']['id'] || ! $this->config['keys']['secret'] ) {
-      throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
-    }
+		if ( ! $this->config['keys']['id'] || ! $this->config['keys']['secret'] ) {
+			throw new Exception( "Your application id and secret are required in order to connect to {$this->providerId}.", 4 );
+		}
 
-    // override requested scope
-    if ( isset( $this->config['scope'] ) && ! empty( $this->config['scope'] ) ) {
-      $this->scope = $this->config['scope'];
-    }
+		// override requested scope
+		if ( isset( $this->config['scope'] ) && ! empty( $this->config['scope'] ) ) {
+			$this->scope = $this->config['scope'];
+		}
 
-    // include OAuth2 client
-    require_once Hybrid_Auth::$config['path_libraries'] . 'OAuth/OAuth2Client.php';
-    require_once Hybrid_Auth::$config['path_libraries'] . 'Amazon/AmazonOAuth2Client.php';
+		// include OAuth2 client
+		require_once Hybrid_Auth::$config['path_libraries'] . 'OAuth/OAuth2Client.php';
+		require_once Hybrid_Auth::$config['path_libraries'] . 'Amazon/AmazonOAuth2Client.php';
 
-    // create a new OAuth2 client instance
-    $this->api = new AmazonOAuth2Client( $this->config['keys']['id'], $this->config['keys']['secret'], $this->endpoint, $this->compressed );
+		// create a new OAuth2 client instance
+		$this->api = new AmazonOAuth2Client( $this->config['keys']['id'], $this->config['keys']['secret'], $this->endpoint, $this->compressed );
 
 		$this->api->api_base_url  = 'https://api.amazon.com';
 		$this->api->authorize_url = 'https://www.amazon.com/ap/oa';
@@ -50,18 +50,18 @@ class Hybrid_Providers_Amazon extends Hybrid_Provider_Model_OAuth2 {
 
 		$this->api->curl_header   = array( 'Content-Type: application/x-www-form-urlencoded' );
 
-    // If we have an access token, set it
-    if ( $this->token( 'access_token' ) ) {
-      $this->api->access_token            = $this->token('access_token');
-      $this->api->refresh_token           = $this->token('refresh_token');
-      $this->api->access_token_expires_in = $this->token('expires_in');
-      $this->api->access_token_expires_at = $this->token('expires_at');
-    }
+		// If we have an access token, set it
+		if ( $this->token( 'access_token' ) ) {
+			$this->api->access_token            = $this->token('access_token');
+			$this->api->refresh_token           = $this->token('refresh_token');
+			$this->api->access_token_expires_in = $this->token('expires_in');
+			$this->api->access_token_expires_at = $this->token('expires_at');
+		}
 
-    // Set curl proxy if exists
-    if ( isset( Hybrid_Auth::$config['proxy'] ) ) {
-      $this->api->curl_proxy = Hybrid_Auth::$config['proxy'];
-    }
+		// Set curl proxy if exists
+		if ( isset( Hybrid_Auth::$config['proxy'] ) ) {
+			$this->api->curl_proxy = Hybrid_Auth::$config['proxy'];
+		}
 	}
 
 	/**

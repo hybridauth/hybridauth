@@ -54,72 +54,72 @@ class AmazonOAuth2Client extends OAuth2Client {
 	}
 
 	private function request( $url, $params=false, $type="GET" )
-  {
-    Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
-    Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
+	{
+		Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
+		Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
 
-    if( $type == "GET" ){
-      $url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
-    }
+		if( $type == "GET" ){
+			$url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
+		}
 
-    $this->http_info = array();
-    $ch = curl_init();
+		$this->http_info = array();
+		$ch = curl_init();
 
-    curl_setopt($ch, CURLOPT_URL            , $url );
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER , 1 );
-    curl_setopt($ch, CURLOPT_TIMEOUT        , $this->curl_time_out );
-    curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , $this->curl_ssl_verifyhost );
-    curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
+		curl_setopt($ch, CURLOPT_URL            , $url );
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER , 1 );
+		curl_setopt($ch, CURLOPT_TIMEOUT        , $this->curl_time_out );
+		curl_setopt($ch, CURLOPT_USERAGENT      , $this->curl_useragent );
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , $this->curl_connect_time_out );
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , $this->curl_ssl_verifypeer );
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , $this->curl_ssl_verifyhost );
+		curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
 
-    if ($this->curl_compressed){
-      curl_setopt($ch, CURLOPT_ENCODING, "gzip,deflate");
-    }
+		if ($this->curl_compressed){
+			curl_setopt($ch, CURLOPT_ENCODING, "gzip,deflate");
+		}
 
-    if($this->curl_proxy){
-      curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
-    }
+		if($this->curl_proxy){
+			curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
+		}
 
-    if( $type == "POST" ){
-      curl_setopt($ch, CURLOPT_POST, 1);
-      if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
-    }
-    if( $type == "DELETE" ){
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-    }
-    if( $type == "PATCH" ){
-      curl_setopt($ch, CURLOPT_POST, 1);
-      if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-    }
-    $response = curl_exec($ch);
-    if( $response === false ) {
-        Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
-    }
-    Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
-    Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
+		if( $type == "POST" ){
+			curl_setopt($ch, CURLOPT_POST, 1);
+			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
+		}
+		if( $type == "DELETE" ){
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+		}
+		if( $type == "PATCH" ){
+			curl_setopt($ch, CURLOPT_POST, 1);
+			if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+		}
+		$response = curl_exec($ch);
+		if( $response === false ) {
+				Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
+		}
+		Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
+		Hybrid_Logger::debug( "OAuth2Client::request(). dump request result: ", serialize( $response ) );
 
-    $this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $this->http_info = array_merge($this->http_info, curl_getinfo($ch));
+		$this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$this->http_info = array_merge($this->http_info, curl_getinfo($ch));
 
-    curl_close ($ch);
+		curl_close ($ch);
 
-    return $response;
-  }
+		return $response;
+	}
 
-  private function parseRequestResult( $result )
-  {
-    if( json_decode( $result ) ) return json_decode( $result );
+	private function parseRequestResult( $result )
+	{
+		if( json_decode( $result ) ) return json_decode( $result );
 
-    parse_str( $result, $output );
+		parse_str( $result, $output );
 
-    $result = new StdClass();
+		$result = new StdClass();
 
-    foreach( $output as $k => $v )
-      $result->$k = $v;
+		foreach( $output as $k => $v )
+			$result->$k = $v;
 
-    return $result;
-  }
+		return $result;
+	}
 }
