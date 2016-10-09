@@ -30,7 +30,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 		}
 
 		if (empty($this->config['fields'])) {
-			$this->config['fields'] = [
+			$this->config['fields'] = array(
 				'id',
 				'first-name',
 				'last-name',
@@ -40,7 +40,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 				'date-of-birth',
 				'phone-numbers',
 				'summary',
-			];
+			);
 		}
 
 		if (!class_exists('OAuthConsumer', false)) {
