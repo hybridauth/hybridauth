@@ -1,5 +1,14 @@
 Hybridauth Change log
 =====================
+2.8.0 - XXXX
+      New provider:
+        #673 - Strava
+      New:
+        #679 - Allow setting custom start & done endpoints (#680 docs)
+      Fixes:
+        #684 - [Twitter] Set emailVerified
+        #685 - [LinkedIn] Remove array shorthand constructor
+
 2.7.0 - September 4 2016
       New provider:
         #639 - Humanitarian ID
