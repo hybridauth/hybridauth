@@ -19,7 +19,8 @@
     },
     "require": {
         "php": ">=5.2.0",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "facebook/graph-sdk": "^5.4"
     },
     "autoload": {
         "psr-0": {

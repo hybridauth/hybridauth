@@ -23,7 +23,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
 	/**
 	 * Provider API client
-	 * @var Facebook
+	 * @var \Facebook\Facebook
 	 */
 	public $api;
 
@@ -34,67 +34,75 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		if (!$this->config["keys"]["id"] || !$this->config["keys"]["secret"]) {
 			throw new Exception("Your application id and secret are required in order to connect to {$this->providerId}.", 4);
 		}
-
-		if (!class_exists('FacebookApiException', false)) {
-			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/base_facebook.php";
-			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/facebook.php";
-		}
-
-		if (isset(Hybrid_Auth::$config["proxy"])) {
-			BaseFacebook::$CURL_OPTS[CURLOPT_PROXY] = Hybrid_Auth::$config["proxy"];
-		}
+//
+//		if (!class_exists('FacebookApiException', false)) {
+//			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/base_facebook.php";
+//			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/facebook.php";
+//		}
+//
+//		if (isset(Hybrid_Auth::$config["proxy"])) {
+//			BaseFacebook::$CURL_OPTS[CURLOPT_PROXY] = Hybrid_Auth::$config["proxy"];
+//		}
 
 		$trustForwarded = isset($this->config['trustForwarded']) ? (bool) $this->config['trustForwarded'] : false;
-		$this->api = new Facebook(array('appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"], 'trustForwarded' => $trustForwarded));
 
-		if ($this->token("access_token")) {
-			$this->api->setAccessToken($this->token("access_token"));
-			$this->api->setExtendedAccessToken();
-			$access_token = $this->api->getAccessToken();
+        $this->api = new Facebook\Facebook([
+            'app_id' => $this->config["keys"]["id"],
+            'app_secret' => $this->config["keys"]["secret"],
+            'default_graph_version' => 'v2.2',
+            'trustForwarded' => $trustForwarded,
+        ]);
 
-			if ($access_token) {
-				$this->token("access_token", $access_token);
-				$this->api->setAccessToken($access_token);
-			}
+//		if ($this->token("access_token")) {
+//			$this->api->setAccessToken($this->token("access_token"));
+//			$this->api->setExtendedAccessToken();
+//			$access_token = $this->api->getAccessToken();
+//
+//			if ($access_token) {
+//				$this->token("access_token", $access_token);
+//				$this->api->setAccessToken($access_token);
+//			}
+//
+//			$this->api->setAccessToken($this->token("access_token"));
+//		}
 
-			$this->api->setAccessToken($this->token("access_token"));
-		}
-
-		$this->api->getUser();
+//		$this->api->getUser();
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	function loginBegin() {
-		$parameters = array("scope" => $this->scope, "redirect_uri" => $this->endpoint, "display" => "page");
-		$optionals = array("scope", "redirect_uri", "display", "auth_type");
+//		$parameters = array("scope" => $this->scope, "redirect_uri" => $this->endpoint, "display" => "page");
+//		$optionals = array("scope", "redirect_uri", "display", "auth_type");
+//
+//		foreach ($optionals as $parameter) {
+//			if (isset($this->config[$parameter]) && !empty($this->config[$parameter])) {
+//				$parameters[$parameter] = $this->config[$parameter];
+//
+//				//If the auth_type parameter is used, we need to generate a nonce and include it as a parameter
+//				if ($parameter == "auth_type") {
+//					$nonce = md5(uniqid(mt_rand(), true));
+//					$parameters['auth_nonce'] = $nonce;
+//
+//					Hybrid_Auth::storage()->set('fb_auth_nonce', $nonce);
+//				}
+//			}
+//		}
+//
+//		if (isset($this->config['force']) && $this->config['force'] === true) {
+//			$parameters['auth_type'] = 'reauthenticate';
+//			$parameters['auth_nonce'] = md5(uniqid(mt_rand(), true));
+//
+//			Hybrid_Auth::storage()->set('fb_auth_nonce', $parameters['auth_nonce']);
+//		}
 
-		foreach ($optionals as $parameter) {
-			if (isset($this->config[$parameter]) && !empty($this->config[$parameter])) {
-				$parameters[$parameter] = $this->config[$parameter];
+        $helper = $this->api->getRedirectLoginHelper();
+        $permissions = $this->scope;
+        $url = $helper->getLoginUrl($this->endpoint, $permissions);
 
-				//If the auth_type parameter is used, we need to generate a nonce and include it as a parameter
-				if ($parameter == "auth_type") {
-					$nonce = md5(uniqid(mt_rand(), true));
-					$parameters['auth_nonce'] = $nonce;
 
-					Hybrid_Auth::storage()->set('fb_auth_nonce', $nonce);
-				}
-			}
-		}
-
-		if (isset($this->config['force']) && $this->config['force'] === true) {
-			$parameters['auth_type'] = 'reauthenticate';
-			$parameters['auth_nonce'] = md5(uniqid(mt_rand(), true));
-
-			Hybrid_Auth::storage()->set('fb_auth_nonce', $parameters['auth_nonce']);
-		}
-
-		// get the login url
-		$url = $this->api->getLoginUrl($parameters);
-
-		// redirect to facebook
+        // redirect to facebook
 		Hybrid_Auth::redirect($url);
 	}
 
@@ -102,57 +110,121 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 	 * {@inheritdoc}
 	 */
 	function loginFinish() {
-		// in case we get error_reason=user_denied&error=access_denied
-		if (isset($_REQUEST['error']) && $_REQUEST['error'] == "access_denied") {
-			throw new Exception("Authentication failed! The user denied your request.", 5);
-		}
 
-		// in case we are using iOS/Facebook reverse authentication
-		if (isset($_REQUEST['access_token'])) {
-			$this->token("access_token", $_REQUEST['access_token']);
-			$this->api->setAccessToken($this->token("access_token"));
-			$this->api->setExtendedAccessToken();
-			$access_token = $this->api->getAccessToken();
+        $helper = $this->api->getRedirectLoginHelper();
+        try {
+            $accessToken = $helper->getAccessToken();
+        } catch(Facebook\Exceptions\FacebookResponseException $e) {
+            // When Graph returns an error
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch(Facebook\Exceptions\FacebookSDKException $e) {
+            // When validation fails or other local issues
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
 
-			if ($access_token) {
-				$this->token("access_token", $access_token);
-				$this->api->setAccessToken($access_token);
-			}
+        if (! isset($accessToken)) {
+            if ($helper->getError()) {
+                header('HTTP/1.0 401 Unauthorized');
+                echo "Error: " . $helper->getError() . "\n";
+                echo "Error Code: " . $helper->getErrorCode() . "\n";
+                echo "Error Reason: " . $helper->getErrorReason() . "\n";
+                echo "Error Description: " . $helper->getErrorDescription() . "\n";
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo 'Bad request';
+            }
+            exit;
+        }
 
-			$this->api->setAccessToken($this->token("access_token"));
-		}
+        // Logged in
+        echo '<h3>Access Token</h3>';
+        var_dump($accessToken->getValue());
 
+        // The OAuth 2.0 client handler helps us manage access tokens
+        $oAuth2Client = $this->api->getOAuth2Client();
 
-		// if auth_type is used, then an auth_nonce is passed back, and we need to check it.
-		if (isset($_REQUEST['auth_nonce'])) {
+        // Get the access token metadata from /debug_token
+        $tokenMetadata = $oAuth2Client->debugToken($accessToken);
+        echo '<h3>Metadata</h3>';
+        var_dump($tokenMetadata);
 
-			$nonce = Hybrid_Auth::storage()->get('fb_auth_nonce');
+        // Validation (these will throw FacebookSDKException's when they fail)
+        $tokenMetadata->validateAppId($this->config["keys"]["id"]); // Replace {app-id} with your app id
+        // If you know the user ID this access token belongs to, you can validate it here
+        //$tokenMetadata->validateUserId('123');
+        $tokenMetadata->validateExpiration();
 
-			//Delete the nonce
-			Hybrid_Auth::storage()->delete('fb_auth_nonce');
+        if (! $accessToken->isLongLived()) {
+            // Exchanges a short-lived access token for a long-lived one
+            try {
+                $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
+            } catch (Facebook\Exceptions\FacebookSDKException $e) {
+                echo "<p>Error getting long-lived access token: " . $helper->getMessage() . "</p>\n\n";
+                exit;
+            }
 
-			if ($_REQUEST['auth_nonce'] != $nonce) {
-				throw new Exception("Authentication failed! Invalid nonce used for reauthentication.", 5);
-			}
-		}
+            echo '<h3>Long-lived</h3>';
+            var_dump($accessToken->getValue());
+        }
 
-		// try to get the UID of the connected user from fb, should be > 0
-		if (!$this->api->getUser()) {
-			throw new Exception("Authentication failed! {$this->providerId} returned an invalid user id.", 5);
-		}
+        $_SESSION['fb_access_token'] = (string) $accessToken;
 
-		// set user as logged in
-		$this->setUserConnected();
+        header('Location: https://example.com/members.php');
 
-		// store facebook access token
-		$this->token("access_token", $this->api->getAccessToken());
+//
+//
+//        // in case we get error_reason=user_denied&error=access_denied
+//		if (isset($_REQUEST['error']) && $_REQUEST['error'] == "access_denied") {
+//			throw new Exception("Authentication failed! The user denied your request.", 5);
+//		}
+//
+//		// in case we are using iOS/Facebook reverse authentication
+//		if (isset($_REQUEST['access_token'])) {
+//			$this->token("access_token", $_REQUEST['access_token']);
+//			$this->api->setAccessToken($this->token("access_token"));
+//			$this->api->setExtendedAccessToken();
+//			$access_token = $this->api->getAccessToken();
+//
+//			if ($access_token) {
+//				$this->token("access_token", $access_token);
+//				$this->api->setAccessToken($access_token);
+//			}
+//
+//			$this->api->setAccessToken($this->token("access_token"));
+//		}
+//
+//		// if auth_type is used, then an auth_nonce is passed back, and we need to check it.
+//		if (isset($_REQUEST['auth_nonce'])) {
+//
+//			$nonce = Hybrid_Auth::storage()->get('fb_auth_nonce');
+//
+//			//Delete the nonce
+//			Hybrid_Auth::storage()->delete('fb_auth_nonce');
+//
+//			if ($_REQUEST['auth_nonce'] != $nonce) {
+//				throw new Exception("Authentication failed! Invalid nonce used for reauthentication.", 5);
+//			}
+//		}
+//
+//		// try to get the UID of the connected user from fb, should be > 0
+//		if (!$this->api->getUser()) {
+//			throw new Exception("Authentication failed! {$this->providerId} returned an invalid user id.", 5);
+//		}
+//
+//		// set user as logged in
+//		$this->setUserConnected();
+//
+//		// store facebook access token
+//		$this->token("access_token", $this->api->getAccessToken());
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	function logout() {
-		$this->api->destroySession();
+//		$this->api->destroySession();
 		parent::logout();
 	}
 
