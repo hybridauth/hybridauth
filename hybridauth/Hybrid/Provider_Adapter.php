@@ -165,10 +165,7 @@ class Hybrid_Provider_Adapter {
 
 		// Workaround to fix broken callback urls for the Facebook OAuth client
         if ($this->adapter->useSafeUrl) {
-            str_replace('.', '_', [
-                $this->params["login_start"],
-                $this->params["login_done"]
-            ]);
+            str_replace('hauth.done', 'hauth_done', $this->params['login_done']);
         }
 
 		if (isset($this->params["hauth_return_to"])) {

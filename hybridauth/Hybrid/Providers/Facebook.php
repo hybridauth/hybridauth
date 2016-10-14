@@ -31,7 +31,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      * @var \Facebook\Facebook
      */
     public $api;
-    
+
     public $useSafeUrls = true;
 
     /**
@@ -85,9 +85,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         try {
             $accessToken = $helper->getAccessToken();
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
-            throw new Hybrid_Exception('Facebook Graph returned an error: ' . $e->getMessage(), 0, $e);
+            throw new Hybrid_Exception('Facebook Graph returned an error: ' . $e->getMessage());
         } catch (Facebook\Exceptions\FacebookSDKException $e) {
-            throw new Hybrid_Exception('Facebook SDK returned an error: ' . $e->getMessage(), 0, $e);
+            throw new Hybrid_Exception('Facebook SDK returned an error: ' . $e->getMessage());
         }
 
         if (!isset($accessToken)) {
