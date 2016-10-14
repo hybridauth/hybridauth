@@ -56,12 +56,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         $this->api = new FacebookSDK([
             'app_id' => $this->config["keys"]["id"],
             'app_secret' => $this->config["keys"]["secret"],
-            'default_graph_version' => 'v2.2',
+            'default_graph_version' => 'v2.8',
             'trustForwarded' => $trustForwarded,
-//            'http_client_handler' => null, // Guzzle didn't work for me
         ]);
-
-        $this->
     }
 
     /**
@@ -155,12 +152,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
         // Store the user profile.
         $this->user->profile->identifier = (array_key_exists('id', $data)) ? $data['id'] : "";
-        $this->user->profile->username = (array_key_exists('username', $data)) ? $data['username'] : "";
         $this->user->profile->displayName = (array_key_exists('name', $data)) ? $data['name'] : "";
         $this->user->profile->firstName = (array_key_exists('first_name', $data)) ? $data['first_name'] : "";
         $this->user->profile->lastName = (array_key_exists('last_name', $data)) ? $data['last_name'] : "";
         $this->user->profile->photoURL = !empty($this->user->profile->identifier) ? "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?width=150&height=150" : '';
-        $this->user->profile->coverInfoURL = "https://graph.facebook.com/" . $this->user->profile->identifier . "?fields=cover&access_token=" . $this->token('access_token');
         $this->user->profile->profileURL = (array_key_exists('link', $data)) ? $data['link'] : "";
         $this->user->profile->webSiteURL = (array_key_exists('website', $data)) ? $data['website'] : "";
         $this->user->profile->gender = (array_key_exists('gender', $data)) ? $data['gender'] : "";
@@ -207,11 +202,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     function getUserContacts() {
         $apiCall = '?fields=link,name';
         $returnedContacts = [];
-        $pagedList = false;
+        $pagedList = true;
 
-        do {
+        while ($pagedList) {
             try {
                 $response = $this->api->get('/me/friends' . $apiCall, $this->token('access_token'));
+                $response = $response->getDecodedBody();
             } catch (FacebookSDKException $e) {
                 throw new Hybrid_Exception("User contacts request failed! {$this->providerId} returned an error {$e->getMessage()}", 0, $e);
             }
@@ -227,7 +223,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
             // Add the new page contacts
             $returnedContacts = array_merge($returnedContacts, $response['data']);
-        } while ($pagedList == true);
+        }
 
         $contacts = [];
 
@@ -246,38 +242,6 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     }
 
     /**
-     * {@inheridoc}
-     */
-    function getUserPages($writableonly = false) {
-        if ((isset($this->config['scope']) && strpos($this->config['scope'], 'manage_pages') === false) || (!isset($this->config['scope']) && strpos($this->scope, 'manage_pages') === false)) {
-            throw new Exception("User status requires manage_page permission!");
-        }
-
-        try {
-            $pages = $this->api->api("/me/accounts", 'get');
-        } catch (FacebookApiException $e) {
-            throw new Exception("Cannot retrieve user pages! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
-        }
-
-        if (!isset($pages['data'])) {
-            return [];
-        }
-
-        if (!$writableonly) {
-            return $pages['data'];
-        }
-
-        $wrpages = [];
-        foreach ($pages['data'] as $p) {
-            if (isset($p['perms']) && in_array('CREATE_CONTENT', $p['perms'])) {
-                $wrpages[] = $p;
-            }
-        }
-
-        return $wrpages;
-    }
-
-    /**
      * Load the user latest activity, needs 'read_stream' permission
      *
      * @param string $stream Which activity to fetch:
@@ -292,8 +256,8 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             } else {
                 $response = $this->api->get('/me/home', $this->token('access_token'));
             }
-        } catch (FacebookApiException $e) {
-            throw new Exception("User activity stream request failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
+        } catch (FacebookSDKException $e) {
+            throw new Hybrid_Exception("User activity stream request failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
         }
 
         if (!$response || !count($response['data'])) {
