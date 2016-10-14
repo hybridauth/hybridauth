@@ -153,7 +153,6 @@ class Hybrid_Provider_Adapter {
 		# for default HybridAuth endpoint url hauth_login_start_url
 		# 	auth.start  required  the IDp ID
 		# 	auth.time   optional  login request timestamp
-
 		if (!isset($this->params["login_start"]) ) {
 			$this->params["login_start"] = $HYBRID_AUTH_URL_BASE . ( strpos($HYBRID_AUTH_URL_BASE, '?') ? '&' : '?' ) . "hauth.start={$this->id}&hauth.time={$this->params["hauth_time"]}";
 		}
@@ -165,7 +164,7 @@ class Hybrid_Provider_Adapter {
 		}
 
 		// Workaround to fix broken callback urls for the Facebook OAuth client
-        if (property_exists('useSaveUrls', $this->adapter) && $this->adapter->useSaveUrl) {
+        if ($this->adapter->useSafeUrl) {
             str_replace('.', '_', [
                 $this->params["login_start"],
                 $this->params["login_done"]

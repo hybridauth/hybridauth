@@ -31,8 +31,8 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      * @var \Facebook\Facebook
      */
     public $api;
-
-    public $useSaveUrls = true;
+    
+    public $useSafeUrls = true;
 
     /**
      * {@inheritdoc}
