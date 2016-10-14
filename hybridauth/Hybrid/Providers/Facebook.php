@@ -178,17 +178,13 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
             if (count($birtydayPieces) == 1) {
                 $this->user->profile->birthYear = (int)$birtydayPieces[0];
-            } else {
-                if (count($birtydayPieces) == 2) {
-                    $this->user->profile->birthMonth = (int)$birtydayPieces[0];
-                    $this->user->profile->birthDay = (int)$birtydayPieces[1];
-                } else {
-                    if (count($birtydayPieces) == 2) {
-                        $this->user->profile->birthMonth = (int)$birtydayPieces[0];
-                        $this->user->profile->birthDay = (int)$birtydayPieces[1];
-                        $this->user->profile->birthYear = (int)$birtydayPieces[0];
-                    }
-                }
+            } elseif (count($birtydayPieces) == 2) {
+                $this->user->profile->birthMonth = (int)$birtydayPieces[0];
+                $this->user->profile->birthDay = (int)$birtydayPieces[1];
+            } elseif (count($birtydayPieces) == 3) {
+                $this->user->profile->birthMonth = (int)$birtydayPieces[0];
+                $this->user->profile->birthDay = (int)$birtydayPieces[1];
+                $this->user->profile->birthYear = (int)$birtydayPieces[2];
             }
         }
 
