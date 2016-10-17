@@ -160,6 +160,11 @@
             <li>
               Once you have registered, copy and past the created application credentials (App ID and Secret) into the HybridAuth <a href="Configuration.html#SETUP_API_KEYS">config file</a>.
             </li>
+            <li>
+		          You also need to add a valid Oauth redirect URI (https://developers.facebook.com/docs/facebook-login/security/). This should
+              be the social login callback url of your website (ie. http://mywebsite.com/path_to_hybridauth/?hauth_done=Facebook).
+              NOTE: The underscore (_) in the callback url. Other HybridAuth callbacks use 'hauth.done', but the Oauth client in the Facebook SDK doesn't accept this.
+            </li>
           </ol>
   				<hr />
   				<div style="display: flex;">
