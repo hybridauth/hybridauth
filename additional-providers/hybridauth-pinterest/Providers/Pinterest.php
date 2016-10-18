@@ -9,15 +9,15 @@
  * Hybrid_Providers_Pinterest (By Eduardo Marcolino - https://github.com/eduardo-marcolino)
  */
 class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
-  public $scope = "read_public,write_public,read_relationships,write_relationships";
+  public $scope = 'read_public,write_public,read_relationships,write_relationships';
   
   function initialize() {
     parent::initialize();
 
-    $this->api->api_base_url = "https://api.pinterest.com/v1/";
-    $this->api->authorize_url = "https://api.pinterest.com/oauth/";
-    $this->api->token_url = "https://api.pinterest.com/v1/oauth/token";
-    $this->api->sign_token_name = "access_token";
+    $this->api->api_base_url = 'https://api.pinterest.com/v1/';
+    $this->api->authorize_url = 'https://api.pinterest.com/oauth/';
+    $this->api->token_url = 'https://api.pinterest.com/v1/oauth/token';
+    $this->api->sign_token_name = 'access_token';
   }
   
   function loginBegin() {
@@ -42,26 +42,27 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
       $this->access_token = $token;
 
       // we should have an access_token unless something has gone wrong
-      if (!isset($token["access_token"])) {
+      if (!isset($token['access_token'])) {
         throw new Exception("Authentication failed! {$this->providerId} returned an invalid access token.", 5);
       }
 
-      $this->token("access_token", $token['access_token']);
+      $this->token('access_token', $token['access_token']);
 
       // set user as logged in to the current provider
       $this->setUserConnected();
+
       return;
     }
     parent::loginFinish();
   }
 
   function getUserProfile() {
-    $profile = $this->api->api("me/", "GET", array(
-        'fields' => 'id,username,first_name,last_name,counts,image'
+    $profile = $this->api->api('me/', 'GET', array(
+      'fields' => 'id,username,first_name,last_name,counts,image'
     ));
 
     if (!isset($profile->data->id)) {
-         throw new Exception("User profile request failed! {$this->providerId} returned an invalid response:" . Hybrid_Logger::dumpData( $profile ), 6);
+      throw new Exception("User profile request failed! {$this->providerId} returned an invalid response:" . Hybrid_Logger::dumpData($profile), 6);
     }
 
     $data = $profile->data;
