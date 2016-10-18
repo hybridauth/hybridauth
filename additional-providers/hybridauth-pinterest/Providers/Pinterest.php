@@ -195,24 +195,29 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
    *   Board machine name
    * @param string $note
    *   Pin's description
-   * @param string $link
-   *   URL the pin will link to when you click through
    * @param string $img_type
-   *   URL the pin will link to when you click through
+   *   image: upload the image you want to pin using multipart form data
+   *   image_url: the link to the image that you want to pin
+   *   image_base64: the link of a base64 encoded image
    * @param string $image
+   *   Pin's image
+   * @param string $link
    *   URL the pin will link to when you click through
    *
    * @return mixed
-   *   Success: array with succes field
+   *   Success: array with pin fields ID, note, url, link
    *   Query error: array with fields message, error code
    *   Other error: Null
    */
-  function createUserPin($username, $board_name, $note, $link, $img_type, $image) {
+  function createUserPin($username, $board_name, $note, $img_type, $image,  $link = NULL) {
     $data = array(
       'board' => $username . '/' . $board_name,
       'note' => $note,
-      'link' => $link,
     );
+
+    if (!empty($link)) {
+      $data['link'] => $link,
+    }
 
     if (in_array($img_type, array('image', 'image_url', 'image_base64'))) {
       $data[$img_type] = $image;
