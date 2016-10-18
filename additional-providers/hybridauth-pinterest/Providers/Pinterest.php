@@ -80,6 +80,32 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
   }
 
   /**
+   * Creates a board for the authenticated user.
+   * 
+   * @param string $title
+   *   Board title
+   * @param string $description
+   *   Board description
+   *
+   * @return mixed
+   *   Success: array with fields ID, url and name
+   *   Query error: array with fields message, error code
+   *   Other error: Null
+   */
+  function createUserBoard($title, $description = NULL) {
+    $args = array(
+      'name' => $title
+    );
+    if (!empty($description)) {
+      $args['description'] = $description;
+    }
+    $board = $this->api->api('boards/', 'POST', $args);
+    $data = !empty($board->data) ? $board->data : NULL;
+
+    return $data;
+  }
+
+  /**
    * The response returns specified board.
    * 
    * @param string $username
