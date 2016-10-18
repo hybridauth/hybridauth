@@ -162,4 +162,28 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
     return $data;
   }
 
+  /**
+   * @todo Changes the chosen board’s name and/or description.
+   */
+
+  /**
+   * Deletes the specified board.
+   *
+   * @param string $username
+   *   User's display name
+   * @param string $board_name
+   *   Board machine name
+   *
+   * @return mixed
+   *   Success: array with succes field
+   *   Query error: array with fields message, error code
+   *   Other error: Null
+   */
+  function deleteUserBoard($username, $board_name) {
+    $board = $this->api->api('boards/' . $username . '/' . $board_name . '/', 'DELETE');
+    $data = !empty($board->data) ? $board->data : NULL;
+
+    return $data;
+  }
+
 }
