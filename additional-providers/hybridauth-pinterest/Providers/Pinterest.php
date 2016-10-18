@@ -106,7 +106,7 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
   }
 
   /**
-   * The response returns specified board.
+   * Returns specified board for the authenticated user.
    * 
    * @param string $username
    *   User's display name
