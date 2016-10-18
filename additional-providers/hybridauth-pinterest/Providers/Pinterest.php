@@ -8,12 +8,10 @@
 /**
  * Hybrid_Providers_Pinterest (By Eduardo Marcolino - https://github.com/eduardo-marcolino)
  */
-class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2
-{
+class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
   public $scope = "read_public,write_public,read_relationships,write_relationships";
   
-  function initialize() 
-  {
+  function initialize() {
     parent::initialize();
 
     $this->api->api_base_url = "https://api.pinterest.com/v1/";
@@ -22,15 +20,20 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2
     $this->api->sign_token_name = "access_token";
   }
   
-  function loginBegin() 
-  {
-    Hybrid_Auth::redirect($this->api->authorizeUrl(array(
-        'scope' => isset($this->config['scope']) ? $this->config['scope'] : $this->scope,
-        'response_type' => 'code',
-        'client_id' => $this->api->client_id,
-        'redirect_uri' => $this->api->redirect_uri,
-        'state' => isset($this->config['state']) ? $this->config['state'] : ''
-    )));
+  function loginBegin() {
+    $parameters = array(
+      'scope' => isset($this->config['scope']) ? $this->config['scope'] : $this->scope,
+      'response_type' => 'token',
+      'client_id' => $this->api->client_id,
+      'redirect_uri' => $this->api->redirect_uri,
+      'state' => isset($this->config['state']) ? $this->config['state'] : ''
+    );
+
+    if (is_array($parameters['scope'])) {
+      $parameters['scope'] = implode(',', $parameters['scope']);
+    }
+
+    Hybrid_Auth::redirect($this->api->authorizeUrl($parameters));
   }
   
   function getUserProfile() {
@@ -52,8 +55,8 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2
     if (isset($data->image->{'60x60'})) {
       $this->user->profile->photoURL = $data->image->{'60x60'}->url;
     }
-    
+
     return $this->user->profile;
   }
-  
+
 }
