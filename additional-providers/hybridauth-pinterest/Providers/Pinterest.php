@@ -35,7 +35,26 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
 
     Hybrid_Auth::redirect($this->api->authorizeUrl($parameters));
   }
-  
+
+  function loginFinish() {
+    if (isset($_REQUEST['access_token'])) {
+      $token = $_REQUEST;
+      $this->access_token = $token;
+
+      // we should have an access_token unless something has gone wrong
+      if (!isset($token["access_token"])) {
+        throw new Exception("Authentication failed! {$this->providerId} returned an invalid access token.", 5);
+      }
+
+      $this->token("access_token", $token['access_token']);
+
+      // set user as logged in to the current provider
+      $this->setUserConnected();
+      return;
+    }
+    parent::loginFinish();
+  }
+
   function getUserProfile() {
     $profile = $this->api->api("me/", "GET", array(
         'fields' => 'id,username,first_name,last_name,counts,image'
