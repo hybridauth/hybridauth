@@ -125,4 +125,19 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
     return $data;
   }
 
+  /**
+   * Returns a list of the authenticated user's public boards.
+   *
+   * @return mixed
+   *   Success: list arrays with fields ID, url and name
+   *   Query error: array with fields message, error code
+   *   Other error: Null
+   */
+  function getUserBoards() {
+    $board = $this->api->api('me/boards/', 'GET');
+    $data = !empty($board->data) ? $board->data : NULL;
+
+    return $data;
+  }
+
 }
