@@ -79,4 +79,24 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
     return $this->user->profile;
   }
 
+  /**
+   * The response returns specified board.
+   * 
+   * @param string $username
+   *   User's display name
+   * @param string $board_name
+   *   Board machine name
+   *
+   * @return mixed
+   *   Success: array with fields ID, url and name
+   *   Query error: array with fields message, error code
+   *   Other error: Null
+   */
+  function getUserBoard($username, $board_name) {
+    $board = $this->api->api('boards/' . $username . '/'. $board_name . '/', 'GET');
+    $data = !empty($board->data) ? $board->data : NULL;
+
+    return $data;
+  }
+
 }
