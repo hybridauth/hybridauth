@@ -163,7 +163,7 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
   }
 
   /**
-   * @todo Changes the chosen board’s name and/or description.
+   * @todo Changes the chosen board's name and/or description.
    */
 
   /**
@@ -186,4 +186,41 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
     return $data;
   }
 
+  /**
+   * Creates a pin for the authenticated user.
+   *
+   * @param string $username
+   *   User's display name
+   * @param string $board_name
+   *   Board machine name
+   * @param string $note
+   *   Pin's description
+   * @param string $link
+   *   URL the pin will link to when you click through
+   * @param string $img_type
+   *   URL the pin will link to when you click through
+   * @param string $image
+   *   URL the pin will link to when you click through
+   *
+   * @return mixed
+   *   Success: array with succes field
+   *   Query error: array with fields message, error code
+   *   Other error: Null
+   */
+  function createUserPin($username, $board_name, $note, $link, $img_type, $image) {
+    $data = array(
+      'board' => $username . '/' . $board_name,
+      'note' => $note,
+      'link' => $link,
+    );
+
+    if (in_array($img_type, array('image', 'image_url', 'image_base64'))) {
+      $data[$img_type] = $image;
+    }
+
+    $pin = $this->api->api('pins/', 'POST', $data);
+    $data = !empty($pin->data) ? $pin->data : NULL;
+
+    return $data;
+  }
 }
