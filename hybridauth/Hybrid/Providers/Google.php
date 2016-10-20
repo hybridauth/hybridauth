@@ -158,12 +158,16 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 		} else {
 			$this->user->profile->webSiteURL = '';
 		}
-		// google API returns age ranges or min. age only (with plus.login scope)
+		// google API returns age ranges min and/or max as of https://developers.google.com/+/web/api/rest/latest/people#resource
 		if (property_exists($response, 'ageRange')) {
 			if (property_exists($response->ageRange, 'min') && property_exists($response->ageRange, 'max')) {
 				$this->user->profile->age = $response->ageRange->min . ' - ' . $response->ageRange->max;
 			} else {
-				$this->user->profile->age = '> ' . $response->ageRange->min;
+				if (property_exists($response->ageRange, 'min')) {
+                    $this->user->profile->age = '>= ' . $response->ageRange->min;
+                } else {
+                    $this->user->profile->age = '<= ' . $response->ageRange->max;
+                }
 			}
 		} else {
 			$this->user->profile->age = '';
