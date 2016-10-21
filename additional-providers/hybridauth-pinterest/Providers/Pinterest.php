@@ -2,7 +2,7 @@
 /*!
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2013, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2013, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -10,16 +10,15 @@
  */
 class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
   public $scope = 'read_public,write_public,read_relationships,write_relationships';
-  
+
   function initialize() {
     parent::initialize();
-
     $this->api->api_base_url = 'https://api.pinterest.com/v1/';
     $this->api->authorize_url = 'https://api.pinterest.com/oauth/';
     $this->api->token_url = 'https://api.pinterest.com/v1/oauth/token';
     $this->api->sign_token_name = 'access_token';
   }
-  
+
   function loginBegin() {
     $parameters = array(
       'scope' => isset($this->config['scope']) ? $this->config['scope'] : $this->scope,
@@ -28,7 +27,6 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
       'redirect_uri' => $this->api->redirect_uri,
       'state' => isset($this->config['state']) ? $this->config['state'] : ''
     );
-
     if (is_array($parameters['scope'])) {
       $parameters['scope'] = implode(',', $parameters['scope']);
     }
@@ -42,7 +40,7 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
       $this->access_token = $token;
 
       // we should have an access_token unless something has gone wrong
-      if (!isset($token['access_token'])) {
+      if (!isset($token["access_token"])) {
         throw new Exception("Authentication failed! {$this->providerId} returned an invalid access token.", 5);
       }
 
@@ -50,7 +48,6 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
 
       // set user as logged in to the current provider
       $this->setUserConnected();
-
       return;
     }
     parent::loginFinish();
@@ -71,7 +68,7 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
     $this->user->profile->firstName = $data->first_name;
     $this->user->profile->lastName = $data->last_name;
     $this->user->profile->displayName = $data->username;
-    
+
     if (isset($data->image->{'60x60'})) {
       $this->user->profile->photoURL = $data->image->{'60x60'}->url;
     }
@@ -81,7 +78,7 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
 
   /**
    * Creates a board for the authenticated user.
-   * 
+   *
    * @param string $title
    *   Board title
    * @param string $description
@@ -107,16 +104,16 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
 
   /**
    * Returns specified board for the authenticated user.
-   * 
+   *
    * @param string $username
-   *   User's display name
+   *   User's display name.
    * @param string $board_name
-   *   Board machine name
+   *   Board machine name.
    *
    * @return mixed
-   *   Success: array with fields ID, url and name
-   *   Query error: array with fields message, error code
-   *   Other error: Null
+   *   Success: array with fields ID, url and name.
+   *   Query error: array with fields message, error code.
+   *   Other error: Null.
    */
   function getUserBoard($username, $board_name) {
     $board = $this->api->api('boards/' . $username . '/' . $board_name . '/', 'GET');
@@ -129,9 +126,9 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
    * Returns a list of the authenticated user's public boards.
    *
    * @return mixed
-   *   Success: list arrays with fields ID, url and name
-   *   Query error: array with fields message, error code
-   *   Other error: Null
+   *   Success: list arrays with fields ID, url and name.
+   *   Query error: array with fields message, error code.
+   *   Other error: Null.
    */
   function getUserBoards() {
     $board = $this->api->api('me/boards/', 'GET');
@@ -142,18 +139,18 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
 
   /**
    * Returns a list of pins on the board.
-   * 
-   * @todo Add parametr cursor
-   * 
+   *
+   * @todo Add parameter cursor
+   *
    * @param string $username
-   *   User's display name
+   *   User's display name.
    * @param string $board_name
-   *   Board machine name
+   *   Board machine name.
    *
    * @return mixed
-   *   Success: list with arrays including pin fields ID, url, link and description
-   *   Query error: array with fields message, error code
-   *   Other error: Null
+   *   Success: list with arrays including pin fields ID, url, link and description.
+   *   Query error: array with fields message, error code.
+   *   Other error: Null.
    */
   function getUserBoardPins($username, $board_name) {
     $board = $this->api->api('boards/' . $username . '/' . $board_name . '/pins/', 'GET');
@@ -170,14 +167,14 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
    * Deletes the specified board.
    *
    * @param string $username
-   *   User's display name
+   *   User's display name.
    * @param string $board_name
-   *   Board machine name
+   *   Board machine name.
    *
    * @return mixed
-   *   Success: array with succes field
-   *   Query error: array with fields message, error code
-   *   Other error: Null
+   *   Success: array with succes field.
+   *   Query error: array with fields message, error code.
+   *   Other error: Null.
    */
   function deleteUserBoard($username, $board_name) {
     $board = $this->api->api('boards/' . $username . '/' . $board_name . '/', 'DELETE');
@@ -190,39 +187,36 @@ class Hybrid_Providers_Pinterest extends Hybrid_Provider_Model_OAuth2 {
    * Creates a pin for the authenticated user.
    *
    * @param string $username
-   *   User's display name
+   *   User's display name.
    * @param string $board_name
-   *   Board machine name
+   *   Board machine name.
    * @param string $note
-   *   Pin's description
+   *   Pin's description.
    * @param string $img_type
-   *   image: upload the image you want to pin using multipart form data
-   *   image_url: the link to the image that you want to pin
-   *   image_base64: the link of a base64 encoded image
+   *   image: upload the image you want to pin using multipart form data.
+   *   image_url: the link to the image that you want to pin.
+   *   image_base64: the link of a base64 encoded image.
    * @param string $image
-   *   Pin's image
+   *   Pin's image.
    * @param string $link
-   *   URL the pin will link to when you click through
+   *   URL the pin will link to when you click through.
    *
    * @return mixed
-   *   Success: array with pin fields ID, note, url, link
-   *   Query error: array with fields message, error code
-   *   Other error: Null
+   *   Success: array with pin fields ID, note, url, link.
+   *   Query error: array with fields message, error code.
+   *   Other error: Null.
    */
   function createUserPin($username, $board_name, $note, $img_type, $image,  $link = NULL) {
     $data = array(
       'board' => $username . '/' . $board_name,
       'note' => $note,
     );
-
     if (!empty($link)) {
-      $data['link'] => $link,
+      $data['link'] = $link;
     }
-
     if (in_array($img_type, array('image', 'image_url', 'image_base64'))) {
       $data[$img_type] = $image;
     }
-
     $pin = $this->api->api('pins/', 'POST', $data);
     $data = !empty($pin->data) ? $pin->data : NULL;
 
