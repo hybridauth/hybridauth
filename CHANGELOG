@@ -1,13 +1,21 @@
 Hybridauth Change log
 =====================
-2.8.0 - XXXX
+2.8.0 - October 29 2016
+      BREAKING:
+        #688 - [Facebook] Update Provider to use newer API version 
+        #691 - [Google+] Correct age range
       New provider:
         #673 - Strava
+        #682 - Amazon
       New:
         #679 - Allow setting custom start & done endpoints (#680 docs)
+        #689 - [LinkedIn] Add current organization and job title to the user profile
+        #690 - [Pinterest] Provider updates and new API calls
       Fixes:
+        #658 - [Windows Live] Workaround for authentication
         #684 - [Twitter] Set emailVerified
         #685 - [LinkedIn] Remove array shorthand constructor
+        #692 - [Tumblr] Use https protocol for tumblr urls
 
 2.7.0 - September 4 2016
       New provider:
