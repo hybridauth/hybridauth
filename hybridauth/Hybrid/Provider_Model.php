@@ -64,6 +64,9 @@ abstract class Hybrid_Provider_Model {
    */
   public $compressed = false;
 
+    /** @var bool $useSafeUrls Enable this to replace '.' with '_' characters in the callback urls */
+    public $useSafeUrls = false;
+
   /**
    * Common providers adapter constructor
    *

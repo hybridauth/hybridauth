@@ -168,7 +168,12 @@ class Hybrid_Provider_Adapter {
 		if ($this->id=="Live") { 
 			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE."live.php"; 
 		}
-		
+
+		# Workaround to fix broken callback urls for the Facebook OAuth client
+		if ($this->adapter->useSafeUrls) {
+				$this->params['login_done'] = str_replace('hauth.done', 'hauth_done', $this->params['login_done']);
+		}
+
 		if (isset($this->params["hauth_return_to"])) {
 			Hybrid_Auth::storage()->set("hauth_session.{$this->id}.hauth_return_to", $this->params["hauth_return_to"]);
 		}
