@@ -163,6 +163,12 @@ class Hybrid_Provider_Adapter {
 			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE . ( strpos($HYBRID_AUTH_URL_BASE, '?') ? '&' : '?' ) . "hauth.done={$this->id}";
 		}
 
+		# workaround to solve windows live authentication since microsoft disallowed redirect urls to contain any parameters
+		# http://mywebsite.com/path_to_hybridauth/?hauth.done=Live will not work
+		if ($this->id=="Live") { 
+			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE."live.php"; 
+		}
+		
 		if (isset($this->params["hauth_return_to"])) {
 			Hybrid_Auth::storage()->set("hauth_session.{$this->id}.hauth_return_to", $this->params["hauth_return_to"]);
 		}
