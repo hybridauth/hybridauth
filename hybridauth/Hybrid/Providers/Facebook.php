@@ -47,8 +47,15 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 		$trustForwarded = isset($this->config['trustForwarded']) ? (bool) $this->config['trustForwarded'] : false;
 		$this->api = new Facebook(array('appId' => $this->config["keys"]["id"], 'secret' => $this->config["keys"]["secret"], 'trustForwarded' => $trustForwarded));
 
-		if ($this->token("access_token")) {
-			$this->api->setAccessToken($this->token("access_token"));
+		if ($this->token("access_token") || isset($_REQUEST["code"])) {
+			if ($this->token("access_token")) {
+				$this->api->setAccessToken($this->token("access_token"));
+		        } else if(isset($_REQUEST["code"])
+			&& $access_token_from_code = $this->api->getAccessTokenFromCode($_REQUEST["code"], $this->config["hauth_return_to"]."?hauth.done=Facebook")
+			) {
+				$this->api->setAccessToken($access_token_from_code);
+			}
+
 			$this->api->setExtendedAccessToken();
 			$access_token = $this->api->getAccessToken();
 
