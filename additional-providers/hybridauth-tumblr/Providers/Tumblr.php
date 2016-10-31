@@ -78,4 +78,28 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
                 
                 return $response;
 	}
+
+	/**
+	 * Create new blog post.
+	 *
+	 * @param $data
+	 *   Data of post.
+	 *
+	 * @return mixed
+	 *   Response from Tumblr after posting.
+	 *
+	 * @throws \Exception
+	 *   If creating user post failed.
+	 *
+	 * @see https://www.tumblr.com/docs/en/api/v2#posting
+	 */
+	function createUserPost($data) {
+		$response  = $this->api->post('blog/' . $this->token('primary_blog') . '/post', $data);
+
+		if ( $response->meta->status != 201 ){
+			throw new Exception("Creating user post failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $response->meta->status ));
+		}
+
+		return $response;
+	}
 }
