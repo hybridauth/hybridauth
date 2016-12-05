@@ -1,8 +1,11 @@
 Hybridauth Change log
 =====================
-2.8.1 - November 28 2016
+2.8.1 - December 5 2016
       Fixes:
+        #696 - [Core] Passing more arguments in called method
+        #697 - [Tumblr] Update posting function
         #703 - [GitHub] Update provider to recognize verified email
+        #705 - [Plurk] Update to use https
 
 2.8.0 - October 29 2016
       BREAKING:
