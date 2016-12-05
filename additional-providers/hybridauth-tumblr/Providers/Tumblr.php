@@ -64,18 +64,31 @@ class Hybrid_Providers_Tumblr extends Hybrid_Provider_Model_OAuth1
 		return $this->user->profile;
  	}
 
-   	/**
-	* post to tumblr
-	*/ 
-	function setUserStatus( $status )
+	/**
+	 * Post to Tumblr.
+	 *
+	 * @param string|array $data
+	 *   Data of post.
+	 *
+	 * @return mixed
+	 *   Response from Tumblr after posting.
+	 *
+	 * @throws \Exception
+	 *   If creating user post failed.
+	 *
+	 * @see https://www.tumblr.com/docs/en/api/v2#posting
+	 */
+	function setUserStatus( $data )
 	{
-		$parameters = array( 'type' => "text", 'body' => $status ); 
-		$response  = $this->api->post( "blog/" . $this->token( "primary_blog" ) . '/post', $parameters );  
-
-		if ( $response->meta->status != 201 ){
-			throw new Exception( "Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $response->meta->status ) );
+		if (is_string($data)) {
+			$data = array('type' => 'text', 'body' => $data );
 		}
-                
-                return $response;
+
+		$response = $this->api->post( "blog/" . $this->token( "primary_blog" ) . '/post', $data );
+		if ( $response->meta->status != 201 ){
+			throw new Exception("Update user status failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus( $response->meta->status ));
+		}
+
+		return $response;
 	}
 }
