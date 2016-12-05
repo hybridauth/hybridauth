@@ -1,5 +1,9 @@
 Hybridauth Change log
 =====================
+2.8.1 - November 28 2016
+      Fixes:
+        #703 - [GitHub] Update provider to recognize verified email
+
 2.8.0 - October 29 2016
       BREAKING:
         #688 - [Facebook] Update Provider to use newer API version 
