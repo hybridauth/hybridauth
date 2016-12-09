@@ -1,5 +1,10 @@
 Hybridauth Change log
 =====================
+2.8.2 - December 9 2016
+      Fixes:
+        #707 - [Core] OAuth2Client RFC6749 compliant requests (fixes #694)
+        #710 - [Core] Fix error message delivery
+
 2.8.1 - December 5 2016
       Fixes:
         #696 - [Core] Passing more arguments in called method
