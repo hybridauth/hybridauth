@@ -119,7 +119,7 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model {
     try {
       $this->api->authenticate($code);
     } catch (Exception $e) {
-      throw new Exception("User profile request failed! {$this->providerId} returned an error: $e", 6);
+      throw new Exception("User profile request failed! {$this->providerId} returned an error: " . $e->getMessage(), 6);
     }
 
     // check if authenticated
