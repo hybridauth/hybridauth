@@ -239,14 +239,7 @@ class Hybrid_Provider_Adapter {
 			throw new Exception("Call to undefined function Hybrid_Providers_{$this->id}::$name().");
 		}
 
-		$counter = count($arguments);
-		if ($counter == 1) {
-			return $this->adapter->$name($arguments[0]);
-		} elseif ($counter == 2) {
-			return $this->adapter->$name($arguments[0], $arguments[1]);
-		} else {
-			return $this->adapter->$name();
-		}
+    return call_user_func_array(array($this->adapter, $name), $arguments);
 	}
 
 	/**
