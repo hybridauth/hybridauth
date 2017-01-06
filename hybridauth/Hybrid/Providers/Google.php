@@ -16,7 +16,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	// or here: http://discovery-check.appspot.com/ (unofficial but up to date)
 
 	// default permissions
-	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds https://www.googleapis.com/auth/drive";
+	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds";
 
 	/**
 	* IDp wrappers initializer
@@ -47,7 +47,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	function loginBegin()
 	{
 		$parameters = array("scope" => $this->scope, "access_type" => "offline");
-		$optionals  = array("scope", "access_type", "redirect_uri", "approval_prompt", "hd", "state");
+		$optionals  = array("scope", "access_type", "redirect_uri", "approval_prompt", "hd", "state", "include_granted_scopes");
 
 		foreach ($optionals as $parameter){
 			if( isset( $this->config[$parameter] ) && ! empty( $this->config[$parameter] ) ){

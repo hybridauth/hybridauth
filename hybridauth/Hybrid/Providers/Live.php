@@ -20,7 +20,7 @@
 class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions
-	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.offline_access wl.skydrive";
+	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.offline_access";
 
 
 	/**
