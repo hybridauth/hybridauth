@@ -207,12 +207,12 @@ class Hybrid_Auth
 	*        openid_identifier: The OpenID identity provider identifier
 	*           google_service: can be "Users" for Google user accounts service or "Apps" for Google hosted Apps
 	*/
-	public static function authenticate( $providerId, $params = NULL )
+	public static function authenticate( $providerId, $params = NULL, $force_reauth = false )
 	{
 		Hybrid_Logger::info( "Enter Hybrid_Auth::authenticate( $providerId )" );
 
 		// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
-		if( ! Hybrid_Auth::storage()->get( "hauth_session.$providerId.is_logged_in" ) ){
+		if($force_reauth || ! Hybrid_Auth::storage()->get( "hauth_session.$providerId.is_logged_in" ) ){
 			Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), User not connected to the provider. Try to authenticate.." );
 
 			$provider_adapter = Hybrid_Auth::setup( $providerId, $params );
