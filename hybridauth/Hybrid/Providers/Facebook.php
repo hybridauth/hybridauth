@@ -83,7 +83,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
         $helper = $this->api->getRedirectLoginHelper();
         try {
-            $accessToken = $helper->getAccessToken();
+            $accessToken = $helper->getAccessToken($this->params['login_done']);
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
             throw new Hybrid_Exception('Facebook Graph returned an error: ' . $e->getMessage());
         } catch (Facebook\Exceptions\FacebookSDKException $e) {
