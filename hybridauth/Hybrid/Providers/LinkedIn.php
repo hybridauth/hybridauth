@@ -164,6 +164,13 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 				$this->user->profile->birthYear = (string) $data->{'date-of-birth'}->year;
 			}
 
+            if ($data->{'location'}) {
+                $this->user->profile->city = (string) $data->{'location'}->name;
+                if ($data->{'location'}->{'country'}) {
+                    $this->user->profile->country = (string) $data->{'location'}->{'country'}->code;
+                }
+            }
+
 			return $this->user->profile;
 		} else {
 			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData( $response ), 6);
