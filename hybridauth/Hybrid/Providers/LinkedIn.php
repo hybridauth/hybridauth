@@ -112,7 +112,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model {
 	 */
 	function getUserProfile() {
 		try {
-			// http://developer.linkedin.com/docs/DOC-1061
+			// https://developer.linkedin.com/docs/fields
 			$response = $this->api->profile('~:('. implode(',', $this->config['fields']) .')');
 		} catch (LinkedInException $e) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an error: {$e->getMessage()}", 6, $e);
