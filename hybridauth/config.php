@@ -45,7 +45,8 @@ return
 				),
 				"LinkedIn" => array(
 					"enabled" => true,
-					"keys" => array("key" => "", "secret" => "")
+					"keys" => array("key" => "", "secret" => ""),
+					"fields" => array()
 				),
 				"Foursquare" => array(
 					"enabled" => true,
