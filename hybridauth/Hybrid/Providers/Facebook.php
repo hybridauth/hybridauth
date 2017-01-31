@@ -169,7 +169,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             $regionArr = explode(',', $this->user->profile->region);
             if (count($regionArr) > 1) {
                 $this->user->profile->city = trim($regionArr[0]);
-                $this->user->profile->country = trim($regionArr[1]);
+                $this->user->profile->country = trim(end($regionArr));
             }
         }
 
