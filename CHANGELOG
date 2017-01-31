@@ -1,5 +1,15 @@
 Hybridauth Change log
 =====================
+2.8.3 - XXX
+      Fixes:
+        #715 - [LinkedIn] Removed unset() which breaks PHP 7.1 compatibility
+        #722 - [Core] Add notice about maintainance mode of the library
+        #732 - [Amazon] Fix wrong lowercase in filename
+        #733 - [Live] Fix authorize_url for windows live
+        #735 - [LinkedIn] location feature
+        #727 + #734 - [Facebook] Fix problem which occurs during calling the Facebook Graph API to getAccessToken() for a specific redirectUrl
+        #729 - [Facebook] Fix wrong country data
+
 2.8.2 - December 9 2016
       Fixes:
         #707 - [Core] OAuth2Client RFC6749 compliant requests (fixes #694)
