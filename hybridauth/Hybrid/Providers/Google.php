@@ -209,10 +209,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 		
 		// Google Gmail and Android contacts
 		if (strpos($this->scope, '/m8/feeds/') !== false) {
-			//https://www.google.com/m8/feeds/contacts/default/full?&alt=json&max-results='.$max_results.'&oauth_token='.$accesstoken;
-			$response = $this->api->api("https://www.google.com/m8/feeds/contacts/default/full?"
-					. http_build_query(array_merge(array('alt' => 'json', 'v' => '3.0'), $this->config['contacts_param'])));
-		
+				
 			$response = $this->api->api("https://www.google.com/m8/feeds/contacts/default/full?"
 					. http_build_query(array_merge(array('alt' => 'json'), $this->config['contacts_param'])));
 		
