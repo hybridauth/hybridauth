@@ -197,24 +197,33 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	 */
 	function getUserContacts() {
 		// refresh tokens if needed
+	
 		$this->refreshToken();
+		
 
 		$contacts = array();
 		if (!isset($this->config['contacts_param'])) {
+			
 			$this->config['contacts_param'] = array("max-results" => 500);
 		}
-
+		
 		// Google Gmail and Android contacts
 		if (strpos($this->scope, '/m8/feeds/') !== false) {
-
+			//https://www.google.com/m8/feeds/contacts/default/full?&alt=json&max-results='.$max_results.'&oauth_token='.$accesstoken;
 			$response = $this->api->api("https://www.google.com/m8/feeds/contacts/default/full?"
 					. http_build_query(array_merge(array('alt' => 'json', 'v' => '3.0'), $this->config['contacts_param'])));
-
+		
+			$response = $this->api->api("https://www.google.com/m8/feeds/contacts/default/full?"
+					. http_build_query(array_merge(array('alt' => 'json'), $this->config['contacts_param'])));
+		
+			
 			if (!$response) {
+				
 				return array();
 			}
-
+			
 			if (isset($response->feed->entry)) {
+				
 				foreach ($response->feed->entry as $idx => $entry) {
 					$uc = new Hybrid_User_Contact();
 					$uc->email = isset($entry->{'gd$email'}[0]->address) ? (string) $entry->{'gd$email'}[0]->address : '';
@@ -303,3 +312,4 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	}
 
 }
+
