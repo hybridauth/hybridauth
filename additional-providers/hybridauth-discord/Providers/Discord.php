@@ -37,7 +37,7 @@ class Hybrid_Providers_Discord extends Hybrid_Provider_Model_OAuth2
 		$data = $this->api->api( "users/@me" ); 
 
 		if ( ! isset( $data->id ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.".print_r($data, true), 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$this->user->profile->identifier  = @ $data->id; 
