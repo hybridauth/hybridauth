@@ -16,7 +16,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2
 	// or here: http://discovery-check.appspot.com/ (unofficial but up to date)
 
 	// default permissions
-	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds";
+	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds https://www.googleapis.com/auth/drive";
 
 	/**
 	* IDp wrappers initializer
