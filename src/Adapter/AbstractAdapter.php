@@ -1,9 +1,8 @@
 <?php
-
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2015 Hybridauth authors | https://hybridauth.github.io/license.html
+*  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Adapter;
@@ -290,11 +289,13 @@ abstract class AbstractAdapter implements AdapterInterface
      * @throws HttpClientFailureException
      * @throws HttpRequestFailedException
      */
-    protected function validateApiResponse()
+    protected function validateApiResponse($error = '')
     {
+        $error .= !empty($error) ? '. ' : '';
+
         if ($this->httpClient->getResponseClientError()) {
             throw new HttpClientFailureException(
-                'HTTP client error: '.
+                $error . 'HTTP client error: '.
                 $this->httpClient->getResponseClientError().
                 '.'
             );
@@ -302,7 +303,7 @@ abstract class AbstractAdapter implements AdapterInterface
 
         if (200 != $this->httpClient->getResponseHttpCode()) {
             throw new HttpRequestFailedException(
-                'HTTP error '.
+                $error . 'HTTP error '.
                 $this->httpClient->getResponseHttpCode().
                 '. Raw Provider API response: '.
                 $this->httpClient->getResponseBody().
