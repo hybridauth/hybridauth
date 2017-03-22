@@ -46,20 +46,16 @@ class Exception extends \Exception implements ExceptionInterface
         if ($object) {
             $html .= '<h2>Debug</h2>';
 
-            ob_start();
-            var_dump($object);
-            $var_dump = ob_get_clean();
+            $obj_dump = print_r($object, true);
 
-            $html .= sprintf('<b>' . get_class($object) . '</b> extends <b>' . get_parent_class($object) . '</b><pre>%s</pre>', $var_dump);
+            $html .= sprintf('<b>' . get_class($object) . '</b> extends <b>' . get_parent_class($object) . '</b><pre>%s</pre>', $obj_dump);
         }
 
         $html .= '<h2>Session</h2>';
 
-        ob_start();
-        var_dump($_SESSION);
-        $var_dump = ob_get_clean();
+        $session_dump = print_r($_SESSION, true);
 
-        $html .= sprintf('<pre>%s</pre>', $var_dump);
+        $html .= sprintf('<pre>%s</pre>', $session_dump);
 
         echo sprintf("<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:75px;}</style></head><body>%s</body></html>", $title, $html);
     }
