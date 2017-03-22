@@ -68,8 +68,7 @@ class BitBucket extends OAuth2
     }
 
     /**
-    *
-    * https://developer.github.com/v3/users/emails/
+    * Request user email
     */
     protected function requestUserEmail($userProfile)
     {
