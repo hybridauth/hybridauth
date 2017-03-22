@@ -30,7 +30,7 @@ class Curl implements HttpClientInterface
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_MAXREDIRS      => 5,
         CURLINFO_HEADER_OUT    => true,
-        CURLOPT_USERAGENT      => 'HybridAuth Library (https://github.com/hybridauth/hybridauth)',
+        CURLOPT_USERAGENT      => 'HybridAuth, PHP Social Authentication Library (https://github.com/hybridauth/hybridauth)',
     ];
 
     /**
