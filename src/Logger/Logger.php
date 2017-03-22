@@ -1,5 +1,4 @@
 <?php
-
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -45,6 +44,8 @@ class Logger implements LoggerInterface
      */
     public function __construct($level, $file)
     {
+        $this->level = self::NONE;
+
         if ($level !== self::NONE) {
             $this->initialize($file);
 
