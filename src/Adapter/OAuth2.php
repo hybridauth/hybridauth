@@ -104,6 +104,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $accessTokenInfoUrl = '';
 
     /**
+    * IPD API Documentation
+    *
+    * OPTIONAL.
+    *
+    * @var string
+    */
+    protected $apiDocumentation = '';
+
+    /**
     * Redirection Endpoint
     *
     * The redirection endpoint URI is generated and used internally by Hybridauth Endpoint class.
@@ -394,7 +403,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->tokenExchangeHeaders
         );
 
-        $this->validateApiResponse();
+        $this->validateApiResponse('Unable to exchange code for API access token');
 
         return $response;
     }
@@ -495,7 +504,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->tokenExchangeHeaders
         );
 
-        $this->validateApiResponse();
+        $this->validateApiResponse('Unable to refresh the access token');
 
         $this->validateRefreshAccessToken($response);
 
@@ -566,7 +575,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $headers     // Request Headers
         );
 
-        $this->validateApiResponse();
+        $this->validateApiResponse('Signed API request has returned an error');
 
         $response = (new Data\Parser())->parse($response);
 

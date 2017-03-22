@@ -52,6 +52,15 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     protected $accessTokenUrl = '';
 
     /**
+    * IPD API Documentation
+    *
+    * OPTIONAL.
+    *
+    * @var string
+    */
+    protected $apiDocumentation = '';
+
+    /**
     * OAuth Version
     *
     *  '1.0' OAuth Core 1.0
@@ -530,7 +539,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $headers
         );
 
-        $this->validateApiResponse();
+        $this->validateApiResponse('Signed API request has returned an error');
 
         return $response;
     }

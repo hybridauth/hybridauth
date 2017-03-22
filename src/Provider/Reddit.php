@@ -43,6 +43,11 @@ class Reddit extends OAuth2
     /**
     * {@inheritdoc}
     */
+    protected $apiDocumentation = 'https://github.com/reddit/reddit/wiki/OAuth2';
+
+    /**
+    * {@inheritdoc}
+    */
     protected function initialize()
     {
         parent::initialize();

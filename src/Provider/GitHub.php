@@ -40,6 +40,11 @@ class GitHub extends OAuth2
     /**
     * {@inheritdoc}
     */
+    protected $apiDocumentation = 'https://developer.github.com/v3/oauth/';
+
+    /**
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
