@@ -23,8 +23,6 @@ use Hybridauth\Deprecated\DeprecatedHybridauthTrait;
  */
 class Hybridauth
 {
-    use DeprecatedHybridauthTrait;
-
     /**
     * Hybridauth version.
     *

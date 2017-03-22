@@ -25,8 +25,6 @@ use Hybridauth\Deprecated\DeprecatedAdapterTrait;
  */
 abstract class AbstractAdapter implements AdapterInterface
 {
-    use DeprecatedAdapterTrait;
-
     /**
      * Provider ID (unique name).
      *

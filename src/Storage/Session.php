@@ -15,8 +15,6 @@ use Hybridauth\Deprecated\DeprecatedStorageTrait;
  */
 class Session implements StorageInterface
 {
-    use DeprecatedStorageTrait;
-
     /**
     * Initiate a new session
     *
