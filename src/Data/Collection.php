@@ -91,7 +91,7 @@ final class Collection
             return $data;
         }
 
-        return $this;
+        return new Collection([]);
     }
 
     /**

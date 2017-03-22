@@ -61,7 +61,18 @@ class Google extends OAuth2
         $userProfile->description = $data->get('aboutMe');
         $userProfile->gender      = $data->get('gender');
         $userProfile->language    = $data->get('language');
-        $userProfile->email       = $data->get('email');
+
+        if (!empty($data->get('email'))) {
+            $userProfile->email = $data->get('email');
+        } elseif (!empty($data->get('emails'))) {
+            $emails = $data->get('emails');
+            $userProfile->email = $emails[0]->value;
+
+            if ($emails[0]->type == 'account') {
+                $userProfile->emailVerified = $userProfile->email;
+            }
+        }
+
         $userProfile->phone       = $data->get('phone');
         $userProfile->country     = $data->get('country');
         $userProfile->region      = $data->get('region');

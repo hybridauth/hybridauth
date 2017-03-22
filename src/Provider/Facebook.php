@@ -72,7 +72,7 @@ class Facebook extends OAuth2
 
         $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
 
-        $userProfile = $this->fetchUserRegion($userProfile, $userProfile);
+        $userProfile = $this->fetchUserRegion($userProfile);
 
         $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
 
