@@ -4,7 +4,8 @@
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-    IMPORTANT: Hybridauth 3 is currently in development with the only remaning tasks of ensuring major providers are properly working and finishing documentation, hence it's NOT ready for production yet.
+    IMPORTANT: Hybridauth 3 is currently in development with the only remaning tasks of ensuring major providers are
+    properly working and finishing documentation, hence it's NOT ready for production yet.
 
 Hybridauth enables developers to easily build social applications and tools to engage websites visitors and customers on a social level by implementing social sign-in, social sharing, users profiles, friends list, activities stream, status updates and more.
 
