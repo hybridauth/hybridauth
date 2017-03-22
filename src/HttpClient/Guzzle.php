@@ -21,7 +21,7 @@ use GuzzleHttp\Exception\TransferException;
  *
  * <code>
  *  $guzzle = new Hybridauth\HttpClient\Guzzle( new GuzzleHttp\Client(), [
- *      'verify'  => '/path/to/ca-bundle.crt',
+ *      'verify'  => '/path/to/your/certificate.crt',
  *      'headers' => [ 'User-Agent' => '..' ]
  *      // 'proxy' => ...
  *  ]);
