@@ -2,21 +2,16 @@
 /*!
 * This simple example illustrate how to authenticate users with GitHub.
 *
-* Most providers works pretty much the same. For more information, refer to the
-* on-line user manual.
+* Most other providers work pretty much the same.
 */
 
 /**
  * Step 1: Require the Hybridauth Library
  *
- * If you are not using Composer, you may use the included Hybridauth PSR-4 compliant
- * autoloader as an example.
- *
- * If you are already using another PSR-4 autoloader on your project, simply map the
- * `Hybridauth\\` namespace to the `./src` folder.
+ * Should be as simple as including Composer's autoloader.
  */
 
-include 'vendor/autoload.php'; // or include 'hybridauth_autoload.php';
+include 'vendor/autoload.php';
 
 /**
  * Step 2: Configuring Your Application
@@ -26,13 +21,16 @@ include 'vendor/autoload.php'; // or include 'hybridauth_autoload.php';
  * To get started with GitHub authentication, you need to create a new GitHub
  * application.
  *
- * First, navigate to https://github.com/settings/applications then click the Register
+ * First, navigate to https://github.com/settings/developers then click the Register
  * new application button at the top right of that page and fill in any required fields
  * such as the application name, description and website.
  *
- * Set the Authorization callback URL to https://path/to/hybridauth/examples/example.php.
+ * Set the Authorization callback URL to https://path/to/hybridauth/examples/example_01.php.
  * Understandably, you need to replace 'path/to/hybridauth' with the real path to this
  * script.
+ *
+ * Note that Hybridauth provides an utility function that can generate the current page url for 
+ * you and can be used for the callback. Exemple: 'callback' => Hybridauth\HttpClient\Util::getCurrentUrl()
  *
  * After configuring your GitHub application, simple replace 'your-app-id' and 'your-app-secret'
  * with your application credentials (Client ID and Client Secret).
@@ -46,11 +44,13 @@ include 'vendor/autoload.php'; // or include 'hybridauth_autoload.php';
  */
 
 $config = [
-    'callback' => 'https://path/to/hybridauth/examples/example.php',
+    'callback' => 'https://path/to/hybridauth/examples/example_01.php', // or Hybridauth\HttpClient\Util::getCurrentUrl()
+
     'keys'     => ['id' => 'your-app-id', 'secret' => 'your-app-secret'],
+
     'scope'    => ['user:email']
 
-    /* optional
+    /* optional : set debgu mode
         // You can also set it to
         // - false To disable logging
         // - true To enable logging
@@ -59,18 +59,16 @@ $config = [
         'debug_mode' => true,
         // 'debug_mode' => 'info',
         // 'debug_mode' => 'error',
-
         // Path to file writable by the web server. Required if 'debug_mode' is not false
         'debug_file' => __FILE__ . '.log', */
 
-    /* optional
-        // tweak default Http client curl settings
-        // http://www.php.net/manual/fr/function.curl-setopt.php  
+    /* optional : customize Curl settings
+        // for more information on curl, refer to: http://www.php.net/manual/fr/function.curl-setopt.php  
         'curl_options' => [
             // setting custom certificates
             // http://curl.haxx.se/docs/caextract.html
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_CAINFO         => dirname(__FILE__) . '/tests/ca-bundle.crt',
+            CURLOPT_CAINFO         => '/path/to/your/certificate.crt',
 
             // setting proxies 
             # CURLOPT_PROXY          => '*.*.*.*:*',
@@ -91,7 +89,7 @@ $config = [
 $github = new Hybridauth\Provider\GitHub($config);
 
 /**
- * Step 4: Logging Users In
+ * Step 4: Authenticating Users
  *
  * When invoked, `authenticate()` will redirect users to GitHub login page where they
  * will be asked to grant access to your application. If hey do, GitHub will redirect
@@ -116,15 +114,19 @@ echo 'Hi '.$userProfile->displayName;
 /**
  * Bonus: Access GitHub API
  *
- * List the authenticated user's public gists.
+ * Now that the user is authenticated with Gihub, and depending on the authorization given to your
+ * application, you should be able to query the said API in behalf of the user.
+ *
+ * As an exapmle we list the authenticated user's public gists.
  */
 
-$apiResponse = $github->apiRequest('/gists/public');
+$apiResponse = $github->apiRequest('gists/public');
 
 /**
- * Step 6: Log Users Out
+ * Step 6: Disconnecting form the Provider API
  *
- *
+ * This will erase the current user authentication data from session, and any further
+ * attempt to communicate with Github API will result on an authorisation exception.
  */
 
 $github->disconnect();
@@ -137,9 +139,13 @@ $github->disconnect();
  *
  * Below is a basic example of how to catch exceptions.
  *
- * Note that on the previous step we disconnected the user. Meaning Hybridauth
+ * Note that on the previous step we disconnected from the API; meaning Hybridauth
  * has erased the oauth access token used to sign http requests from the current
- * session. Thus, any new request to the provider API will now throw an exception.
+ * session, thus, any new request we now make will now throw an exception.
+ *
+ * It's also important that you don't show Hybridauth exception's messages to the
+ * user as they may include sensetive data, and that you use your own error messages
+ * instead.
  */
 
 try {
