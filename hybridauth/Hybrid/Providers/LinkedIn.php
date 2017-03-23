@@ -33,7 +33,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         // create a new OAuth2 client instance
         $this->api = new OAuth2Client($this->config["keys"]["key"],
                                         $this->config["keys"]["secret"],
-                                        $this->config["hauth_return_to"]);
+                                        $this->endpoint);
 
         // If we have an access token, set it
         if($this->token("access_token")) {
