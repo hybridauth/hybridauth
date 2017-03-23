@@ -53,6 +53,16 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
      * load the user profile from the IDp api client
      */
     function getUserProfile() {
+        $fields = array(
+            'email-address',
+            'id',
+            'first-name',
+            'last-name',
+            'picture-url',
+            'public-profile-url',
+            'summary',
+            'formatted-name'
+            );
         $this->api->curl_header = array(
             'Connection: Keep-Alive',
             'Authorization: Bearer ' . $this->api->access_token,
@@ -62,13 +72,20 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         $this->refreshToken();
 
         // ask linkedin api for user info
-        $url = "https://api.linkedin.com/v1/people/~";
+        $base_url = "https://api.linkedin.com/v1/people/~:";
+        $url = $base_url . "(" . implode(",", $fields) . ")";
         $params = array('format' => 'json');
         $data = $this->api->api($url, "GET", $params, true);
 
-        $this->user->profile->firstName = $data->firstName;
-        $this->user->profile->lastName = $data->lastName;
-        $this->user->profile->identifier = $data->id;
+        $this->user->profile->email         = $data->emailAddress;
+        $this->user->profile->emailVerified = $data->emailAddress;
+        $this->user->profile->identifier    = $data->id;
+        $this->user->profile->firstName     = $data->firstName;
+        $this->user->profile->lastName      = $data->lastName;
+        $this->user->profile->photoURL      = $data->pictureUrl;
+        $this->user->profile->profileURL    = $data->publicProfileUrl;
+        $this->user->profile->description   = $data->summary;
+        $this->user->profile->displayName   = $data->formattedName;
 
         return $this->user->profile;
     }
