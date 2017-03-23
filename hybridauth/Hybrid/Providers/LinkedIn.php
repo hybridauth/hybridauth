@@ -63,7 +63,12 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
 
         // ask linkedin api for user info
         $url = "https://api.linkedin.com/v1/people/~";
-        $response = $this->api->api($url);
+        $params = array('format' => 'json');
+        $data = $this->api->api($url, "GET", $params, true);
+
+        $this->user->profile->firstName = $data->firstName;
+        $this->user->profile->lastName = $data->lastName;
+        $this->user->profile->identifier = $data->id;
 
         return $this->user->profile;
     }
