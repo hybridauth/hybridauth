@@ -48,4 +48,23 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         $this->api->token_url      = "https://www.linkedin.com/oauth/v2/accessToken";
         $this->api->token_info_url = "https://www.linkedin.com/oauth/v2";
     }
+
+    /**
+     * load the user profile from the IDp api client
+     */
+    function getUserProfile() {
+        $this->api->curl_header = array(
+            'Connection: Keep-Alive',
+            'Authorization: Bearer ' . $this->api->access_token,
+        );
+
+        // refresh tokens if needed
+        $this->refreshToken();
+
+        // ask linkedin api for user info
+        $url = "https://api.linkedin.com/v1/people/~";
+        $response = $this->api->api($url);
+
+        return $this->user->profile;
+    }
 }
