@@ -61,7 +61,8 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
             'picture-url',
             'public-profile-url',
             'summary',
-            'formatted-name'
+            'formatted-name',
+            'positions'
             );
         $this->api->curl_header = array(
             'Connection: Keep-Alive',
@@ -75,17 +76,31 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         $base_url = "https://api.linkedin.com/v1/people/~:";
         $url = $base_url . "(" . implode(",", $fields) . ")";
         $params = array('format' => 'json');
-        $data = $this->api->api($url, "GET", $params, true);
+
+        try {
+            $data = $this->api->api($url, "GET", $params, true);
+        } catch (Exception $e) {
+            throw new Exception("User profile request failed! {$this->providerId} returned an error: {$e->getMessage()}", 6, $e);
+        }
 
         $this->user->profile->email         = $data->emailAddress;
         $this->user->profile->emailVerified = $data->emailAddress;
         $this->user->profile->identifier    = $data->id;
         $this->user->profile->firstName     = $data->firstName;
         $this->user->profile->lastName      = $data->lastName;
-        $this->user->profile->photoURL      = $data->pictureUrl;
         $this->user->profile->profileURL    = $data->publicProfileUrl;
         $this->user->profile->description   = $data->summary;
         $this->user->profile->displayName   = $data->formattedName;
+
+        if ($data->positions) {
+            $this->user->profile->job_title = $data->positions->values[0]->title;
+            $this->user->profile->organization_name = $data->positions->values[0]->company->name;
+        }
+        if (isset($data->pictureUrl)) {
+            $this->user->profile->photoURL = $data->pictureUrl;
+        } else {
+            $this->user->profile->photoURL = "";
+        }
 
         return $this->user->profile;
     }
