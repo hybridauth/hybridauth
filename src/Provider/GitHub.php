@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Github OAuth2 provider adapter.
  */
 class GitHub extends OAuth2
 {
@@ -95,7 +95,8 @@ class GitHub extends OAuth2
                     break;
                 }
             }
-        } // user email is not mandatory so keep it quite
+        }
+        // user email is not mandatory so keep it quite
         catch (\Exception $e) {
         }
 
