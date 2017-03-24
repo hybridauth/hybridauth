@@ -13,7 +13,29 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
+ * Google OAuth2 provider adapter.
  *
+ * Example:
+ *
+ *   $config = [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys'     => [ 'id' => '', 'secret' => '' ],
+ *       'scope'    => 'profile https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds/',
+ *       'authorize_url_parameters' => ['approval_prompt' => 'force']
+ *   ];
+ *
+ *   $adapter = new Hybridauth\Provider\Google( $config );
+ *
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken(); 
+ *       $contacts = $adapter->getUserContacts(['max-results' => 75]);
+ *   }
+ *   catch( Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class Google extends OAuth2
 {
@@ -40,8 +62,43 @@ class Google extends OAuth2
     /**
     * {@inheritdoc}
     */
+    protected $apiDocumentation = 'https://developers.google.com/identity/protocols/OAuth2';
+
+    /**
+    * {@inheritdoc}
+    *
+    * Extra parameters for authorize url can be set in config:
+    *
+    * Example:
+    *
+    *   $config = [
+    *       'callback' => '...',
+    *       'keys'     => [ 'id' => '', 'secret' => '' ],
+    *       'authorize_url_parameters' => [
+    *              'approval_prompt' => 'force',
+    *              'hd'              => ..
+    *              'state'           => ..
+    *              // etc.
+    *       ]
+    *   ];
+    */
+    protected function getAuthorizeUrl($parameters = [])
+    {
+        $parameters = ['access_type' => 'offline']
+                     + (array) $this->config->get("authorize_url_parameters")
+                     + $parameters;
+
+        return parent::getAuthorizeUrl($parameters);
+    }
+
+    /**
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
+        // refresh tokens if needed
+        $this->refreshAccessToken();
+
         $response = $this->apiRequest('people/me');
 
         $data = new Data\Collection($response);
@@ -67,29 +124,36 @@ class Google extends OAuth2
         $userProfile->region      = $data->get('region');
         $userProfile->zip         = $data->get('zip');
 
+        $userProfile->emailVerified = $data->get('verified') ? $userProfile->email : '';
+
         if ($data->filter('image')->exists('url')) {
             $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2) . 150;
         }
 
-        $userProfile = $this->fetchUserEmail($userProfile, $data);
+        if(! $userProfile->email && $data->exists('emails')){
+            $userProfile = $this->fetchUserEmail($userProfile, $data);
+        }
 
-        $userProfile = $this->fetchUserProfileUrl($userProfile, $data);
+        if(! $userProfile->profileURL && $data->exists('urls')){
+           $userProfile = $this->fetchUserProfileUrl($userProfile, $data);
+        }
 
-        $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
-
-        $userProfile->emailVerified = $data->get('verified') ? $userProfile->email : '';
+        if(! $userProfile->profileURL && $data->exists('urls')){
+            $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
+        }
 
         return $userProfile;
     }
 
     /**
-    *
+    * Fetch user email
     */
     protected function fetchUserEmail($userProfile, $data)
     {
         foreach ($data->get('emails') as $email) {
             if ('account' == $email->type) {
-                $userProfile->email = $email->value;
+                $userProfile->email         = $email->value;
+                $userProfile->emailVerified = $email->value;
 
                 break;
             }
@@ -99,11 +163,11 @@ class Google extends OAuth2
     }
 
     /**
-    *
+    * Fetch user profile url
     */
     protected function fetchUserProfileUrl($userProfile, $data)
     {
-        foreach ($data->filter('urls')->all() as $url) {
+        foreach ($data->get('urls') as $url) {
             if ($url->get('primary')) {
                 $userProfile->webSiteURL = $url->get('value');
 
@@ -115,7 +179,7 @@ class Google extends OAuth2
     }
 
     /**
-    *
+    * Fetch use birthday
     */
     protected function fetchBirthday($userProfile, $birthday)
     {
@@ -131,46 +195,69 @@ class Google extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public function getUserContacts()
+    public function getUserContacts($parameters = [])
     {
-        // @fixme
-        $extraParams = array( 'max-results' => 500 );
+        // refresh tokens if needed
+        $this->refreshAccessToken();
+
+        $parameters = ['max-results' => 500] + $parameters;
 
         // Google Gmail and Android contacts
         if (false !== strpos($this->scope, '/m8/feeds/')) {
-            return $this->getGmailContacts($extraParams);
+            return $this->getGmailContacts($parameters);
         }
 
         // Google social contacts
         if (false !== strpos($this->scope, '/auth/plus.login')) {
-            return $this->getGplusContacts($extraParams);
+            return $this->getGplusContacts($parameters);
         }
     }
 
     /**
     * Retrieve Gmail contacts
-    *
-    *  ..
     */
-    protected function getGmailContacts($extraParams)
+    protected function getGmailContacts($parameters = [])
     {
-        $contacts = [];
-
         $url = 'https://www.google.com/m8/feeds/contacts/default/full?'
-                    . http_build_query(array_merge([ 'alt' => 'json', 'v' => '3.0' ], $extraParams));
+                    . http_build_query(array_merge([ 'alt' => 'json', 'v' => '3.0' ], $parameters));
 
         $response = $this->apiRequest($url);
 
-        $data = new Data\Collection($response);
+        if (! $response) {
+            return [];
+        }
 
-        foreach ($data->filter('feed')->filter('entry')->all() as $idx => $entry) {
-            $userContact = new User\Contact();
+        $contacts = [];
 
-            $userContact->email       = $entry->filter('gd$email')->filter(0)->get('address');
-            $userContact->displayName = $entry->filter('title')->get('$t');
-            $userContact->identifier  = $userContact->email;
+        if (isset($response->feed->entry)) {
+            foreach ($response->feed->entry as $idx => $entry) {
+                $uc = new User\Contact();
 
-            $contacts[] = $userContact;
+                $uc->email = isset($entry->{'gd$email'}[0]->address) 
+                            ? (string) $entry->{'gd$email'}[0]->address 
+                            : '';
+
+                $uc->displayName = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';
+                $uc->identifier  = ($uc->email != '') ? $uc->email : '';
+                $uc->description = '';
+
+                if (property_exists($response, 'website')) {
+                    if (is_array($response->website)) {
+                        foreach ($response->website as $w) {
+                            if ($w->primary == true)
+                                $uc->webSiteURL = $w->value;
+                        }
+                    }
+                    else {
+                        $uc->webSiteURL = $response->website->value;
+                    }
+                }
+                else {
+                    $uc->webSiteURL = '';
+                }
+
+                $contacts[] = $uc;
+            }
         }
 
         return $contacts;
@@ -178,21 +265,19 @@ class Google extends OAuth2
 
     /**
     * Retrieve Google plus contacts
-    *
-    *  ..
     */
-    protected function getGplusContacts($extraParams)
+    protected function getGplusContacts($parameters = [])
     {
         $contacts = [];
 
         $url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?'
-                    . http_build_query($extraParams);
+                    . http_build_query($parameters);
 
         $response = $this->apiRequest($url);
 
         $data = new Data\Collection($response);
 
-        foreach ($data->filter('items')->all() as $idx => $item) {
+        foreach ($data->get('items') as $item) {
             $userContact = new User\Contact();
 
             $userContact->identifier  = $item->get('id');
