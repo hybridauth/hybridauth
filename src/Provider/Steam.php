@@ -11,6 +11,27 @@ use Hybridauth\Adapter\OpenID;
 use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\User;
 
+/**
+ * Steam OpenID provider adapter.
+ *
+ * Example:
+ *
+ *   $config = [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys'     => [ 'secret' => 'steam-api-key' ]
+ *   ];
+ *
+ *   $adapter = new Hybridauth\Provider\Google( $config );
+ *
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *   }
+ *   catch( Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
+ */
 class Steam extends OpenID
 {
     /**
@@ -21,9 +42,9 @@ class Steam extends OpenID
     /**
     * {@inheritdoc}
     */
-    public function loginFinish()
+    public function authenticateFinish()
     {
-        parent::loginFinish();
+        parent::authenticateFinish();
 
         $userProfile = $this->storage->get($this->providerId . '.user');
 
@@ -37,9 +58,10 @@ class Steam extends OpenID
 
         // if api key is provided, we attempt to use steam web api
 
-        if ($this->config->filter('keys')->exists('secret')) {
+        if ($this->config->filter('keys')->get('secret')) {
             $result = $this->getUserProfileWebAPI($this->config->filter('keys')->get('secret'), $userProfile->identifier);
-        } // otherwise we fallback to community data
+        }
+        // otherwise we fallback to community data
         else {
             $result = $this->getUserProfileLegacyAPI($userProfile->identifier);
         }
@@ -61,12 +83,12 @@ class Steam extends OpenID
         $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . $apiKey . '&steamids=' . $steam64;
 
         $response = $this->httpClient->request($apiUrl);
+
         $data = json_decode($response);
 
-        // not sure if correct
         $data = isset($data->response->players[0]) ? $data->response->players[0] : null;
 
-        $userProfile = array();
+        $userProfile = [];
 
         $userProfile['displayName'] = property_exists($data, 'personaname')    ? $data->personaname    : '';
         $userProfile['firstName'  ] = property_exists($data, 'realname')       ? $data->realname       : '';
@@ -88,7 +110,7 @@ class Steam extends OpenID
 
         $response = $this->httpClient->request($apiUrl);
 
-        $userProfile = array();
+        $userProfile = [];
 
         try {
             $data = new \SimpleXMLElement($response);
@@ -100,8 +122,9 @@ class Steam extends OpenID
             $userProfile['region'      ] = property_exists($data, 'location')   ? (string) $data->location    : '';
             $userProfile['profileURL'  ] = property_exists($data, 'customURL')
                                                 ? "http://steamcommunity.com/id/{$data->customURL}/"
-                                                : "http://steamcommunity.com/profiles/{$userProfile->identifier}/";
-        } // these data are not mandatory, so keep it quite
+                                                : "http://steamcommunity.com/profiles/{$steam64}/";
+        }
+        // these data are not mandatory, so keep it quite
         catch (\Exception $e) {
         }
 
