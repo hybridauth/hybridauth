@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * BitBucket OAuth2 provider adapter.
  */
 class BitBucket extends OAuth2
 {
@@ -36,6 +36,11 @@ class BitBucket extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://bitbucket.org/site/oauth2/access_token';
+
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiDocumentation = 'https://developer.atlassian.com/bitbucket/concepts/oauth2.html';
 
     /**
     * {@inheritdoc}
@@ -85,7 +90,8 @@ class BitBucket extends OAuth2
                     break;
                 }
             }
-        } // user email is not mandatory so keep it quite
+        }
+        // user email is not mandatory so keep it quite
         catch (\Exception $e) {
         }
 
