@@ -1,6 +1,11 @@
 Hybridauth Change log
 =====================
-2.8.3 - XXX
+2.9.0 - March 24 2017
+      New providers: 
+        #740 + #741 - Discord
+        #737 + #738 - idQ
+        #718 - Envato
+        #711 + #712 - Stripe
       Fixes:
         #715 - [LinkedIn] Removed unset() which breaks PHP 7.1 compatibility
         #722 - [Core] Add notice about maintainance mode of the library
@@ -9,6 +14,7 @@ Hybridauth Change log
         #735 - [LinkedIn] location feature
         #727 + #734 - [Facebook] Fix problem which occurs during calling the Facebook Graph API to getAccessToken() for a specific redirectUrl
         #729 - [Facebook] Fix wrong country data
+        #736 - [Google] Resolve issue in obtaining contacts
 
 2.8.2 - December 9 2016
       Fixes:
@@ -26,7 +32,7 @@ Hybridauth Change log
       BREAKING:
         #688 - [Facebook] Update Provider to use newer API version 
         #691 - [Google+] Correct age range
-      New provider:
+      New providers:
         #673 - Strava
         #682 - Amazon
       New:
@@ -40,7 +46,7 @@ Hybridauth Change log
         #692 - [Tumblr] Use https protocol for tumblr urls
 
 2.7.0 - September 4 2016
-      New provider:
+      New providers:
         #639 - Humanitarian ID
         #649 - Pinterest
         #653 - Weibo
