@@ -7,7 +7,7 @@
     IMPORTANT: Hybridauth 3 is currently in development with the only remaning tasks of ensuring major providers are
     properly working and finishing documentation, hence it's NOT ready for production yet.
     
-    To check on project progression or if you wish to contribute on a task, see [TODO.md](https://github.com/hybridauth/hybridauth/blob/master/TODO.md).
+   :octocat: To check on project progression or if you wish to contribute on a task, see [TODO.md](https://github.com/hybridauth/hybridauth/blob/master/TODO.md).
 
 Hybridauth enables developers to easily build social applications and tools to engage websites visitors and customers on a social level by implementing social sign-in, social sharing, users profiles, friends list, activities stream, status updates and more.
 
