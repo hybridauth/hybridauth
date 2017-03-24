@@ -30,9 +30,17 @@ final class Collection
             $this->collection = $data;
         }
 
-        if (is_array($data)) {
-            $this->collection = (object) $data;
-        }
+        $this->collection = (object) $data;
+    }
+
+    /**
+    * Retrieves the whole colletion
+    *
+    * @return mixed
+    */
+    public function getCollection()
+    {
+        return $this->collection;
     }
 
     /**
@@ -63,16 +71,6 @@ final class Collection
     }
 
     /**
-    * Returns the whole collection
-    *
-    * @return Collection
-    */
-    public function all()
-    {
-        return new Collection($this->collection);
-    }
-
-    /**
     * .. until I come with a better name..
     *
     * @param $property
@@ -91,7 +89,7 @@ final class Collection
             return $data;
         }
 
-        return $this;
+        return new Collection([]);
     }
 
     /**
