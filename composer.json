@@ -20,8 +20,7 @@
     },
     "require-dev": {
         "ext-curl": "*",
-        "phpunit/phpunit": "~4.1",
-        "guzzlehttp/guzzle": "~6.0"
+        "phpunit/phpunit": "~4.1"
     },
     "autoload": {
         "psr-4": {
