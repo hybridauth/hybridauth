@@ -1,5 +1,5 @@
-Hybridauth 3 Todo List
-======================
+Hybridauth 3.0 Progression
+==========================
 
 #### Core Components
 
@@ -11,9 +11,9 @@ Storage                 |  [X]         |  [X]        | Only PHP Session is imple
 Logging                 |  [X]         |  [X]        | We provide a housemade logging using fles, and a wrapper for ps3 loggers for those who wish to use it.
 Http Client             |  [X]         |  [X]        | We provide a default Client using Curl, and a wrapper for Guzzle for those who wish to use it.
 User Entities           |  [X]         |  [X]        | User profile, contact and activity.
-OAuth 1 Abstract Model  |  [X]         |  [X]        | 
-OAuth 2 Abstract Model  |  [X]         |  [X]        | 
-OpenID 1 Abstract Model |  [X]         |  [X]        | 
+OAuth 1 Model           |  [X]         |  [X]        | 
+OAuth 2 Model           |  [X]         |  [X]        | 
+OpenID 1 Model          |  [X]         |  [X]        | 
 
 #### Providers
 
@@ -23,9 +23,9 @@ More information on how to implement IDPs into Hybridauth 3 can be found at http
 
 Provider      | Specs    | Implemented  | Working     | Notes
 ------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------
-Facebook      | OAuth2   |  [X]         |             | Authentication and getUserProfile are working.
-Twitter       | OAuth1   |  [X]         |             | Authentication and getUserProfile are working.
-Google        | OAuth2   |  [X]         |             | Authentication and getUserProfile are working.
+Facebook      | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
+Twitter       | OAuth1   |  [X]         |  [X]        | 
+Google        | OAuth2   |  [X]         |  [X]        | 
 GitHub        | OAuth2   |  [X]         |  [X]        | 
 Reddit        | OAuth2   |  [X]         |  [X]        | 
 BitBucket     | OAuth2   |  [X]         |  [X]        | 
@@ -36,18 +36,19 @@ Dribbble      | OAuth2   |  [X]         |             |
 Windows Live  | OAuth2   |  [X]         |             | 
 Foursquare    | OAuth2   |  [X]         |             | 
 Instagram     | OAuth2   |  [X]         |             | 
-TwitchTV      | OAuth2   |  [X]         |             | 
 LinkedIn      | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
 Yahoo         | OAuth2   |              |             | 
 Vkontakte     | OAuth2   |  [X]         |             | Russian Provider and probably won't be able to test if working.
 Mailru        | OAuth2   |  [X]         |             | Russian Provider and probably won't be able to test if working.
 Odnoklassniki | OAuth2   |  [X]         |             | Russian Provider and probably won't be able to test if working.
 OpenID        | OpenID   |  [X]         |  [X]        | Generic OpenID Adapter.
-AOL           | OpenID   |  [X]         |             | Uses OpenID.
-PaypalOpenID  | OpenID   |  [X]         |             | Uses OpenID.
-Stackoverflow | OpenID   |  [X]         |             | Uses OpenID.
-YahooOpenID   | OpenID   |  [X]         |             | Uses OpenID as name implies.
-Steam         | Hybrid   |  [X]         |             | Steam Adapter is a mix of OpenID and a Proprietary API.
+PaypalOpenID  | OpenID   |  [X]         |  [X]        | Uses OpenID.
+Stackoverflow | OpenID   |  [X]         |  [X]        | Uses OpenID.
+YahooOpenID   | OpenID   |  [X]         |  [X]        | Uses OpenID as name implies.
+AOLOpenID     | OpenID   |  [X]         |  [X]        | Uses OpenID as name implies.
+Steam         | Hybrid   |  [X]         |  [X]        | Steam Adapter is a mix of OpenID and a Proprietary API.
+Discord       | Hybrid   |  [X]         |  [X]        |
+TwitchTV      | OAuth2   |  [X]         |             | 
 
 -----------------------
 
