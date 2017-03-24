@@ -13,10 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Reddit
- *
- * http://www.reddit.com/dev/api/oauth
- * https://github.com/reddit/reddit/wiki/OAuth2
+ * Reddit provider adapter.
  */
 class Reddit extends OAuth2
 {
@@ -72,11 +69,9 @@ class Reddit extends OAuth2
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        $addtionals = [
-            'duration' => 'temporary'
-        ];
-
-        $parameters = array_replace($parameters, (array) $addtionals);
+        $parameters = ['duration' => 'temporary']
+                     + (array) $this->config->get("authorize_url_parameters")
+                     + $parameters;
 
         return parent::getAuthorizeUrl($parameters);
     }
