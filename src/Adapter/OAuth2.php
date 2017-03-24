@@ -250,10 +250,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         try {
             if (! isset($_GET['code'])) {
                 $this->authenticateBegin();
-            } else {
+            }
+            else {
                 $this->authenticateFinish();
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->clearTokens();
 
             throw $e;
@@ -296,7 +298,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             &&  $this->token('authorization_state') != $collection->get('state')
         ) {
             throw new InvalidAuthorizationStateException(
-                'The authorization state is either invalid or has been used.'
+                'The authorization state [state=' . substr(htmlentities($collection->get('state')), 0, 100). '] ' 
+                    . 'of this page is either invalid or has already been consumed.'
             );
         }
 
@@ -488,8 +491,26 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @return string Raw Provider API response
     */
-    public function refreshAccessToken()
+    public function refreshAccessToken($forceRefresh = false)
     {
+        $proceed = $forceRefresh;
+
+        // have an access token?
+        if ($this->token('access_token')) {
+
+            // have to refresh?
+            if ($this->token('refresh_token') && $this->token('access_token_expires_at')) {
+                
+                // expired?
+                if ($this->token('access_token_expires_at') <= time()) {
+                    $proceed = true;
+                }
+            }
+        }
+
+        if(! $proceed )
+            return;
+
         $defaults = [
             'grant_type'    => 'refresh_token',
             'refresh_token' => $this->token('refresh_token'),
