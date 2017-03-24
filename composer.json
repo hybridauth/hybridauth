@@ -1,6 +1,6 @@
 {
     "name": "hybridauth/hybridauth",
-    "description": "Open source social sign on PHP library.",
+    "description": "PHP Social Authentication Library",
     "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter"],
     "homepage": "https://hybridauth.github.io",
     "type": "library",
@@ -16,11 +16,12 @@
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
-        "php": ">=5.4.0",
-        "ext-curl": "*"
+        "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.1"
+        "ext-curl": "*",
+        "phpunit/phpunit": "~4.1",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "autoload": {
         "psr-4": {
