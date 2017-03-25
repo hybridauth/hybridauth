@@ -1,4 +1,4 @@
-# HybridAuth 2.9.0
+# HybridAuth 2.9.1
 
 **NOTE:** HybridAuth is in maintainance mode. Although pull requests from the community are still accepted, you should find alternatives if you are starting a new project. HA is getting outdated by the day and there are no official plans to work on HybridAuth.
 
