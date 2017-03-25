@@ -290,8 +290,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	 * @param array  $params Parameters to add
 	 * @return string
 	 */
-	function addUrlParam($url, array $params) 
-		
+	function addUrlParam($url, array $params){		
 		$query = parse_url($url, PHP_URL_QUERY);
 
 		// Returns the URL string with new parameters
