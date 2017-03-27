@@ -123,6 +123,81 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     function logout() {
         parent::logout();
     }
+    
+    /**
+    * Update user status
+    *
+    * @param mixed  $status An array describing the status, or string
+    * @param string $pageid (optional) User page id
+    * @return array
+    * @throw Exception
+    */
+    function setUserStatus($status, $pageid = null) {
+
+      if (!is_array($status)) {
+          $status = array('message' => $status);
+      }
+
+      $access_token = null;
+
+      if (is_null($pageid)) {
+          $pageid = 'me';
+          $access_token = $this->token('access_token');
+
+          // if post on page, get access_token page
+      } else {
+          
+          foreach ($this->getUserPages(true) as $p) {
+              if (isset($p['id']) && intval($p['id']) == intval($pageid)) {
+                  $access_token = $p['access_token'];
+                  break;
+              }
+          }
+
+          if (is_null($access_token)) {
+              throw new Exception("Update user page failed, page not found or not writable!");
+          }
+      }
+
+      try {
+          $response = $this->api->post('/' . $pageid . '/feed', $status, $access_token);
+      } catch (FacebookSDKException $e) {
+          throw new Exception("Update user status failed! {$this->providerId} returned an error {$e->getMessage()}", 0, $e);
+      }
+
+      return $response;
+    }
+
+    /**
+    * {@inheridoc}
+    */
+   function getUserPages($writableonly = false) {
+       if (( isset($this->config['scope']) && strpos($this->config['scope'], 'manage_pages') === false ) || (!isset($this->config['scope']) && strpos($this->scope, 'manage_pages') === false ))
+           throw new Exception("User status requires manage_page permission!");
+
+       try {
+           $pages = $this->api->get("/me/accounts", $this->token('access_token'));
+       } catch (FacebookApiException $e) {
+           throw new Exception("Cannot retrieve user pages! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
+       }
+
+       if (!isset($pages['data'])) {
+           return array();
+       }
+
+       if (!$writableonly) {
+           return $pages['data'];
+       }
+
+       $wrpages = array();
+       foreach ($pages['data'] as $p) {
+           if (isset($p['perms']) && in_array('CREATE_CONTENT', $p['perms'])) {
+               $wrpages[] = $p;
+           }
+       }
+
+       return $wrpages;
+    }
 
     /**
      * {@inheritdoc}
