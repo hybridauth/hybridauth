@@ -361,8 +361,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'redirect_uri'  => $this->endpoint,
             'scope'         => $this->scope,
         ];
-
-        $parameters = array_merge($defaults, (array) $parameters);
+ 
+        $parameters = $defaults
+                     + (array) $this->config->get("authorize_url_parameters")
+                     + $parameters;
 
         if ($this->supportRequestState) {
             $state = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');

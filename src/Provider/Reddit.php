@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Reddit provider adapter.
+ * Reddit OAuth2 provider adapter.
  */
 class Reddit extends OAuth2
 {
@@ -66,12 +66,12 @@ class Reddit extends OAuth2
 
     /**
     * {@inheritdoc}
+    *
+    * Add duration=temporary as default extra parameter when generating authorize url. 
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        $parameters = ['duration' => 'temporary']
-                     + (array) $this->config->get("authorize_url_parameters")
-                     + $parameters;
+        $parameters = ['duration' => 'temporary'];
 
         return parent::getAuthorizeUrl($parameters);
     }

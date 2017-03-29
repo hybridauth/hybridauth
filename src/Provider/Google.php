@@ -21,7 +21,7 @@ use Hybridauth\User;
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
  *       'scope'    => 'profile https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds/',
- *       'authorize_url_parameters' => ['approval_prompt' => 'force']
+ *       'authorize_url_parameters' => [ 'approval_prompt' => 'force' ]
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Google( $config );
@@ -67,13 +67,13 @@ class Google extends OAuth2
     /**
     * {@inheritdoc}
     *
-    * Extra parameters for authorize url can be set in config:
+    * Add access_type=offline as default extra parameter when generating authorize url. 
     *
-    * Example:
+    * Any other parameter can be now set through adapter config. Example:
     *
     *   $config = [
     *       'callback' => '...',
-    *       'keys'     => [ 'id' => '', 'secret' => '' ],
+    *       'keys'     => [ 'id' => '...', 'secret' => '..' ],
     *       'authorize_url_parameters' => [
     *              'approval_prompt' => 'force',
     *              'hd'              => ..
@@ -84,9 +84,7 @@ class Google extends OAuth2
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        $parameters = ['access_type' => 'offline']
-                     + (array) $this->config->get("authorize_url_parameters")
-                     + $parameters;
+        $parameters = ['access_type' => 'offline'];
 
         return parent::getAuthorizeUrl($parameters);
     }
