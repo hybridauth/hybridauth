@@ -13,22 +13,40 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Hybrid_Providers_Facebook provider adapter based on OAuth2 protocol
+ * Facebook OAuth2 provider adapter.
  *
- * ! This is an attempt to replace FACEBOOK SDK.
- * ! Methods tested so far: getUserProfile, getUserContacts, getUserActivity
+ * Example:
+ *
+ *   $config = [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys'     => [ 'id' => '', 'secret' => '' ],
+ *       'scope'    => 'email, user_status, user_posts'
+ *   ];
+ *
+ *   $adapter = new Hybridauth\Provider\Facebook( $config );
+ *
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken(); 
+ *       $response = $adapter->setUserStatus("Hybridauth test message..");
+ *   }
+ *   catch( Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class Facebook extends OAuth2
 {
     /**
     * {@inheritdoc}
     */
-    protected $scope = 'email, public_profile, user_friends';
+    protected $scope = 'email, user_hometown, publish_actions, user_status, user_about_me, user_birthday, user_posts, user_website, user_friends';
 
     /**
     * {@inheritdoc}
     */
-    protected $apiBaseUrl = 'https://graph.facebook.com/v2.2/';
+    protected $apiBaseUrl = 'https://graph.facebook.com/v2.8/';
 
     /**
     * {@inheritdoc}
@@ -43,7 +61,12 @@ class Facebook extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public function getUserProfile($callback = null)
+    protected $apiDocumentation = 'https://developers.facebook.com/docs/facebook-login/overview';
+
+    /**
+    * {@inheritdoc}
+    */
+    public function getUserProfile()
     {
         $response = $this->apiRequest('me?fields=id,name,first_name,last_name,link,website,gender,locale,about,email,hometown,verified,birthday');
 
@@ -68,7 +91,9 @@ class Facebook extends OAuth2
 
         $userProfile->region = $data->filter('hometown')->get('name');
 
-        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . '/picture?width=150&height=150';
+        $photoSize = $this->config->get('photo_size') ?: '150';
+
+        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . '/picture?width=' . $photoSize . '&height=' . $photoSize;
 
         $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
 
@@ -117,13 +142,12 @@ class Facebook extends OAuth2
     *
     * https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
     */
-    public function getUserContacts()
+    public function getUserContacts($parameters = [])
     {
-        // $apiUrl = 'me/friends?fields=link,name';
+        // $apiUrl = ;
         $contacts = [];
 
-        // @fixme: delete this line. I'm using graph api v1 just for tests.
-        $apiUrl = 'https://graph.facebook.com/me/friends?fields=link,name';
+        $apiUrl = 'me/friends?fields=link,name';
 
         do {
             $response = $this->apiRequest($apiUrl);
@@ -140,7 +164,7 @@ class Facebook extends OAuth2
                 continue;
             }
 
-            foreach ($data->filter('data')->all() as $item) {
+            foreach ((array) $data->filter('data')->getCollection() as $item) {
                 $contacts[] = $this->fetchUserContacts($item);
             }
 
@@ -148,7 +172,8 @@ class Facebook extends OAuth2
                 $apiUrl = $data->filter('paging')->get('next');
 
                 $pagedList = true;
-            } else {
+            }
+            else {
                 $pagedList = false;
             }
         } while ($pagedList);
@@ -162,6 +187,8 @@ class Facebook extends OAuth2
     protected function fetchUserContacts($item)
     {
         $userContact = new User\Contact();
+
+        $item = new Data\Collection($item);
 
         $userContact->identifier  = $item->get('id');
         $userContact->displayName = $item->get('name');
@@ -189,10 +216,8 @@ class Facebook extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public function getUserActivity($stream)
+    public function getUserActivity($stream = 'me')
     {
-        $activities = [];
-
         $apiUrl = $stream == 'me' ? '/me/feed' : '/me/home';
 
         $response = $this->apiRequest($apiUrl);
@@ -203,11 +228,9 @@ class Facebook extends OAuth2
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
-        if ($data->filter('data')->isEmpty()) {
-            return $activities;
-        }
+        $activities = [];
 
-        foreach ($data->filter('data')->all() as $item) {
+        foreach ((array) $data->filter('data')->getCollection() as $item){
             $activities[] = $this->fetchUserActivity($item);
         }
 
@@ -220,6 +243,8 @@ class Facebook extends OAuth2
     protected function fetchUserActivity($item)
     {
         $userActivity = new User\Activity();
+
+        $item = new Data\Collection($item);
 
         $userActivity->id   = $item->get('id');
         $userActivity->date = $item->get('created_time');
@@ -236,9 +261,9 @@ class Facebook extends OAuth2
             $userActivity->text = $item->get('message');
         }
 
-        if (! empty($userActivity->text)) {
+        if (! empty($userActivity->text) and $item->exists('from')) {
             $userActivity->user->identifier  = $item->filter('from')->get('id');
-            $userActivity->user->displayName = $item->get('name');
+            $userActivity->user->displayName = $item->filter('from')->get('name');
 
             $userActivity->user->profileURL  = 'https://www.facebook.com/profile.php?id=' . $userActivity->user->identifier;
 
