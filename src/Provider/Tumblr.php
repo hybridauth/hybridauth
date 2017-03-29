@@ -12,6 +12,9 @@ use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
+/**
+ * Tumblr OAuth1 provider adapter.
+ */ 
 class Tumblr extends OAuth1
 {
     /**
@@ -37,6 +40,11 @@ class Tumblr extends OAuth1
     /**
     * {@inheritdoc}
     */
+    protected $apiDocumentation = 'https://www.tumblr.com/docs/en/api/v2';
+
+    /**
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user/info');
@@ -51,7 +59,9 @@ class Tumblr extends OAuth1
 
         $userProfile->displayName = $data->filter('response')->filter('user')->get('name');
 
-        foreach ($data->filter('response')->filter('user')->filter('blogs')->all() as $blog) {
+        foreach ((array) $data->filter('response')->filter('user')->filter('blogs')->getCollection() as $blog) {
+            $blog = new Data\Collection($blog);
+
             if ($blog->get('primary') && $blog->exists('url')) {
                 $userProfile->identifier  = $blog->get('url');
                 $userProfile->profileURL  = $blog->get('url');
@@ -61,6 +71,7 @@ class Tumblr extends OAuth1
                 $bloghostname = explode('://', $blog->get('url'));
                 $bloghostname = substr($bloghostname[1], 0, -1);
 
+                // store user's primary blog which will be used as target by setUserStatus
                 $this->token('primary_blog', $bloghostname);
 
                 break;
