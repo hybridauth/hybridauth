@@ -15,7 +15,7 @@ OAuth 1 Model           |  [X]         |  [X]        |
 OAuth 2 Model           |  [X]         |  [X]        | 
 OpenID 1 Model          |  [X]         |  [X]        | 
 
-#### Providers
+#### Porting Providers from Hybridauth 2.9 to 3.0
 
 Priority is given to major social networks and OpenId providers (because those are easy to implement). 
 
@@ -23,32 +23,32 @@ More information on how to implement IDPs into Hybridauth 3 can be found at http
 
 Provider      | Specs    | Implemented  | Working     | Notes
 ------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------
-Facebook      | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
+Facebook      | OAuth2   |  [X]         |  [X]        | 
 Twitter       | OAuth1   |  [X]         |  [X]        | 
 Google        | OAuth2   |  [X]         |  [X]        | 
 GitHub        | OAuth2   |  [X]         |  [X]        | 
 Reddit        | OAuth2   |  [X]         |  [X]        | 
 BitBucket     | OAuth2   |  [X]         |  [X]        | 
-WordPress     | OAuth2   |  [X]         |             | 
-Tumblr        | OAuth1   |  [X]         |             | 
-Disqus        | OAuth2   |  [X]         |             | 
+WordPress     | OAuth2   |  [X]         |  [X]        | 
+Tumblr        | OAuth1   |  [X]         |  [X]        | 
+Disqus        | OAuth2   |  [X]         |  [X]        | 
 Dribbble      | OAuth2   |  [X]         |             | 
 Windows Live  | OAuth2   |  [X]         |             | 
 Foursquare    | OAuth2   |  [X]         |             | 
 Instagram     | OAuth2   |  [X]         |             | 
 LinkedIn      | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
 Yahoo         | OAuth2   |              |             | 
-Vkontakte     | OAuth2   |  [X]         |             | Russian Provider and probably won't be able to test if working.
-Mailru        | OAuth2   |  [X]         |             | Russian Provider and probably won't be able to test if working.
-Odnoklassniki | OAuth2   |  [X]         |             | Russian Provider and probably won't be able to test if working.
+Vkontakte     | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
+Mailru        | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
+Odnoklassniki | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
 OpenID        | OpenID   |  [X]         |  [X]        | Generic OpenID Adapter.
 PaypalOpenID  | OpenID   |  [X]         |  [X]        | Uses OpenID.
 Stackoverflow | OpenID   |  [X]         |  [X]        | Uses OpenID.
 YahooOpenID   | OpenID   |  [X]         |  [X]        | Uses OpenID as name implies.
 AOLOpenID     | OpenID   |  [X]         |  [X]        | Uses OpenID as name implies.
 Steam         | Hybrid   |  [X]         |  [X]        | Steam Adapter is a mix of OpenID and a Proprietary API.
-Discord       | Hybrid   |  [X]         |  [X]        |
-TwitchTV      | OAuth2   |  [X]         |             | 
+Discord       | OAuth2   |  [X]         |  [X]        |
+TwitchTV      | OAuth2   |  [X]         |  [X]        |
 
 -----------------------
 
