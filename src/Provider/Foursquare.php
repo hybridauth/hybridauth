@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Foursquare OAuth2 provider adapter.
  */
 class Foursquare extends OAuth2
 {
@@ -71,15 +71,15 @@ class Foursquare extends OAuth2
         $userProfile->lastName      = $data->get('lastName');
         $userProfile->gender        = $data->get('gender');
         $userProfile->city          = $data->get('homeCity');
-
         $userProfile->email         = $data->filter('contact')->get('email');
         $userProfile->emailVerified = $userProfile->email;
-
         $userProfile->profileURL    = 'https://www.foursquare.com/user/' . $userProfile->identifier;
         $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         if ($data->exists('photo')) {
-            $userProfile->photoURL = $data->filter('photo')->get('prefix') . '150x150' . $data->filter('photo')->get('suffix');
+            $photoSize = $this->config->get('photo_size') ?: '150x150';
+
+            $userProfile->photoURL = $data->filter('photo')->get('prefix') . $photoSize . $data->filter('photo')->get('suffix');
         }
 
         return $userProfile;

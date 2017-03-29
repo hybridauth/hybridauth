@@ -13,8 +13,7 @@ use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\User;
 
 /**
- * Hybrid_Providers_Odnoklassniki provider adapter based on OAuth2 protocol
- *
+ * Odnoklassniki OAuth2 provider adapter.
  */
 class Odnoklassniki extends OAuth2
 {

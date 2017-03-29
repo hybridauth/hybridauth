@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * WordPress OAuth2 provider adapter.
  */
 class WordPress extends OAuth2
 {
@@ -31,6 +31,11 @@ class WordPress extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://public-api.wordpress.com/oauth2/token';
+
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiDocumentation = 'https://developer.wordpress.com/docs/api/';
 
     /**
     * {@inheritdoc}

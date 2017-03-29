@@ -9,6 +9,9 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
 
+/**
+ * Stackoverflow OpenID provider adapter.
+ */
 class Stackoverflow extends OpenID
 {
     /**

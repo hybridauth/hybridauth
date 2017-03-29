@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * LinkedIn OAuth2 provider adapter.
  */
 class LinkedIn extends OAuth2
 {

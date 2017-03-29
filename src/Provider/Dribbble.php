@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Dribbble OAuth2 provider adapter.
  */
 class Dribbble extends OAuth2
 {

@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Disqus OAuth2 provider adapter.
  */
 class Disqus extends OAuth2
 {
@@ -36,6 +36,11 @@ class Disqus extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://disqus.com/api/oauth/2.0/access_token/';
+
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiDocumentation = 'https://disqus.com/api/docs/auth/';
 
     /**
     * {@inheritdoc}

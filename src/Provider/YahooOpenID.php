@@ -9,6 +9,9 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
 
+/**
+ * Yahoo OpenID provider adapter.
+ */
 class YahooOpenID extends OpenID
 {
     /**

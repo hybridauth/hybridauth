@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
-* Twitter provider adapter.
+ * Twitter provider adapter.
  *
  * Example:
  *
@@ -202,7 +202,7 @@ class Twitter extends OAuth1
     /**
     * {@inheritdoc}
     */
-    public function getUserActivity($stream = 'home')
+    public function getUserActivity($stream = 'me')
     {
         $apiUrl = ($stream == 'me')
                     ? 'statuses/user_timeline.json'

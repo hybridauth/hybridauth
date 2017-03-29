@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * By Sebastian Lasse - https://github.com/sebilasse
+ * Instagram OAuth2 provider adapter.
  */
 class Instagram extends OAuth2
 {

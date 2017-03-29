@@ -13,8 +13,9 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Yahoo OAuth2 provider adapter.
  */
-class Yahoo extends OAuth1
+class Yahoo extends OAuth2
 {
+	// unimplemented..
 }

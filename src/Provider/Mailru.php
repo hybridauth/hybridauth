@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Mailru OAuth2 provider adapter.
  */
 class Mailru extends OAuth2
 {

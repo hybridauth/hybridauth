@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Vkontakte OAuth2 provider adapter.
  */
 class Vkontakte extends OAuth2
 {

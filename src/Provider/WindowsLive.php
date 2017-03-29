@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- *
+ * Windows Live OAuth2 provider adapter.
  */
 class WindowsLive extends OAuth2
 {
