@@ -9,8 +9,18 @@ namespace Hybridauth\HttpClient;
 
 use Hybridauth\Data;
 
+/**
+ * HttpClient\Util home to a number of utility functions.
+ */ 
 class Util
 {
+    /**
+    * Redirect handler.
+    *
+    * @var callable|null
+    */
+    protected static $redirectHandler;
+
     /**
     * Exit handler.
     *
@@ -18,20 +28,39 @@ class Util
     */
     protected static $exitHandler;
 
-    /**
+   /**
     * Redirect to a given URL.
+    *
+    * In case your application need to perform certain required actions before Hybridauth redirect users
+    * to IDPs websites, the default behaviour can be alterted in one of two ways:
+    *   If callable $redirectHandler is defined, it will be called instead.
+    *   If callable $exitHandler is defined, it will be called instead of exit().
     *
     * @param string $url
     */
     public static function redirect($url)
     {
+        if (static::$redirectHandler) {
+            return call_user_func(static::$redirectHandler, $url);
+        }
+
         header("Location: $url");
 
         if (static::$exitHandler) {
-            call_user_func(static::$exitHandler);
-        } else {
-            exit(1);
+            return call_user_func(static::$exitHandler);
         }
+
+        exit(1);
+    }
+
+    /**
+    * Redirect handler to which the regular redirect() will yield the action of redirecting users.
+    *
+    * @param callable $callback
+    */
+    public static function setRedirectHandler($callback)
+    {
+        self::$redirectHandler = $callback;
     }
 
     /**
@@ -39,7 +68,7 @@ class Util
     *
     * @param callable $callback
     */
-    public static function setExitHandler(callable $callback)
+    public static function setExitHandler($callback)
     {
         self::$exitHandler = $callback;
     }
