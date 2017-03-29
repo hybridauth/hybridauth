@@ -69,7 +69,12 @@ class GitHub extends OAuth2
         $userProfile->displayName = $userProfile->displayName ?: $data->get('login');
 
         if (empty($userProfile->email) && strpos($this->scope, 'user:email') !== false) {
-            $userProfile = $this->requestUserEmail($userProfile);
+            try {
+                $userProfile = $this->requestUserEmail($userProfile);
+            }
+            // user email is not mandatory so keep it quite
+            catch (\Exception $e) {
+            }
         }
 
         return $userProfile;
@@ -81,23 +86,18 @@ class GitHub extends OAuth2
     */
     protected function requestUserEmail($userProfile)
     {
-        try {
-            $response = $this->apiRequest('user/emails');
+        $response = $this->apiRequest('user/emails');
 
-            foreach ($response as $idx => $item) {
-                if (! empty($item->primary) && $item->primary == 1) {
-                    $userProfile->email = $item->email;
+        foreach ($response as $idx => $item) {
+            if (! empty($item->primary) && $item->primary == 1) {
+                $userProfile->email = $item->email;
 
-                    if (! empty($item->verified) && $item->verified == 1) {
-                        $userProfile->emailVerified = $userProfile->email;
-                    }
-
-                    break;
+                if (! empty($item->verified) && $item->verified == 1) {
+                    $userProfile->emailVerified = $userProfile->email;
                 }
+
+                break;
             }
-        }
-        // user email is not mandatory so keep it quite
-        catch (\Exception $e) {
         }
 
         return $userProfile;
