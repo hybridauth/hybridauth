@@ -40,19 +40,24 @@ class Instagram extends OAuth2
     /**
     * {@inheritdoc}
     */
+    protected $apiDocumentation = 'https://www.instagram.com/developer/authentication/';
+
+    /**
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users/self/');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (! $data->exists('data')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $data = $data->filter('id');
+        $data = $data->filter('data');
 
         $userProfile->identifier  = $data->get('id');
         $userProfile->description = $data->get('bio');
