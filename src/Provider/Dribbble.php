@@ -35,6 +35,11 @@ class Dribbble extends OAuth2
     /**
     * {@inheritdoc}
     */
+    protected $apiDocumentation = 'http://developer.dribbble.com/v1/oauth/';
+
+    /**
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
