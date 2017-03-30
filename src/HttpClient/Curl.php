@@ -30,6 +30,7 @@ class Curl implements HttpClientInterface
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_MAXREDIRS      => 5,
         CURLINFO_HEADER_OUT    => true,
+        CURLOPT_ENCODING       => 'identity',
         CURLOPT_USERAGENT      => 'HybridAuth, PHP Social Authentication Library (https://github.com/hybridauth/hybridauth)',
     ];
 
@@ -48,11 +49,11 @@ class Curl implements HttpClientInterface
     * @var array
     */
     protected $requestHeader = [
-        'Accept'        => '*/*',
-        'Cache-Control' => 'max-age=0',
-        'Connection'    => 'keep-alive',
-        'Expect'        => '',
-        'Pragma'        => '',
+        'Accept'          => '*/*',
+        'Cache-Control'   => 'max-age=0',
+        'Connection'      => 'keep-alive',
+        'Expect'          => '',
+        'Pragma'          => '',
     ];
 
     /**
@@ -115,7 +116,7 @@ class Curl implements HttpClientInterface
 
         if ('POST' == $method) {
             $this->curlOptions[CURLOPT_POST]       = true;
-            $this->curlOptions[CURLOPT_POSTFIELDS] = $parameters;
+            $this->curlOptions[CURLOPT_POSTFIELDS] = http_build_query($parameters);
         }
 
         $this->requestHeader = array_merge($this->requestHeader, $headers);
