@@ -34,13 +34,13 @@ final class Collection
     }
 
     /**
-    * Retrieves the whole colletion
+    * Retrieves the whole colletion as array
     *
     * @return mixed
     */
-    public function getCollection()
+    public function toArray()
     {
-        return $this->collection;
+        return (array) $this->collection;
     }
 
     /**

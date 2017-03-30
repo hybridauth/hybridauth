@@ -59,7 +59,7 @@ class Tumblr extends OAuth1
 
         $userProfile->displayName = $data->filter('response')->filter('user')->get('name');
 
-        foreach ((array) $data->filter('response')->filter('user')->filter('blogs')->getCollection() as $blog) {
+        foreach ($data->filter('response')->filter('user')->filter('blogs')->toArray() as $blog) {
             $blog = new Data\Collection($blog);
 
             if ($blog->get('primary') && $blog->exists('url')) {

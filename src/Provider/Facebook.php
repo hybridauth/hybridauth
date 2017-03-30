@@ -144,7 +144,6 @@ class Facebook extends OAuth2
     */
     public function getUserContacts($parameters = [])
     {
-        // $apiUrl = ;
         $contacts = [];
 
         $apiUrl = 'me/friends?fields=link,name';
@@ -164,8 +163,8 @@ class Facebook extends OAuth2
                 continue;
             }
 
-            foreach ((array) $data->filter('data')->getCollection() as $item) {
-                $contacts[] = $this->fetchUserContacts($item);
+            foreach ($data->filter('data')->toArray() as $item) {
+                $contacts[] = $this->fetchUserContact($item);
             }
 
             if ($data->filter('paging')->exists('next')) {
@@ -184,7 +183,7 @@ class Facebook extends OAuth2
     /**
     *
     */
-    protected function fetchUserContacts($item)
+    protected function fetchUserContact($item)
     {
         $userContact = new User\Contact();
 
@@ -230,7 +229,7 @@ class Facebook extends OAuth2
 
         $activities = [];
 
-        foreach ((array) $data->filter('data')->getCollection() as $item){
+        foreach ($data->filter('data')->toArray() as $item){
             $activities[] = $this->fetchUserActivity($item);
         }
 
