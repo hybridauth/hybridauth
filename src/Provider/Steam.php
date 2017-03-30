@@ -9,6 +9,7 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
 use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
@@ -21,16 +22,11 @@ use Hybridauth\User;
  *       'keys'     => [ 'secret' => 'steam-api-key' ]
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Google( $config );
+ *   $adapter = new Hybridauth\Provider\Steam( $config );
  *
- *   try {
- *       $adapter->authenticate();
- *
- *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch( Exception $e ){
- *       echo $e->getMessage() ;
- *   }
+ *   $adapter->authenticate();
+
+ *   $userProfile = $adapter->getUserProfile();
  */
 class Steam extends OpenID
 {
@@ -54,21 +50,27 @@ class Steam extends OpenID
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
-        $result = array();
+        try {
+            $result = [];
 
-        // if api key is provided, we attempt to use steam web api
+            $apiKey = $this->config->filter('keys')->get('secret');
 
-        if ($this->config->filter('keys')->get('secret')) {
-            $result = $this->getUserProfileWebAPI($this->config->filter('keys')->get('secret'), $userProfile->identifier);
+            // if api key is provided, we attempt to use steam web api
+            if ($apiKey) {
+                $result = $this->getUserProfileWebAPI($apiKey, $userProfile->identifier);
+            }
+            // otherwise we fallback to community data
+            else {
+                $result = $this->getUserProfileLegacyAPI($userProfile->identifier);
+            }
+
+            // fetch user profile
+            foreach ($result as $k => $v) {
+                $userProfile->$k = $v ?: $userProfile->$k;
+            }
         }
-        // otherwise we fallback to community data
-        else {
-            $result = $this->getUserProfileLegacyAPI($userProfile->identifier);
-        }
-
-        // fetch user profile
-        foreach ($result as $k => $v) {
-            $userProfile->$k = $v ?: $userProfile->$k;
+        // these data are not mandatory, so keep it quite
+        catch (\Exception $e) {
         }
 
         // store user profile
@@ -76,7 +78,7 @@ class Steam extends OpenID
     }
 
     /**
-    *
+    * Fetch user profile on Steam web API
     */
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
@@ -87,20 +89,22 @@ class Steam extends OpenID
         $data = json_decode($response);
 
         $data = isset($data->response->players[0]) ? $data->response->players[0] : null;
+        
+        $data = new Data\Collection($data);
 
         $userProfile = [];
 
-        $userProfile['displayName'] = property_exists($data, 'personaname')    ? $data->personaname    : '';
-        $userProfile['firstName'  ] = property_exists($data, 'realname')       ? $data->realname       : '';
-        $userProfile['photoURL'   ] = property_exists($data, 'avatarfull')     ? $data->avatarfull     : '';
-        $userProfile['profileURL' ] = property_exists($data, 'profileurl')     ? $data->profileurl     : '';
-        $userProfile['country'    ] = property_exists($data, 'loccountrycode') ? $data->loccountrycode : '';
+        $userProfile['displayName'] = (string) $data->get('personaname');
+        $userProfile['firstName'  ] = (string) $data->get('realname');
+        $userProfile['photoURL'   ] = (string) $data->get('avatarfull');
+        $userProfile['profileURL' ] = (string) $data->get('profileurl');
+        $userProfile['country'    ] = (string) $data->get('loccountrycode');
 
         return $userProfile;
     }
 
     /**
-    *
+    * Fetch user profile on community API
     */
     public function getUserProfileLegacyAPI($steam64)
     {
@@ -110,23 +114,21 @@ class Steam extends OpenID
 
         $response = $this->httpClient->request($apiUrl);
 
+
+        $data = new \SimpleXMLElement($response);
+
+        $data = new Data\Collection($data);
+
         $userProfile = [];
 
-        try {
-            $data = new \SimpleXMLElement($response);
-
-            $userProfile['displayName' ] = property_exists($data, 'steamID')    ? (string) $data->steamID     : '';
-            $userProfile['firstName'   ] = property_exists($data, 'realname')   ? (string) $data->realname    : '';
-            $userProfile['photoURL'    ] = property_exists($data, 'avatarFull') ? (string) $data->avatarFull  : '';
-            $userProfile['description' ] = property_exists($data, 'summary')    ? (string) $data->summary     : '';
-            $userProfile['region'      ] = property_exists($data, 'location')   ? (string) $data->location    : '';
-            $userProfile['profileURL'  ] = property_exists($data, 'customURL')
-                                                ? "http://steamcommunity.com/id/{$data->customURL}/"
-                                                : "http://steamcommunity.com/profiles/{$steam64}/";
-        }
-        // these data are not mandatory, so keep it quite
-        catch (\Exception $e) {
-        }
+        $userProfile['displayName' ] = (string) $data->get('steamID');
+        $userProfile['firstName'   ] = (string) $data->get('realname');
+        $userProfile['photoURL'    ] = (string) $data->get('avatarFull');
+        $userProfile['description' ] = (string) $data->get('summary');
+        $userProfile['region'      ] = (string) $data->get('location');
+        $userProfile['profileURL'  ] = (string) $data->get('customURL')
+                                            ? 'http://steamcommunity.com/id/' . (string) $data->get('customURL') . '/'
+                                            : 'http://steamcommunity.com/profiles/' . $steam64 . '/';
 
         return $userProfile;
     }
