@@ -21,34 +21,35 @@ Priority is given to major social networks and OpenId providers (because those a
 
 More information on how to implement IDPs into Hybridauth 3 can be found at https://hybridauth.github.io/developer-ref-extend-hybridauth.html
 
-Provider      | Specs    | Implemented  | Working     | Notes
-------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------
-Facebook      | OAuth2   |  [X]         |  [X]        | 
-Twitter       | OAuth1   |  [X]         |  [X]        | 
-Google        | OAuth2   |  [X]         |  [X]        | 
-GitHub        | OAuth2   |  [X]         |  [X]        | 
-Reddit        | OAuth2   |  [X]         |  [X]        | 
-BitBucket     | OAuth2   |  [X]         |  [X]        | 
-WordPress     | OAuth2   |  [X]         |  [X]        | 
-Tumblr        | OAuth1   |  [X]         |  [X]        | 
-Disqus        | OAuth2   |  [X]         |  [X]        | 
-Dribbble      | OAuth2   |  [X]         |             | 
-Windows Live  | OAuth2   |  [X]         |             | 
-Foursquare    | OAuth2   |  [X]         |             | 
-Instagram     | OAuth2   |  [X]         |             | 
-LinkedIn      | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
-Yahoo         | OAuth2   |              |             | 
-Vkontakte     | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
-Mailru        | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
-Odnoklassniki | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
-OpenID        | OpenID   |  [X]         |  [X]        | Generic OpenID Adapter.
-PaypalOpenID  | OpenID   |  [X]         |  [X]        | Uses OpenID.
-Stackoverflow | OpenID   |  [X]         |  [X]        | Uses OpenID.
-YahooOpenID   | OpenID   |  [X]         |  [X]        | Uses OpenID as name implies.
-AOLOpenID     | OpenID   |  [X]         |  [X]        | Uses OpenID as name implies.
-Steam         | Hybrid   |  [X]         |  [X]        | Steam Adapter is a mix of OpenID and a Proprietary API.
-Discord       | OAuth2   |  [X]         |  [X]        |
-TwitchTV      | OAuth2   |  [X]         |  [X]        |
+Provider            | Specs    | Implemented  | Working     | Notes
+------------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------
+Facebook            | OAuth2   |  [X]         |  [X]        | 
+Twitter             | OAuth1   |  [X]         |  [X]        | 
+Google              | OAuth2   |  [X]         |  [X]        | 
+GitHub              | OAuth2   |  [X]         |  [X]        | 
+Reddit              | OAuth2   |  [X]         |  [X]        | 
+BitBucket           | OAuth2   |  [X]         |  [X]        | 
+WordPress           | OAuth2   |  [X]         |  [X]        | 
+Tumblr              | OAuth1   |  [X]         |  [X]        | 
+Disqus              | OAuth2   |  [X]         |  [X]        | 
+Dribbble            | OAuth2   |  [X]         |  [X]        | 
+Windows Live        | OAuth2   |  [X]         |             | 
+Foursquare          | OAuth2   |  [X]         |  [X]        | 
+Instagram           | OAuth2   |  [X]         |  [X]        | 
+LinkedIn            | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
+Yahoo               | OAuth2   |  [X]         |  [X]        | Only authentication and getUserProfile are implemented.
+Vkontakte           | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
+Mailru              | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
+Odnoklassniki       | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
+StackExchange       | OAuth2   |  [X]         |  [X]        | 
+OpenID              | OpenID   |  [X]         |  [X]        | Generic OpenID Adapter.
+PaypalOpenID        | OpenID   |  [X]         |  [X]        | 
+StackExchangeOpenID | OpenID   |  [X]         |  [X]        | 
+YahooOpenID         | OpenID   |  [X]         |  [X]        | 
+AOLOpenID           | OpenID   |  [X]         |  [X]        | 
+Steam               | Hybrid   |  [X]         |  [X]        | Steam Adapter is a mix of OpenID and a Proprietary API.
+Discord             | OAuth2   |  [X]         |  [X]        | 
+TwitchTV            | OAuth2   |  [X]         |  [X]        | 
 
 -----------------------
 
