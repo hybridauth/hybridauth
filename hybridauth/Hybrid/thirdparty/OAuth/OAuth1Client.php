@@ -2,7 +2,7 @@
 /**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html 
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 // A service client for the OAuth 1/1.0a flow.
@@ -13,7 +13,7 @@ class OAuth1Client{
 	public $authenticate_url      = "";
 	public $request_token_url     = "";
 	public $access_token_url      = "";
-	
+
 	public $request_token_method  = "GET";
 	public $access_token_method   = "GET";
 
@@ -31,10 +31,11 @@ class OAuth1Client{
 
 	public $http_code             = "";
 	public $http_info             = "";
+	protected $response           = null;
 
-	/** 
+	/**
 	* OAuth client constructor
-	*/ 
+	*/
 	function __construct( $consumer_key, $consumer_secret, $oauth_token = null, $oauth_token_secret = null )
 	{
 		$this->sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
@@ -43,14 +44,14 @@ class OAuth1Client{
 
 		if ( $oauth_token && $oauth_token_secret ){
 			$this->token = new OAuthConsumer( $oauth_token, $oauth_token_secret );
-		} 
+		}
 	}
 
-	/** 
+	/**
 	* Build authorize url
-	* 
-	* @return string 
-	*/ 
+	*
+	* @return string
+	*/
 	function authorizeUrl( $token, $extras =array() )
 	{
 		if ( is_array( $token ) ){
@@ -68,28 +69,28 @@ class OAuth1Client{
 
 	/**
 	* Get a request_token from provider
-	* 
-	* @return array a key/value array containing oauth_token and oauth_token_secret 
+	*
+	* @return array a key/value array containing oauth_token and oauth_token_secret
 	*/
 	function requestToken( $callback = null )
 	{
-		$parameters = array(); 
+		$parameters = array();
 
 		if ( $callback ) {
-			$this->redirect_uri = $parameters['oauth_callback'] = $callback; 
+			$this->redirect_uri = $parameters['oauth_callback'] = $callback;
 		}
 
-		$request     = $this->signedRequest( $this->request_token_url, $this->request_token_method, $parameters ); 
+		$request     = $this->signedRequest( $this->request_token_url, $this->request_token_method, $parameters );
 		$token       = OAuthUtil::parse_parameters( $request );
-		$this->token = new OAuthConsumer( $token['oauth_token'], $token['oauth_token_secret'] ); 
+		$this->token = new OAuthConsumer( $token['oauth_token'], $token['oauth_token_secret'] );
 
-		return $token; 
-	} 
+		return $token;
+	}
 
-	/** 
-	* Exchange the request token and secret for an access token and secret, to sign API calls. 
-	* 
-	* @return array array('oauth_token' => the access token, 'oauth_token_secret' => the access secret) 
+	/**
+	* Exchange the request token and secret for an access token and secret, to sign API calls.
+	*
+	* @return array array('oauth_token' => the access token, 'oauth_token_secret' => the access secret)
 	*/
 	function accessToken( $oauth_verifier = false, $oauth_token = false )
 	{
@@ -97,36 +98,36 @@ class OAuth1Client{
 
 		// 1.0a
 		if ( $oauth_verifier ) {
-			$parameters['oauth_verifier'] = $oauth_verifier; 
+			$parameters['oauth_verifier'] = $oauth_verifier;
 		}
 
-		$request     = $this->signedRequest( $this->access_token_url, $this->access_token_method, $parameters ); 
-		$token       = OAuthUtil::parse_parameters( $request ); 
-		$this->token = new OAuthConsumer( $token['oauth_token'], $token['oauth_token_secret'] ); 
+		$request     = $this->signedRequest( $this->access_token_url, $this->access_token_method, $parameters );
+		$token       = OAuthUtil::parse_parameters( $request );
+		$this->token = new OAuthConsumer( $token['oauth_token'], $token['oauth_token_secret'] );
 
 		return $token;
 	}
 
-	/** 
+	/**
 	* GET wrapper for provider apis request
 	*/
-	function get($url, $parameters = array(), $content_type = NULL)
+	function get($url, $parameters = array(), $content_type = null)
 	{
-		return $this->api($url, 'GET', $parameters, NULL, $content_type);
-	} 
+		return $this->api($url, 'GET', $parameters, null, $content_type);
+	}
 
-	/** 
+	/**
 	* POST wrapper for provider apis request
 	*/
-	function post($url, $parameters = array(), $body = NULL, $content_type = NULL, $multipart = false)
+	function post($url, $parameters = array(), $body = null, $content_type = null, $multipart = false)
 	{
 		return $this->api($url, 'POST', $parameters, $body, $content_type, $multipart );
 	}
 
-	/** 
-	* Format and sign an oauth for provider api 
-	*/ 
-	function api( $url, $method = 'GET', $parameters = array(), $body = NULL, $content_type = NULL, $multipart = false )
+	/**
+	* Format and sign an oauth for provider api
+	*/
+	function api( $url, $method = 'GET', $parameters = array(), $body = null, $content_type = null, $multipart = false )
 	{
 		if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
 			$url = $this->api_base_url . $url;
@@ -138,13 +139,23 @@ class OAuth1Client{
 			$response = json_decode( $response );
 		}
 
-		return $response; 
-	} 
+		return $this->response = $response;
+	}
 
-	/** 
-	* Make signed request  
-	*/ 
-	function signedRequest( $url, $method, $parameters, $body = NULL, $content_type = NULL, $multipart = false )
+	/**
+	 * Return the response object afer the fact
+	 *
+	 * @return mixed
+	 */
+	public function getResponse()
+	{
+	    return $this->response;
+	}
+
+	/**
+	* Make signed request
+	*/
+	function signedRequest( $url, $method, $parameters, $body = null, $content_type = null, $multipart = false )
 	{
 
         $signature_parameters = array();
@@ -159,7 +170,7 @@ class OAuth1Client{
 		$request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $signature_parameters);
 		$request->sign_request($this->sha1_method, $this->consumer, $this->token);
 		switch ($method) {
-			case 'GET': return $this->request( $request->to_url(), 'GET', NULL, NULL, $content_type );
+			case 'GET': return $this->request( $request->to_url(), 'GET', null, null, $content_type );
 			default   :
 		if ($body)
 			return $this->request( $request->to_url(), $method, $body, $request->to_header(), $content_type );
@@ -167,14 +178,14 @@ class OAuth1Client{
 			return $this->request( $request->get_normalized_http_url(), $method, ($multipart ? $parameters : $request->to_postdata()), $request->to_header(), $content_type, $multipart ) ;
 		}
 	}
-	
-	/** 
-	* Make http request  
-	*/ 
-	function request( $url, $method, $postfields = NULL, $auth_header = NULL, $content_type = NULL, $multipart = false )
+
+	/**
+	* Make http request
+	*/
+	function request( $url, $method, $postfields = null, $auth_header = null, $content_type = null, $multipart = false )
 	{
 		Hybrid_Logger::info( "Enter OAuth1Client::request( $method, $url )" );
-		Hybrid_Logger::debug( "OAuth1Client::request(). dump post fields: ", serialize( $postfields ) ); 
+		Hybrid_Logger::debug( "OAuth1Client::request(). dump post fields: ", serialize( $postfields ) );
 
 		$this->http_info = array();
 		$ci = curl_init();
@@ -183,25 +194,25 @@ class OAuth1Client{
 		curl_setopt( $ci, CURLOPT_USERAGENT     , $this->curl_useragent );
 		curl_setopt( $ci, CURLOPT_CONNECTTIMEOUT, $this->curl_connect_time_out );
 		curl_setopt( $ci, CURLOPT_TIMEOUT       , $this->curl_time_out );
-		curl_setopt( $ci, CURLOPT_RETURNTRANSFER, TRUE );
+		curl_setopt( $ci, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ci, CURLOPT_HTTPHEADER    , array('Expect:') );
 		curl_setopt( $ci, CURLOPT_SSL_VERIFYPEER, $this->curl_ssl_verifypeer );
 		curl_setopt( $ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader') );
-		curl_setopt( $ci, CURLOPT_HEADER        , FALSE );
+		curl_setopt( $ci, CURLOPT_HEADER        , false );
 
         if( $multipart ){
             curl_setopt( $ci, CURLOPT_HTTPHEADER, array( 'Expect:', $auth_header ) );
 
         }elseif ($content_type)
 			curl_setopt( $ci, CURLOPT_HTTPHEADER, array('Expect:', "Content-Type: $content_type") );
-		
+
 		if($this->curl_proxy){
 			curl_setopt( $ci, CURLOPT_PROXY        , $this->curl_proxy);
 		}
- 
+
 		switch ($method){
 			case 'POST':
-				curl_setopt( $ci, CURLOPT_POST, TRUE );
+				curl_setopt( $ci, CURLOPT_POST, true );
 
 				if ( !empty($postfields) ){
 					curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields );
@@ -220,7 +231,7 @@ class OAuth1Client{
 
 		curl_setopt($ci, CURLOPT_URL, $url);
 		$response = curl_exec($ci);
-		if( $response === FALSE ) {
+		if( $response === false ) {
 				Hybrid_Logger::error( "OAuth1Client::request(). curl_exec error: ", curl_error($ci) );
 		}
 
@@ -233,7 +244,7 @@ class OAuth1Client{
 
 		curl_close ($ci);
 
-		return $response; 
+		return $response;
 	}
 
 	/**
@@ -249,5 +260,5 @@ class OAuth1Client{
 		}
 
 		return strlen($header);
-	} 
-} 
+	}
+}

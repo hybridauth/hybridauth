@@ -4,6 +4,11 @@
 
 // vim: foldmethod=marker
 
+/* Generic exception class
+ */
+//if (!class_exists('OAuthException', false)) {
+//  class OAuthException extends Exception {
+//    // pass
 /* Hack this to only include once */
 if(!defined("OAUTH_INCLUDED")){
   define("OAUTH_INCLUDED", 1);
@@ -13,17 +18,18 @@ if(!defined("OAUTH_INCLUDED")){
     class OAuthException extends Exception{
       // pass
     }
+
   }
 
   class OAuthConsumer{
     public $key;
     public $secret;
 
-    function __construct($key, $secret, $callback_url = NULL){
-      $this->key = $key;
-      $this->secret = $secret;
-      $this->callback_url = $callback_url;
-    }
+  function __construct($key, $secret, $callback_url=null) {
+    $this->key = $key;
+    $this->secret = $secret;
+    $this->callback_url = $callback_url;
+  }
 
     function __toString(){
       return "OAuthConsumer[key=$this->key,secret=$this->secret]";
@@ -599,7 +605,7 @@ if(!defined("OAUTH_INCLUDED")){
     private function get_signature_method($request){
       $signature_method = $request instanceof OAuthRequest
         ? $request->get_parameter("oauth_signature_method")
-        : NULL;
+        : null;
 
       if(!$signature_method){
         // According to chapter 7 ("Accessing Protected Ressources") the signature-method
@@ -625,7 +631,7 @@ if(!defined("OAUTH_INCLUDED")){
     private function get_consumer($request){
       $consumer_key = $request instanceof OAuthRequest
         ? $request->get_parameter("oauth_consumer_key")
-        : NULL;
+        : null;
 
       if(!$consumer_key){
         throw new OAuthException("Invalid consumer key");
@@ -664,10 +670,10 @@ if(!defined("OAUTH_INCLUDED")){
       // this should probably be in a different method
       $timestamp = $request instanceof OAuthRequest
         ? $request->get_parameter('oauth_timestamp')
-        : NULL;
+        : null;
       $nonce = $request instanceof OAuthRequest
         ? $request->get_parameter('oauth_nonce')
-        : NULL;
+        : null;
 
       $this->check_timestamp($timestamp);
       $this->check_nonce($consumer, $token, $nonce, $timestamp);

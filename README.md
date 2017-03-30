@@ -1,4 +1,6 @@
-# HybridAuth 2.4.0
+# HybridAuth 2.9.1
+
+**NOTE:** HybridAuth is in maintainance mode. Although pull requests from the community are still accepted, you should find alternatives if you are starting a new project. HA is getting outdated by the day and there are no official plans to work on HybridAuth.
 
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -16,8 +18,7 @@ HybridAuth repository is made up of several projects:
 
 - **HybridAuth Core library** includes OpenID, Facebook, Twitter, LinkedIn, Google, Yahoo, Windows Live, Foursquare and AOL.
 - **The additional providers project** contains many others services
-  which you may want to use,
-- **Examples and demos** contains five examples for you to test,
+  which you may want to use.
 
 ## Getting Started
 

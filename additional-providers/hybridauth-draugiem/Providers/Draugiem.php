@@ -98,7 +98,14 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 			throw new Exception( 'User profile request failed! ' . $this->providerId . ' api returned an invalid response.', 6 );
 		}
 
-		list($year, $month, $day) =explode("-",$response['birthday']);
+		$year = $month = $day = null;
+
+		if (isset($response['birthday'])) {
+			$birthday = explode("-", $response['birthday']);
+			if (count($birthday) === 3) {
+				list($year, $month, $day) = $birthday;
+			}
+		}
 
 		$this->user->profile->identifier    = @ $response['uid'];
 		$this->user->profile->displayName  	= $response['name']. ' ' .$response['surname'];
@@ -116,7 +123,6 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 			case 'M': $this->user->profile->gender = 'male'; break;
 			case 'F': $this->user->profile->gender = 'female'; break;
 		}
-
 		return $this->user->profile;
 	}
 

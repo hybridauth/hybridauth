@@ -1,6 +1,139 @@
 Hybridauth Change log
 =====================
-2.4.0 - March 26 2015
+2.9.1 - March 25 2017
+      Fixes:
+        #751 - Google Auth break on 2.9.0
+	
+2.9.0 - March 24 2017
+      New providers: 
+        #740 + #741 - Discord
+        #737 + #738 - idQ
+        #718 - Envato
+        #711 + #712 - Stripe
+      Fixes:
+        #715 - [LinkedIn] Removed unset() which breaks PHP 7.1 compatibility
+        #722 - [Core] Add notice about maintainance mode of the library
+        #732 - [Amazon] Fix wrong lowercase in filename
+        #733 - [Live] Fix authorize_url for windows live
+        #735 - [LinkedIn] location feature
+        #727 + #734 - [Facebook] Fix problem which occurs during calling the Facebook Graph API to getAccessToken() for a specific redirectUrl
+        #729 - [Facebook] Fix wrong country data
+        #736 - [Google] Resolve issue in obtaining contacts
+
+2.8.2 - December 9 2016
+      Fixes:
+        #707 - [Core] OAuth2Client RFC6749 compliant requests (fixes #694)
+        #710 - [Core] Fix error message delivery
+
+2.8.1 - December 5 2016
+      Fixes:
+        #696 - [Core] Passing more arguments in called method
+        #697 - [Tumblr] Update posting function
+        #703 - [GitHub] Update provider to recognize verified email
+        #705 - [Plurk] Update to use https
+
+2.8.0 - October 29 2016
+      BREAKING:
+        #688 - [Facebook] Update Provider to use newer API version 
+        #691 - [Google+] Correct age range
+      New providers:
+        #673 - Strava
+        #682 - Amazon
+      New:
+        #679 - Allow setting custom start & done endpoints (#680 docs)
+        #689 - [LinkedIn] Add current organization and job title to the user profile
+        #690 - [Pinterest] Provider updates and new API calls
+      Fixes:
+        #658 - [Windows Live] Workaround for authentication
+        #684 - [Twitter] Set emailVerified
+        #685 - [LinkedIn] Remove array shorthand constructor
+        #692 - [Tumblr] Use https protocol for tumblr urls
+
+2.7.0 - September 4 2016
+      New providers:
+        #639 - Humanitarian ID
+        #649 - Pinterest
+        #653 - Weibo
+        #661 - Dataporten
+      New:
+        #612 - [OAuth2Client][improvement] Be able to specify decode json step per each api call
+        #638 - Make use of the redirect mode
+        #655 - [OAuth2Client][improvement] Can now make `DELETE` and `PATCH` calls.
+        #668 - [LinkedIn] Add ability to set fields
+      Fixes:
+        #637 - [BitBucket] Fix fetch email
+        #610 - Fixes redirect in auth after user pushes the browser back button
+        #634 - [Google+] correct age values
+        #650 - [Vkontakte] Update URLs and small fixes with reformat
+        #656 - [Sina] Remove duplicate expression
+        #657 - Fixed issue with empty redirect mode configuration preventing redirection
+        #669 - Fix PHP Notice when $_SERVER["QUERY_STRING"] is not defined
+
+2.6.0 - January 12 2016
+      New providers:
+        #546 + #547 - GitLab OAuth2
+        #577 - MixCloud
+        #568 + #589 - Digital Ocean
+      Updates:
+        Updated LightOpenID to 1.2.0
+        #572 - Add cURL timeouts for OpenID
+        #582 - [Facebook] read_stream removed
+        #588 - [BitBucket] Upgrade to OAuth2 protocol and patches
+        #607 + #240 - Gzip support added
+      Changes:
+        #567 - [Odnoklassniki] Get better size of user avatar
+        #570 - [odnoklassniki] Improve error reporting
+        #571 - [Hybrid_Endpoint] Improve error reporting
+        #576 - Improve logging and error handling in main providers
+        #598 - Update GitLab API points, fix LastFM typo, refactor file/folder structure stack exchange
+      Fixes:
+        #575 - [Steam] Fix Steam profileUrl
+        #578 - [Odnoklassniki] new link
+        #595 - [DigitalOcean] Removing location
+        #606 + #607 - [stackexchange] Bugs fixing and improvements
+
+2.5.1 - October 12 2015
+      Fixes:
+        #542 - [XING] updated provider to 1.1.0
+        #549 - Update Auth.php library version
+        #558 - [XING] Fix typo
+        #559 - [VKontakte] Fix warnings for getUserByResponse() for undefined City and Country
+        #560 - [Drupal module] Require OAuth.php only if not exist
+        #564 - Fix DateTime error in Logger
+
+2.5.0 - September 7 2015
+      New:
+        #444 + #445 - Slack provider
+        $474 - WarGaming OpenID provider
+        #454 - xuite's oauth provider
+        #480 - Improved inline documentation for IDE support
+        #370 + #495 - [github] getUserContacts() implementation (followers & following)
+        #372 + #495 - [instagram] getUserContacts() implementation (follows & followed-by)
+        #519 - [Twitter] Add email option to Twitter API
+      Fixes:
+        #438 + #445 - [LinkedIn] getusercontacts error
+        #446 + #447 - [Steam] xml parsing error
+        #340 + #476 - Ensure session is saved before sending response
+        #472 - [Facebook] Obsolete 'read_friendlists' FB permission was changed to 'read_custom_friendlists'
+        #453 - [Vkontakte] fix Undefined property: stdClass::$email
+        #499 + #500 - [Facebook] Bug: treating hometown as current location
+        #523 - [Draugiem] API does not always return the birthday object
+        #525 - [Facebook] Fixes getUserProfile v2.4 compatibility
+        #532 + #533 [soundcloud] Provider doesn't implement getUserProfile() and getUserContacts()
+        #535 - [Draugiem] API does not always return the birthday object
+      Changes:
+        #477 - [Vkontakte] Move Vkontakte fields to configuration
+        71531f2 - [Facebook] Adding birthday field to be retrieved
+      Removed:
+        #455 - [Viadeo] Viadeo connect not existing anymore
+
+2.4.1 - April 11 2015
+      Fixes:
+        #430 - Disable autoloading for class_exists() checks
+        #435 + #436 - Google fix Undefined property: stdClass::$emails
+        #437 + #442 - OAuth2Client->api() - json_decode
+
+2.4.0 - April 2 2015
       New Providers:
         - BitBucket #405
         - Rhapsody #362
@@ -17,7 +150,8 @@ Hybridauth Change log
         #396 + #408 - Make Hybrid_Endpoint methods non-static
         #410 - Set LinkedIn API request timeout to 5 seconds because the API can be slow.
         #419 - Adding emailVerified for Google email type 'account'
-        #406 - Add access token to header in google provider
+        #406 + #425 - Add access token to header in google provider
+        #427 - Add class property for responses to be stored
       Fixes:
         #382 - Fix undefined variable in Foursquare
         #379 - Google authentication problem on the master branch (invalid_request, missing parameter) with Drupal 7
@@ -34,6 +168,7 @@ Hybridauth Change log
         #413 - Fix Fatal Error: Declaration of Hybrid_Storage::config() must be compatible with that of Hybrid_Storage_Interface::config()
         #417 - Fixed an issue with email property for vkontakte
         #393 + #420 - Steam API user data support
+        #426 - GitHub provider fix: Parameter order incorrect
       Removed:
         - Removed examples (#381, #339, #208)
 

@@ -214,7 +214,7 @@ class WeiboOAuth {
      */ 
     function oAuthRequest($url, $method, $parameters , $multi = false) { 
 
-        if (strrpos($url, 'http://') !== 0 && strrpos($url, 'http://') !== 0) { 
+        if (strrpos($url, 'http://') !== 0) { 
             $url = "{$this->host}{$url}.{$this->format}"; 
         } 
 
