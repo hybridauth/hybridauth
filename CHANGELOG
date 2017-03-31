@@ -1,8 +1,12 @@
 Hybridauth Change log
 =====================
+2.9.2 - xxx
+      Fixes:
+        #753 + #745 - [Facebook] Return `setUserStatus` functionality
+
 2.9.1 - March 25 2017
       Fixes:
-        #751 - Google Auth break on 2.9.0
+        #751 - [Google] Auth break on 2.9.0
 	
 2.9.0 - March 24 2017
       New providers: 
