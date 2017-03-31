@@ -123,7 +123,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     function logout() {
         parent::logout();
     }
-    
+
     /**
     * Update user status
     *
@@ -146,7 +146,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
           // if post on page, get access_token page
       } else {
-          
+
           foreach ($this->getUserPages(true) as $p) {
               if (isset($p['id']) && intval($p['id']) == intval($pageid)) {
                   $access_token = $p['access_token'];
@@ -177,6 +177,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
        try {
            $pages = $this->api->get("/me/accounts", $this->token('access_token'));
+           $pages = $pages->getDecodedBody();
        } catch (FacebookApiException $e) {
            throw new Exception("Cannot retrieve user pages! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
        }
@@ -327,6 +328,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             } else {
                 $response = $this->api->get('/me/home', $this->token('access_token'));
             }
+            $response = $response->getDecodedBody();
         } catch (FacebookSDKException $e) {
             throw new Hybrid_Exception("User activity stream request failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
         }
