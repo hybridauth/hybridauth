@@ -53,6 +53,14 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
         $trustForwarded = isset($this->config['trustForwarded']) ? (bool)$this->config['trustForwarded'] : false;
 
+		// If Composer install was executed in the Hybridauth library use that
+		// autoloader.
+		if (file_exists(Hybrid_Auth::$config["path_vendor"] . '/autoload.php')) {
+			require_once Hybrid_Auth::$config["path_vendor"] . '/autoload.php';
+		}
+		else {
+			require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/autoload.php";
+		}
         $this->api = new FacebookSDK([
             'app_id' => $this->config["keys"]["id"],
             'app_secret' => $this->config["keys"]["secret"],
@@ -123,7 +131,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     function logout() {
         parent::logout();
     }
-    
+
     /**
     * Update user status
     *
@@ -146,7 +154,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
           // if post on page, get access_token page
       } else {
-          
+
           foreach ($this->getUserPages(true) as $p) {
               if (isset($p['id']) && intval($p['id']) == intval($pageid)) {
                   $access_token = $p['access_token'];
