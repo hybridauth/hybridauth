@@ -9,7 +9,10 @@
 
 namespace Hybridauth\Thirdparty\OpenID;
 
-use Hybridauth\Exception;
+use Hybridauth\Exception\Exception;
+use Hybridauth\Exception\ExceptionInterface;
+
+class ErrorException extends Exception implements ExceptionInterface {}
 
 /**
  * This class provides a simple interface for OpenID 1.1/2.0 authentication.
