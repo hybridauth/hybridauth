@@ -129,7 +129,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function getUserProfile()
     {
-        throw new NotImplementedException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.');
     }
 
     /**
@@ -137,7 +137,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function getUserContacts()
     {
-        throw new NotImplementedException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.');
     }
 
     /**
@@ -145,7 +145,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function setUserStatus($status)
     {
-        throw new NotImplementedException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.');
     }
 
     /**
@@ -153,7 +153,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function getUserActivity($stream)
     {
-        throw new NotImplementedException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.');
     }
 
     /**
@@ -161,7 +161,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
-        throw new NotImplementedException('Provider does not support this feature.', 8);
+        throw new NotImplementedException('Provider does not support this feature.');
     }
 
     /**
@@ -319,8 +319,8 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         $endpoints = $this->config->filter('endpoints');
 
-        $this->apiBaseUrl = $endpoints->get('api_base_url')     ?: $this->apiBaseUrl;
-        $this->authorizeUrl = $endpoints->get('authorize_url')    ?: $this->authorizeUrl;
+        $this->apiBaseUrl = $endpoints->get('api_base_url') ?: $this->apiBaseUrl;
+        $this->authorizeUrl = $endpoints->get('authorize_url') ?: $this->authorizeUrl;
         $this->accessTokenUrl = $endpoints->get('access_token_url') ?: $this->accessTokenUrl;
     }
 }
