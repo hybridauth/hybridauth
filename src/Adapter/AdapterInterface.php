@@ -28,6 +28,7 @@ interface AdapterInterface
     * @throws InvalidAuthorizationStateException
     * @throws InvalidOauthTokenException
     * @throws InvalidOpenidIdentifierException
+    * @throws UnexpectedApiResponseException
     *
     * @return boolean|null
     */
@@ -52,6 +53,7 @@ interface AdapterInterface
     *
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
+    * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @return \Hybridauth\User\Profile
     */
@@ -62,6 +64,7 @@ interface AdapterInterface
     *
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
+    * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
     * @return array of \Hybridauth\User\Contact
@@ -75,6 +78,7 @@ interface AdapterInterface
     *
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
+    * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
     * @return array of \Hybridauth\User\Activity
@@ -88,6 +92,7 @@ interface AdapterInterface
     *
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
+    * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
     * @return mixed API response
@@ -99,6 +104,7 @@ interface AdapterInterface
     *
     * @throws HttpClientFailureException
     * @throws HttpRequestFailedException
+    * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
     * @return \Hybridauth\User\Profile

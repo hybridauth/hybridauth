@@ -8,7 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth1;
-use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -52,7 +52,7 @@ class Tumblr extends OAuth1
         $data = new Data\Collection($response);
 
         if (! $data->exists('response')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();

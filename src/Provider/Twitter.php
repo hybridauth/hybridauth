@@ -8,7 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth1;
-use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -87,7 +87,7 @@ class Twitter extends OAuth1
         $data = new Data\Collection($response);
 
         if (! $data->exists('id')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
@@ -124,7 +124,7 @@ class Twitter extends OAuth1
         $data = new Data\Collection($response);
 
         if (! $data->exists('ids')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         if ($data->filter('ids')->isEmpty()) {

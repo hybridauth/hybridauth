@@ -11,7 +11,7 @@ use Hybridauth\Exception;
 use Hybridauth\Exception\InvalidOpenidIdentifierException;
 use Hybridauth\Exception\AuthorizationDeniedException;
 use Hybridauth\Exception\InvalidOpenidResponseException;
-use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
 use Hybridauth\User;
@@ -137,7 +137,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     * Finalize the authorization process.
     *
     * @throws AuthorizationDeniedException
-    * @throws UnexpectedValueException
+    * @throws UnexpectedApiResponseException 
     */
     public function authenticateFinish()
     {
@@ -146,13 +146,13 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         }
 
         if (! $this->openIdClient->validate()) {
-            throw new UnexpectedValueException('Invalid response received.');
+            throw new UnexpectedApiResponseException('Invalid response received.');
         }
 
         $openidAttributes = $this->openIdClient->getAttributes();
 
         if (! $this->openIdClient->identity) {
-            throw new UnexpectedValueException('Provider returned an expected response.');
+            throw new UnexpectedApiResponseException('Provider returned an expected response.');
         }
 
         $userProfile = $this->fetchUserProfile($openidAttributes);
@@ -237,7 +237,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $userProfile = $this->storage->get($this->providerId . '.user');
 
         if (! is_object($userProfile)) {
-            throw new UnexpectedValueException('Provider returned an expected response.');
+            throw new UnexpectedApiResponseException('Provider returned an expected response.');
         }
 
         return $userProfile;

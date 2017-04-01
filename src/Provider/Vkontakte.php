@@ -8,7 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -61,7 +61,7 @@ class Vkontakte extends OAuth2
         $data = new Data\Collection($response->response[0]);
 
         if (! $data->exists('uid')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();

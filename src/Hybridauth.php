@@ -9,6 +9,7 @@ namespace Hybridauth;
 
 use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Storage\Session;
 use Hybridauth\Logger\LoggerInterface;

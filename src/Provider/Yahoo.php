@@ -8,7 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -79,7 +79,7 @@ class Yahoo extends OAuth2
 		$data = new Data\Collection($response);
 
 		if (! $data->filter('guid')->exists('value')) {
-			throw new UnexpectedValueException('Provider API returned an unexpected response.');
+			throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
 		}
 
 		return $this->userId =  $data->filter('guid')->get('value');
@@ -101,7 +101,7 @@ class Yahoo extends OAuth2
 		$data = new Data\Collection($response);
 
 		if (! $data->exists('profile')) {
-			throw new UnexpectedValueException('Provider API returned an unexpected response.');
+			throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
 		}
 
         $userProfile = new User\Profile();

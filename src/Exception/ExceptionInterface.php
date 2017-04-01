@@ -24,6 +24,7 @@ interface ExceptionInterface
     |   |    |    InvalidAuthorizationStateException      extends UnexpectedValueException
     |   |    |    InvalidOauthTokenException              extends UnexpectedValueException
     |   |    |    InvalidAccessTokenException             extends UnexpectedValueException
+    |   |    |    UnexpectedApiResponseException          extends UnexpectedValueException
     |   |
     |   |    BadMethodCallException                       extends RuntimeException
     |   |    |   NotImplementedException                  extends BadMethodCallException

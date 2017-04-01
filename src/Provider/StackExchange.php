@@ -8,7 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception\UnexpectedValueException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
 use Hybridauth\User;
 
@@ -79,7 +79,7 @@ class StackExchange extends OAuth2
         $response = $this->apiRequest('me?site=' . $site );
 
         if (! $response || !isset($response->items) || !isset($response->items[0])) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $data = new Data\Collection($response->items[0]);
