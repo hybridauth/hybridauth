@@ -33,14 +33,13 @@ WordPress           | OAuth2   |  [X]         |  [X]        |
 Tumblr              | OAuth1   |  [X]         |  [X]        | 
 Disqus              | OAuth2   |  [X]         |  [X]        | 
 Dribbble            | OAuth2   |  [X]         |  [X]        | 
-Windows Live        | OAuth2   |  [X]         |             | 
+WindowsLive         | OAuth2   |  [X]         |  [X]        | 
 Foursquare          | OAuth2   |  [X]         |  [X]        | 
 Instagram           | OAuth2   |  [X]         |  [X]        | 
-LinkedIn            | OAuth2   |  [X]         |             | Only authentication and getUserProfile are implemented.
-Yahoo               | OAuth2   |  [X]         |  [X]        | Only authentication and getUserProfile are implemented.
+LinkedIn            | OAuth2   |  [X]         |  [X]        | 
+Yahoo               | OAuth2   |  [X]         |  [X]        |
 Vkontakte           | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
 Mailru              | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
-Odnoklassniki       | OAuth2   |  [X]         |             | Russian Provider, I probably won't be able to test if working.
 StackExchange       | OAuth2   |  [X]         |  [X]        | 
 OpenID              | OpenID   |  [X]         |  [X]        | Generic OpenID Adapter.
 PaypalOpenID        | OpenID   |  [X]         |  [X]        | 
