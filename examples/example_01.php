@@ -48,7 +48,7 @@ $config = [
 
     'keys'     => ['id' => 'your-app-id', 'secret' => 'your-app-secret'],
 
-    'scope'    => ['user:email']
+    'scope'    => 'user:email'
 
     /* optional : set debgu mode
         // You can also set it to
