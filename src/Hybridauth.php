@@ -24,13 +24,6 @@ use Hybridauth\Deprecated\DeprecatedHybridauthTrait;
 class Hybridauth
 {
     /**
-    * Hybridauth version.
-    *
-    * @var string
-    */
-    public static $version = '3.0.0-Remake';
-
-    /**
     * Hybridauth config.
     *
     * @var array
