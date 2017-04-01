@@ -114,7 +114,6 @@ class Steam extends OpenID
 
         $response = $this->httpClient->request($apiUrl);
 
-
         $data = new \SimpleXMLElement($response);
 
         $data = new Data\Collection($data);
