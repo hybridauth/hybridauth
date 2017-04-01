@@ -4,8 +4,7 @@
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-    IMPORTANT: Hybridauth 3 is currently in development with the only remaning tasks of ensuring major providers are
-    properly working and finishing documentation, hence it's NOT ready for production yet.
+    IMPORTANT: Hybridauth 3 is currently in beta stage and it might NOT be suitable for production use.
 
    :octocat: To check on project progression or if you wish to contribute on a task, see [TODO.md](https://github.com/hybridauth/hybridauth/blob/3.0.0-Remake/TODO.md).
 
@@ -20,23 +19,23 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 ##### New way of doing things :
 
 ```php
-    $config = [
-        'callback' => 'http://localhost/hybridauth/examples/twitter.php',
-        'keys' => [ 'key' => 'your-consumer-key', 'secret' => 'your-consumer-secret' ]
-    ];
+$config = [
+    'callback' => 'http://localhost/hybridauth/examples/twitter.php',
+    'keys' => [ 'key' => 'your-consumer-key', 'secret' => 'your-consumer-secret' ]
+];
 
-    $twitter = new Hybridauth\Provider\Twitter( $config );
+$twitter = new Hybridauth\Provider\Twitter( $config );
 
-    try {
-        $twitter->authenticate();
+try {
+    $twitter->authenticate();
 
-        $userProfile = $twitter->getUserProfile();
-        $accessToken = $twitter->getAccessToken();
-        $apiResponse = $twitter->apiRequest( 'statuses/home_timeline.json' );
-    }
-    catch( Exception $e ){
-        echo "Ooophs, we ran into an issue! " . $e->getMessage();
-    }
+    $userProfile = $twitter->getUserProfile();
+    $accessToken = $twitter->getAccessToken();
+    $apiResponse = $twitter->apiRequest( 'statuses/home_timeline.json' );
+}
+catch( Exception $e ){
+    echo "Ooophs, we ran into an issue! " . $e->getMessage();
+}
 ```
 
 ##### Legacy way (Similar to Hybridauth 2.x)
@@ -44,26 +43,26 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 While HybridAuth 3 provides a similar interface to its functions, it's not backward compatible with Hybridauth 2. Please refer to [Upgrade guide](https://hybridauth.github.io/developer-ref-migrating.html) to make the neccessary changes to your existing application in order to make it work with HybridAuth 3.x.
 
 ```php
-    $config = [
-        'callback' => 'http://localhost/hybridauth/examples/callback.php',
-        'providers' => [
-            'GitHub' => [ 'enabled' => true, 'keys' => [ 'id' => '', 'secret' => '' ] ],
-            'Google' => [ 'enabled' => true, 'keys' => [ 'id' => '', 'secret' => '' ] ]
-        ]
-    ];
+$config = [
+    'callback' => 'http://localhost/hybridauth/examples/callback.php',
+    'providers' => [
+        'GitHub' => [ 'enabled' => true, 'keys' => [ 'id' => '', 'secret' => '' ] ],
+        'Google' => [ 'enabled' => true, 'keys' => [ 'id' => '', 'secret' => '' ] ]
+    ]
+];
 
-    $hybridauth = new Hybridauth( $config );
+$hybridauth = new Hybridauth( $config );
 
-    try{
-        $github = $hybridauth->authenticate( 'GitHub' );
+try{
+    $github = $hybridauth->authenticate( 'GitHub' );
 
-        $user_profile = $github->getUserProfile();
+    $user_profile = $github->getUserProfile();
 
-        echo "Hi there " . $user_profile->displayName;
-    }
-    catch( Exception $e ){
-        echo "Ooophs, we ran into an issue! " . $e->getMessage();
-    }
+    echo "Hi there " . $user_profile->displayName;
+}
+catch( Exception $e ){
+    echo "Ooophs, we ran into an issue! " . $e->getMessage();
+}
 ```
 
 #### Requirements
@@ -78,7 +77,7 @@ We recommend that you always use the latest release available at https://github.
 When using Composer, you'll have to add Hybridauth to your project's existing composer.json file:
 
 ```bash
-  $ php composer.phar require hybridauth/hybridauth
+$ php composer.phar require hybridauth/hybridauth
 ```
 
 After installing, you need to require Composer's autoloader in your project:
@@ -90,7 +89,7 @@ require 'vendor/autoload.php';
 You can then later update Hybridauth to newer versions using composer:
 
 ```bash
-  $ php composer.phar update
+$ php composer.phar update
 ```
 
 #### Versions Status
