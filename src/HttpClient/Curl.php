@@ -119,7 +119,7 @@ class Curl implements HttpClientInterface
             $this->curlOptions[CURLOPT_POSTFIELDS] = http_build_query($parameters);
         }
 
-        $this->requestHeader = array_merge($this->requestHeader, $headers);
+        $this->requestHeader = array_merge($this->requestHeader, (array)$headers);
 
         $this->requestArguments['headers'] = $this->requestHeader;
 

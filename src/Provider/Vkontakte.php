@@ -77,13 +77,9 @@ class Vkontakte extends OAuth2
                                         ? 'http://vk.com/' . $data->get('screen_name')
                                         : '';
 
-        if ($data->exists('sex')) {
-            switch ($data->get('sex')) {
-                case 1: $userProfile->gender = 'female';
-                    break;
-                case 2: $userProfile->gender =   'male';
-                    break;
-            }
+        switch ($data->get('sex')) {
+            case 1: $userProfile->gender = 'female'; break;
+            case 2: $userProfile->gender =   'male'; break;
         }
 
         return $userProfile;

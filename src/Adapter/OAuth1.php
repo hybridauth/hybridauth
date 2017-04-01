@@ -191,10 +191,12 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         try {
             if (! $this->token('request_token')) {
                 $this->authenticateBegin();
-            } elseif (! $this->token('access_token')) {
+            }
+            elseif (! $this->token('access_token')) {
                 $this->authenticateFinish();
             }
-        } catch (\Exception $exception) {
+        }
+        catch (\Exception $exception) {
             $this->clearTokens();
 
             throw $exception;
@@ -227,12 +229,10 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     public function authenticateFinish()
     {
-        $data = new Data\Collection($_GET);
-
-        $denied         = $data->get('denied');
-        $oauth_problem  = $data->get('oauth_problem');
-        $oauth_token    = $data->get('oauth_token');
-        $oauth_verifier = $data->get('oauth_verifier');
+        $denied         = filter_input(INPUT_GET, 'denied');
+        $oauth_problem  = filter_input(INPUT_GET, 'oauth_problem');
+        $oauth_token    = filter_input(INPUT_GET, 'oauth_token');
+        $oauth_verifier = filter_input(INPUT_GET, 'oauth_verifier');
 
         if ($denied) {
             throw new AuthorizationDeniedException(
@@ -272,7 +272,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             'oauth_token' => $this->token('request_token')
         ];
 
-        $parameters = array_replace($defaults, (array) $parameters);
+        $parameters = array_replace($defaults, (array)$parameters);
 
         return $this->authorizeUrl . '?' . http_build_query($parameters, '', '&');
     }
@@ -489,9 +489,9 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $url = $this->apiBaseUrl . $url;
         }
 
-        $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
+        $parameters = array_replace($this->apiRequestParameters, (array)$parameters);
 
-        $headers = array_replace($this->apiRequestHeaders, (array) $headers);
+        $headers = array_replace($this->apiRequestHeaders, (array)$headers);
 
         $response = $this->oauthRequest($url, $method, $parameters, $headers);
 

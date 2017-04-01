@@ -260,7 +260,7 @@ class Facebook extends OAuth2
             $userActivity->text = $item->get('message');
         }
 
-        if (! empty($userActivity->text) and $item->exists('from')) {
+        if (! empty($userActivity->text) && $item->exists('from')) {
             $userActivity->user->identifier  = $item->filter('from')->get('id');
             $userActivity->user->displayName = $item->filter('from')->get('name');
 

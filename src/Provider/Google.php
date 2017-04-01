@@ -217,7 +217,7 @@ class Google extends OAuth2
     protected function getGmailContacts($parameters = [])
     {
         $url = 'https://www.google.com/m8/feeds/contacts/default/full?'
-                    . http_build_query(array_merge([ 'alt' => 'json', 'v' => '3.0' ], $parameters));
+                    . http_build_query(array_replace([ 'alt' => 'json', 'v' => '3.0' ], (array)$parameters));
 
         $response = $this->apiRequest($url);
 

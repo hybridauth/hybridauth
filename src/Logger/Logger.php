@@ -15,10 +15,11 @@ use Hybridauth\Exception\InvalidArgumentException;
  */
 class Logger implements LoggerInterface
 {
-    const NONE = 'none';
+    const NONE  = 'none';
     const ERROR = 'error';
-    const INFO = 'info';
+    const INFO  = 'info';
     const DEBUG = 'debug';
+
     /**
      * Debug level.
      *
@@ -67,11 +68,11 @@ class Logger implements LoggerInterface
         }
 
         if (!file_exists($file) && !touch($file)) {
-            throw new RuntimeException("Log file {$file} can not be created.");
+            throw new RuntimeException(sprintf("Log file %s can not be created.", $file));
         }
 
         if (!is_writable($file)) {
-            throw new RuntimeException("Log file {$file} is not writeable.");
+            throw new RuntimeException(sprintf("Log file %s is not writeable.", $file));
         }
     }
 
@@ -129,7 +130,7 @@ class Logger implements LoggerInterface
         $datetime = new \DateTime();
         $datetime = $datetime->format(DATE_ATOM);
 
-        $content = "$level -- $_SERVER[REMOTE_ADDR] -- $datetime -- $message -- ";
+        $content = sprintf("%s -- %s -- %s -- %s", $level, $_SERVER['REMOTE_ADDR'], $datetime, $message);
         $content .= ($context ? print_r($context, true) : '');
         $content .= "\n";
 

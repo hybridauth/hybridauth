@@ -248,7 +248,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         try {
-            if (! isset($_GET['code'])) {
+            $this->authenticateCheckError();
+
+            $code = filter_input(INPUT_GET, 'code');
+
+            if (empty($code)) {
                 $this->authenticateBegin();
             }
             else {
@@ -260,6 +264,29 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
             throw $e;
         }
+    }
+
+    /**
+    * Authorization Request Error Response
+    *
+    * RFC6749: If the request fails due to a missing, invalid, or mismatching
+    * redirection URI, or if the client identifier is missing or invalid,
+    * the authorization server SHOULD inform the resource owner of the error.
+    *
+    * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+    */
+    public function authenticateCheckError()
+    {
+        $error = filter_input(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
+
+        if (! empty($error)) {
+            $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
+
+            throw new InvalidAuthorizationCodeException(
+                sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri)
+            );
+        }        
     }
 
     /**
@@ -283,7 +310,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     public function authenticateFinish()
     {
-        $collection = new Data\Collection($_GET);
+        $state = filter_input(INPUT_GET, 'state');
+        $code = filter_input(INPUT_GET, 'code');
 
         /**
         * Authorization Request State
@@ -295,26 +323,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         * http://tools.ietf.org/html/rfc6749#section-4.1.1
         */
         if ($this->supportRequestState
-            &&  $this->token('authorization_state') != $collection->get('state')
+            &&  $this->token('authorization_state') != $state
         ) {
             throw new InvalidAuthorizationStateException(
-                'The authorization state [state=' . substr(htmlentities($collection->get('state')), 0, 100). '] ' 
+                'The authorization state [state=' . substr(htmlentities($state), 0, 100). '] ' 
                     . 'of this page is either invalid or has already been consumed.'
-            );
-        }
-
-        /**
-        * Authorization Request Error Response
-        *
-        * RFC6749: If the request fails due to a missing, invalid, or mismatching
-        * redirection URI, or if the client identifier is missing or invalid,
-        * the authorization server SHOULD inform the resource owner of the error.
-        *
-        * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
-        */
-        if ($collection->get('error')) {
-            throw new InvalidAuthorizationCodeException(
-                'Provider returned an error: ' . htmlentities($collection->get('error'))
             );
         }
 
@@ -326,7 +339,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         *
         * http://tools.ietf.org/html/rfc6749#section-4.1.2
         */
-        $response = $this->exchangeCodeForAccessToken($collection->get('code'));
+        $response = $this->exchangeCodeForAccessToken($code);
 
         $this->validateAccessTokenExchange($response);
 
@@ -362,9 +375,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'scope'         => $this->scope,
         ];
  
-        $parameters = $defaults
-                     + (array) $this->config->get("authorize_url_parameters")
-                     + $parameters;
+        $parameters = array_replace($defaults, (array) $this->config->get("authorize_url_parameters"), (array)$parameters);
 
         if ($this->supportRequestState) {
             $state = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
@@ -491,6 +502,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * This method is similar to exchangeCodeForAccessToken(). The only difference is here
     * we exchange refresh_token for a new access_token.
     *
+    * @param $forceRefresh boolean set to true in case you want to bypass expiration validation
+    *
     * @return string Raw Provider API response
     */
     public function refreshAccessToken($forceRefresh = false)
@@ -500,9 +513,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         // have an access token?
         if ($this->token('access_token')) {
 
-            // have to refresh?
+            // have a refresh token?
             if ($this->token('refresh_token') && $this->token('access_token_expires_at')) {
-                
+
                 // expired?
                 if ($this->token('access_token_expires_at') <= time()) {
                     $proceed = true;
@@ -518,7 +531,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'refresh_token' => $this->token('refresh_token'),
         ];
 
-        $this->tokenExchangeParameters = array_merge($defaults, (array) $this->tokenExchangeParameters);
+        $this->tokenExchangeParameters = array_replace($defaults, (array) $this->tokenExchangeParameters);
 
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
@@ -587,12 +600,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         $this->apiRequestParameters[ $this->accessTokenName ] = $this->token('access_token');
 
-        $parameters = $this->apiRequestParameters + (array) $parameters;
-        $headers = $this->apiRequestHeaders + (array) $headers;
+        $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
+        $headers = array_replace($this->apiRequestHeaders, (array) $headers);
 
         $response = $this->httpClient->request(
-            $url, //
-            $method, // HTTP Request Method. Defaults to GET.
+            $url, 
+            $method,     // HTTP Request Method. Defaults to GET.
             $parameters, // Request Parameters
             $headers     // Request Headers
         );
