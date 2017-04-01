@@ -20,7 +20,7 @@ class LinkedIn extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'r_basicprofile r_emailaddress r_contactinfo';
+    public $scope = 'r_basicprofile r_emailaddress';
 
     /**
     * {@inheritdoc}
@@ -36,6 +36,11 @@ class LinkedIn extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
+
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiDocumentation = 'https://developer.linkedin.com/docs/oauth2';
 
     /**
     * {@inheritdoc}
@@ -59,25 +64,28 @@ class LinkedIn extends OAuth2
             'picture-url', 'public-profile-url',
         ];
 
-        $response = $this->apiRequest('people/~:(' . implode(',', $this->fields) . ')?format=json');
+        $response = $this->apiRequest('people/~:(' . implode(',', $fields) . ')', 'GET', ['format' => 'json']);
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('ID')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedValueException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('ID');
-        $userProfile->firstName   = $data->get('firstName');
-        $userProfile->lastName    = $data->get('lastName');
-        $userProfile->photoURL    = $data->get('pictureUrl');
-        $userProfile->profileURL  = $data->get('publicProfileUrl');
-        $userProfile->email       = $data->get('headline');
-        $userProfile->bio         = $data->get('language');
+        $userProfile->identifier    = $data->get('id');
+        $userProfile->firstName     = $data->get('firstName');
+        $userProfile->lastName      = $data->get('lastName');
+        $userProfile->photoURL      = $data->get('pictureUrl');
+        $userProfile->profileURL    = $data->get('publicProfileUrl');
+        $userProfile->email         = $data->get('emailAddress');
+        $userProfile->description   = $data->get('headline');
+        $userProfile->country       = $data->filter('location')->get('name');
 
-        $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+        $userProfile->emailVerified = $userProfile->email;
+
+        $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         return $userProfile;
     }
