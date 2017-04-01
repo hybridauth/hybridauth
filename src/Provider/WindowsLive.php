@@ -35,7 +35,12 @@ class WindowsLive extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected $accessTokenUrl = 'https://login.live.com/oauth20_authorize.srf';
+    protected $accessTokenUrl = 'https://login.live.com/oauth20_token.srf';
+
+    /**
+    * {@inheritdoc}
+    */
+    protected $apiDocumentation = 'https://msdn.microsoft.com/en-us/library/hh243647.aspx';
 
     /**
     * {@inheritdoc}
@@ -63,6 +68,7 @@ class WindowsLive extends OAuth2
         $userProfile->birthDay      = $data->get('birth_day');
         $userProfile->birthMonth    = $data->get('birth_month');
         $userProfile->birthYear     = $data->get('birth_year');
+        $userProfile->language      = $data->get('locale');
 
         return $userProfile;
     }
@@ -70,19 +76,19 @@ class WindowsLive extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected function getUserContacts()
+    public function getUserContacts()
     {
-        $contacts = [];
-
         $response = $this->apiRequest('me/contacts');
-
-        if ($data->get('errcode')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
-        }
 
         $data = new Data\Collection($response);
 
-        foreach ($data->filter('data')->all() as $idx => $entry) {
+        if (! $data->exists('data')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
+
+        $contacts = [];
+
+        foreach ($data->filter('data')->toArray() as $idx => $entry) {
             $userContact = new User\Contact();
 
             $userContact->identifier  = $entry->get('id');
