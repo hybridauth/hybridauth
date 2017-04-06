@@ -50,7 +50,7 @@ $config = [
 
     'scope'    => 'user:email'
 
-    /* optional : set debgu mode
+    /* optional : set debug mode
         // You can also set it to
         // - false To disable logging
         // - true To enable logging
@@ -92,7 +92,7 @@ $github = new Hybridauth\Provider\GitHub($config);
  * Step 4: Authenticating Users
  *
  * When invoked, `authenticate()` will redirect users to GitHub login page where they
- * will be asked to grant access to your application. If hey do, GitHub will redirect
+ * will be asked to grant access to your application. If they do, GitHub will redirect
  * the users back to Authorization callback URL (i.e., this script).
  *
  * Note that GitHub and few other providers will ask their users for authorisation
@@ -115,15 +115,15 @@ echo 'Hi '.$userProfile->displayName;
  * Bonus: Access GitHub API
  *
  * Now that the user is authenticated with Gihub, and depending on the authorization given to your
- * application, you should be able to query the said API in behalf of the user.
+ * application, you should be able to query the said API on behalf of the user.
  *
- * As an exapmle we list the authenticated user's public gists.
+ * As an example we list the authenticated user's public gists.
  */
 
 $apiResponse = $github->apiRequest('gists/public');
 
 /**
- * Step 6: Disconnecting form the Provider API
+ * Step 6: Disconnecting from the Provider API
  *
  * This will erase the current user authentication data from session, and any further
  * attempt to communicate with Github API will result on an authorisation exception.
@@ -144,7 +144,7 @@ $github->disconnect();
  * session, thus, any new request we now make will now throw an exception.
  *
  * It's also important that you don't show Hybridauth exception's messages to the
- * user as they may include sensetive data, and that you use your own error messages
+ * user as they may include sensitive data, and that you use your own error messages
  * instead.
  */
 
@@ -156,7 +156,7 @@ try {
 * Catch Curl Errors
 *
 * This kind of error may happen when:
-*     - Internet or Networks issues.
+*     - Internet or Network issues.
 *     - Your server configuration is not setup correctly.
 * The full list of curl errors that may happen can be found at http://curl.haxx.se/libcurl/c/libcurl-errors.html
 */
@@ -167,7 +167,7 @@ catch (Hybridauth\Exception\HttpClientFailureException $e) {
 /**
 * Catch API Requests Errors
 *
-* This usually happen when requesting a:
+* This usually happens when requesting a:
 *     - Wrong URI or a mal-formatted http request.
 *     - Protected resource without providing a valid access token.
 */
