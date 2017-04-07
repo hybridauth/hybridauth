@@ -90,9 +90,6 @@ class Yahoo extends OAuth2
     */
     public function getUserProfile()
     {
-        // refresh tokens if needed
-        $this->refreshAccessToken();
-
 		// Retrive current user guid if needed
 		$this->getCurrentUserId();
 

@@ -104,9 +104,6 @@ class Google extends OAuth2
     */
     public function getUserProfile()
     {
-        // refresh tokens if needed
-        $this->refreshAccessToken();
-
         $response = $this->apiRequest('people/me');
 
         $data = new Data\Collection($response);
@@ -205,9 +202,6 @@ class Google extends OAuth2
     */
     public function getUserContacts($parameters = [])
     {
-        // refresh tokens if needed
-        $this->refreshAccessToken();
-
         $parameters = ['max-results' => 500] + $parameters;
 
         // Google Gmail and Android contacts
