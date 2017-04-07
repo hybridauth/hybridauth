@@ -10,11 +10,7 @@ namespace Hybridauth\User;
 use Hybridauth\Exception\UnexpectedValueException;
 
 /**
- * Hybrid_User_Contact
- *
- * used to provider the connected user contacts list on a standardized structure across supported social apis.
- *
- * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Contacts.html
+ * Hybridauth\User\Contact
  */
 final class Contact
 {

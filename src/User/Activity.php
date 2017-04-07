@@ -10,11 +10,7 @@ namespace Hybridauth\User;
 use Hybridauth\Exception\UnexpectedValueException;
 
 /**
- * Hybrid_User_Activity
- *
- * used to provider the connected user activity stream on a standardized structure across supported social apis.
- *
- * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Activity.html
+ * Hybridauth\User\Activity
  */
 final class Activity
 {
