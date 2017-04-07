@@ -65,6 +65,9 @@ class Hybrid_Providers_HumanitarianId extends Hybrid_Provider_Model_OAuth2
       $_REQUEST["hauth_done"] = str_replace("?", "&", $_REQUEST["hauth_done"]);
       parse_str($_REQUEST["hauth_done"], $request);
     }
+    else {
+      $request = $_REQUEST;
+    }
 
     $error = (array_key_exists('error', $request)) ? $request['error'] : "";
 
