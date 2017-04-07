@@ -1,37 +1,39 @@
+---
+layout: default
+title: "Hybridauth Documentation"
+---
+
 Hybridauth Documentation
 ========================
 
-Welcome to Hybridauth documentation. As a good start we recommend to ...
+Welcome to Hybridauth documentation. We recommend to start by reading [Installation](install.html) then [Introduction](introduction.html) and then you may move to Developer References for advanced usage. To make sure you can sign in your users with a certain social network or identity provider, refer to [Supported Providers](providers.html). 
 
 ### Getting started
 
 . | .
 ------------------------------------- | -----------------------------------------------------------------------------------
-[Installation](install.html)          | Tow to install Hybridauth.
-[Supported Providers](providers.html) |
-[Plugins and Addons](plugins.html)    |
+[Installation](install.html)          | System requirements, installation process and namespace auto-loading.
+[Introduction](introduction.html)     | Contains introductory examples of how to use Hybridauth to sign in users with social networks.
+[Supported Providers](providers.html) | Listing of supported social networks and identity providers and their enabled features.
 
 ### Developer References
 
 . | .
 --------------------------------------------------------------- | ---------------------------------------------------------
-[Authenticating a user](developer-ref-user-authentication.html) |
-[Access user profile](developer-ref-user-profile.html)          |
-[Access user contacts](developer-ref-user-contacts.html)        |
-[Update user status](developer-ref-user-status.html)            |
-[Access providers APIs](developer-ref-providers-apis.html)      |
-[Exception handling](developer-ref-exceptions.html)             |
-[Extending Hybridauth](developer-ref-extend-hybridauth.html)    |
-[Migrating to 3.0+](developer-ref-migrating.html)               |
+[User Authentication](developer-ref-user-authentication.html)   | Examples of how to authenticate users with a given providers and how to make use of access tokens.
+[User Profile](developer-ref-user-profile.html)                 | Describes how to retrieve users profiles in standardized structure across all the social networks.
+[User Contacts list](developer-ref-user-contacts.html)          | Describes how to retrieve users contacts lists.
+[User Activity Stream](developer-ref-user-activity.html)        | Describes how to retrieve users activity stream such as tweets and Facebook's wall.
+[User Status](developer-ref-user-status.html)                   | Outlines how to update user's status.
+[Providers APIs](developer-ref-providers-apis.html)             | Outlines how to access social networks APIs in behalf of connected users.
+[Exceptions](developer-ref-exceptions.html)                     | Errors and exceptions handling.
+[Extending Hybridauth](developer-ref-extend-hybridauth.html)    | Describes how to add new providers adapters to Hybridauth, and how to port them from 2.x.
 
+### Migration
 
-### Community resources
-
-| .
-| ----------------------------------------------------------------------------
-| [EN] [Integrate Social Sign On in your PHP apps using HybridAuth](http://hasin.me/2014/02/10/integrate-social-sign-on-in-your-php-apps-using-hybridauth/), by Hasin Hayder, February 2014.
-| [RU] [Интеграция HybridAuth в Phalcon PHP](http://blog.artdevue.com/hybridauth-to-phalcon.html), by Valentin Rasulov.
-
+. | .
+--------------------------------------------------------------- | ---------------------------------------------------------
+[Migrating from 2.x](developer-ref-migrating.html)              | (not done yet)
 
 <style>
     thead { display:none !important; }

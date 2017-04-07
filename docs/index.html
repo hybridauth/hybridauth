@@ -10,16 +10,17 @@
     <meta name="keywords" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="http://fonts.googleapis.com/css?family=Roboto:100,200,300,400,700|Roboto+Condensed:400,700" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:100,200,300,400,500,600,700" rel="stylesheet" type="text/css">
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"> 
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> 
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/tranquil-heart.css" rel="stylesheet"> 
     <link href="assets/css/style.css" rel="stylesheet">   
-    <link href="assets/css/prettify.css" rel="stylesheet">   
 
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> 
     <script type="text/javascript" src="assets/js/prettify.js"></script>
+    <script type="text/javascript" src="assets/js/script.js"></script>
 </head>
 <body>
     <header>
@@ -44,18 +45,17 @@
         </nav>
     </header>
 
-    <div id="content" class="container"> 
+    <div class="container"> 
         <div class="block row wslidxspla" style="padding-bottom: 0px; margin-bottom: 0px;">
             <div class="col col-md-12">
-                <h1>Hybridauth Social Login Library</h1>
-                <h3><!-- to change to something that make more sense .. --></h3>
+                <h1>Hybridauth, <small style="font-size: 24px;">open source social login php library.</small></h1>
             </div>
 
             <br style="clear:both;" />
 
             <div class="wslidxbtn" style="margin-bottom: 30px;">
-                  <a href="./documentation.html" class="btn btn-primary btn-lg" ><span class="glyphicon glyphicon-bookmark icon-white" style="margin-top: 5px;"></span> Hybridauth Documentation</a>
-                  <a href="https://github.com/hybridauth/hybridauth/releases" class="btn btn-success btn-lg" target="_blank" ><span class="glyphicon glyphicon-download icon-white" style="margin-top: 5px;"></span> Download Hybridauth 3.0 </a> 
+                  <a href="./documentation.html" class="btn btn-primary btn-lg" ><span class="glyphicon glyphicon-book icon-white" style="margin-top: 5px;"></span> Online Documentation</a>
+                  <a href="https://github.com/hybridauth/hybridauth/releases" class="btn btn-success btn-lg" target="_blank" ><span class="glyphicon glyphicon-download icon-white" style="margin-top: 5px;"></span> Download Hybridauth</a> 
             </div>
         </div>
         
@@ -72,7 +72,7 @@
         <br />
 
         <p align="center">
-            HybridAuth Open Source PHP Social Sign On Library, &copy; <!-- whatever that means --> 2009-2015.
+            HybridAuth Open Source PHP Social Sign On Library, © 2009-2017.
             <br />HybridAuth code is licensed under <a href="http://opensource.org/licenses/MIT">MIT License</a>. HybridAuth documentation is licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
             <br />HybridAuth documentation website was made using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> and <a href="http://jquery.com/">jQuery</a>. Project hosting provided by <a href="http://github.com/">Github</a>.
         </p>
@@ -84,10 +84,13 @@
         <div class="container">
             <div class="row"> 
                 <ul>
+                    <li><a href="./index.html">Home</a></li>
+                    <li><a href="https://github.com/hybridauth/hybridauth/releases" target="_blank">Download</a></li> 
                     <li><a href="./documentation.html">Documentation</a></li>
                     <li><a href="./getinvolved.html">Get involved</a></li> 
                     <li><a href="./support.html">Support</a></li> 
                     <li><a href="./license.html">License</a></li> 
+                    <span style="color:white">&mdash;</span>
                     <li><a href="https://github.com/hybridauth/hybridauth" target="_blank">Github</a></li> 
                     <li><a href="https://gitter.im/hybridauth/hybridauth" target="_blank">Gitter</a></li> 
                 </ul>
@@ -108,7 +111,7 @@
                 dataType: 'jsonp',
                 success: function(data) {
                     $.each(data.data, function(key, val) {
-                        $('#githubcontributors').append('<a href="' + val.html_url + '" target="_blank" title="' + val.login + '"><img src="' + val.avatar_url + '" width="85" height="85" class="img-rounded" style="margin:5px;"/></a>');
+                        $('#githubcontributors').append('<a href="' + val.html_url + '" target="_blank" title="' + val.login + '"><img src="' + val.avatar_url + '" width="55" height="55" class="img-rounded" style="margin:5px;"/></a>');
                     });
                 }
             });

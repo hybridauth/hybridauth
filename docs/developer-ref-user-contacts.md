@@ -1,35 +1,40 @@
-User Contacts
-=============
+---
+layout: default
+title: "User's Contacts"
+description: "Describes how to retrieve users contacts lists."
+---
 
-**Important** Currently only Facebook, Twitter and LinkedIn do support this feature. Others providers will throw an
-exception (`NotImplementedException`: Provider does not support this feature), when `getUserContacts()` is called.
+User's Contacts
+===============
 
+Similarly to the user's profile, after authentication, Hybridauth can provide the connected user contact
+list in a rich, simple and **standardized structure** across the social APIs supporting this feature.
 
-Same with the user's profile, after authentication, HybridAuth can provide the connected user contact list's in a rich,
-simple and **standardized structure** across all the social APIs.
+If a provider does not support this feature, Hybridauth will throw an exception `NotImplementedException`.
+To know more about providers capabilities, refer to [Supported Providers](providers.html) .
 
-**Sample :**
+**Usage :**
 
-```php
-// Instantiate Google Adapter
+<pre>
+//Instantiate Google Adapter
 $google = new Hybridauth\Provider\Google($config);
 
-// Aauthenticate with the user
+//Sign in with google
 $google->authenticate();
 
-// Retrieve Users Profiles
-$userContacts = $google->getUserContatcs();
+//Retrieve User's contacts
+$userContacts = $google->getUserContatcs(); //Returns an array of Hybridauth\User\Contact objects
 
-// Iterate over the user contacts list
+//Iterate over the user contacts list
 foreach( $userContacts as $contact ){
 	echo $contact->displayName . ' ' . $contact->profileURL . "\n";
 }
-```
+</pre>
 
 
 ### Class Hybridauth\User\Contact
 
-This class represents the .... 
+This class represents a user's contact.
 
 **Data Members :**
 

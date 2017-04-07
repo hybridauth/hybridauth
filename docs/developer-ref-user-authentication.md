@@ -1,134 +1,186 @@
-User authentication
+---
+layout: default
+title: "User authentication"
+description: "Examples of how to authenticate users with a given providers and how to make use of OAuth access tokens."
+---
+
+User Authentication
 ===================
 
-### Simple authentication:
+{% include callout.html content="If you're new to Hybridauth, you may want to start with the [Introduction](introduction.html) to get a general overview of the library and its basic usage. This section will tackle users authentication in more details." type="primary" %} 
 
-```php
-/**
-* 1. Require the Hybridauth Library
-*
-* If you are using Composer, then `vendor/autoload.php` will autoload all the required classes for us,
-* otherwise you may use the included Hybridauth PSR-4 compliant autoloader on the examples folder.
-* To know more, refer to the installation section.
-*/
-include 'vendor/autoload.php'; // or include 'examples/hybridauth_autoload.php';
+### User Authentication:
 
+In the following example we'll demonstrate who to sign a user with Google and how to retrieve his profile using Hybridauth in 4 simple steps. In addition we'll discuss all possible configuration parameters, required or otherwise.
+
+<pre>
 /**
-* 2. Build the adapter configuration array
+* 1. Build the adapter configuration array
 */
 $config = [
-    'callback' => 'http://example.com/hybridauth/example.php',
-
-    'keys' => [ 'key' => 'your-twitter-consumer-key', 'secret' => 'your-twitter-consumer-secret' ]
-];
-
-/**
-* 3. Instantiate Twitter adapter using the array $config we just built.
-*/
-$twitter = new Hybridauth\Provider\Twitter( $config );
-
-try {
     /**
-    * 4. Logging the user in
+    * Required: Callback URL
     *
-    * Hybridauth will attempt to negotiate with the Twitter api and authenticate the user. If the process
-    * fails for whatever reason, then Hybridauth will throw an exception.
+    * The callback url is the location where a provider (Google in this case) will redirect the use once they
+    * authenticate and authorize your application.
     *
-    * If the user is authenticated, then subsequent calls to this method will be ignored (yield a boolean).
-    * To know more, refer to Hybridauth full developer api.
+    * For this example we choose to come back to this same script, however in your project you'll have to you need to
+    * replace it with the valid url to yours. 
+    *
+    * For convenience, Hybridauth provides an utility function `Hybridauth\HttpClient\Util::getCurrentUrl()` that can
+    * generate the current page url for you and you can use it for the callback.
     */
-    $twitter->authenticate();
+    'callback' => 'http://localhost/path/to/this/script.php',
 
-    # at this point the authentication process has succeeded, and we can proceed with our application logic.
-    # the examples below are meant to give a quick overview for the kind actions that Hybridauth can execute
-    # on behalf on the user.
-
-    // Retrieve the oauth access tokens
-    $accessToken = $twitter->getAccessToken();
-
-    // Retrieve the user profile
-    $userProfile = $twitter->getUserProfile();
-
-    // etc.
-}
-catch( Exception $e ){
-    echo "Oops, we ran into an issue! " . $e->getMessage();
-}
-```
-
-### Authenticating a user with access tokens
-
-Since Hybridauth 3 it's possible to directly authenticate a user with the access token.
-
-```php
-$config = [
-    'callback' => 'http://localhost/hybridauth/example.php',
-
-    'keys' => [ 'key' => 'your-twitter-consumer-key', 'secret' => 'your-twitter-consumer-secret' ],
-
-    // Supply the user access tokens
-    'tokens' => [ 'access_token' => 'user-access-token', 'access_token_secret' => 'user-access-token-secret' ]
-];
-
-$twitter = new Hybridauth\Provider\Twitter( $config );
-
-try {
     /**
-    * Retrieve the user profile
+    * Required*: Application credentials
     *
-    * Note that we didn't call `$twitter->authenticate()` as we already have the user access tokens and in
-    * case these tokens has been revoked or expired, `$twitter->getUserProfile()` will throw an exception.
-    * For more information, refer to Hybridauth full developer api.
+    * A set of keys used by providers to identify your website and only required by those using OAuth 1 and OAuth 2. To acquire
+    * these you'll have to register an application on provider's site. In the case of Google for instance you can refer to
+    * https://support.google.com/cloud/answer/6158849
     */
-    $userProfile = $twitter->getUserProfile();
-}
-catch( Exception $e ){
-    echo "Oops, we ran into an issue! " . $e->getMessage();
-}
-```
+    'keys' => [ 
+        'id'     => 'your-google-client-id',
+        'secret' => 'your-google-client-secret' 
+    ],
 
-### Legacy way (Similar to Hybridauth 2)
+    /**
+    * Optional: Custom Scope
+    *
+    * Providers using OAuth 2 will requires to know the scope of the authorization a user is going to give to your
+    * application, and Hybridauth's adapters will request a limited scope by default, however you may specify a custom
+    * value to overwrite default ones.
+    */
+    'scope' => 'profile https://www.googleapis.com/auth/plus.profile.emails.read', 
 
-Hybridauth 3 provides an unified entry point to the various providers it supports which make it easy to authenticate users
-with multiple providers.
+    /**
+    * Optional: Custom Provider's API end points
+    *
+    * Hybridauth allows you to overwrite all the provider's API end point, which might be useful in some cases like when
+    * there is a need to use a different API version for example.
+    */
+    'endpoints' => [
+        'api_base_url'     => 'https://www.googleapis.com/plus/v1/',
+        'authorize_url'    => 'https://accounts.google.com/o/oauth2/auth',
+        'access_token_url' => 'https://accounts.google.com/o/oauth2/token',
+    ],
 
+    /**
+    * Optional: Custom Provider's Authorize Url Parameters
+    *
+    * Certain providers enables you to customize the authorization url which you can optionality pass in adapter's config
+    * as an associative array.
+    */
+    'authorize_url_parameters' => [
+           'approval_prompt' => 'force',
+           'access_type'     => 'offline',
+           'hd'              => ..,
+           'state'           => ..,
+           //And so on.
+    ],
 
-**Note:** If you were using Hybridauth 2, please refer to [Migrating to 3.0+](developer-ref-migrating.html) to make the
-necessary changes to your existing application in order to make it work with HybridAuth 3.
+    /**
+    * Optional: Debug Mode
+    *
+    * The debug mode is set to false by default, however you can rise its level to either 'info', 'debug' or 'error'.
+    *
+    * debug_mode: false|info|debug|error
+    * debug_file: Path to file writeable by the web server. Required if only 'debug_mode' is not false.
+    */
+    'debug_mode' => false,
+    'debug_file' => __FILE__ . '.log',
 
-```php
-$config = [
-    'base_url'  => 'http://localhost/hybridauth/callback.php',
+    /**
+    * Optional: CURL Settings
+    *
+    * For more information, refer to: http://www.php.net/manual/function.curl-setopt.php  
+    */
+    'curl_options' => [
+        //Set a custom certificate
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_CAINFO         => '/path/to/your/certificate.crt',
 
-    'providers' => [
-        'Twitter' => [
-            'enabled' => true,
-            'keys'    => [ 'key' => 'your-twitter-consumer-key', 'secret' => 'your-twitter-consumer-secret' ],
-        ]
-        'GitHub' => [
-            'enabled' => true,
-            'keys'    => [ 'id' => 'your-github-application-id', 'secret' => 'your-github-application-secret' ],
-        ]
+        //Set a valid proxy address
+        CURLOPT_PROXY          => '8.8.8.8',
+
+        //Set a custom user agent
+        CURLOPT_USERAGENT      => 'User Agent String'
+        
+        //And so on.
     ]
 ];
 
-// Instantiate Hybridauth main class with the config array
-$hybridauth = new Hybridauth\Hybridauth( $config );
+/**
+* 2. Instantiate Google adapter using the configuration array we built
+*/
+$adapter = new Hybridauth\Provider\Google($config);
 
-try{
-    // Authenticate with GitHub
-    $github = $hybridauth->authenticate( "GitHub" );
+/**
+* 3. Sign in a user with Google
+*
+* Hybridauth will attempt to negotiate with the Google api and authenticate the user. If for whatever reason the process fails,
+* Hybridauth will then throw an exception.
+*
+* Note that if the user is already authenticated, then any subsequent call to this method will be ignored.
+*/
+$adapter->authenticate();
 
-    // Retrieve the user github profile
-    $userProfile = $github->getUserProfile();
+/**
+* Retrieve OAuth 1 / OAuth 2 Access Tokens
+*
+* These access tokens can be stored to database and later used to restore user's session.
+*/
+$accessToken = $adapter->getAccessToken();
 
-    // Authenticate with Twitter
-    $twitter = $hybridauth->authenticate( "Twitter" );
+/**
+* 4. Perform actions in behalf of connected user
+*
+* At this point the authentication process has succeeded, and we can proceed with our application logic. For example we may
+* attempt to retrieve the user profile.
+*/
+$userProfile = $adapter->getUserProfile();
+</pre>
 
-    // Retrieve the user twitter profile
-    $userProfile = $twitter->getUserProfile();
-}
-catch( Exception $e ){
-    echo "Oops, we ran into an issue! " . $e->getMessage();
-}
-```
+### Authenticating User Using Access Tokens
+
+Authenticating a user using access tokens is a similar to normal way of signing in users except for step 3 where we'll feed the adapter the said tokens instead of redirecting the user to provider's website for authentication/authorization.
+
+<pre>
+/**
+* 1. Build the adapter configuration array
+*/
+$config = [
+    /**
+    * Location where to redirect users once they authenticate with Google
+    */
+    'callback' => 'http://localhost/path/to/this/script.php',
+
+    /**
+    * Your Google application credentials
+    */
+    'keys' => [ 'id' => 'your-google-client-id', 'secret' => 'your-google-client-secret' ],
+];
+
+/**
+* 2. Instantiate Google adapter using the configuration array we built
+*/
+$adapter = new Hybridauth\Provider\Google($config);
+
+/**
+* 3. Restore OAuth 1 / OAuth 2 Access Tokens
+*
+* Instead of calling `Adapter::authenticate()` as we'd normally do, here we simply feed the adapter any stored access tokens
+* we have. In case the access tokens we used has been revoked or expired, the provider's will reject the connection, and
+* Hybridauth will throw an exception.
+*
+* Note that these tokens should be the same format and content returned by `Adapter::getAccessToken()`
+*/
+$adapter->setAccessToken($accessToken);
+
+/**
+* 4. Perform actions in behalf of connected user
+*
+* For example we may go ahead and attempt to retrieve the user profile.
+*/
+$userProfile = $adapter->getUserProfile();
+</pre>

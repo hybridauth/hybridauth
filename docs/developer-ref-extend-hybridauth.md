@@ -1,28 +1,34 @@
+---
+layout: default
+title: "Extending Hybridauth - Adding new providers"
+description: "Describes how to add new providers adapters to Hybridauth, and how to port them from 2.x."
+---
+
 # Upgrading supported providers to 3.0
 
 ## 1. OpenID
 
 OpenID providers are still the same and they are the most easy ones: in most cases we just set $openidIdentifier and that's it.
 
-```php
+<pre>
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
 
-final class Stackoverflow extends OpenID
+final class StackoverflowOpenID extends OpenID
 {
     protected $openidIdentifier = 'https://openid.stackexchange.com/';
 }
-```
+</pre>
 
 ## 2. OAuth 2
 
-OAuth2Client and Model_OAuth2 are now merged together into a new abstract class to simplify the authorization flow.
+`OAuth2Client` and `Model_OAuth2` are now merged together into a new abstract class to simplify the authorization flow.
 
 Subclasses (i.e., providers adapters) can either use the already provided methods by the new OAuth2 class, override them,
 or create new ones when needed.
 
-```php
+<pre>
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
@@ -74,11 +80,11 @@ final class MyCustomProvider extends OAuth2
 
     function getUserProfile()
     {
-        /* now we use apiRequest() for signed requests. */
-        $response = $this->apiRequest( 'user/profile', 'GET', [], [ 'Authorization' => .. ] );
+        /* Send a signed http request to provider API to request user's profile */
+        $response = $this->apiRequest( 'user/profile' );
 
-        /* example of how to instantiate a user profile and how to use data collection, assuming user/profile returns this response:
-
+        /* Example of how to instantiate a user profile and how to use data collection
+           assuming user/profile returns this response:
             {
                 "id": "98131543",
                 "firstName": "John",
@@ -104,34 +110,28 @@ final class MyCustomProvider extends OAuth2
         }
 
         $userProfile->identifier = $collection->get( 'id' );
-
         $userProfile->email = $collection->get( 'email' );
-
         $userProfile->displayName = $data->get( 'firstName' ) . ' ' . $data->get( 'lastName' ) ;
+        $userProfile->address = $collection->filter( 'address' )->get( 'streetAddress' );
+        $userProfile->city = $collection->filter( 'address' )->get( 'city' );
 
         if( $collection->exists( 'image' ) )
         {
             $userProfile->photoURL = 'http://provider.ltd/users/' . $collection->get( 'image' );
         }
 
-        $userProfile->address = $collection->filter( 'address' )->get( 'streetAddress' );
-
-        $userProfile->city = $collection->filter( 'address' )->get( 'city' );
-
-        // ...
-
         return $userProfile;
     }
 
     //..
 }
-```
+</pre>
 
 ## 3. OAuth 1
 
 OAuth 1 is very similar to OAuth 2. Subclasses can set the default provider endpoints and settings.
 
-```php
+<pre>
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth1;
@@ -183,4 +183,4 @@ final class MyCustomProvider extends OAuth1
 
     //..
 }
-```
+</pre>

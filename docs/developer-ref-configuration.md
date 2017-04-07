@@ -1,10 +1,10 @@
 ---
 layout: default
-title: "Plugins and Addons"
+title: "Configuration"
 ---
 
-Plugins and Addons
-==================
+Configuration
+=============
 
 <br />
 

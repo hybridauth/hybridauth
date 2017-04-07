@@ -1,55 +1,17 @@
+---
+layout: default
+title: "Exceptions Handling"
+description: "Errors and exceptions handling."
+---
+
 Exceptions Handling
 ===================
 
 Hybridauth uses exceptions extensively and it's important that these exceptions be properly caught/handled in your code.
 
-Below a list of exceptions that Hybridauth may throw at you in case something goes wrong:
-
-**Exception Name**                        | **Description**
------------------------------------------ | --------------------------------------------------------------------------------
-`Exception                              ` | Exception is the base class for all Exceptions.
-`RuntimeException                       ` | Exception thrown if an error which can only be found on runtime occurs.
-`InvalidArgumentException               ` | Exception thrown if an argument is not of the expected type.
-`UnexpectedValueException               ` | Exception thrown if a value does not match with a set of values. 
-`BadMethodCallException                 ` | Exception thrown if a callback refers to an undefined method or if some arguments are missing.
-`NotImplementedException                ` | Exception thrown when a requested method or operation is not implemented.
-`InvalidApplicationCredentialsException ` | Exception thrown when your application key and secret are not setup correctly
-`InvalidAuthorizationCodeException      ` | Exception thrown when an OAuth2 authentication request fails due to a missing, invalid, or mismatching redirection URI, or if the client identifier is missing or invalid.
-`InvalidAuthorizationStateException     ` | Exception thrown when an OAuth2 authorization state is either invalid or has been used.
-`InvalidAccessTokenException            ` | Exception thrown when an OAuth1 `access_token` is invalid. 
-`InvalidOauthTokenException             ` | Exception thrown when an OAuth1 `oauth_token` is invalid.
-`InvalidOpenidIdentifierException       ` | Exception thrown when an OpenID identifier `openid_identifier` was not setup correctly.
-`HttpClientFailureException             ` | Exception thrown when the curl http client returns an errors. Typically happen due to networks issues or server configuration.
-`HttpRequestFailedException             ` | Exception thrown when a requested URL returns an errors. This usually happen when requesting a wrong URI or a protected resource without providing a valid access token.
-`AuthorizationDeniedException           ` | Exception thrown when a user deny the authentication/authorization request.
-
-
-**Exceptions Class Tree:**
-
-```
-    ExceptionInterface
-    Exception                                             extends \Exception implements ExceptionInterface
-    |   RuntimeException                                  extends Exception
-    |   |    UnexpectedValueException                     extends RuntimeException
-    |   |    |    AuthorizationDeniedException            extends UnexpectedValueException
-    |   |    |    HttpClientFailureException              extends UnexpectedValueException
-    |   |    |    HttpRequestFailedException              extends UnexpectedValueException
-    |   |    |    InvalidAuthorizationCodeException       extends UnexpectedValueException
-    |   |    |    InvalidAuthorizationStateException      extends UnexpectedValueException
-    |   |    |    InvalidOauthTokenException              extends UnexpectedValueException
-    |   |    |    InvalidAccessTokenException             extends UnexpectedValueException
-    |   |
-    |   |    BadMethodCallException                       extends RuntimeException
-    |   |    |   NotImplementedException                  extends BadMethodCallException  
-    |   |
-    |   |    InvalidArgumentException                     extends RuntimeException
-    |   |    |   InvalidApplicationCredentialsException   extends InvalidArgumentException
-    |   |    |   InvalidOpenidIdentifierException         extends InvalidArgumentException
-```
-
 **Example:**
 
-```php
+<pre>
 try {
     $github = new Hybridauth\Provider\GitHub($config);
     
@@ -86,4 +48,52 @@ catch (Hybridauth\Exception\HttpRequestFailedException $e) {
 catch (\Exception $e) {
     echo 'Oops! We ran into an unknown issue: ' . $e->getMessage();
 }
-```
+</pre>
+
+<br />
+**Exceptions Inheritance Tree:**
+
+<pre>
+Exception
+|   RuntimeException
+|   |    UnexpectedValueException
+|   |    |    AuthorizationDeniedException
+|   |    |    HttpClientFailureException
+|   |    |    HttpRequestFailedException
+|   |    |    InvalidAuthorizationCodeException
+|   |    |    InvalidAuthorizationStateException
+|   |    |    InvalidOauthTokenException
+|   |    |    InvalidAccessTokenException
+|   |    |    UnexpectedApiResponseException
+|   |
+|   |    BadMethodCallException
+|   |    |   NotImplementedException
+|   |
+|   |    InvalidArgumentException
+|   |    |   InvalidApplicationCredentialsException
+|   |    |   InvalidOpenidIdentifierException
+</pre>
+
+<br />
+**Exceptions description:**
+
+
+**Exception Name**                        | **Description**
+----------------------------------------- | --------------------------------------------------------------------------------
+`Exception                              ` | Exception is the base class for all Exceptions.
+`RuntimeException                       ` | Exception thrown if an error which can only be found on runtime occurs.
+`InvalidArgumentException               ` | Exception thrown if an argument is not of the expected type.
+`UnexpectedValueException               ` | Exception thrown if a value does not match with a set of values. 
+`BadMethodCallException                 ` | Exception thrown if a callback refers to an undefined method or if some arguments are missing.
+`NotImplementedException                ` | Exception thrown when a requested method or operation is not implemented.
+`InvalidApplicationCredentialsException ` | Exception thrown when your application key and secret are not setup correctly
+`InvalidAuthorizationCodeException      ` | Exception thrown when an OAuth2 authentication request fails due to a missing, invalid, or mismatching redirection URI, or if the client identifier is missing or invalid.
+`InvalidAuthorizationStateException     ` | Exception thrown when an OAuth2 authorization state is either invalid or has been used.
+`InvalidAccessTokenException            ` | Exception thrown when an OAuth1 `access_token` is invalid. 
+`UnexpectedApiResponseException         ` | 
+`InvalidOauthTokenException             ` | Exception thrown when an OAuth1 `oauth_token` is invalid.
+`InvalidOpenidIdentifierException       ` | Exception thrown when an OpenID identifier `openid_identifier` was not setup correctly.
+`HttpClientFailureException             ` | Exception thrown when the curl http client returns an errors. Typically happen due to networks issues or server configuration.
+`HttpRequestFailedException             ` | Exception thrown when a requested URL returns an errors. This usually happen when requesting a wrong URI or a protected resource without providing a valid access token.
+`AuthorizationDeniedException           ` | Exception thrown when a user deny the authentication/authorization request.
+

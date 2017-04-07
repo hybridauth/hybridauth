@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Search"
+---
+
 Search Results
 ==============
 

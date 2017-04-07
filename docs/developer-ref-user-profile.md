@@ -1,33 +1,37 @@
-User profile
-============
+---
+layout: default
+title: "User's profile"
+description: "Describes how to retrieve users profiles in standardized structure across all the social networks."
+---
 
-After authentication, HybridAuth provide the connected user profile's in a rich, simple and **standardized structure**
-across all the social APIs.
+User's profile
+==============
 
-Also, keep in mind that not all social APIs will provide all the user data to third-party.
+Once a user is authenticated against a provider API, you can retrieve the user's profile in a rich, 
+simple and **standardized structure** across **all** the social APIs supported by HybridAuth.
 
-The `Hybridauth\User\Profile` object will be populated with as much information about the user as HybridAuth was able
-to pull from the given API or authentication provider.
+The `Hybridauth\User\Profile` object will be populated with as much information about the user as 
+HybridAuth was able to pull from the given API or authentication provider.
 
 **Sample :**
 
-```php
-// Instantiate Github Adapter
+<pre>
+//Instantiate Github Adapter
 $github = new Hybridauth\Provider\GitHub($config);
 
-// Authenticate with the user
+//Authenticate using Github
 $github->authenticate();
 
-// Retrieve Users Profiles
-$userProfile = $github->getUserProfile();
+//Retrieve User's profile
+$userProfile = $github->getUserProfile(); //Returns an instance of class Hybridauth\User\Profile
 
-echo 'Hi '.$userProfile->displayName;
-```
+//Access User's dispaly name
+echo 'Hi ' . $userProfile->displayName;
+</pre>
 
 ### Class Hybridauth\User\Profile
 
-It represents the current logged in user profile. list of fields available in the normalized user profile structure used by
-HybridAuth. 
+It represents the current logged in user profile.
 
 **Data Members :**
 
@@ -43,12 +47,12 @@ firstName     | String   | User's first name
 lastName      | String   | User's last name
 gender        | String   | User's gender. Values are 'female', 'male' or NULL
 language      | String   | User's language
-age           | Integer  | User' age, note that we don't calculate it. we return it as is if the IDp provide it
+age           | Integer  | User' age, note that we don't calculate it. We return it as it is.
 birthDay      | Integer  | The day in the month in which the person was born.
 birthMonth    | Integer  | The month in which the person was born.
 birthYear     | Integer  | The year in which the person was born.
 email         | String   | User email. Not all of IDp grant access to the user email
-emailVerified | String   | Verified user email. Note: not all of IDp grant access to verified user email. Currently only Facebook, Google, Yahoo and Foursquare do provide the verified user email.
+emailVerified | String   | Verified user email. Note: not all of IDp grant access to verified user email.
 phone         | String   | User's phone number
 address       | String   | User's address
 country       | String   | User's country
