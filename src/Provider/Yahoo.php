@@ -59,7 +59,7 @@ class Yahoo extends OAuth2
         ];
 
         $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->token('access_token')
+            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
         ];
     }
 

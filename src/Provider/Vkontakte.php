@@ -41,8 +41,8 @@ class Vkontakte extends OAuth2
     {
         $data = parent::validateAccessTokenExchange($response);
 
-        $this->token('user_id', $data->get('user_id'));
-        $this->token('email', $data->get('email'));
+        $this->storeData('user_id', $data->get('user_id'));
+        $this->storeData('email', $data->get('email'));
     }
 
     /**
@@ -51,7 +51,7 @@ class Vkontakte extends OAuth2
     public function getUserProfile()
     {
         $parameters = [
-            'uid'    => $this->token('user_id'),
+            'uid'    => $this->getStoredData('user_id'),
             'fields' => 'first_name,last_name,nickname,screen_name,sex,' .
                             'bdate,timezone,photo_rec,photo_big,photo_max_orig'
         ];
@@ -67,7 +67,7 @@ class Vkontakte extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier  = $data->get('uid');
-        $userProfile->email       = $this->token('email');
+        $userProfile->email       = $this->getStoredData('email');
         $userProfile->firstName   = $data->get('first_name');
         $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');

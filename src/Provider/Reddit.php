@@ -52,7 +52,7 @@ class Reddit extends OAuth2
         $this->tokenExchangeParameters = [
             'client_id'    => $this->clientId,
             'grant_type'   => 'authorization_code',
-            'redirect_uri' => $this->endpoint
+            'redirect_uri' => $this->callback
         ];
 
         $this->tokenExchangeHeaders = [
@@ -60,7 +60,7 @@ class Reddit extends OAuth2
         ];
 
         $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->token('access_token')
+            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
         ];
     }
 

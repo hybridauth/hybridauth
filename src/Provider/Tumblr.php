@@ -72,7 +72,7 @@ class Tumblr extends OAuth1
                 $bloghostname = substr($bloghostname[1], 0, -1);
 
                 // store user's primary blog which will be used as target by setUserStatus
-                $this->token('primary_blog', $bloghostname);
+                $this->storeData('primary_blog', $bloghostname);
 
                 break;
             }
@@ -90,7 +90,7 @@ class Tumblr extends OAuth1
                     ? [ 'type' => 'text', 'body' => $status ]
                     : $status;
 
-        $response = $this->apiRequest('blog/' . $this->token('primary_blog') . '/post', 'POST', $status);
+        $response = $this->apiRequest('blog/' . $this->getStoredData('primary_blog') . '/post', 'POST', $status);
 
         return $response;
     }

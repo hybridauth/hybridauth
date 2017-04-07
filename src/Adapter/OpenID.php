@@ -40,11 +40,9 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     protected $openidIdentifier = '';
 
     /**
-    * Adapter initializer
-    *
-    * @throws InvalidOpenidIdentifierException
+    * {@inheritdoc}
     */
-    protected function initialize()
+    protected function configure()
     {
         if ($this->config->exists('openid_identifier')) {
             $this->openidIdentifier = $this->config->get('openid_identifier');
@@ -54,8 +52,17 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             throw new InvalidOpenidIdentifierException('OpenID adapter requires an openid_identifier.', 4);
         }
 
-        $hostPort = parse_url($this->endpoint, PHP_URL_PORT);
-        $hostUrl  = parse_url($this->endpoint, PHP_URL_HOST);
+        $this->setCallback($this->config->get('callback'));
+        $this->setApiEndpoints($this->config->get('endpoints'));
+    }
+
+    /**
+    * {@inheritdoc}
+    */
+    protected function initialize()
+    {
+        $hostPort = parse_url($this->callback, PHP_URL_PORT);
+        $hostUrl  = parse_url($this->callback, PHP_URL_HOST);
 
         if ($hostPort != null) {
             $hostUrl .= ':' . $hostPort;
@@ -70,7 +77,9 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     */
     public function authenticate()
     {
-        if ($this->isAuthorized()) {
+        $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
+
+        if ($this->isConnected()) {
             return true;
         }
 
@@ -87,7 +96,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     /**
     * {@inheritdoc}
     */
-    public function isAuthorized()
+    public function isConnected()
     {
         return (bool) $this->storage->get($this->providerId . '.user');
     }
@@ -110,7 +119,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     public function authenticateBegin()
     {
         $this->openIdClient->identity  = $this->openidIdentifier;
-        $this->openIdClient->returnUrl = $this->endpoint;
+        $this->openIdClient->returnUrl = $this->callback;
         $this->openIdClient->required  = [
             'namePerson/first'       ,
             'namePerson/last'        ,
@@ -130,7 +139,11 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             'media/image/default'    ,
         ];
 
-        HttpClient\Util::redirect($this->openIdClient->authUrl());
+        $authUrl = $this->openIdClient->authUrl();
+
+        $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
+
+        HttpClient\Util::redirect($authUrl);
     }
 
     /**
@@ -141,6 +154,8 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     */
     public function authenticateFinish()
     {
+        $this->logger->debug(sprintf('%s::authenticateFinish(), callback url:', get_class($this)), [HttpClient\Util::getCurrentUrl(true)]);
+
         if ($this->openIdClient->mode == 'cancel') {
             throw new AuthorizationDeniedException('User has cancelled the authentication.');
         }

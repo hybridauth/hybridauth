@@ -20,8 +20,16 @@ use Hybridauth\User;
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'profile https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds/',
- *       'authorize_url_parameters' => [ 'approval_prompt' => 'force' ]
+ *       'scope'    => 'profile https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read',
+ *
+ *        // google's custom auth url params
+ *       'authorize_url_parameters' => [
+ *              'approval_prompt' => 'force', // to pass only when you need to acquire a new refresh token. 
+ *              'access_type'     => ..,      // is set to 'offline' by default
+ *              'hd'              => ..,
+ *              'state'           => ..,
+ *              // etc.
+ *       ] 
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Google( $config );
@@ -74,12 +82,14 @@ class Google extends OAuth2
     *   $config = [
     *       'callback' => '...',
     *       'keys'     => [ 'id' => '...', 'secret' => '..' ],
+    *
+    *        // google's custom auth url params
     *       'authorize_url_parameters' => [
-    *              'approval_prompt' => 'force',
-    *              'hd'              => ..
-    *              'state'           => ..
+    *              'approval_prompt' => 'force', // to pass only when you need to acquire a new refresh token. 
+    *              'hd'              => ..,
+    *              'state'           => ..,
     *              // etc.
-    *       ]
+    *       ] 
     *   ];
     */
     protected function getAuthorizeUrl($parameters = [])

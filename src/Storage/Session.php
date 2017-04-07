@@ -20,14 +20,14 @@ class Session implements StorageInterface
      *
      * @var string
      */
-    protected $namespace = 'HA:STORE';
+    protected $storeNamespace = 'HYBRIDAUTH::STORAGE';
 
     /**
      * Key prefix
      *
      * @var string
      */
-    protected $keyPrefix = 'hauth_session.';
+    protected $keyPrefix = '';
 
     /**
     * Initiate a new session
@@ -56,8 +56,8 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (isset($_SESSION[$this->namespace], $_SESSION[$this->namespace][$key])) {
-            return unserialize($_SESSION[$this->namespace][$key]);
+        if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
+            return $_SESSION[$this->storeNamespace][$key];
         }
 
         return null;
@@ -70,7 +70,7 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        $_SESSION[$this->namespace][$key] = serialize($value);
+        $_SESSION[$this->storeNamespace][$key] = $value;
     }
 
     /**
@@ -78,7 +78,7 @@ class Session implements StorageInterface
     */
     public function clear()
     {
-        $_SESSION[$this->namespace] = [];
+        $_SESSION[$this->storeNamespace] = [];
     }
 
     /**
@@ -88,12 +88,12 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (isset($_SESSION[$this->namespace], $_SESSION[$this->namespace][$key])) {
-            $tmp = $_SESSION[$this->namespace];
+        if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
+            $tmp = $_SESSION[$this->storeNamespace];
 
             unset($tmp[$key]);
 
-            $_SESSION[$this->namespace] = $tmp;
+            $_SESSION[$this->storeNamespace] = $tmp;
         }
     }
 
@@ -104,8 +104,8 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (isset($_SESSION[$this->namespace]) && count($_SESSION[$this->namespace])) {
-            $tmp = $_SESSION[$this->namespace];
+        if (isset($_SESSION[$this->storeNamespace]) && count($_SESSION[$this->storeNamespace])) {
+            $tmp = $_SESSION[$this->storeNamespace];
 
             foreach ($tmp as $k => $v) {
                 if (strstr($k, $key)) {
@@ -113,7 +113,7 @@ class Session implements StorageInterface
                 }
             }
 
-            $_SESSION[$this->namespace] = $tmp;
+            $_SESSION[$this->storeNamespace] = $tmp;
         }
     }
 }

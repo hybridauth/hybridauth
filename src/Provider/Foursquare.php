@@ -125,7 +125,7 @@ class Foursquare extends OAuth2
 
         $userContact->identifier  = $item->get('id');
         $userContact->photoURL    = $item->filter('photo')->get('prefix') . $photoSize . $item->filter('photo')->get('suffix');
-        $userContact->displayName = trim($item->get('firstName') . " " . $item->get('lastName'));
+        $userContact->displayName = trim($item->get('firstName') . ' ' . $item->get('lastName'));
         $userContact->email       = $item->filter('contact')->get('email');
 
         return $userContact;

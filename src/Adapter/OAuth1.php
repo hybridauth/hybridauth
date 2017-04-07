@@ -71,9 +71,19 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     protected $oauth1Version = '1.0a';
 
     /**
-    * @var object
+    * @var string
     */
     protected $consumerKey = null;
+
+    /**
+    * @var string
+    */
+    protected $consumerSecret = null;
+
+    /**
+    * @var object
+    */
+    protected $OAuthConsumer = null;
 
     /**
     * @var object
@@ -126,16 +136,16 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     protected $apiRequestHeaders = [];
 
     /**
-    * Adapter initializer
-    *
-    * @throws InvalidApplicationCredentialsException
+    * {@inheritdoc}
     */
-    protected function initialize()
+    protected function configure()
     {
-        if (! $this->config->filter('keys')->get('key') || ! $this->config->filter('keys')->get('secret')
-        ) {
+        $this->consumerKey    = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key');
+        $this->consumerSecret = $this->config->filter('keys')->get('secret');
+
+        if (! $this->consumerKey || !$this->consumerSecret) {
             throw new InvalidApplicationCredentialsException(
-                'Your consumer key and secret are required in order to connect to ' . $this->providerId
+                'Your application id is required in order to connect to ' . $this->providerId
             );
         }
 
@@ -143,6 +153,15 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $this->setAccessToken($this->config->get('tokens'));
         }
 
+        $this->setCallback($this->config->get('callback'));
+        $this->setApiEndpoints($this->config->get('endpoints'));
+    }
+
+    /**
+    * {@inheritdoc}
+    */
+    protected function initialize()
+    {
         /**
         * Set up OAuth Signature and Consumer
         *
@@ -157,26 +176,24 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         */
         $this->sha1Method  = new OAuthSignatureMethodHMACSHA1();
 
-        $this->consumerKey = new OAuthConsumer(
+        $this->OAuthConsumer = new OAuthConsumer(
             $this->config->filter('keys')->get('key'),
             $this->config->filter('keys')->get('secret')
         );
 
-        if ($this->token('request_token')) {
+        if ($this->getStoredData('request_token')) {
             $this->consumerToken = new OAuthConsumer(
-                $this->token('request_token'),
-                $this->token('request_token_secret')
+                $this->getStoredData('request_token'),
+                $this->getStoredData('request_token_secret')
             );
         }
 
-        if ($this->token('access_token')) {
+        if ($this->getStoredData('access_token')) {
             $this->consumerToken = new OAuthConsumer(
-                $this->token('access_token'),
-                $this->token('access_token_secret')
+                $this->getStoredData('access_token'),
+                $this->getStoredData('access_token_secret')
             );
         }
-
-        $this->overrideEndpoints();
     }
 
     /**
@@ -184,20 +201,22 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     public function authenticate()
     {
-        if ($this->isAuthorized()) {
+        $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
+
+        if ($this->isConnected()) {
             return true;
         }
 
         try {
-            if (! $this->token('request_token')) {
+            if (! $this->getStoredData('request_token')) {
                 $this->authenticateBegin();
             }
-            elseif (! $this->token('access_token')) {
+            elseif (! $this->getStoredData('access_token')) {
                 $this->authenticateFinish();
             }
         }
         catch (\Exception $exception) {
-            $this->clearTokens();
+            $this->clearStoredData();
 
             throw $exception;
         }
@@ -218,6 +237,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         $authUrl = $this->getAuthorizeUrl();
 
+        $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
+
         HttpClient\Util::redirect($authUrl);
     }
 
@@ -229,6 +250,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     public function authenticateFinish()
     {
+        $this->logger->debug(sprintf('%s::authenticateFinish(), callback url:', get_class($this)), [HttpClient\Util::getCurrentUrl(true)]);
+
         $denied         = filter_input(INPUT_GET, 'denied');
         $oauth_problem  = filter_input(INPUT_GET, 'oauth_problem');
         $oauth_token    = filter_input(INPUT_GET, 'oauth_token');
@@ -269,7 +292,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     protected function getAuthorizeUrl($parameters = [])
     {
         $defaults = [
-            'oauth_token' => $this->token('request_token')
+            'oauth_token' => $this->getStoredData('request_token')
         ];
 
         $parameters = array_replace($defaults, (array)$parameters);
@@ -298,7 +321,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         * http://oauth.net/core/1.0a/#auth_step1
         */
         if ('1.0a' == $this->oauth1Version) {
-            $this->requestTokenParameters['oauth_callback'] = $this->endpoint;
+            $this->requestTokenParameters['oauth_callback'] = $this->callback;
         }
 
         $response = $this->oauthRequest(
@@ -365,8 +388,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $tokens['oauth_token_secret']
         );
 
-        $this->token('request_token', $tokens['oauth_token']);
-        $this->token('request_token_secret', $tokens['oauth_token_secret']);
+        $this->storeData('request_token', $tokens['oauth_token']);
+        $this->storeData('request_token_secret', $tokens['oauth_token_secret']);
 
         return $collection;
     }
@@ -461,11 +484,11 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $collection->get('oauth_token_secret')
         );
 
-        $this->token('access_token', $collection->get('oauth_token'));
-        $this->token('access_token_secret', $collection->get('oauth_token_secret'));
+        $this->storeData('access_token', $collection->get('oauth_token'));
+        $this->storeData('access_token_secret', $collection->get('oauth_token_secret'));
 
-        $this->deleteToken('request_token');
-        $this->deleteToken('request_token_secret');
+        $this->deleteStoredData('request_token');
+        $this->deleteStoredData('request_token_secret');
 
         return $collection;
     }
@@ -515,7 +538,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     protected function oauthRequest($uri, $method = 'GET', $parameters = [], $headers = [])
     {
         $request = OAuthRequest::from_consumer_and_token(
-            $this->consumerKey,
+            $this->OAuthConsumer,
             $this->consumerToken,
             $method,
             $uri,
@@ -524,7 +547,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         $request->sign_request(
             $this->sha1Method,
-            $this->consumerKey,
+            $this->OAuthConsumer,
             $this->consumerToken
         );
 

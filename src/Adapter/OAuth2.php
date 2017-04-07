@@ -113,9 +113,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $apiDocumentation = '';
 
     /**
-    * Redirection Endpoint
-    *
-    * The redirection endpoint URI is generated and used internally by Hybridauth Endpoint class.
+    * Redirection Endpoint or Callback
     *
     * RFC6749: After completing its interaction with the resource owner, the
     * authorization server directs the resource owner's user-agent back to
@@ -125,7 +123,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @var string
     */
-    protected $endpoint = '';
+    protected $callback = '';
 
     /**
     * Authorization Request State
@@ -198,29 +196,34 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $apiRequestHeaders = [];
 
     /**
-    * Adapter initializer
-    *
-    * @throws InvalidApplicationCredentialsException
+    * {@inheritdoc}
     */
-    protected function initialize()
+    protected function configure()
     {
-        if (! $this->config->filter('keys')->get('id')) {
+        $this->clientId     = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key');
+        $this->clientSecret = $this->config->filter('keys')->get('secret');
+
+        if (! $this->clientId || !$this->clientSecret) {
             throw new InvalidApplicationCredentialsException(
                 'Your application id is required in order to connect to ' . $this->providerId
             );
         }
 
-        $this->clientId     = $this->config->filter('keys')->get('id');
-        $this->clientSecret = $this->config->filter('keys')->get('secret');
-
-        $this->scope = $this->config->exists('scope')
-                            ? $this->config->get('scope')
-                            : $this->scope;
+        $this->scope = $this->config->exists('scope') ? $this->config->get('scope') : $this->scope;
 
         if ($this->config->exists('tokens')) {
             $this->setAccessToken($this->config->get('tokens'));
         }
 
+        $this->setCallback($this->config->get('callback'));
+        $this->setApiEndpoints($this->config->get('endpoints'));
+    }
+
+    /**
+    * {@inheritdoc}
+    */
+    protected function initialize()
+    {
         /**
         * Set the default Access Token Request parameters
         *
@@ -232,10 +235,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
             'grant_type'    => 'authorization_code',
-            'redirect_uri'  => $this->endpoint
+            'redirect_uri'  => $this->callback
         ];
-
-        $this->overrideEndpoints();
     }
 
     /**
@@ -243,7 +244,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     public function authenticate()
     {
-        if ($this->isAuthorized()) {
+        $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
+
+        if ($this->isConnected()) {
             return true;
         }
 
@@ -260,7 +263,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             }
         }
         catch (\Exception $e) {
-            $this->clearTokens();
+            $this->clearStoredData();
 
             throw $e;
         }
@@ -286,7 +289,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             throw new InvalidAuthorizationCodeException(
                 sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri)
             );
-        }        
+        }
     }
 
     /**
@@ -299,6 +302,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     {
         $authUrl = $this->getAuthorizeUrl();
 
+        $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
+
         HttpClient\Util::redirect($authUrl);
     }
 
@@ -310,6 +315,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     public function authenticateFinish()
     {
+        $this->logger->debug(sprintf('%s::authenticateFinish(), callback url:', get_class($this)), [HttpClient\Util::getCurrentUrl(true)]);
+
         $state = filter_input(INPUT_GET, 'state');
         $code = filter_input(INPUT_GET, 'code');
 
@@ -323,7 +330,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         * http://tools.ietf.org/html/rfc6749#section-4.1.1
         */
         if ($this->supportRequestState
-            &&  $this->token('authorization_state') != $state
+            &&  $this->getStoredData('authorization_state') != $state
         ) {
             throw new InvalidAuthorizationStateException(
                 'The authorization state [state=' . substr(htmlentities($state), 0, 100). '] ' 
@@ -371,7 +378,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $defaults = [
             'response_type' => 'code',
             'client_id'     => $this->clientId,
-            'redirect_uri'  => $this->endpoint,
+            'redirect_uri'  => $this->callback,
             'scope'         => $this->scope,
         ];
  
@@ -380,7 +387,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         if ($this->supportRequestState) {
             $state = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
 
-            $this->token('authorization_state', $state);
+            $this->storeData('authorization_state', $state);
 
             $parameters['state'] = $state;
         }
@@ -469,19 +476,19 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             );
         }
 
-        $this->token('access_token', $collection->get('access_token'));
-        $this->token('token_type', $collection->get('token_type'));
-        $this->token('refresh_token', $collection->get('refresh_token'));
-        $this->token('expires_in', $collection->get('expires_in'));
+        $this->storeData('access_token', $collection->get('access_token'));
+        $this->storeData('token_type', $collection->get('token_type'));
+        $this->storeData('refresh_token', $collection->get('refresh_token'));
+        $this->storeData('expires_in', $collection->get('expires_in'));
 
         // calculate when the access token expire
         if ($collection->exists('expires_in')) {
             $expires_at = time() + (int) $collection->get('expires_in');
 
-            $this->token('access_token_expires_at', $expires_at);
+            $this->storeData('expires_at', $expires_at);
         }
 
-        $this->deleteToken('authorization_state');
+        $this->deleteStoredData('authorization_state');
 
         return $collection;
     }
@@ -508,27 +515,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     public function refreshAccessToken($forceRefresh = false)
     {
-        $proceed = $forceRefresh;
-
-        // have an access token?
-        if ($this->token('access_token')) {
-
-            // have a refresh token?
-            if ($this->token('refresh_token') && $this->token('access_token_expires_at')) {
-
-                // expired?
-                if ($this->token('access_token_expires_at') <= time()) {
-                    $proceed = true;
-                }
-            }
-        }
-
-        if(! $proceed )
+        if ($forceRefresh == false || $this->hasAccessTokenExpired() != true)
             return;
 
         $defaults = [
             'grant_type'    => 'refresh_token',
-            'refresh_token' => $this->token('refresh_token'),
+            'refresh_token' => $this->getStoredData('refresh_token'),
         ];
 
         $this->tokenExchangeParameters = array_replace($defaults, (array) $this->tokenExchangeParameters);
@@ -545,6 +537,24 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $this->validateRefreshAccessToken($response);
 
         return $response;
+    }
+
+    /**
+    * Check whether access token has expired
+    *
+    * @return string Raw Provider API response
+    */
+    public function hasAccessTokenExpired()
+    {
+        if (! $this->getStoredData('expires_at')) {
+            return null;
+        }
+
+        if ($this->getStoredData('expires_at') <= time()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -594,11 +604,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
+        if ($this->hasAccessTokenExpired() === true){
+            
+        }
+
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
             $url = $this->apiBaseUrl . $url;
         }
 
-        $this->apiRequestParameters[ $this->accessTokenName ] = $this->token('access_token');
+        $this->apiRequestParameters[ $this->accessTokenName ] = $this->getStoredData('access_token');
 
         $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
         $headers = array_replace($this->apiRequestHeaders, (array) $headers);

@@ -50,7 +50,7 @@ class Discord extends OAuth2
         parent::initialize();
 
         $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->token('access_token')
+            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
         ];
     }
 

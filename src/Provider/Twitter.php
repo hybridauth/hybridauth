@@ -69,7 +69,7 @@ class Twitter extends OAuth1
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        if($this->config->get("authorize") === true)
+        if($this->config->get('authorize') === true)
         {
             $this->authorizeUrl = 'https://api.twitter.com/oauth/authorize';
         }

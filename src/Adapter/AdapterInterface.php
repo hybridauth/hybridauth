@@ -35,11 +35,11 @@ interface AdapterInterface
     public function authenticate();
 
     /**
-    * Returns TRUE if the user is authorized
+    * Returns TRUE if the user is connected
     *
     * @return boolean
     */
-    public function isAuthorized();
+    public function isConnected();
 
     /**
     * Clear all access token in storage
@@ -55,6 +55,8 @@ interface AdapterInterface
     * @throws HttpRequestFailedException
     * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
+    * @throws UnexpectedApiResponseException
+    *
     * @return \Hybridauth\User\Profile
     */
     public function getUserProfile();
@@ -67,6 +69,8 @@ interface AdapterInterface
     * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
+    * @throws UnexpectedApiResponseException
+    *
     * @return array of \Hybridauth\User\Contact
     */
     public function getUserContacts();
@@ -81,6 +85,8 @@ interface AdapterInterface
     * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
+    * @throws UnexpectedApiResponseException
+    *
     * @return array of \Hybridauth\User\Activity
     */
     public function getUserActivity($stream);
@@ -95,6 +101,8 @@ interface AdapterInterface
     * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
+    * @throws UnexpectedApiResponseException
+    *
     * @return mixed API response
     */
     public function setUserStatus($status);
@@ -107,6 +115,7 @@ interface AdapterInterface
     * @throws UnexpectedApiResponseException
     * @throws UnexpectedValueException
     * @throws NotImplementedException
+    *
     * @return \Hybridauth\User\Profile
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = []);
