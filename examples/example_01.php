@@ -18,19 +18,17 @@ include 'vendor/autoload.php';
  *
  * If you're already familiar with the process, you can skip the explanation below.
  *
- * To get started with GitHub authentication, you need to create a new GitHub
- * application.
+ * To get started with GitHub authentication, you need to create a new GitHub application.
  *
  * First, navigate to https://github.com/settings/developers then click the Register
  * new application button at the top right of that page and fill in any required fields
  * such as the application name, description and website.
  *
  * Set the Authorization callback URL to https://path/to/hybridauth/examples/example_01.php.
- * Understandably, you need to replace 'path/to/hybridauth' with the real path to this
- * script.
+ * Understandably, you need to replace 'path/to/hybridauth' with the real path to this script.
  *
- * Note that Hybridauth provides an utility function that can generate the current page url for 
- * you and can be used for the callback. Exemple: 'callback' => Hybridauth\HttpClient\Util::getCurrentUrl()
+ * Note that Hybridauth provides an utility function that can generate the current page url for you
+ * and can be used for the callback. Example: 'callback' => Hybridauth\HttpClient\Util::getCurrentUrl()
  *
  * After configuring your GitHub application, simple replace 'your-app-id' and 'your-app-secret'
  * with your application credentials (Client ID and Client Secret).
@@ -46,38 +44,29 @@ include 'vendor/autoload.php';
 $config = [
     'callback' => 'https://path/to/hybridauth/examples/example_01.php', // or Hybridauth\HttpClient\Util::getCurrentUrl()
 
-    'keys'     => ['id' => 'your-app-id', 'secret' => 'your-app-secret'],
+    'keys' => [ 'id' => 'your-app-id', 'secret' => 'your-app-secret' ], // Your Github application credentials
 
-    'scope'    => 'user:email'
+    /* optional : set scope
+        'scope' => 'user:email', */
 
     /* optional : set debug mode
-        // You can also set it to
-        // - false To disable logging
-        // - true To enable logging
-        // - 'error' To log only error messages. Useful in production
-        // - 'info' To log info and error messages (ignore debug messages] 
         'debug_mode' => true,
-        // 'debug_mode' => 'info',
-        // 'debug_mode' => 'error',
-        // Path to file writable by the web server. Required if 'debug_mode' is not false
+        // Path to file writeable by the web server. Required if 'debug_mode' is not false
         'debug_file' => __FILE__ . '.log', */
 
     /* optional : customize Curl settings
         // for more information on curl, refer to: http://www.php.net/manual/fr/function.curl-setopt.php  
         'curl_options' => [
             // setting custom certificates
-            // http://curl.haxx.se/docs/caextract.html
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_CAINFO         => '/path/to/your/certificate.crt',
 
-            // setting proxies 
-            # CURLOPT_PROXY          => '*.*.*.*:*',
+            // set a valid proxy ip address
+            CURLOPT_PROXY => '*.*.*.*:*',
 
-            // custom user agent
-            # CURLOPT_USERAGENT      => '', 
-
-            // etc..
-        ], */
+            // set a custom user agent
+            CURLOPT_USERAGENT      => ''
+        ] */
 ];
 
 /**
@@ -104,7 +93,9 @@ $github->authenticate();
 /**
  * Step 5: Retrieve Users Profiles
  *
- *
+ * Calling getUserProfile returns an instance of class Hybridauth\User\Profile which contain the 
+ * connected user's profile in simple and standardized structure across all the social APIs supported
+ * by HybridAuth.
  */
 
 $userProfile = $github->getUserProfile();
@@ -120,10 +111,10 @@ echo 'Hi '.$userProfile->displayName;
  * As an example we list the authenticated user's public gists.
  */
 
-$apiResponse = $github->apiRequest('gists/public');
+$apiResponse = $github->apiRequest('gists');
 
 /**
- * Step 6: Disconnecting from the Provider API
+ * Step 6: Disconnect the adapter
  *
  * This will erase the current user authentication data from session, and any further
  * attempt to communicate with Github API will result on an authorisation exception.
@@ -143,9 +134,8 @@ $github->disconnect();
  * has erased the oauth access token used to sign http requests from the current
  * session, thus, any new request we now make will now throw an exception.
  *
- * It's also important that you don't show Hybridauth exception's messages to the
- * user as they may include sensitive data, and that you use your own error messages
- * instead.
+ * It's important that you don't show Hybridauth exception's messages to the end user as
+ * they may include sensitive data, and that you use your own error messages instead.
  */
 
 try {
@@ -153,31 +143,35 @@ try {
 }
 
 /**
-* Catch Curl Errors
-*
-* This kind of error may happen when:
-*     - Internet or Network issues.
-*     - Your server configuration is not setup correctly.
-* The full list of curl errors that may happen can be found at http://curl.haxx.se/libcurl/c/libcurl-errors.html
-*/
+ * Catch Curl Errors
+ *
+ * This kind of error may happen in case of:
+ *     - Internet or Network issues.
+ *     - Your server configuration is not setup correctly.
+ *
+ * The full list of curl errors that may happen can be found at http://curl.haxx.se/libcurl/c/libcurl-errors.html
+ */
+
 catch (Hybridauth\Exception\HttpClientFailureException $e) {
     echo 'Curl text error message : '.$github->getHttpClient()->getResponseClientError();
 }
 
 /**
-* Catch API Requests Errors
-*
-* This usually happens when requesting a:
-*     - Wrong URI or a mal-formatted http request.
-*     - Protected resource without providing a valid access token.
-*/
+ * Catch API Requests Errors
+ *
+ * This usually happens when requesting a:
+ *     - Wrong URI or a mal-formatted http request.
+ *     - Protected resource without providing a valid access token.
+ */
+
 catch (Hybridauth\Exception\HttpRequestFailedException $e) {
     echo 'Raw API Response: '.$github->getHttpClient()->getResponseBody();
 }
 
 /**
-* I catch everything else
-*/
+ * Base PHP's exception that catches everything [else]
+ */
+
 catch (\Exception $e) {
     echo 'Oops! We ran into an unknown issue: '.$e->getMessage();
 }

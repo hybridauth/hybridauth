@@ -14,22 +14,19 @@ $config = [
     // etc.
 ];
 
-$adapter = new Hybridauth\Provider\OpenID( $config );
-
 try {
+    $adapter = new Hybridauth\Provider\OpenID( $config );
+
     $adapter->authenticate();
 
-    $userProfile = $adapter->getUserProfile();
     $tokens = $adapter->getAccessToken();
+    $userProfile = $adapter->getUserProfile();
 
-    echo '<pre>';
+    // print_r( $tokens );
+    // print_r( $userProfile );
 
-    print_r( $userProfile );
-    print_r( $tokens );
-    print_r( $_SESSION );
+    $adapter->disconnect();
 }
 catch( Exception $e ){
     echo $e->getMessage();
 }
-
-$adapter->disconnect();

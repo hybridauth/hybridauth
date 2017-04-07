@@ -15,22 +15,19 @@ $guzzle = new Hybridauth\HttpClient\Guzzle(null, [
     // 'verify'  => true, # Set to false to disable SSL certificate verification
 ]);
 
-$adapter = new Hybridauth\Provider\Github( $config, $guzzle );
-
 try {
+    $adapter = new Hybridauth\Provider\Github($config, $guzzle);
+
     $adapter->authenticate();
 
-    $userProfile = $adapter->getUserProfile();
     $tokens = $adapter->getAccessToken();
+    $userProfile = $adapter->getUserProfile();
 
-    echo '<pre>';
+    // print_r( $tokens );
+    // print_r( $userProfile );
 
-    print_r( $userProfile );
-    print_r( $tokens );
-    print_r( $_SESSION );
+    $adapter->disconnect();
 }
 catch( Exception $e ){
     echo $e->getMessage();
 }
-
-$adapter->disconnect();
