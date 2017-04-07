@@ -1,7 +1,5 @@
 # HybridAuth 2.9.2-dev
 
-**NOTE:** HybridAuth is in maintainance mode. Although pull requests from the community are still accepted, you should find alternatives if you are starting a new project. HA is getting outdated by the day and there are no official plans to work on HybridAuth.
-
 [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 HybridAuth enables developers to easily build social applications and tools
