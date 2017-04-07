@@ -2,9 +2,11 @@
 
 use Hybridauth\Storage\Session;
 
+session_start(); // they will hate me for this..
+
 class SessionTest extends \PHPUnit_Framework_TestCase
 {
-    public function some_randome_session_data()
+    public function some_random_session_data()
     {
         return [
             [ 'foo', 'bar' ],
@@ -32,7 +34,9 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * @dataProvider some_randome_session_data
+    * @dataProvider some_random_session_data
+    * @covers Session::get
+    * @covers Session::set
     */
     public function test_set_and_get_data($key, $value)
     {
@@ -46,7 +50,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * @dataProvider some_randome_session_data
+    * @dataProvider some_random_session_data
+    * @covers Session::delete
     */
     public function test_delete_data($key, $value)
     {
@@ -62,7 +67,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * @dataProvider some_randome_session_data
+    * @dataProvider some_random_session_data
+    * @covers Session::clear
     */
     public function test_clear_data($key, $value)
     {
@@ -77,17 +83,20 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($data);
     }
 
+    /**
+    * @covers Session::clear
+    */
     public function test_clear_data_bulk()
     {
         $storage = new Session;
 
-        foreach ((array) $this->some_randome_session_data() as $key => $value) {
+        foreach ((array) $this->some_random_session_data() as $key => $value) {
             $storage->set($key, $value);
         }
 
         $storage->clear();
 
-        foreach ((array) $this->some_randome_session_data() as $key => $value) {
+        foreach ((array) $this->some_random_session_data() as $key => $value) {
             $data = $storage->get($key);
 
             $this->assertNull($data);
@@ -95,7 +104,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * @dataProvider some_randome_session_data
+    * @dataProvider some_random_session_data
+    * @covers Session::deleteMatch
     */
     public function test_delete_match_data($key, $value)
     {
