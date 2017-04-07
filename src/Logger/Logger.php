@@ -68,11 +68,11 @@ class Logger implements LoggerInterface
         }
 
         if (!file_exists($file) && !touch($file)) {
-            throw new RuntimeException(sprintf("Log file %s can not be created.", $file));
+            throw new RuntimeException(sprintf('Log file %s can not be created.', $file));
         }
 
         if (!is_writable($file)) {
-            throw new RuntimeException(sprintf("Log file %s is not writeable.", $file));
+            throw new RuntimeException(sprintf('Log file %s is not writeable.', $file));
         }
     }
 
@@ -130,8 +130,8 @@ class Logger implements LoggerInterface
         $datetime = new \DateTime();
         $datetime = $datetime->format(DATE_ATOM);
 
-        $content = sprintf("%s -- %s -- %s -- %s", $level, $_SERVER['REMOTE_ADDR'], $datetime, $message);
-        $content .= ($context ? print_r($context, true) : '');
+        $content = sprintf('%s -- %s -- %s -- %s', $level, $_SERVER['REMOTE_ADDR'], $datetime, $message);
+        $content .= ($context ? "\n".print_r($context, true) : '');
         $content .= "\n";
 
         file_put_contents($this->file, $content, FILE_APPEND);

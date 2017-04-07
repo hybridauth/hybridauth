@@ -141,10 +141,10 @@ class Guzzle implements HttpClientInterface
         }
 
         if ($this->logger) {
-            $this->logger->debug("HttpClient\Guzzle::request( $uri, $method ), response:", $this->getResponse());
+            $this->logger->debug(sprintf('%s::request( %s, %s ), response:', get_class($this), $uri, $method), $this->getResponse());
 
             if ($this->responseClientError) {
-                $this->logger->error("HttpClient\Guzzle::request( $uri, $method ), GuzzleHttp error: ", [$this->responseClientError]);
+                $this->logger->error(sprintf('%s::request( %s, %s ), error:', get_class($this), $uri, $method), [$this->responseClientError]);
             }
         }
 

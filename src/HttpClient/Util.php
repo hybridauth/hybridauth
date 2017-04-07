@@ -32,7 +32,7 @@ class Util
     * Redirect to a given URL.
     *
     * In case your application need to perform certain required actions before Hybridauth redirect users
-    * to IDPs websites, the default behaviour can be alterted in one of two ways:
+    * to IDPs websites, the default behaviour can be altered in one of two ways:
     *   If callable $redirectHandler is defined, it will be called instead.
     *   If callable $exitHandler is defined, it will be called instead of exit().
     *
@@ -44,7 +44,7 @@ class Util
             return call_user_func(static::$redirectHandler, $url);
         }
 
-        header("Location: $url");
+        header(sprintf('Location: %s', $url));
 
         if (static::$exitHandler) {
             return call_user_func(static::$exitHandler);
