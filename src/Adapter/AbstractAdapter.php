@@ -25,6 +25,8 @@ use Hybridauth\Deprecated\DeprecatedAdapterTrait;
  */
 abstract class AbstractAdapter implements AdapterInterface
 {
+    use DataStoreTrait;
+
     /**
      * Provider ID (unique name).
      *
@@ -99,24 +101,13 @@ abstract class AbstractAdapter implements AdapterInterface
 
         $this->config = new Data\Collection($config);
 
-        $this->storage = $storage ?: new Session();
-
-        $this->logger = $logger ?: new Logger(
-            $this->config->exists('debug_mode') ? $this->config->get('debug_mode') : Logger::NONE,
-            $this->config->exists('debug_file') ? $this->config->get('debug_file') : ''
-        );
-
-        $this->httpClient = $httpClient ?: new HttpClient();
-
-        if ($this->config->exists('curl_options') && method_exists($this->httpClient, 'setCurlOptions')) {
-            $this->httpClient->setCurlOptions($this->config->get('curl_options'));
-        }
-
-        if (method_exists($this->httpClient, 'setLogger')) {
-            $this->httpClient->setLogger($this->logger);
-        }
-
         $this->configure();
+
+        $this->setHttpClient($httpClient);
+
+        $this->setStorage($storage);
+
+        $this->setLogger($logger);
 
         $this->logger->debug(sprintf('Initialize %s, config: ', get_class($this)), $config);
 
@@ -165,14 +156,6 @@ abstract class AbstractAdapter implements AdapterInterface
      * {@inheritdoc}
      */
     public function getUserActivity($stream)
-    {
-        throw new NotImplementedException('Provider does not support this feature.');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
         throw new NotImplementedException('Provider does not support this feature.');
     }
@@ -243,57 +226,15 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Store a piece of data in storage.
-     *
-     * These method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it  
-     * can be also used by providers to store any other useful data (i.g., user_id, auth_nonce, etc.)
-     *
-     * @param string $token
-     * @param mixed  $value
-     *
-     * @return mixed
+    
      */
-    public function storeData($name, $value = null)
+    public function setHttpClient($httpClient)
     {
-        // if empty, we simply delete the thing as we'd want to only store necessary data
-        if (empty($value)) {
-            return $this->deleteStoredData($name);
+        $this->httpClient = $httpClient ?: new HttpClient();
+
+        if ($this->config->exists('curl_options') && method_exists($this->httpClient, 'setCurlOptions')) {
+            $this->httpClient->setCurlOptions($this->config->get('curl_options'));
         }
-
-        $this->storage->set($this->providerId.'.'.$name, $value);
-    }
-
-    /**
-     * Retrieve a piece of data from storage.
-     *
-     * These method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it  
-     * can be also used by providers to retrieve from store any other useful data (i.g., user_id, auth_nonce, etc.)
-     *
-     * @param string $token
-     *
-     * @return mixed
-     */
-    public function getStoredData($name)
-    {
-        return $this->storage->get($this->providerId.'.'.$name);
-    }
-
-    /**
-     * Delete a stored piece of data.
-     *
-     * @param string $name
-     */
-    protected function deleteStoredData($name)
-    {
-        $this->storage->delete($this->providerId.'.'.$name);
-    }
-
-    /**
-     * Delete all stored data of the instantiated adapter
-     */
-    public function clearStoredData()
-    {
-        $this->storage->deleteMatch($this->providerId.'.');
     }
 
     /**
@@ -307,11 +248,54 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
+    
+     */
+    public function setStorage($storage)
+    {
+        $this->storage = $storage ?: new Session();
+    }
+
+    /**
+     * Return storage instance.
+     *
+     * @return Storage
+     */
+    public function getStorage()
+    {
+        return $this->storage;
+    }
+
+    /**
+     *
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger ?: new Logger(
+            $this->config->get('debug_mode') ?: Logger::NONE,
+            $this->config->get('debug_file') ?: ''
+        );
+        
+        if (method_exists($this->httpClient, 'setLogger')) {
+            $this->httpClient->setLogger($this->logger);
+        }
+    }
+
+    /**
+     * Return logger instance.
+     *
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
     * Set Adapter's API callback url
      *
      * @throws InvalidArgumentException
     */
-    protected function setCallback($callback)
+    public function setCallback($callback)
     {
         if (! filter_var($callback, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('A valid callback url is required.');
@@ -323,7 +307,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
     * Overwrite Adapter's API endpoints
     */
-    protected function setApiEndpoints($endpoints)
+    public function setApiEndpoints($endpoints)
     {
         if(empty($endpoints)){
             return;

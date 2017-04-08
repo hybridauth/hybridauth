@@ -64,7 +64,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $hostPort = parse_url($this->callback, PHP_URL_PORT);
         $hostUrl  = parse_url($this->callback, PHP_URL_HOST);
 
-        if ($hostPort != null) {
+        if ($hostPort) {
             $hostUrl .= ':' . $hostPort;
         }
 
