@@ -47,7 +47,7 @@ class Logger implements LoggerInterface
     {
         $this->level = self::NONE;
 
-        if ($level !== self::NONE) {
+        if ($level && $level !== self::NONE) {
             $this->initialize($file);
 
             $this->level = $level;
