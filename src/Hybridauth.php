@@ -21,7 +21,7 @@ use Hybridauth\Deprecated\DeprecatedHybridauthTrait;
 /**
  * Hybridauth\Hybridauth
  *
- * For ease of use of multiple providers, Hybridauth implements the class Hybridauth\Hybridauth, 
+ * For ease of use of multiple providers, Hybridauth implements the class Hybridauth\Hybridauth,
  * a sort of factory/façade which acts as an unified interface or entry point, and it expects a
  * configuration array containing the list of providers you want to use, their respective credentials
  * and authorized callback.
@@ -72,8 +72,7 @@ class Hybridauth
     ) {
         if (is_string($config) && file_exists($config)) {
             $config = include $config;
-        }
-        elseif (! is_array($config)) {
+        } elseif (! is_array($config)) {
             throw new InvalidArgumentException('Hybriauth config does not exist on the given path.');
         }
 
@@ -141,7 +140,7 @@ class Hybridauth
 
         $providersConfig = array_change_key_case($this->config['providers'], CASE_LOWER);
 
-        if (! isset($providersConfig[$provider])) {
+        if (! isset($providersConfig[$name])) {
             throw new InvalidArgumentException('Unknown Provider.');
         }
 
@@ -159,11 +158,11 @@ class Hybridauth
     }
 
     /**
-    * Returns a boolean of whether the user is connected with a provider 
+    * Returns a boolean of whether the user is connected with a provider
     *
     * @param string $name adapter's name (case insensitive)
     *
-    * @return boolean 
+    * @return boolean
     */
     public static function isConnectedWith($name)
     {
@@ -175,7 +174,8 @@ class Hybridauth
     *
     * @return array
     */
-    public static function getConnectedProviders() {
+    public static function getConnectedProviders()
+    {
         $providers = [];
 
         foreach ($this->config['providers'] as $name => $_) {
@@ -192,7 +192,8 @@ class Hybridauth
     *
     * @return array
     */
-    public static function getConnectedAdapters() {
+    public static function getConnectedAdapters()
+    {
         $adapters = [];
 
         foreach ($this->config['providers'] as $name => $_) {
