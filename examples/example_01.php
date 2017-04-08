@@ -6,6 +6,19 @@
 */
 
 /**
+ * Step 0: Start PHP session
+ *
+ * Normally this step is not required as HybridAuth will attempt to start the session for you, however
+ * in some cases it might be better to call session_start() at top of script to avoid cookie-based sessions
+ * issues. 
+ *
+ * See: http://php.net/manual/en/function.session-start.php#refsect1-function.session-start-notes
+ *      http://stackoverflow.com/a/8028987
+ */
+
+session_start();
+
+/**
  * Step 1: Require the Hybridauth Library
  *
  * Should be as simple as including Composer's autoloader.
