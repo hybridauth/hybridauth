@@ -11,7 +11,7 @@ use Hybridauth\Data;
 
 /**
  * HttpClient\Util home to a number of utility functions.
- */ 
+ */
 class Util
 {
     /**

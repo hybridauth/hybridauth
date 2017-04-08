@@ -210,12 +210,10 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         try {
             if (! $this->getStoredData('request_token')) {
                 $this->authenticateBegin();
-            }
-            elseif (! $this->getStoredData('access_token')) {
+            } elseif (! $this->getStoredData('access_token')) {
                 $this->authenticateFinish();
             }
-        }
-        catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             $this->clearStoredData();
 
             throw $exception;

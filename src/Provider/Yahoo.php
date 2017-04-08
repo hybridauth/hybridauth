@@ -63,43 +63,44 @@ class Yahoo extends OAuth2
         ];
     }
 
-	/**
-	 * Returns current user id
-	 *
-	 * @return int
-	 * @throws Exception
-	 */
-	protected function getCurrentUserId()
-	{
-		if($this->userId)
-			return $this->userId;
+    /**
+     * Returns current user id
+     *
+     * @return int
+     * @throws Exception
+     */
+    protected function getCurrentUserId()
+    {
+        if ($this->userId) {
+            return $this->userId;
+        }
 
-		$response = $this->apiRequest('me/guid', 'GET', [ 'format' => 'json']);
+        $response = $this->apiRequest('me/guid', 'GET', [ 'format' => 'json']);
 
-		$data = new Data\Collection($response);
+        $data = new Data\Collection($response);
 
-		if (! $data->filter('guid')->exists('value')) {
-			throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
-		}
+        if (! $data->filter('guid')->exists('value')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
 
-		return $this->userId =  $data->filter('guid')->get('value');
-	}
+        return $this->userId =  $data->filter('guid')->get('value');
+    }
 
     /**
     * {@inheritdoc}
     */
     public function getUserProfile()
     {
-		// Retrive current user guid if needed
-		$this->getCurrentUserId();
+        // Retrive current user guid if needed
+        $this->getCurrentUserId();
 
         $response = $this->apiRequest('user/'  . $this->userId . '/profile', 'GET', [ 'format' => 'json']);
 
-		$data = new Data\Collection($response);
+        $data = new Data\Collection($response);
 
-		if (! $data->exists('profile')) {
-			throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
-		}
+        if (! $data->exists('profile')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
 
         $userProfile = new User\Profile();
 
@@ -114,19 +115,19 @@ class Yahoo extends OAuth2
         $userProfile->language    = $data->get('lang');
         $userProfile->address     = $data->get('location');
 
-		if('F' == $data->get('gender'))
-			$userProfile->gender = 'female';
+        if ('F' == $data->get('gender')) {
+            $userProfile->gender = 'female';
+        } elseif ('M' == $data->get('gender')) {
+            $userProfile->gender = 'male';
+        }
 
-		elseif('M' == $data->get('gender'))
-			$userProfile->gender = 'male';
-
-		// I ain't getting no emails on my tests. go figures..
-		foreach($data->filter('emails')->toArray() as $item){
-			if($data->get('primary')){
-				$userProfile->email         = $data->get('handle');
-				$userProfile->emailVerified = $data->get('handle');
-			}
-		}
+        // I ain't getting no emails on my tests. go figures..
+        foreach ($data->filter('emails')->toArray() as $item) {
+            if ($data->get('primary')) {
+                $userProfile->email         = $data->get('handle');
+                $userProfile->emailVerified = $data->get('handle');
+            }
+        }
 
         return $userProfile;
     }

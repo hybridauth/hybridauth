@@ -257,12 +257,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
             if (empty($code)) {
                 $this->authenticateBegin();
-            }
-            else {
+            } else {
                 $this->authenticateFinish();
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->clearStoredData();
 
             throw $e;
@@ -333,7 +331,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             &&  $this->getStoredData('authorization_state') != $state
         ) {
             throw new InvalidAuthorizationStateException(
-                'The authorization state [state=' . substr(htmlentities($state), 0, 100). '] ' 
+                'The authorization state [state=' . substr(htmlentities($state), 0, 100). '] '
                     . 'of this page is either invalid or has already been consumed.'
             );
         }
@@ -614,7 +612,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $headers = array_replace($this->apiRequestHeaders, (array) $headers);
 
         $response = $this->httpClient->request(
-            $url, 
+            $url,
             $method,     // HTTP Request Method. Defaults to GET.
             $parameters, // Request Parameters
             $headers     // Request Headers

@@ -135,15 +135,15 @@ class Google extends OAuth2
             $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2) . 150;
         }
 
-        if(! $userProfile->email && $data->exists('emails')){
+        if (! $userProfile->email && $data->exists('emails')) {
             $userProfile = $this->fetchUserEmail($userProfile, $data);
         }
 
-        if(! $userProfile->profileURL && $data->exists('urls')){
-           $userProfile = $this->fetchUserProfileUrl($userProfile, $data);
+        if (! $userProfile->profileURL && $data->exists('urls')) {
+            $userProfile = $this->fetchUserProfileUrl($userProfile, $data);
         }
 
-        if(! $userProfile->profileURL && $data->exists('urls')){
+        if (! $userProfile->profileURL && $data->exists('urls')) {
             $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
         }
 
@@ -235,8 +235,8 @@ class Google extends OAuth2
             foreach ($response->feed->entry as $idx => $entry) {
                 $uc = new User\Contact();
 
-                $uc->email = isset($entry->{'gd$email'}[0]->address) 
-                            ? (string) $entry->{'gd$email'}[0]->address 
+                $uc->email = isset($entry->{'gd$email'}[0]->address)
+                            ? (string) $entry->{'gd$email'}[0]->address
                             : '';
 
                 $uc->displayName = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';
@@ -246,15 +246,14 @@ class Google extends OAuth2
                 if (property_exists($response, 'website')) {
                     if (is_array($response->website)) {
                         foreach ($response->website as $w) {
-                            if ($w->primary == true)
+                            if ($w->primary == true) {
                                 $uc->webSiteURL = $w->value;
+                            }
                         }
-                    }
-                    else {
+                    } else {
                         $uc->webSiteURL = $response->website->value;
                     }
-                }
-                else {
+                } else {
                     $uc->webSiteURL = '';
                 }
 

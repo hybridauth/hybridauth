@@ -14,7 +14,7 @@ use Hybridauth\User;
 
 /**
  * Tumblr OAuth1 provider adapter.
- */ 
+ */
 class Tumblr extends OAuth1
 {
     /**

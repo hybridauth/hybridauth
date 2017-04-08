@@ -23,11 +23,11 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
 spl_autoload_register(
     function ($class) {
         // project-specific namespace prefix. Will only kicks in for Hybridauth's namespace.
-        $prefix = 'Hybridauth\\'; 
+        $prefix = 'Hybridauth\\';
 
-        // base directory for the namespace prefix. 
+        // base directory for the namespace prefix.
         $base_dir = __DIR__;   // By default, it points to this same folder.
-                               // You may change this path if having trouble detecting the path to 
+                               // You may change this path if having trouble detecting the path to
                                // the source files.
 
         // does the class use the namespace prefix?

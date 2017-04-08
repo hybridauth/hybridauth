@@ -90,8 +90,8 @@ class Hybridauth
     /**
     * Instantiate the given provider and authentication or authorization protocol.
     *
-    * If not authenticated yet, the user will be redirected to the provider's site for 
-    * authentication/authorisation, otherwise it will simply return an instance of 
+    * If not authenticated yet, the user will be redirected to the provider's site for
+    * authentication/authorisation, otherwise it will simply return an instance of
     * provider's adapter.
     *
     * @param string $name adapter's name (case insensitive)

@@ -171,8 +171,7 @@ class Facebook extends OAuth2
                 $apiUrl = $data->filter('paging')->get('next');
 
                 $pagedList = true;
-            }
-            else {
+            } else {
                 $pagedList = false;
             }
         } while ($pagedList);
@@ -229,7 +228,7 @@ class Facebook extends OAuth2
 
         $activities = [];
 
-        foreach ($data->filter('data')->toArray() as $item){
+        foreach ($data->filter('data')->toArray() as $item) {
             $activities[] = $this->fetchUserActivity($item);
         }
 

@@ -69,8 +69,7 @@ class Twitter extends OAuth1
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        if($this->config->get('authorize') === true)
-        {
+        if ($this->config->get('authorize') === true) {
             $this->authorizeUrl = 'https://api.twitter.com/oauth/authorize';
         }
 
@@ -97,7 +96,7 @@ class Twitter extends OAuth1
         $userProfile->description   = $data->get('description');
         $userProfile->firstName     = $data->get('name');
         $userProfile->email         = $data->get('email');
-        $userProfile->emailVerified = $data->get('email'); 
+        $userProfile->emailVerified = $data->get('email');
         $userProfile->webSiteURL    = $data->get('url');
         $userProfile->region        = $data->get('location');
 
@@ -142,13 +141,12 @@ class Twitter extends OAuth1
             try {
                 $response = $this->apiRequest('users/lookup.json', 'GET', $parameters);
 
-                if ($response && count($response)){
+                if ($response && count($response)) {
                     foreach ($response as $item) {
                         $contacts[] = $this->fetchUserContact($item);
                     }
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 continue;
             }
         }

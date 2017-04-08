@@ -93,7 +93,7 @@ class Foursquare extends OAuth2
     /**
     * {@inheritdoc}
     */
-    function getUserContacts()
+    public function getUserContacts()
     {
         $response = $this->apiRequest('users/self/friends');
 
@@ -129,5 +129,5 @@ class Foursquare extends OAuth2
         $userContact->email       = $item->filter('contact')->get('email');
 
         return $userContact;
-    }    
+    }
 }

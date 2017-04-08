@@ -290,7 +290,7 @@ abstract class AbstractAdapter implements AdapterInterface
     */
     protected function setApiEndpoints($endpoints)
     {
-        if(empty($endpoints)){
+        if (empty($endpoints)) {
             return;
         }
 
@@ -321,7 +321,7 @@ abstract class AbstractAdapter implements AdapterInterface
         }
 
         // if validateApiResponseHttpCode is set to false, we by pass verification of http status code
-        if (! $this->validateApiResponseHttpCode){
+        if (! $this->validateApiResponseHttpCode) {
             return;
         }
 

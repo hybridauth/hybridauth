@@ -17,7 +17,7 @@ trait DataStoreTrait
     /**
      * Store a piece of data in storage.
      *
-     * This method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it  
+     * This method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it
      * can be also used by providers to store any other useful data (i.g., user_id, auth_nonce, etc.)
      *
      * @param string $token
@@ -38,8 +38,8 @@ trait DataStoreTrait
     /**
      * Retrieve a piece of data from storage.
      *
-     * This method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it  
-     * can be also used by providers to retrieve from store any other useful data (i.g., user_id, 
+     * This method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it
+     * can be also used by providers to retrieve from store any other useful data (i.g., user_id,
      * auth_nonce, etc.)
      *
      * @param string $token
