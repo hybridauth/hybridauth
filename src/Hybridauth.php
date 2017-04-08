@@ -77,26 +77,15 @@ class Hybridauth
             throw new InvalidArgumentException('Hybriauth config does not exist on the given path.');
         }
 
-        $this->config = $config + [
+        th$is->config = $config + [
             'debug_mode'   => Logger::NONE,
             'debug_file'   => '',
             'curl_options' => null,
             'providers'    => []
         ];
-
-        $this->storage = $storage ?: new Session();
-
-        $this->logger = $logger ?: new Logger($this->config['debug_mode'], $this->config['debug_file']);
-
-        $this->httpClient = $httpClient ?: new HttpClient();
-
-        if ($this->config['curl_options'] && method_exists($this->httpClient, 'setCurlOptions')) {
-            $this->httpClient->setCurlOptions($this->config['curl_options']);
-        }
-
-        if (method_exists($this->httpClient, 'setLogger')) {
-            $this->httpClient->setLogger($this->logger);
-        }
+        $this->storage = $storage;
+        $this->logger = $logger;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -189,7 +178,7 @@ class Hybridauth
     public static function getConnectedProviders() {
         $providers = [];
 
-        foreach ($this->config['providers'] as $name => $params) {
+        foreach ($this->config['providers'] as $name => $_) {
             if ($this->isConnectedWith($name)) {
                 $providers[] = $name;
             }
@@ -206,7 +195,7 @@ class Hybridauth
     public static function getConnectedAdapters() {
         $adapters = [];
 
-        foreach ($this->config['providers'] as $name => $params) {
+        foreach ($this->config['providers'] as $name => $_) {
             if ($this->isConnectedWith($name)) {
                 $adapters[$name] = $this->getAdapter($name);
             }
@@ -220,7 +209,12 @@ class Hybridauth
     */
     public static function disconnectAllAdapters()
     {
-        // we simply clear stored data
-        $this->storage->clear();
+        foreach ($this->config['providers'] as $name => $_) {
+            $adapter = $this->getAdapter($name);
+
+            if ($adapter->isConnected()) {
+                $adapter->disconnect();
+            }
+        }
     }
 }
