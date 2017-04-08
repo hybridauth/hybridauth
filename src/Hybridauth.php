@@ -90,8 +90,9 @@ class Hybridauth
     /**
     * Instantiate the given provider and authentication or authorization protocol.
     *
-    * If user not authenticated yet, the user will be redirected to the authorization Service
-    * to authorize the application.
+    * If not authenticated yet, the user will be redirected to the provider's site for 
+    * authentication/authorisation, otherwise it will simply return an instance of 
+    * provider's adapter.
     *
     * @param string $name adapter's name (case insensitive)
     *
@@ -99,8 +100,6 @@ class Hybridauth
     */
     public function authenticate($name)
     {
-        $this->logger->info(sprintf('Hybridauth::authenticate(%s)', $name));
-
         $adapter = $this->getAdapter($name);
 
         $adapter->authenticate();
@@ -119,7 +118,7 @@ class Hybridauth
     {
         $config = $this->getProviderConfig($name);
 
-        $adapter = "Hybridauth\\Provider\\$name";
+        $adapter = sprintf('Hybridauth\\Provider\\%s', $name);
 
         return new $adapter($config, $this->httpClient, $this->storage, $this->logger);
     }
@@ -197,8 +196,10 @@ class Hybridauth
         $adapters = [];
 
         foreach ($this->config['providers'] as $name => $_) {
-            if ($this->isConnectedWith($name)) {
-                $adapters[$name] = $this->getAdapter($name);
+            $adapter = $this->getAdapter($name);
+
+            if ($adapter->isConnected()) {
+                $adapters[$name] = $adapter;
             }
         }
 
