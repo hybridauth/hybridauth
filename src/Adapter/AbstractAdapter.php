@@ -116,10 +116,6 @@ abstract class AbstractAdapter implements AdapterInterface
 
     /**
     * Load adapter's configuration
-    *
-    * @throws InvalidArgumentException
-    * @throws InvalidApplicationCredentialsException
-    * @throws InvalidOpenidIdentifierException
     */
     abstract protected function configure();
 
@@ -181,24 +177,18 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Return oauth access tokens.
-     *
-     * @param array $tokenNames
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getAccessToken($tokenNames = [])
+    public function getAccessToken()
     {
-        if (empty($tokenNames)) {
-            $tokenNames = [
-                'access_token',
-                'access_token_secret',
-                'token_type',
-                'refresh_token',
-                'expires_in',
-                'expires_at',
-            ];
-        }
+        $tokenNames = [
+            'access_token',
+            'access_token_secret',
+            'token_type',
+            'refresh_token',
+            'expires_in',
+            'expires_at',
+        ];
 
         $tokens = [];
 
@@ -212,9 +202,7 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Reset adapter access tokens.
-     *
-     * @param array $tokens
+     * {@inheritdoc}
      */
     public function setAccessToken($tokens = [])
     {
@@ -226,9 +214,9 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-    
+     * {@inheritdoc}
      */
-    public function setHttpClient($httpClient)
+    public function setHttpClient(HttpClientInterface $httpClient = null)
     {
         $this->httpClient = $httpClient ?: new HttpClient();
 
@@ -238,9 +226,7 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * Return http client instance.
-     *
-     * @return HttpClientInterface
+     * {@inheritdoc}
      */
     public function getHttpClient()
     {
@@ -248,17 +234,15 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-    
+     * {@inheritdoc}
      */
-    public function setStorage($storage)
+    public function setStorage(StorageInterface $storage = null)
     {
         $this->storage = $storage ?: new Session();
     }
 
     /**
-     * Return storage instance.
-     *
-     * @return Storage
+     * {@inheritdoc}
      */
     public function getStorage()
     {
@@ -266,24 +250,21 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-     *
+     * {@inheritdoc}
      */
-    public function setLogger($logger)
+    public function setLogger(LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: new Logger(
-            $this->config->get('debug_mode') ?: Logger::NONE,
-            $this->config->get('debug_file') ?: ''
+            $this->config->get('debug_mode'), $this->config->get('debug_file')
         );
-        
+
         if (method_exists($this->httpClient, 'setLogger')) {
             $this->httpClient->setLogger($this->logger);
         }
     }
 
     /**
-     * Return logger instance.
-     *
-     * @return Logger
+     * {@inheritdoc}
      */
     public function getLogger()
     {
@@ -295,19 +276,19 @@ abstract class AbstractAdapter implements AdapterInterface
      *
      * @throws InvalidArgumentException
     */
-    public function setCallback($callback)
+    protected function setCallback($callback)
     {
         if (! filter_var($callback, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('A valid callback url is required.');
         }
-        
+
         $this->callback = $callback;
     }
 
     /**
     * Overwrite Adapter's API endpoints
     */
-    public function setApiEndpoints($endpoints)
+    protected function setApiEndpoints($endpoints)
     {
         if(empty($endpoints)){
             return;

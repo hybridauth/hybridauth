@@ -278,7 +278,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
     */
-    public function authenticateCheckError()
+    protected function authenticateCheckError()
     {
         $error = filter_input(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
 
@@ -298,7 +298,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * Build Authorization URL for Authorization Request and redirect the user-agent to the
     * Authorization Server.
     */
-    public function authenticateBegin()
+    protected function authenticateBegin()
     {
         $authUrl = $this->getAuthorizeUrl();
 
@@ -313,7 +313,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * @throws InvalidAuthorizationStateException
     * @throws InvalidAuthorizationCodeException
     */
-    public function authenticateFinish()
+    protected function authenticateFinish()
     {
         $this->logger->debug(sprintf('%s::authenticateFinish(), callback url:', get_class($this)), [HttpClient\Util::getCurrentUrl(true)]);
 
@@ -509,15 +509,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * This method is similar to exchangeCodeForAccessToken(). The only difference is here
     * we exchange refresh_token for a new access_token.
     *
-    * @param $forceRefresh boolean set to true in case you want to bypass expiration validation
-    *
     * @return string Raw Provider API response
     */
-    public function refreshAccessToken($forceRefresh = false)
+    public function refreshAccessToken()
     {
-        if ($forceRefresh == false || $this->hasAccessTokenExpired() != true)
-            return;
-
         $defaults = [
             'grant_type'    => 'refresh_token',
             'refresh_token' => $this->getStoredData('refresh_token'),
@@ -605,8 +600,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
         // refresh tokens if needed
-        if ($this->hasAccessTokenExpired() === true){
-            $this->refreshAccessToken(true);
+        if ($this->hasAccessTokenExpired() === true) {
+            $this->refreshAccessToken();
         }
 
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {

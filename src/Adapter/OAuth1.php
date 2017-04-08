@@ -229,7 +229,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     * 2. Build Authorization URL for Authorization Request and redirect the user-agent to the
     *    Authorization Server.
     */
-    public function authenticateBegin()
+    protected function authenticateBegin()
     {
         $response = $this->requestAuthToken();
 
@@ -248,7 +248,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     * @throws AuthorizationDeniedException
     * @throws InvalidOauthTokenException
     */
-    public function authenticateFinish()
+    protected function authenticateFinish()
     {
         $this->logger->debug(sprintf('%s::authenticateFinish(), callback url:', get_class($this)), [HttpClient\Util::getCurrentUrl(true)]);
 

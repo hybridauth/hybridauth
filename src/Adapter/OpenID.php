@@ -116,7 +116,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     *
     * Include and instantiate LightOpenID
     */
-    public function authenticateBegin()
+    protected function authenticateBegin()
     {
         $this->openIdClient->identity  = $this->openidIdentifier;
         $this->openIdClient->returnUrl = $this->callback;
@@ -152,7 +152,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     * @throws AuthorizationDeniedException
     * @throws UnexpectedApiResponseException 
     */
-    public function authenticateFinish()
+    protected function authenticateFinish()
     {
         $this->logger->debug(sprintf('%s::authenticateFinish(), callback url:', get_class($this)), [HttpClient\Util::getCurrentUrl(true)]);
 

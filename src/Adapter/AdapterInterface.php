@@ -7,6 +7,10 @@
 
 namespace Hybridauth\Adapter;
 
+use Hybridauth\HttpClient\HttpClientInterface;
+use Hybridauth\Storage\StorageInterface;
+use Hybridauth\Logger\LoggerInterface;
+
 /**
  *
  */
@@ -14,21 +18,6 @@ interface AdapterInterface
 {
     /**
     * Initiate the appropriate protocol and process/automate the authentication or authorization flow.
-    *
-    * @throws Exception
-    * @throws RuntimeException
-    * @throws UnexpectedValueException
-    * @throws InvalidArgumentException
-    * @throws AuthorizationDeniedException
-    * @throws HttpClientFailureException
-    * @throws HttpRequestFailedException
-    * @throws InvalidAccessTokenException
-    * @throws InvalidApplicationCredentialsException
-    * @throws InvalidAuthorizationCodeException
-    * @throws InvalidAuthorizationStateException
-    * @throws InvalidOauthTokenException
-    * @throws InvalidOpenidIdentifierException
-    * @throws UnexpectedApiResponseException
     *
     * @return boolean|null
     */
@@ -51,25 +40,12 @@ interface AdapterInterface
     /**
     * Retrieve the connected user profile
     *
-    * @throws HttpClientFailureException
-    * @throws HttpRequestFailedException
-    * @throws UnexpectedApiResponseException
-    * @throws UnexpectedValueException
-    * @throws UnexpectedApiResponseException
-    *
     * @return \Hybridauth\User\Profile
     */
     public function getUserProfile();
 
     /**
     * Retrieve the connected user contacts list
-    *
-    * @throws HttpClientFailureException
-    * @throws HttpRequestFailedException
-    * @throws UnexpectedApiResponseException
-    * @throws UnexpectedValueException
-    * @throws NotImplementedException
-    * @throws UnexpectedApiResponseException
     *
     * @return array of \Hybridauth\User\Contact
     */
@@ -80,13 +56,6 @@ interface AdapterInterface
     *
     * @param string $stream
     *
-    * @throws HttpClientFailureException
-    * @throws HttpRequestFailedException
-    * @throws UnexpectedApiResponseException
-    * @throws UnexpectedValueException
-    * @throws NotImplementedException
-    * @throws UnexpectedApiResponseException
-    *
     * @return array of \Hybridauth\User\Activity
     */
     public function getUserActivity($stream);
@@ -96,13 +65,6 @@ interface AdapterInterface
     *
     * @param string|array $status
     *
-    * @throws HttpClientFailureException
-    * @throws HttpRequestFailedException
-    * @throws UnexpectedApiResponseException
-    * @throws UnexpectedValueException
-    * @throws NotImplementedException
-    * @throws UnexpectedApiResponseException
-    *
     * @return mixed API response
     */
     public function setUserStatus($status);
@@ -110,13 +72,49 @@ interface AdapterInterface
     /**
     * Send a signed request to provider API
     *
-    * @throws HttpClientFailureException
-    * @throws HttpRequestFailedException
-    * @throws UnexpectedApiResponseException
-    * @throws UnexpectedValueException
-    * @throws NotImplementedException
-    *
-    * @return \Hybridauth\User\Profile
+    * @return mixed
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = []);
+
+    /**
+     * Return oauth access tokens.
+     *
+     * @return array
+     */
+    public function getAccessToken();
+
+    /**
+     * Set oauth access tokens.
+     */
+    public function setAccessToken($tokens = []);
+
+    /**
+     * Set http client instance.
+     */
+    public function setHttpClient(HttpClientInterface $httpClient = null);
+
+    /**
+     * Return http client instance.
+     */
+    public function getHttpClient();
+
+    /**
+     * Set storage instance.
+     */
+    public function setStorage(StorageInterface $storage = null);
+
+    /**
+     * Return storage instance.
+     */
+    public function getStorage();
+
+    /**
+     * Set Logger instance.
+     */
+    public function setLogger(LoggerInterface $logger = null);
+
+    /**
+     * Return logger instance.
+     */
+    public function getLogger();
 }
