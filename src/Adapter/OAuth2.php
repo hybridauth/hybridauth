@@ -606,7 +606,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     {
         // refresh tokens if needed
         if ($this->hasAccessTokenExpired() === true){
-            $adapter->refreshAccessToken(true);
+            $this->refreshAccessToken(true);
         }
 
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
