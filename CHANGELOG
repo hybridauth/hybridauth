@@ -1,8 +1,11 @@
 Hybridauth Change log
 =====================
-2.9.2 - xxx
+2.9.2 - April 14 2017
       Fixes:
         #753 + #745 - [Facebook] Return `setUserStatus` functionality
+        #767 - Fixed issue with Humanitarian ID
+        #760 + #698 - [Facebook] Fix fatal error during provider initialization (both for composer and non composer installation)
+        #759 + #750 - [Facebook] Fix issue with cannot use object of type Facebook\FacebookResponse as array
 
 2.9.1 - March 25 2017
       Fixes:
