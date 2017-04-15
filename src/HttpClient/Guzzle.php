@@ -157,12 +157,12 @@ class Guzzle implements HttpClientInterface
     public function getResponse()
     {
         return [
+            'request' => $this->getRequestArguments(),
             'response' => [
                 'code'    => $this->getResponseHttpCode(),
                 'headers' => $this->getResponseHeader(),
                 'body'    => $this->getResponseBody(),
             ],
-            'request' => $this->getRequestArguments(),
             'client' => [
                 'error' => $this->getResponseClientError(),
                 'info'  => $this->getResponseClientInfo(),

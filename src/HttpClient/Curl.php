@@ -161,12 +161,12 @@ class Curl implements HttpClientInterface
         $curlOptions[CURLOPT_HEADERFUNCTION] = '*omitted';
 
         return [
+            'request' => $this->getRequestArguments(),
             'response' => [
                 'code'    => $this->getResponseHttpCode(),
                 'headers' => $this->getResponseHeader(),
                 'body'    => $this->getResponseBody(),
             ],
-            'request' => $this->getRequestArguments(),
             'client' => [
                 'error' => $this->getResponseClientError(),
                 'info'  => $this->getResponseClientInfo(),
