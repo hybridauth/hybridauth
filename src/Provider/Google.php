@@ -24,12 +24,12 @@ use Hybridauth\User;
  *
  *        // google's custom auth url params
  *       'authorize_url_parameters' => [
- *              'approval_prompt' => 'force', // to pass only when you need to acquire a new refresh token. 
+ *              'approval_prompt' => 'force', // to pass only when you need to acquire a new refresh token.
  *              'access_type'     => ..,      // is set to 'offline' by default
  *              'hd'              => ..,
  *              'state'           => ..,
  *              // etc.
- *       ] 
+ *       ]
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Google( $config );
@@ -38,7 +38,7 @@ use Hybridauth\User;
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
- *       $tokens = $adapter->getAccessToken(); 
+ *       $tokens = $adapter->getAccessToken();
  *       $contacts = $adapter->getUserContacts(['max-results' => 75]);
  *   }
  *   catch( Exception $e ){
@@ -74,29 +74,19 @@ class Google extends OAuth2
 
     /**
     * {@inheritdoc}
-    *
-    * Add access_type=offline as default extra parameter when generating authorize url. 
-    *
-    * Any other parameter can be now set through adapter config. Example:
-    *
-    *   $config = [
-    *       'callback' => '...',
-    *       'keys'     => [ 'id' => '...', 'secret' => '..' ],
-    *
-    *        // google's custom auth url params
-    *       'authorize_url_parameters' => [
-    *              'approval_prompt' => 'force', // to pass only when you need to acquire a new refresh token. 
-    *              'hd'              => ..,
-    *              'state'           => ..,
-    *              // etc.
-    *       ] 
-    *   ];
     */
-    protected function getAuthorizeUrl($parameters = [])
+    protected function initialize()
     {
-        $parameters = ['access_type' => 'offline'];
+        parent::initialize();
 
-        return parent::getAuthorizeUrl($parameters);
+        $this->AuthorizeUrlParameters += [
+            'access_type' => 'offline'
+        ];
+
+        $this->tokenRefreshParameters += [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret
+        ];
     }
 
     /**

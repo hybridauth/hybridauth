@@ -49,6 +49,10 @@ class Reddit extends OAuth2
     {
         parent::initialize();
 
+        $this->AuthorizeUrlParameters += [
+            'duration' => 'permanent'
+        ];
+
         $this->tokenExchangeParameters = [
             'client_id'    => $this->clientId,
             'grant_type'   => 'authorization_code',
@@ -62,18 +66,8 @@ class Reddit extends OAuth2
         $this->apiRequestHeaders = [
             'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
         ];
-    }
 
-    /**
-    * {@inheritdoc}
-    *
-    * Add duration=temporary as default extra parameter when generating authorize url. 
-    */
-    protected function getAuthorizeUrl($parameters = [])
-    {
-        $parameters = ['duration' => 'temporary'];
-
-        return parent::getAuthorizeUrl($parameters);
+        $this->tokenRefreshHeaders = $this->tokenExchangeHeaders;
     }
 
     /**

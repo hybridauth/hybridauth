@@ -126,6 +126,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $callback = '';
 
     /**
+    * Authorization Url Parameters
+    *
+    * @var boolean
+    */
+    protected $AuthorizeUrlParameters = [];
+
+    /**
     * Authorization Request State
     *
     * @var boolean
@@ -172,6 +179,37 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * @var array
     */
     protected $tokenExchangeHeaders = [];
+
+    /**
+    * Refresh Token Request HTTP method.
+    *
+    * See refreshAccessToken()
+    *
+    * @var string
+    */
+    protected $tokenRefreshMethod = 'POST';
+
+    /**
+    * Refresh Token Request URL parameters.
+    *
+    * Sub classes may change add any additional parameter when necessary.
+    *
+    * See refreshAccessToken()
+    *
+    * @var array
+    */
+    protected $tokenRefreshParameters = [];
+
+    /**
+    * Refresh Token Request HTTP headers.
+    *
+    * Sub classes may add any additional header when necessary.
+    *
+    * See refreshAccessToken()
+    *
+    * @var array
+    */
+    protected $tokenRefreshHeaders = [];
 
     /**
     * Authorization Request URL parameters.
@@ -224,18 +262,23 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     protected function initialize()
     {
-        /**
-        * Set the default Access Token Request parameters
-        *
-        * Sub classes may reset this when necessary
-        *
-        * See exchangeCodeForAccessToken()
-        */
+        $this->AuthorizeUrlParameters = [
+            'response_type' => 'code',
+            'client_id'     => $this->clientId,
+            'redirect_uri'  => $this->callback,
+            'scope'         => $this->scope,
+        ];
+
         $this->tokenExchangeParameters = [
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
             'grant_type'    => 'authorization_code',
             'redirect_uri'  => $this->callback
+        ];
+
+        $this->tokenRefreshParameters = [
+            'grant_type'    => 'refresh_token',
+            'refresh_token' => $this->getStoredData('refresh_token'),
         ];
     }
 
@@ -373,24 +416,19 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        $defaults = [
-            'response_type' => 'code',
-            'client_id'     => $this->clientId,
-            'redirect_uri'  => $this->callback,
-            'scope'         => $this->scope,
-        ];
- 
-        $parameters = array_replace($defaults, (array) $this->config->get("authorize_url_parameters"), (array)$parameters);
+        $this->AuthorizeUrlParameters = !empty($parameters)
+            ? $parameters
+            : array_replace((array) $this->AuthorizeUrlParameters, (array) $this->config->get("authorize_url_parameters"));
 
         if ($this->supportRequestState) {
             $state = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
 
             $this->storeData('authorization_state', $state);
 
-            $parameters['state'] = $state;
+            $this->AuthorizeUrlParameters['state'] = $state;
         }
 
-        return $this->authorizeUrl . '?' . http_build_query($parameters, '', '&');
+        return $this->authorizeUrl . '?' . http_build_query($this->AuthorizeUrlParameters, '', '&');
     }
 
     /**
@@ -476,17 +514,22 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         $this->storeData('access_token', $collection->get('access_token'));
         $this->storeData('token_type', $collection->get('token_type'));
-        $this->storeData('refresh_token', $collection->get('refresh_token'));
-        $this->storeData('expires_in', $collection->get('expires_in'));
+
+        if ($collection->get('refresh_token')) {
+            $this->storeData('refresh_token', $collection->get('refresh_token'));
+        }
 
         // calculate when the access token expire
         if ($collection->exists('expires_in')) {
             $expires_at = time() + (int) $collection->get('expires_in');
 
+            $this->storeData('expires_in', $collection->get('expires_in'));
             $this->storeData('expires_at', $expires_at);
         }
 
         $this->deleteStoredData('authorization_state');
+
+        $this->initialize();
 
         return $collection;
     }
@@ -509,20 +552,17 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @return string Raw Provider API response
     */
-    public function refreshAccessToken()
+    public function refreshAccessToken($parameters = [])
     {
-        $defaults = [
-            'grant_type'    => 'refresh_token',
-            'refresh_token' => $this->getStoredData('refresh_token'),
-        ];
-
-        $this->tokenExchangeParameters = array_replace($defaults, (array) $this->tokenExchangeParameters);
+        $this->tokenRefreshParameters = !empty($parameters)
+            ? $parameters
+            : $this->tokenRefreshParameters;
 
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
-            $this->tokenExchangeMethod,
-            $this->tokenExchangeParameters,
-            $this->tokenExchangeHeaders
+            $this->tokenRefreshMethod,
+            $this->tokenRefreshParameters,
+            $this->tokenRefreshHeaders
         );
 
         $this->validateApiResponse('Unable to refresh the access token');

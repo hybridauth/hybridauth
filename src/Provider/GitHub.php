@@ -81,6 +81,7 @@ class GitHub extends OAuth2
     }
 
     /**
+    * Request connected user email
     *
     * https://developer.github.com/v3/users/emails/
     */
