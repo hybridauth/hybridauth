@@ -49,6 +49,8 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2 {
 	 * {@inheritdoc}
 	 */
 	function getUserProfile() {
+    //Refresh tokens if needed
+		//$this->refreshToken();
 		$data = $this->api->get("me");
 
 		if (!isset($data->id)) {
@@ -81,6 +83,8 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2 {
 	 * {@inheritdoc}
 	 */
 	function getUserContacts() {
+    //Refresh tokens if needed
+    //$this->refreshToken();
 		$response = $this->api->get('me/contacts');
 
 		if ($this->api->http_code != 200) {

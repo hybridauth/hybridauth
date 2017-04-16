@@ -43,14 +43,6 @@ class OAuth2Client
 
   //--
 
-  public function __construct( $client_id = false, $client_secret = false, $redirect_uri='', $compressed = false )
-  {
-    $this->client_id       = $client_id;
-    $this->client_secret   = $client_secret;
-    $this->redirect_uri    = $redirect_uri;
-    $this->curl_compressed = $compressed;
-  }
-
   public function authorizeUrl( $extras = array() )
   {
     $params = array(
@@ -126,13 +118,15 @@ class OAuth2Client
   /**
   * Format and sign an oauth for provider api
   */
-  public function api( $url, $method = "GET", $parameters = array(), $decode_json = true )
+  public function api( $url, $method = "GET", $parameters = array(), $decode_json = true, $signed = true )
   {
     if ( strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0 ) {
       $url = $this->api_base_url . $url;
     }
 
-    $parameters[$this->sign_token_name] = $this->access_token;
+    if($signed){
+      $parameters[$this->sign_token_name] = $this->access_token;
+    }
     $response = null;
 
     switch( $method ){
@@ -292,3 +286,4 @@ class OAuth2Client
     return $this->api( $url, 'PATCH', $parameters );
  }
 }
+>>>>>>> 619a9aa3bed0d415e0ee98cd5f832938eba21f1a

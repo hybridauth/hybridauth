@@ -221,10 +221,10 @@ class Hybrid_Auth {
 	 * @param array  $params      Params
 	 * @return
 	 */
-	public static function authenticate($providerId, $params = null) {
+	public static function authenticate($providerId, $params = null, $force_reauth = false) {
 		Hybrid_Logger::info("Enter Hybrid_Auth::authenticate( $providerId )");
 
-		if (!Hybrid_Auth::storage()->get("hauth_session.$providerId.is_logged_in")) {
+		if ($force_reauth || !Hybrid_Auth::storage()->get("hauth_session.$providerId.is_logged_in")) {
 			// if user not connected to $providerId then try setup a new adapter and start the login process for this provider
 			Hybrid_Logger::info("Hybrid_Auth::authenticate( $providerId ), User not connected to the provider. Try to authenticate..");
 			$provider_adapter = Hybrid_Auth::setup($providerId, $params);
