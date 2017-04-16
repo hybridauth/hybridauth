@@ -1,0 +1,42 @@
+filter:
+    excluded_paths:
+        - docs/*
+        - vendor/*
+        - tests/*
+        - examples/*
+        - src/Deprecated/*
+        - src/Thirdparty/*
+
+tools:
+    php_mess_detector: true
+    php_analyzer: true
+    php_pdepend: true
+
+checks:
+    php:
+        code_rating: true
+        duplication: false    
+        avoid_multiple_statements_on_same_line: true
+        avoid_fixme_comments: true
+        avoid_todo_comments: true
+        avoid_unnecessary_concatenation: true
+        classes_in_camel_caps: true
+        encourage_single_quotes: true
+        fix_line_ending: true
+        function_in_camel_caps: true
+        line_length:
+            max_length: '160'
+        parameters_in_camelcaps: true
+        properties_in_camelcaps: true
+        uppercase_constants: true
+
+coding_style:
+    php:
+        indentation:
+            general:
+                use_tabs: true
+        spaces:
+            general:
+                linefeed_character: return-newline
+            around_operators:
+                negation: true

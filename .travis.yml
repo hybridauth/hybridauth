@@ -1,0 +1,36 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - hhvm
+
+env:
+  global:
+    - DEFAULT=1
+
+matrix:
+  include:
+    - php: 5.4
+      env: PHPCS=1 DEFAULT=0
+
+  allow_failures:
+    - env: PHPCS=1 DEFAULT=0
+    - php: 5.4
+    - php: hhvm
+
+before_script:
+  - composer self-update
+  - composer install
+
+  - sh -c "if [ '$PHPCS' = '1' ]; then composer require squizlabs/php_codesniffer=*; fi"
+
+script:
+  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 ./src ./tests; fi"
+
+notifications:
+  email: false
