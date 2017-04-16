@@ -68,8 +68,8 @@ $ php composer.phar update
 | 2.x     | Maintenance | [v2][hybridauth-2-repo] | [v2][hybridauth-2-docs] | >= 5.3      |
 | 3.x     | Development | [v3][hybridauth-3-repo] | [v3][hybridauth-3-docs] | >= 5.4      |
 
-[hybridauth-2-repo]: https://github.com/hybridauth/hybridauth/
-[hybridauth-3-repo]: https://github.com/hybridauth/hybridauth/tree/3.0.0-Remake
+[hybridauth-2-repo]: https://github.com/hybridauth/hybridauth/tree/v2
+[hybridauth-3-repo]: https://github.com/hybridauth/hybridauth/
 [hybridauth-2-docs]: http://hybridauth.github.io/hybridauth/
 [hybridauth-3-docs]: http://hybridauth.github.io/
 
