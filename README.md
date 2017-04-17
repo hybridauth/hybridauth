@@ -1,6 +1,6 @@
 ## [Hybridauth](https://hybridauth.github.io/) 3.0-dev
 
-[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=3.0.0-Remake)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=3.0.0-Remake) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth)
+[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=master) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth)
 
 
     IMPORTANT: Hybridauth 3 is currently in beta stage and it might NOT be suitable for production use.
@@ -41,25 +41,7 @@ catch(\Exception $e){
 
 #### Installation
 
-To install Hybridauth we recommend [Composer](https://getcomposer.org/), the now defacto dependency manager for PHP. Otherwise you may always use the latest release available at [Github](https://github.com/hybridauth/hybridauth/releases).
-
-When using Composer, you'll have to add Hybridauth to your project's existing composer.json file:
-
-```bash
-$ php composer.phar require hybridauth/hybridauth
-```
-
-After installing, you need to require Composer's autoloader in your project:
-
-```php
-require 'vendor/autoload.php';
-```
-
-You can then later update Hybridauth to newer versions using composer:
-
-```bash
-$ php composer.phar update
-```
+To install Hybridauth we recommend [Composer](https://getcomposer.org/), the now defacto dependency manager for PHP. Alternatively, you can download and use the latest release available at [Github](https://github.com/hybridauth/hybridauth/releases).
 
 #### Versions Status
 
