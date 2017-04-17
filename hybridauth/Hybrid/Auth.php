@@ -73,7 +73,6 @@ class Hybrid_Auth {
 
 		// build some need'd paths
 		$config["path_base"] = realpath(dirname(__FILE__)) . "/";
-		$config["path_vendor"] = realpath(dirname(__FILE__) . "/../../vendor");
 		$config["path_libraries"] = $config["path_base"] . "thirdparty/";
 		$config["path_resources"] = $config["path_base"] . "resources/";
 		$config["path_providers"] = $config["path_base"] . "Providers/";
