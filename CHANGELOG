@@ -1,5 +1,10 @@
 Hybridauth Change log
 =====================
+2.9.3 - xxx
+      Improvements:
+        #776 - [Facebook] Improve logic for including autoload.php
+        #641 - [Core] coding standards
+
 2.9.2 - April 14 2017
       Fixes:
         #753 + #745 - [Facebook] Return `setUserStatus` functionality
