@@ -22,6 +22,9 @@
         "ext-curl": "*",
         "facebook/graph-sdk": "^5.4"
     },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "2.*"
+    },
     "autoload": {
         "psr-0": {
             "Hybrid": "hybridauth/"
