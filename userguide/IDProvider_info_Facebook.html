@@ -95,7 +95,7 @@
             </tr>
             <tr>
               <td ><strong>&nbsp;Based on</strong></td>
-              <td>Facebook PHP SDK <a href="https://github.com/facebook/php-sdk">https://github.com/facebook/php-sdk</a></td>
+              <td>Facebook PHP SDK <a href="https://github.com/facebook/php-graph-sdk">https://github.com/facebook/php-graph-sdk</a></td>
             </tr>
             <tr>
               <td ><strong>&nbsp;Since</strong></td>
@@ -111,6 +111,30 @@
               <td>http://mywebsite.com/path_to_hybridauth/?hauth_done=<strong>Facebook</strong></td>
             </tr>
           </table>
+          <h4 style="border-bottom: 1px solid #DDDDDD;">Installation</h4>
+          <p>Hybridauth can be installed with <a href="https://getcomposer.org/">Composer</a>. Run this
+            command:</p>
+          <div class="highlight highlight-source-shell">
+            <pre>composer require hybridauth/hybridauth</pre>
+          </div>
+          <p>However, there are other ways to install hybridauth library:</p>
+          <ol>
+            <li>If you clone hybridauth library and then run <strong>composer install</strong>:
+              <ul>
+                <li>Composer will download facebook/graph-sdk library and generate a
+                  <strong>vendor/autoload.php</strong> file.
+                </li>
+                <li>Hybridauth will include this file and start using the classes that library provides.</li>
+              </ul>
+            </li>
+            <li>If you clone hybridauth library without composer installation (not recommended):
+              <ul>
+                <li>You need to download https://github.com/facebook/php-graph-sdk and put it under <strong>/Hybrid/thirdparty/</strong> directory.</li>
+                <li>Make sure that <strong>/Hybrid/thirdparty/Facebook/autoload.php</strong> exists.</li>
+                <li>Hybridauth will include this file and start using the classes that library provides.</li>
+              </ul>
+            </li>
+          </ol>
 
           <h4 style="border-bottom: 1px solid #DDDDDD;">Configuration & Usage</h4>
 <pre class="prettyprint linenums">
@@ -137,8 +161,8 @@
           For <strong>Facebook</strong> you can configure several extra options:
           </p>
           <ul>
-          	<li><code>scope</code>: An array (or comma-separated list) of permissions you want to request 
-            from the user. See the Facebook docs for a full list of available permissions: 
+          	<li><code>scope</code>: An array (or comma-separated list) of permissions you want to request
+            from the user. See the Facebook docs for a full list of available permissions:
             <a target="_blank" href="https://developers.facebook.com/docs/facebook-login/permissions">
 				      https://developers.facebook.com/docs/facebook-login/permissions
 			      </a>.
@@ -147,7 +171,7 @@
           	<li><code>display</code>: The display context to show the authentication page. By default its set to "page". Options are: page, popup, iframe, touch or wap. Read the Facebook docs for more details: <a target="_blanck" href="http://developers.facebook.com/docs/reference/dialogs#display">http://developers.facebook.com/docs/reference/dialogs#display</a>.
           </ul>
 
-          <h4>Registering application</h4>
+          <h4 style="border-bottom: 1px solid #DDDDDD;">Registering application</h4>
           <div class="alert alert-warning" role="alert">
             This is outdated and should only be used as a general guide.
           </div>
