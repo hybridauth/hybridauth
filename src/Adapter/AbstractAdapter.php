@@ -127,6 +127,14 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
+    {
+        throw new NotImplementedException('Provider does not support this feature.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         throw new NotImplementedException('Provider does not support this feature.');
