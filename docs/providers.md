@@ -19,6 +19,7 @@ Facebook            | OAuth2  | [X]            | [X]            | [X]           
 Twitter             | OAuth1  | [X]            | [X]            | [X]             | [X]            | [X]                  
 Google              | OAuth2  | [X]            | [X]            | [X]             |                |                      
 GitHub              | OAuth2  | [X]            | [X]            |                 |                |                      
+GitLab              | OAuth2  | [X]            | [X]            |                 |                |                      
 Reddit              | OAuth2  | [X]            | [X]            |                 |                |                      
 BitBucket           | OAuth2  | [X]            | [X]            |                 |                |                      
 WordPress           | OAuth2  | [X]            | [X]            |                 |                |                      
