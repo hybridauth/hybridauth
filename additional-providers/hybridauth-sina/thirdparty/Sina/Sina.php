@@ -223,7 +223,7 @@ class WeiboOAuth {
         $request->sign_request($this->sha1_method, $this->consumer, $this->token); 
         switch ($method) { 
         case 'GET': 
-            //echo $request->to_url(); 
+                //echo $request->to_url(); 
             return $this->http($request->to_url(), 'GET'); 
         default: 
             return $this->http($request->get_normalized_http_url(), $method, $request->to_postdata($multi) , $multi ); 
@@ -251,18 +251,18 @@ class WeiboOAuth {
 
         switch ($method) { 
         case 'POST': 
-            curl_setopt($ci, CURLOPT_POST, TRUE); 
-            if (!empty($postfields)) { 
-                curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields); 
-                //echo "=====post data======\r\n";
-                //echo $postfields;
-            } 
+                curl_setopt($ci, CURLOPT_POST, TRUE); 
+                if (!empty($postfields)) { 
+                    curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields); 
+                    //echo "=====post data======\r\n";
+                    //echo $postfields;
+                    } 
             break; 
         case 'DELETE': 
-            curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE'); 
-            if (!empty($postfields)) { 
-                $url = "{$url}?{$postfields}"; 
-            } 
+                curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE'); 
+                if (!empty($postfields)) { 
+                    $url = "{$url}?{$postfields}"; 
+                    } 
         } 
 
         $header_array = array(); 
@@ -341,7 +341,6 @@ class WeiboOAuth {
         { 
             return $this->$method($url , $param ); 
         } 
-
     } 
 } 
 ?>

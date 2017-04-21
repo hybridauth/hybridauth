@@ -25,7 +25,6 @@ class Hybrid_Providers_Slack extends Hybrid_Provider_Model_OAuth2
 		$this->api->authorize_url = "https://slack.com/oauth/authorize";
 		$this->api->token_url     = "https://slack.com/api/oauth.access"; 
 		$this->api->sign_token_name = "token";
-
 	}
 
 	/**

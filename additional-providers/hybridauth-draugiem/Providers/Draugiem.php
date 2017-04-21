@@ -51,7 +51,6 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 
 			$this->user_id = $user['uid'];
 		}
-
 	}
 
    /**
@@ -61,7 +60,6 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 	{
 
 		Hybrid_Auth::redirect($this->api->getLoginUrl($this->endpoint));
-
 	}
  
    /**
@@ -81,7 +79,6 @@ class Hybrid_Providers_Draugiem extends Hybrid_Provider_Model
 		$this->setUserConnected();
 		
 		Hybrid_Auth::storage()->set( "hauth_session.{$this->providerId}.user", $this->user );
-
 	}
 
    /**

@@ -540,7 +540,6 @@ class DraugiemApi {
 	<?php
 			exit;
 		}
-
 	}
 
 

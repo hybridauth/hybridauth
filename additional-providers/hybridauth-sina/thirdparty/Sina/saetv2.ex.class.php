@@ -10,7 +10,7 @@
  */
 if (!class_exists('OAuthException', false)) {
   class OAuthException extends Exception {
-    // pass
+        // pass
   }
 }
 
@@ -324,18 +324,18 @@ class SaeTOAuthV2 {
 	}
 
 	switch ($method) {
-		case 'GET':
-			$url = $url . '?' . http_build_query($parameters);
-			return $this->http($url, 'GET');
-		default:
-			$headers = array();
-			if (!$multi && (is_array($parameters) || is_object($parameters)) ) {
-				$body = http_build_query($parameters);
-			} else {
-				$body = self::build_http_query_multi($parameters);
-				$headers[] = "Content-Type: multipart/form-data; boundary=" . self::$boundary;
-			}
-			return $this->http($url, $method, $body, $headers);
+            case 'GET':
+                $url = $url . '?' . http_build_query($parameters);
+                return $this->http($url, 'GET');
+            default:
+                $headers = array();
+                if (!$multi && (is_array($parameters) || is_object($parameters)) ) {
+                    $body = http_build_query($parameters);
+                } else {
+                    $body = self::build_http_query_multi($parameters);
+                    $headers[] = "Content-Type: multipart/form-data; boundary=" . self::$boundary;
+                }
+                return $this->http($url, $method, $body, $headers);
 	}
 	}
 
@@ -1361,7 +1361,6 @@ class SaeTClientV2
 		$params['comment_ori'] = $comment_ori;
 
 		return $this->oauth->post( 'comments/reply', $params );
-
 	}
 
 	/**
@@ -3206,7 +3205,6 @@ class SaeTClientV2
 		}
 
 		return $this->oauth->$method($url, $params );
-
 	}
 
 	/**

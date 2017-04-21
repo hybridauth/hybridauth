@@ -32,7 +32,6 @@ class Hybrid_Providers_Xuite extends Hybrid_Provider_Model_OAuth2
 		$this->api->token_url     = 'https://my.xuite.net/service/account/token.php';
 
 		$this->api->curl_authenticate_method  = "GET";
-
 	}
 
 	function xuite_api_param($config,$param) {
@@ -47,7 +46,6 @@ class Hybrid_Providers_Xuite extends Hybrid_Provider_Model_OAuth2
 		$api_sig = md5($token);
 		$url_get_str = sprintf("?api_sig=%s&%s",$api_sig,http_build_query($param, '', '&'));
 		return $url_get_str;
-
 	}
 	
 	// 無法使用原生的 api->api 是因為會多加上 access_token 參數, 而 xuite 要自己組
@@ -58,7 +56,7 @@ class Hybrid_Providers_Xuite extends Hybrid_Provider_Model_OAuth2
     Hybrid_Logger::debug( "OAuth2Client::xuite_request(). dump request params: ", print_r( $params , true) );
 
     if( $type == "GET" ){
-      $url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
+              $url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . http_build_query($params, '', '&');
     }
 
     $this->http_info = array();
@@ -77,17 +75,17 @@ class Hybrid_Providers_Xuite extends Hybrid_Provider_Model_OAuth2
     curl_setopt($ch, CURLOPT_HTTPHEADER     , $this->curl_header );
 
     if($this->curl_proxy){
-      curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
+              curl_setopt( $ch, CURLOPT_PROXY        , $this->curl_proxy);
     }
 
     if( $type == "POST" ){
-      curl_setopt($ch, CURLOPT_POST, 1);
-      if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
+              curl_setopt($ch, CURLOPT_POST, 1);
+              if($params) curl_setopt( $ch, CURLOPT_POSTFIELDS, $params );
     }
 
     $response = curl_exec($ch);
     if( $response === FALSE ) {
-        Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
+            Hybrid_Logger::error( "OAuth2Client::request(). curl_exec error: ", curl_error($ch) );
     }
     Hybrid_Logger::debug( "OAuth2Client::request(). dump request info: ", serialize( curl_getinfo($ch) ) );
     //happyman
