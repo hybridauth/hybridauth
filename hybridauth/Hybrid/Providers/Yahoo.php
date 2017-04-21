@@ -34,6 +34,9 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2
         $this->api->api_base_url = 'https://social.yahooapis.com/v1/';
         $this->api->authorize_url = 'https://api.login.yahoo.com/oauth2/request_auth';
         $this->api->token_url = 'https://api.login.yahoo.com/oauth2/get_token';
+
+        // Set headers to get tokens.
+        $this->setAuthorizationHeaders('token');
     }
 
     /**
@@ -303,12 +306,14 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2
      */
     public function getCurrentUserId()
     {
-        // refresh tokens if needed
+        // Set headers to get refresh token.
+        $this->setAuthorizationHeaders('token');
+
+        // Refresh tokens if needed.
         $this->refreshToken();
 
-
-        // WordPress requires the token to be passed as a Bearer within the Header
-        $this->api->curl_header = array('Authorization: Bearer '.$this->api->access_token);
+        // Set headers to make api call.
+        $this->setAuthorizationHeaders('api');
 
         $parameters = array();
         $parameters['format'] = 'json';
@@ -324,6 +329,34 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2
         }
 
         return $response->guid->value;
+    }
+
+    /**
+     * Set correct Authorization headers.
+     *
+     * @param string $type
+     *   Specify type for request header.
+     *
+     * @return void
+     */
+    function setAuthorizationHeaders($type) {
+        switch ($type) {
+            case 'token':
+                // The /get_token requires authorization header.
+                $keys = $this->config["keys"];
+                $this->api->curl_header = array(
+                    'Authorization: Basic ' . base64_encode($keys["id"] .  ':' . $keys["secret"]),
+                    'Content-Type: application/x-www-form-urlencoded',
+                );
+                break;
+
+            case 'api':
+                // Yahoo API requires the token to be passed as a Bearer within the authorization header.
+                $this->api->curl_header = array(
+                    'Authorization: Bearer ' . $this->api->access_token,
+                );
+                break;
+        }
     }
 
 }
