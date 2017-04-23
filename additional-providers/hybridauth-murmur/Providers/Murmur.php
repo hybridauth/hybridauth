@@ -112,7 +112,6 @@ class Hybrid_Providers_Murmur extends Hybrid_Provider_Model_OAuth1
 		}
 		
 		return $contacts;
-		
 	}
 	
 	/**

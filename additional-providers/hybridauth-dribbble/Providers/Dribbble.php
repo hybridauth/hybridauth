@@ -24,7 +24,6 @@ class Hybrid_Providers_Dribbble extends Hybrid_Provider_Model_OAuth2
 		$this->api->api_base_url  = "https://api.dribbble.com/v1/";
 		$this->api->authorize_url = "https://dribbble.com/oauth/authorize";	   
 		$this->api->token_url     = "https://dribbble.com/oauth/token";
-		
 	}
 
 	/**

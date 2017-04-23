@@ -24,7 +24,6 @@ class Hybrid_Providers_WordPress extends Hybrid_Provider_Model_OAuth2
 		$this->api->api_base_url  = "https://public-api.wordpress.com/rest/v1/";
 		$this->api->authorize_url = "https://public-api.wordpress.com/oauth2/authorize";	   
 		$this->api->token_url     = "https://public-api.wordpress.com/oauth2/token";
-		
 	}
 
 	/**

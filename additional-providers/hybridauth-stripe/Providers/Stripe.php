@@ -233,6 +233,7 @@ class Hybrid_Providers_Stripe extends Hybrid_Provider_Model_OAuth2 {
 
     // Constant not defined in PHP < 5.5.
     if (!defined('CURL_SSLVERSION_TLSv1')) {
+      // @codingStandardsIgnoreLine
       define('CURL_SSLVERSION_TLSv1', 1);
     }
 

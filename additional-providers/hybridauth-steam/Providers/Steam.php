@@ -76,7 +76,7 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
       			$this->user->profile->profileURL = 'http://steamcommunity.com/id/' . (string) $data->customURL . '/';
     		}
     		else {
-      			$this->user->profile->profileURL = "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
+            $this->user->profile->profileURL = "http://steamcommunity.com/profiles/{$this->user->profile->identifier}/";
     		}
 		
 		$this->user->profile->webSiteURL		=	"";
@@ -99,6 +99,5 @@ class Hybrid_Providers_Steam extends Hybrid_Provider_Model_OpenID
 		$this->user->profile->region			=	property_exists($data, 'location') ? (string)$data->location : '';
 		$this->user->profile->city				=	"";
 		$this->user->profile->zip				=	"";
-
     }
 }

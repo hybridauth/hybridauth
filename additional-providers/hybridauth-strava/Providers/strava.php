@@ -19,7 +19,6 @@ class Hybrid_Providers_Strava extends Hybrid_Provider_Model_OAuth2
 		$this->api->api_base_url  = "https://www.strava.com/api/v3/";
 		$this->api->authorize_url = "https://www.strava.com/oauth/authorize";	   
 		$this->api->token_url     = "https://www.strava.com/oauth/token";
-		
 	}
 
 	/**

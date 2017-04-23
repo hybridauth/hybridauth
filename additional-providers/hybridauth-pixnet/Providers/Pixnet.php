@@ -101,7 +101,6 @@ class Hybrid_Providers_Pixnet extends Hybrid_Provider_Model_OAuth1
 		}
 		
 		return $contacts;
-		
 	}
 	
 	/**

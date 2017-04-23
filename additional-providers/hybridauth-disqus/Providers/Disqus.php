@@ -25,7 +25,6 @@ class Hybrid_Providers_Disqus extends Hybrid_Provider_Model_OAuth2
 		$this->api->api_base_url  = "https://disqus.com/api/3.0/";
 		$this->api->authorize_url = "https://disqus.com/api/oauth/2.0/authorize";	   
 		$this->api->token_url     = "https://disqus.com/api/oauth/2.0/access_token/";
-		
 	}
 
 	/**
