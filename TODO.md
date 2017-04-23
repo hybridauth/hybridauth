@@ -53,6 +53,15 @@ TwitchTV            | OAuth2   |  [X]         |  [X]        |
 
 -----------------------
 
+#### Documentaion
+
+- [ ] New version of the documentation
+- [ ] Upgrade guide from 2.x.x
+- [ ] Examples
+- [ ] Guides
+
+We need to provide new version of the documentation and other related materials.
+
 #### Optional Tasks:
 
 The following tasks are not required in order to release Hybridauth 3 but they're nice to have.

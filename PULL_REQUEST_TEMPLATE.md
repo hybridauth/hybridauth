@@ -1,10 +1,14 @@
 ## Summary
 
-- [ ] Breaking change
-- [ ] Addition
-- [ ] Patch
-- [ ] Tested (unit tests)
-- [ ] New provider
+(select one:)
+* Breaking change
+* Addition
+* Patch for #
+* New provider
+
+- [ ] Tested
+  - [ ] Unit tests
+  - [ ] Style
 - [ ] Documentation (PR # )
 
 ## Goal
