@@ -1,9 +1,13 @@
 Hybridauth Change log
 =====================
-2.9.3 - xxx
+2.9.3 - April 23 2017
+      Fixes:
+        #784 - [Core] Make protected abstract methods (loginBegin, loginFinish) as public ones
       Improvements:
+        #792 - [Stripe] Add optional stripe_landing auth parameter
+        #788 - [Yahoo] Upgrade to OAuth 2
         #776 - [Facebook] Improve logic for including autoload.php
-        #641 - [Core] coding standards
+        #641 - [Core] coding standards & Travis testing
 
 2.9.2 - April 14 2017
       Fixes:
