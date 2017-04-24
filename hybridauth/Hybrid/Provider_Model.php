@@ -121,14 +121,14 @@ abstract class Hybrid_Provider_Model {
    * @return void
    * @throws Exception
    */
-  abstract protected function loginBegin();
+  abstract public function loginBegin();
 
   /**
    * Finish login
    * @return void
    * @throws Exception
    */
-  abstract protected function loginFinish();
+  abstract public function loginFinish();
 
   /**
    * Generic logout, just erase current provider adapter stored data to let Hybrid_Auth all forget about it
@@ -143,7 +143,7 @@ abstract class Hybrid_Provider_Model {
   /**
    * Grab the user profile from the IDp api client
    * @return Hybrid_User_Profile
-   * @throw Exception
+   * @throws Exception
    */
   function getUserProfile() {
     Hybrid_Logger::error("HybridAuth do not provide users contacts list for {$this->providerId} yet.");
