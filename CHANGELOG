@@ -1,8 +1,11 @@
 Hybridauth Change log
 =====================
-2.9.4 - XXX
+2.9.4 - May 1 2017
+      Fixes:
+        #797 - [Steam] Fix broken authorization
       Improvements:
         #792 - [Stripe] Add optional stripe_landing auth parameter
+        #801 - [Core] Vendor folder now part of gitignore
 
 2.9.3 - April 30 2017
       Fixes:
