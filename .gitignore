@@ -1,4 +1,5 @@
 /.idea
+/vendor
 /hybridauth/config.php
 /examples/signin_signup/application.config.php
 /nbproject/
