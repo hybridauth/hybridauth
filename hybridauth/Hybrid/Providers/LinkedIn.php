@@ -90,7 +90,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
     /**
      * {@inheritdoc}
      *
-     * @param array|string $status
+     * @param array $status
      *   An associative array containing:
      *   - content: A collection of fields describing the shared content.
      *   - comment: A comment by the member to associated with the share.
@@ -128,7 +128,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
     }
 
     /**
-     * Set correct Authorization headers.
+     * Set correct request headers.
      *
      * @param string $api_type
      *   (optional) Specify api type.
