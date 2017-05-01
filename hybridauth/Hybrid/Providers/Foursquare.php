@@ -82,7 +82,7 @@ class Hybrid_Providers_Foursquare extends Hybrid_Provider_Model_OAuth2 {
 		$contacts = array();
 		try {
 			$response = $this->api->api("users/self/friends", "GET", Hybrid_Providers_Foursquare::$apiVersion);
-		} catch (LinkedInException $e) {
+		} catch (Exception $e) {
 			throw new Exception("User contacts request failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
 		}
 
