@@ -1,11 +1,17 @@
 Hybridauth Change log
 =====================
+2.9.4 - May 1 2017
+      Fixes:
+        #797 - [Steam] Fix broken authorization
+      Improvements:
+        #792 - [Stripe] Add optional stripe_landing auth parameter
+        #801 - [Core] Vendor folder now part of gitignore
+
 2.9.3 - April 30 2017
       Fixes:
         #798 - [Strava] Strava is set as strava instead of Strava.php
         #784 - [Core] Make protected abstract methods (loginBegin, loginFinish) as public ones
       Improvements:
-        #792 - [Stripe] Add optional stripe_landing auth parameter
         #788 - [Yahoo] Upgrade to OAuth 2
         #776 - [Facebook] Improve logic for including autoload.php
         #641 - [Core] coding standards & Travis testing
