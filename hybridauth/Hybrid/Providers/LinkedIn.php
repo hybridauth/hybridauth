@@ -96,10 +96,11 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
      *   - comment: A comment by the member to associated with the share.
      *   - visibility: A collection of visibility information about the share.
      *
-     * @return array
-     *   An associative array containing:
+     * @return object
+     *   An object containing:
      *   - updateKey - A unique ID for the shared content posting that was just created.
      *   - updateUrl - A direct link to the newly shared content on LinkedIn.com that you can direct the user's web browser to.
+     * @throws Exception
      * @see https://developer.linkedin.com/docs/share-on-linkedin
      */
     function setUserStatus($status) {
@@ -122,6 +123,10 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
             );
         } catch (Exception $e) {
             throw new Exception("Update user status failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
+        }
+
+        if (!isset($response->updateKey)) {
+            throw new Exception("Update user status failed! {$this->providerId} returned an error: {$response->message}", $response->errorCode);
         }
 
         return $response;
