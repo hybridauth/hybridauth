@@ -74,7 +74,7 @@
 					For MVC frameworks like CakePHP and CodeIgniter, developers usually drop the <code>hybridauth</code> package inside the <code>public</code> directory.
 					This means the callback or return URL for a provider, (ex. Google) look something like this:
 				</p>
-				
+
 				<p><span style="color:green">http://mywebsite.com/hybridauth/index.php<strong>?hauth.done=Google</strong></span></p>
 
 				<p>However, it's possible to fully customize the HybridAuth Endpoint URL by rewrapping the endpoint. This means your endpoint URL could look something like (example #1):</p>
@@ -100,13 +100,13 @@
 <pre class="prettyprint linenums">
 &lt;?php
 	class UsersAuthentication extends Controller {
-		
+
 		function hybridauth_endpoint() {
 			 include "/path/to/framework/application/vendors/hybridauth/index.php";
 		}
 
 		function signin_with_hybridauth( $provider ) {
-			 
+
 			$config = "/path/to/framework/application/vendors/hybridauth/config.php";
 			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
 
@@ -127,7 +127,7 @@
 				<p>If we assume your website domain is <span style="color:green">http://mywebsite.com/</span> and your application url is <span style="color:green">http://mywebsite.com/<b>app/</b></span> then:</p>
 				<p>HybridAuth Endpoint will be (<code>base_url</code> on configuration):<br /><span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span></p>
 				<p>And you could provide it as callback url for your external applications. ex:<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>?hauth.done=Google</b></span></p>
-			
+
 				<hr />
 
 				<h3>Example #2 (advanced)</h3>
@@ -141,7 +141,7 @@
 
 				<p>
 					We'll need to manually adjust the <code>$_REQUEST</code> variable, since this is where HybridAuth looks for the
-					<code>hauth_start</code> and <code>hauth_done</code> keys, which it uses to determine if we are starting the auth 
+					<code>hauth_start</code> and <code>hauth_done</code> keys, which it uses to determine if we are starting the auth
 					process, or we have been redirected back from the service provider. It also tells HybridAuth which provider we are dealing with.
 				</p>
 
@@ -153,9 +153,9 @@
 <pre class="prettyprint linenums">
 &lt;?php
 	class UsersAuthentication extends Controller {
-		 
+
 		function hybridauth_endpoint( $action, $provider ) {
-			 
+
 			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
 			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Endpoint.php";
 
@@ -167,7 +167,7 @@
 		}
 
 		function signin_with_hybridauth( $provider ) {
-			 
+
 			$config = "/path/to/framework/application/vendors/hybridauth/config.php";
 			include "/path/to/framework/application/vendors/hybridauth/Hybrid/Auth.php";
 
@@ -198,7 +198,7 @@
 				<p>HybridAuth Endpoint will be (<code>base_url</code> on configuration):<br /><span style="color:green">http://mywebsite.com/app/<b>usersauthentication/hybridauth_endpoint/</b></span></p>
 				<p>HybridAuth will redirect users logging in via Google to (this will load the <code>Hybrid_Endpoint</code> and start the auth process):<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>start/google</b></span></p>
 				<p>And you could provide it as callback url for your external applications. ex:<br /><span style="color:green">http://mywebsite.com/app/usersauthentication/hybridauth_endpoint/<b>done/google</b></span></p>
-			
+
 			</div><!-- //.col-md-12 -->
 		</div>
 	</div>
@@ -213,12 +213,12 @@
 					/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
 						var disqus_shortname = 'hybridauth'; // required: replace example with your forum shortname
 						var disqus_identifier = 'change-hybridauth-endpoint-url';
-						var disqus_url = 'http://hybridauth.sourceforge.net/userguide/tuts/change-hybridauth-endpoint-url.html';
+						var disqus_url = 'https://hybridauth.github.io/hybridauth/userguide/tuts/change-hybridauth-endpoint-url.html';
 
 					/* * * DON'T EDIT BELOW THIS LINE * * */
 						(function() {
 							var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-							dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+							dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
 							(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 						})();
 				</script>
