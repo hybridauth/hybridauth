@@ -39,7 +39,7 @@ class DraugiemApi {
 
 	private $app_id; //application ID
 	private $app_key;//application API key
-	
+
 	private $user_key = false; //user API key
 	private $session_key = false; //user draugiem.lv session key
 	private $userinfo = false; //active user
@@ -71,10 +71,10 @@ class DraugiemApi {
 	 * Timeout in seconds for session_check requests
 	 */
 	const SESSION_CHECK_TIMEOUT = 180;
-	
+
 	/**
 	 * Constructs Draugiem.lv API object
-	 * 
+	 *
 	 * @param int $app_id your application ID
 	 * @param string $app_key application API key
 	 * @param string $user_key user API key (or empty if no user has been authorized)
@@ -102,18 +102,18 @@ class DraugiemApi {
 			$this->clearSession();
 		} elseif(isset($_GET['dr_auth_code']) && (empty($_SESSION['draugiem_auth_code']) ||
 			$_GET['dr_auth_code'] != $_SESSION['draugiem_auth_code'])){// New session authorization
-				
+
 			$this->clearSession(); //Delete current session data to prevent overwriting of existing session
-			
+
 			//Get authorization data
 			$response = $this->apiCall('authorize', array('code'=>$_GET['dr_auth_code']));
-			
+
 			if($response && isset($response['apikey'])){//API key received
 				//User profile info
 				$userData = reset($response['users']);
-				
+
 				if(!empty($userData)){
-					if(!empty($_GET['session_hash'])){//Internal application, store session key to recheck if draugiem.lv session is active 
+					if(!empty($_GET['session_hash'])){//Internal application, store session key to recheck if draugiem.lv session is active
 						$_SESSION['draugiem_lastcheck'] = time();
 						$this->session_key = $_SESSION['draugiem_session'] = $_GET['session_hash'];
 						if(isset($_GET['domain'])){//Domain for JS actions
@@ -126,7 +126,7 @@ class DraugiemApi {
 							);
 						}
 					}
-					
+
 					$_SESSION['draugiem_auth_code'] = $_GET['dr_auth_code'];
 
 					//User API key
@@ -135,11 +135,11 @@ class DraugiemApi {
 					$_SESSION['draugiem_language'] = $response['language'];
 					//Profile info
 					$this->userinfo = $_SESSION['draugiem_user'] = $userData;
-					
+
 					return true;//Authorization OK
 				}
 			}
-			
+
 		}elseif(isset($_SESSION['draugiem_user'])){//Existing session
 
 
@@ -170,7 +170,7 @@ class DraugiemApi {
 		}
 		return false; //failure
 	}
-	
+
 	/**
 	 * Get user API key from current session. The function must be called after getSession().
 	 *
@@ -188,7 +188,7 @@ class DraugiemApi {
 	public function getUserLanguage(){
 		return isset($_SESSION['draugiem_language']) ? $_SESSION['draugiem_language'] : 'lv';
 	}
-	
+
 	/**
 	 * Get draugiem.lv user ID for currently authorized user
 	 *
@@ -204,7 +204,7 @@ class DraugiemApi {
 			return false;
 		}
 	}
-	
+
 
 	/**
 	 * Return user data for specified Draugiem.lv user IDs
@@ -216,12 +216,12 @@ class DraugiemApi {
 	 * @param mixed $ids array of user IDs or a single user ID (this argument can also be false. In that case, user data of current user will be returned)
 	 * @return array Requested user data items or false if API request has failed
 	 */
-	public function getUserData ($ids = false){
+	public function getUserData($ids = false){
 		if(is_array($ids)){//Array of IDs
 			$ids = implode(',', $ids);
 		} else {//Single ID
 			$return_single = true;
-			
+
 			if($this->userinfo && ($ids == $this->userinfo['uid'] || $ids === false)){//If we have userinfo of active user, return it immediately
 				return $this->userinfo;
 			}
@@ -230,7 +230,7 @@ class DraugiemApi {
 				$ids = (int)$ids;
 			}
 		}
-		
+
 		$response = $this->apiCall('userdata', array('ids'=>$ids));
 		if($response){
 			$userData = $response['users'];
@@ -266,7 +266,7 @@ class DraugiemApi {
 		return $img;
 	}
 
-	
+
 	/**
 	 * Check if two application users are friends
 	 *
@@ -321,9 +321,9 @@ class DraugiemApi {
 			}
 		} else {
 			return false;
-		}			
+		}
 	}
-	
+
 	/**
 	 * Get list of all friends of currently authorized user.
 	 *
@@ -343,8 +343,8 @@ class DraugiemApi {
 			}
 		} else {
 			return false;
-		}			
-	}	
+		}
+	}
 
 	/**
 	 * Get list of friends of currently authorized user that also use this application and are currently logged in draugiem.lv.
@@ -407,7 +407,7 @@ class DraugiemApi {
 			}
 		} else {
 			return false;
-		}			
+		}
 	}
 
 
@@ -415,19 +415,19 @@ class DraugiemApi {
 	################################################
 	###### Draugiem.lv passport functions ##########
 	################################################
-	
+
 	/**
 	 * Get URL for Draugiem.lv Passport login page to authenticate user
 	 *
 	 * @param string $redirect_url URL where user has to be redirected after authorization. The URL has to be in the same domain as URL that has been set in the properties of the application.
 	 * @return string URL of Draugiem.lv Passport login page
 	 */
-	public function getLoginURL ($redirect_url){
+	public function getLoginURL($redirect_url){
 		$hash = md5($this->app_key.$redirect_url);//Request checksum
 		$link = self::LOGIN_URL.'?app='.$this->app_id.'&hash='.$hash.'&redirect='.urlencode($redirect_url);
 		return $link;
 	}
-	
+
 	/**
 	 * Get HTML for Draugiem.lv Passport login button with Draugiem.lv Passport logo.
 	 *
@@ -437,7 +437,7 @@ class DraugiemApi {
 	 */
 	public function getLoginButton($redirect_url, $popup = true){
 		$url = htmlspecialchars($this->getLoginUrl($redirect_url));
-		
+
 		if($popup){
 		$js = "if(handle=window.open('$url&amp;popup=1','Dr_{$this->app_id}' ,'width=400, height=400, left='+(screen.width?(screen.width-400)/2:0)+', top='+(screen.height?(screen.height-400)/2:0)+',scrollbars=no')){handle.focus();return false;}";
 			$onclick = ' onclick="'.$js.'"';
@@ -588,7 +588,7 @@ class DraugiemApi {
 	#########################
 	### Utility functions ###
 	#########################
-		
+
 	/**
 	 * Inner function that calls Draugiem.lv API and returns response as an array
 	 *
@@ -597,7 +597,7 @@ class DraugiemApi {
 	 * @return mixed API response data or false if the request has failed
 	 */
 	public function apiCall($action, $args = array(), $method = 'GET'){
-		
+
 		if(($method == 'POST') && function_exists('curl_init')){
 			$params = array();
 			$params['app'] = $this->app_key;
@@ -606,7 +606,7 @@ class DraugiemApi {
 			}
 			$params['action'] = $action;
 			$params += $args;
-			
+
 			$ch = curl_init(self::API_URL);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
@@ -614,7 +614,7 @@ class DraugiemApi {
 			curl_close($ch);
 			return $response;
 		}
-		
+
 		$url =self::API_URL.'?app='.$this->app_key;
 		if($this->user_key){//User has been authorized
 			$url.='&apikey='.$this->user_key;
@@ -636,12 +636,12 @@ class DraugiemApi {
 			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 			curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
 			$response = curl_exec($ch);
-			curl_close($ch);			
+			curl_close($ch);
 		}else{
-            $parts = parse_url($url); 
+            $parts = parse_url($url);
             $target = $parts['host'];
             $port = 80;
-            
+
             $page    = isset($parts['path'])        ? $parts['path']            : '';
             $page   .= isset($parts['query'])       ? '?' . $parts['query']     : '';
             $page   .= isset($parts['fragment'])    ? '#' . $parts['fragment']  : '';
@@ -652,11 +652,11 @@ class DraugiemApi {
                 $headers .= "Host: {$parts['host']}\r\n";
                 $headers .= "Connection: Close\r\n\r\n";
                 if(fwrite($fp, $headers)){
-                    $response = '';    
+                    $response = '';
 					while (!feof($fp)) {
 						$response .= fgets($fp, 128);
-					}		
-					$response = substr($response, stripos($response, 'a:'));	
+					}
+					$response = substr($response, stripos($response, 'a:'));
                 }
                 fclose($fp);
             }
@@ -667,7 +667,7 @@ class DraugiemApi {
 			$this->lastErrorDescription = 'No response from API server';
 			return false;
 		}
-		
+
 		$response = unserialize($response);
 
 		if(empty($response)){//Empty response
@@ -678,7 +678,7 @@ class DraugiemApi {
 			if(isset($response['error'])){//API error, fill error attributes
 				$this->lastError = $response['error']['code'];
 				$this->lastErrorDescription = 'API error: '.$response['error']['description'];
-				return false;						
+				return false;
 			} else {
 				return $response;
 			}
