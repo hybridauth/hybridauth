@@ -65,14 +65,14 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 							&& property_exists($email, 'email')
 						) {
 							$this->user->profile->email = $email->email;
-							
+
 							// record whether the email address is verified
 							if (property_exists($email, 'verified')
 								&& true === $email->verified
 							) {
 								$this->user->profile->emailVerified = $email->email;
 							}
-							
+
 							break;
 						}
 					}
@@ -97,7 +97,7 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 		$contacts = array();
 		try {
             $response = $this->api->api( "user/followers" );
-        } catch (LinkedInException $e) {
+        } catch (Exception $e) {
             throw new Exception("User contacts request failed! {$this->providerId} returned an error: $e");
         }
         //
@@ -105,7 +105,7 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 			foreach ($response as $contact) {
                 try {
                     $contactInfo = $this->api->api( "users/".$contact->login );
-                } catch (LinkedInException $e) {
+                } catch (Exception $e) {
                     throw new Exception("Contact info request failed for user {$contact->login}! {$this->providerId} returned an error: $e");
                 }
                 //

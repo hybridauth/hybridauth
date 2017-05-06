@@ -60,7 +60,7 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2
         $profile = ( ( isset( $this->user->profile->identifier ) )?( $this->user->profile ):( $this->getUserProfile() ) );
 		try {
             $response = $this->api->api( "users/{$this->user->profile->identifier}/follows" );
-        } catch (LinkedInException $e) {
+        } catch (Exception $e) {
             throw new Exception("User contacts request failed! {$this->providerId} returned an error: $e");
         }
         //
@@ -69,7 +69,7 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2
 			foreach ($response->data as $contact) {
                 try {
                     $contactInfo = $this->api->api( "users/".$contact->id );
-                } catch (LinkedInException $e) {
+                } catch (Exception $e) {
                     throw new Exception("Contact info request failed for user {$contact->username}! {$this->providerId} returned an error: $e");
                 }
                 //
