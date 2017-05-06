@@ -1,5 +1,12 @@
 Hybridauth Change log
 =====================
+2.9.5 - May 6 2017
+      Fixes:
+        #810 - [Core] add composer.lock to gitignore
+      Improvements:
+        #807 - [Vimeo] Upgrade to OAuth2
+        #803 - [LinkedIn] Upgrade to OAuth2 
+
 2.9.4 - May 1 2017
       Fixes:
         #797 - [Steam] Fix broken authorization
