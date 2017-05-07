@@ -646,7 +646,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $url = $this->apiBaseUrl . $url;
         }
 
-        $this->apiRequestParameters[ $this->accessTokenName ] = $this->getStoredData('access_token');
+        if($this->getStoredData('access_token')) {
+            $this->apiRequestParameters[$this->accessTokenName] = $this->getStoredData('access_token');
+        }
 
         $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
         $headers = array_replace($this->apiRequestHeaders, (array) $headers);
