@@ -1,6 +1,6 @@
 ## [Hybridauth](https://hybridauth.github.io/) 3.0-dev
 
-[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=master) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth)
+[![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=master) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
     IMPORTANT: Hybridauth 3 is currently in beta stage and it might NOT be suitable for production use.
@@ -57,7 +57,7 @@ To install Hybridauth we recommend [Composer](https://getcomposer.org/), the now
 
 #### Questions, Help and Support?
 
-For general questions (i.e, "how-to" questions), please consider using [StackOverflow](https://stackoverflow.com/questions/tagged/hybridauth) instead of the Github issues tracker. For convenience, we also have a [low-activity] mailing list at [Google Groups](http://groups.google.com/group/hybridauth) and a [Gitter channel](https://gitter.im/hybridauth/hybridauth) if you want to get help directly from the community.
+For general questions (i.e, "how-to" questions), please consider using [StackOverflow](https://stackoverflow.com/questions/tagged/hybridauth) instead of the Github issues tracker. For convenience, we also have a [low-activity] [Gitter channel](https://gitter.im/hybridauth/hybridauth) if you want to get help directly from the community.
 
 #### License
 
