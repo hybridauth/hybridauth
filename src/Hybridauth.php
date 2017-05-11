@@ -118,7 +118,7 @@ class Hybridauth
     {
         $config = $this->getProviderConfig($name);
 
-        $adapter = $config['adapter'] ?: sprintf('Hybridauth\\Provider\\%s', $name);
+        $adapter = isset($config['adapter']) ? $config['adapter'] : sprintf('Hybridauth\\Provider\\%s', $name);
 
         return new $adapter($config, $this->httpClient, $this->storage, $this->logger);
     }
