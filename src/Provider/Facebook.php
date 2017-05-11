@@ -63,6 +63,8 @@ class Facebook extends OAuth2
     */
     protected $apiDocumentation = 'https://developers.facebook.com/docs/facebook-login/overview';
 
+    private $appsecretProofName = 'appsecret_proof';
+
     /**
     * {@inheritdoc}
     */
@@ -269,5 +271,24 @@ class Facebook extends OAuth2
         }
 
         return $userActivity;
+    }
+
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
+    {
+        $this->addSecretProof();
+
+        return parent::apiRequest($url, $method, $parameters, $headers);
+    }
+
+    private function addSecretProof()
+    {
+        if($accessToken = $this->getStoredData('access_token')) {
+            $this->apiRequestParameters[$this->appsecretProofName] = $this->generateSecretProof($accessToken);
+        }
+    }
+
+    private function generateSecretProof($accessToken)
+    {
+        return hash_hmac('sha256', $accessToken, $this->clientSecret);
     }
 }
