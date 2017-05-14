@@ -133,7 +133,7 @@ class Hybridauth
     *
     * @return array
     */
-    protected function getProviderConfig($name)
+    public function getProviderConfig($name)
     {
         $name = strtolower($name);
 
@@ -163,7 +163,7 @@ class Hybridauth
     *
     * @return boolean
     */
-    public static function isConnectedWith($name)
+    public function isConnectedWith($name)
     {
         return $this->getAdapter($name)->isConnected();
     }
@@ -173,13 +173,13 @@ class Hybridauth
     *
     * @return array
     */
-    public static function getConnectedProviders()
+    public function getConnectedProviders()
     {
         $providers = [];
 
-        foreach ($this->config['providers'] as $name => $_) {
-            if ($this->isConnectedWith($name)) {
-                $providers[] = $name;
+        foreach ($this->config['providers'] as $name => $config) {
+            if ($config['enabled'] && $this->isConnectedWith($name)) {
+                 $providers[] = $name;
             }
         }
 
@@ -191,15 +191,17 @@ class Hybridauth
     *
     * @return array
     */
-    public static function getConnectedAdapters()
+    public function getConnectedAdapters()
     {
         $adapters = [];
 
-        foreach ($this->config['providers'] as $name => $_) {
-            $adapter = $this->getAdapter($name);
+        foreach ($this->config['providers'] as $name => $config) {
+            if ($config['enabled']) {
+                $adapter = $this->getAdapter($name);
 
-            if ($adapter->isConnected()) {
-                $adapters[$name] = $adapter;
+                if ($adapter->isConnected()) {
+                    $adapters[$name] = $adapter;
+                }
             }
         }
 
@@ -209,13 +211,15 @@ class Hybridauth
     /**
     * Disconnect all currently connected adapters at once
     */
-    public static function disconnectAllAdapters()
+    public function disconnectAllAdapters()
     {
-        foreach ($this->config['providers'] as $name => $_) {
-            $adapter = $this->getAdapter($name);
+        foreach ($this->config['providers'] as $name => $config) {
+            if ($config['enabled']) {
+                $adapter = $this->getAdapter($name);
 
-            if ($adapter->isConnected()) {
-                $adapter->disconnect();
+                if ($adapter->isConnected()) {
+                    $adapter->disconnect();
+                }
             }
         }
     }
