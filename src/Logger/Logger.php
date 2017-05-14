@@ -15,15 +15,15 @@ use Hybridauth\Exception\InvalidArgumentException;
  */
 class Logger implements LoggerInterface
 {
-    const NONE  = 'none';
-    const ERROR = 'error';
-    const INFO  = 'info';
-    const DEBUG = 'debug';
+    const NONE  = 'none';  // turn logging off
+    const DEBUG = 'debug'; // debug, info and error messages
+    const INFO  = 'info';  // info and error messages
+    const ERROR = 'error'; // only error messages
 
     /**
      * Debug level.
      *
-     * One of Logger::NONE, Logger::ERROR, Logger::INFO, Logger::DEBUG
+     * One of Logger::NONE, Logger::DEBUG, Logger::INFO, Logger::ERROR
      *
      * @var string
      */
@@ -37,8 +37,8 @@ class Logger implements LoggerInterface
     protected $file;
 
     /**
-     * @param bool|string $level One of Logger::NONE, Logger::ERROR, Logger::INFO, Logger::DEBUG
-     * @param string      $file  File where t write messages
+     * @param bool|string $level One of Logger::NONE, Logger::DEBUG, Logger::INFO, Logger::ERROR
+     * @param string      $file  File where to write messages
      *
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -50,7 +50,7 @@ class Logger implements LoggerInterface
         if ($level && $level !== self::NONE) {
             $this->initialize($file);
 
-            $this->level = $level;
+            $this->level = $level === true ? Logger::DEBUG :  $level;
             $this->file = $file;
         }
     }
@@ -81,6 +81,10 @@ class Logger implements LoggerInterface
      */
     public function info($message, array $context = [])
     {
+        if(!in_array($this->level, [self::DEBUG, self::INFO])){
+            return;
+        }
+
         $this->log(self::INFO, $message, $context);
     }
 
@@ -89,6 +93,10 @@ class Logger implements LoggerInterface
      */
     public function debug($message, array $context = [])
     {
+        if(!in_array($this->level, [self::DEBUG])){
+            return;
+        }
+
         $this->log(self::DEBUG, $message, $context);
     }
 
@@ -97,6 +105,10 @@ class Logger implements LoggerInterface
      */
     public function error($message, array $context = [])
     {
+        if(!in_array($this->level, [self::DEBUG, self::INFO, self::ERROR])){
+            return;
+        }
+
         $this->log(self::ERROR, $message, $context);
     }
 
@@ -105,28 +117,6 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = [])
     {
-        // We do not log anything if:
-        // 1) Logging disabled
-        // 2) Configured logging level is less detailed than $level
-        //
-        // Logging levels priority from less to more detailed, next level implies all previous
-        // * ERROR
-        // * INFO
-        // * DEBUG
-        if (
-            $this->level === self::NONE ||
-            (
-                $level === self::DEBUG &&
-                $this->level !== self::DEBUG
-            ) ||
-            (
-                $level === self::INFO &&
-                !in_array($this->level, [self::DEBUG, self::INFO], true)
-            )
-        ) {
-            return;
-        }
-
         $datetime = new \DateTime();
         $datetime = $datetime->format(DATE_ATOM);
 
