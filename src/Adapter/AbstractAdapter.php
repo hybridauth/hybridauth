@@ -333,7 +333,9 @@ abstract class AbstractAdapter implements AdapterInterface
             return;
         }
 
-        if (200 != $this->httpClient->getResponseHttpCode()) {
+        $status = $this->httpClient->getResponseHttpCode();
+
+        if ($status < 200 || $status > 299 ) {
             throw new HttpRequestFailedException(
                 $error . 'HTTP error '.$this->httpClient->getResponseHttpCode().
                 '. Raw Provider API response: '.$this->httpClient->getResponseBody().'.'
