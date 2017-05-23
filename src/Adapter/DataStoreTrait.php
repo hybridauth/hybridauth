@@ -20,7 +20,7 @@ trait DataStoreTrait
      * This method is mainly used for OAuth tokens (access, secret, refresh, and whatnot), but it
      * can be also used by providers to store any other useful data (i.g., user_id, auth_nonce, etc.)
      *
-     * @param string $token
+     * @param string $name
      * @param mixed  $value
      *
      * @return mixed
@@ -42,7 +42,7 @@ trait DataStoreTrait
      * can be also used by providers to retrieve from store any other useful data (i.g., user_id,
      * auth_nonce, etc.)
      *
-     * @param string $token
+     * @param string $name
      *
      * @return mixed
      */
