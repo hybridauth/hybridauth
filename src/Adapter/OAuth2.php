@@ -633,7 +633,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * @param array  $parameters
     * @param array  $headers
     *
-    * @return object
+    * @return mixed
     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
     {
