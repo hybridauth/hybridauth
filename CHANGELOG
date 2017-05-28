@@ -1,5 +1,9 @@
 Hybridauth Change log
 =====================
+2.9.6 - not released
+      Fixes:
+        #748 - [Google] Updated default google scopes
+
 2.9.5 - May 6 2017
       Fixes:
         #810 - [Core] add composer.lock to gitignore
