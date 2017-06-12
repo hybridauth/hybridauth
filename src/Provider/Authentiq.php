@@ -104,10 +104,10 @@ class Authentiq extends OAuth2
         }
 
         $userProfile->email       = $data->get('email');
-        $userProfile->emailVerified = $data->get('email_verified');
+        $userProfile->emailVerified = $data->get('email_verified') ? $userProfile->email : '';
 
         $userProfile->phone       = $data->get('phone');
-        // $userProfile->phoneVerified = $data->get('phone_verified'); // not supported
+        // $userProfile->phoneVerified = $data->get('phone_verified') ? $userProfile->phone : ''; // not supported
 
         $userProfile->profileURL  = $data->get('profile');
         $userProfile->webSiteURL  = $data->get('website');
