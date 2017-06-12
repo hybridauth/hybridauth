@@ -5,6 +5,8 @@ Hybridauth Change log
         #748 - [Google] Updated default google scopes
       Improvements:
         #820 - Improved HumanitarianID support and removed thirdparty
+      New providers:
+        #839 - Authentiq
 
 2.9.5 - May 6 2017
       Fixes:
