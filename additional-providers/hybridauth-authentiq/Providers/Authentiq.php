@@ -43,13 +43,6 @@ class Hybrid_Providers_Authentiq extends Hybrid_Provider_Model_OAuth2
   }
 
   /**
-   * {@inheritdoc}
-   */
-  function logout() {
-      parent::logout();
-  }
-
-  /**
    * load the user profile from the IDp api client
    */
   function getUserProfile()
@@ -76,10 +69,10 @@ class Hybrid_Providers_Authentiq extends Hybrid_Provider_Model_OAuth2
     }
 
     $this->user->profile->email       = @ (property_exists($data, 'email')) ? $data->email : '';
-    $this->user->profile->emailVerified = @ (property_exists($data, 'email_verified')) ? $data->email_verified : '';
+    $this->user->profile->emailVerified = ! empty($data->email_verified) ? $this->user->profile->email : '';
 
     $this->user->profile->phone       = @ (property_exists($data, 'phone_number')) ? $data->phone_number : '';
-    // $this->user->profile->phoneVerified = @ (property_exists($data, 'phone_number_verified')) ? $data->phone_number_verified : ''; // not supported
+    // $this->user->profile->phoneVerified = ! empty($data->phone_verified) ? $this->user->profile->phone : ''; // not supported
 
     $this->user->profile->profileURL  = @ (property_exists($data, 'profile')) ? $data->profile : '';
     $this->user->profile->webSiteURL  = @ (property_exists($data, 'website')) ? $data->website : '';
