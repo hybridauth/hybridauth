@@ -82,11 +82,11 @@
             </tr>
             <tr>
               <td><strong>&nbsp;IDp URL</strong></td>
-              <td>http://live.com/</td>
+              <td>https://live.com/</td>
             </tr>
             <tr>
               <td><strong>&nbsp;Keys registeration</strong></td>
-              <td>https://manage.dev.live.com/ApplicationOverview.aspx</td>
+              <td>https://apps.dev.microsoft.com/</td>
             </tr>
             <tr>
               <td width="19%" ><strong>&nbsp;Wrapper</strong></td>
@@ -95,14 +95,32 @@
 
             <tr>
               <td><strong>Callback URL</strong></td>
-              <td>http://mywebsite.com/path_to_hybridauth/?hauth.done=<strong>Live</strong></td>
+              <td>https://mywebsite.com/path_to_hybridauth/live.php</td>
             </tr>
           </table>
 
           <h4>Registering application</h4>
-          <p>After registing an new application at <a href="https://manage.dev.live.com/ApplicationOverview.aspx">https://manage.dev.live.com/ApplicationOverview.aspx</a>, copy the created  credentials (key and  Secret) and <a href="Configuration.html#SETUP_API_KEYS">put them on HybridAuth config file</a>,</p>
-          <p>Make sure to put your correct website adress in the "Redirect Domain" field.</p>
-          <div class="text-center"><img src="img/setup_live_01.gif" ></div>
+          <ol>
+            <li>
+              Sign in to the Windows Live <a href="http://go.microsoft.com/fwlink/?LinkId=193157" target="_blank">application management site</a> (https://apps.dev.microsoft.com/).<br>
+              Click <strong>Add an app</strong> on this page.
+            </li>
+            <li>
+              Type an application name. This is the name that users will see in the Windows Live user interface (UI). The application name should include your company name or the name of your web site.
+            </li>
+            <li>
+              Generate <b>Application Secret</b> by clicking <b>Generate New Password</b>.
+            </li>
+            <li>
+              Select <b>Web</b> as a platform by clicking <b>Add Platform</b>.
+            </li>
+            <li>
+              Provide this URL as Redirect URLs: <span class="green">https://mywebsite.com/path_to_hybridauth/live.php</span>
+            </li>
+            <li>
+              Click Save. This action registers your application.
+            </li>
+          </ol>
 			</div>
     </div>
 	</div>
