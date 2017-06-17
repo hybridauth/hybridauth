@@ -114,7 +114,9 @@
         "Google" => array (
           "enabled" => true,
           "keys"    => array ( "id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE" ),
-          "scope"   => "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.profile.emails.read", // optional
+          "scope"   => "https://www.googleapis.com/auth/plus.login ". // optional
+                       "https://www.googleapis.com/auth/plus.me ". // optional
+                       "https://www.googleapis.com/auth/plus.profile.emails.read", // optional
           "access_type"     => "offline",   // optional
           "approval_prompt" => "force",     // optional
           "hd"              => "domain.com" // optional
