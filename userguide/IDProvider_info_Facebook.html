@@ -151,7 +151,6 @@
           "enabled" => true,
           "keys"    => array ( "id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE" ),
           "scope"   => ['email', 'user_about_me', 'user_birthday', 'user_hometown'], // optional
-          "display" => "popup" // optional
     )));
 
     require_once( &quot;/path/to/hybridauth/Hybrid/Auth.php&quot; );
@@ -173,7 +172,6 @@
 			      </a>.
           	<br />
           	Default: <code>scope = email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists</code></li>
-          	<li><code>display</code>: The display context to show the authentication page. By default its set to "page". Options are: page, popup, iframe, touch or wap. Read the Facebook docs for more details: <a target="_blanck" href="http://developers.facebook.com/docs/reference/dialogs#display">http://developers.facebook.com/docs/reference/dialogs#display</a>.
           </ul>
 
           <h4 style="border-bottom: 1px solid #DDDDDD;">Registering application</h4>
