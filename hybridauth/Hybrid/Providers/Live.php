@@ -23,7 +23,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2 {
 	/**
 	 * {@inheritdoc}
 	 */
-	public $scope = "wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday";
+	public $scope = 'wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday';
 
 	/**
 	 * {@inheritdoc}
@@ -33,16 +33,14 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2 {
 
 		// Provider api end-points
 		$this->api->api_base_url = 'https://apis.live.net/v5.0/';
-		$this->api->authorize_url = 'https://oauth.live.com/authorize';
+		$this->api->authorize_url = 'https://login.live.com/oauth20_authorize.srf';
 		$this->api->token_url = 'https://login.live.com/oauth20_token.srf';
 
-		$this->api->curl_authenticate_method = "GET";
-
-        // Override the redirect uri when it's set in the config parameters. This way we prevent
-        // redirect uri mismatches when authenticating with Live.com
-        if (isset($this->config['redirect_uri']) && !empty($this->config['redirect_uri'])) {
-            $this->api->redirect_uri = $this->config['redirect_uri'];
-        }
+    // Override the redirect uri when it's set in the config parameters. This way we prevent
+    // redirect uri mismatches when authenticating with Live.com
+    if (isset($this->config['redirect_uri']) && !empty($this->config['redirect_uri'])) {
+        $this->api->redirect_uri = $this->config['redirect_uri'];
+    }
 	}
 
 	/**
@@ -65,7 +63,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2 {
 		$this->user->profile->profileURL = (property_exists($data, 'link')) ? $data->link : "";
 
 		//wl.emails
-		$this->user->profile->email = (property_exists($data, 'emails')) ? $data->emails->account : "";
+		$this->user->profile->email = (property_exists($data, 'emails')) ? $data->emails->preferred : "";
 		$this->user->profile->emailVerified = (property_exists($data, 'emails')) ? $data->emails->account : "";
 
 		//wl.birthday
