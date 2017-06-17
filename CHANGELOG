@@ -3,6 +3,7 @@ Hybridauth Change log
 2.9.6 - not released
       Fixes:
         #748 - [Google] Updated default google scopes
+        #843 - [Live] Fix authorize_url
       Improvements:
         #820 - Improved HumanitarianID support and removed thirdparty
       New providers:
