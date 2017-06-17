@@ -90,7 +90,7 @@
             </tr>
             <tr>
               <td><strong>&nbsp;Dev documentation</strong></td>
-              <td>https://developers.google.com/identity/protocols/OAuth2</td>
+              <td>https://developers.google.com/+/web/api/rest/oauth</td>
             </tr>
             <tr>
               <td><strong>&nbsp;Since</strong></td>
@@ -114,8 +114,7 @@
         "Google" => array (
           "enabled" => true,
           "keys"    => array ( "id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE" ),
-          "scope"           => "https://www.googleapis.com/auth/userinfo.profile ". // optional
-                               "https://www.googleapis.com/auth/userinfo.email"   , // optional
+          "scope"   => "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.profile.emails.read", // optional
           "access_type"     => "offline",   // optional
           "approval_prompt" => "force",     // optional
           "hd"              => "domain.com" // optional
@@ -134,7 +133,7 @@
         </p>
         <ul>
         	<li>
-            <code>scope</code>: A space delimited set of permissions the application requests. Indicates the Google API access your application is requesting.
+            <code>scope</code>: A space delimited set of <a href="https://developers.google.com/+/web/api/rest/oauth#authorization-scopes" target="help">permissions</a> the application requests. Indicates the Google API access your application is requesting.
         	</li>
         	<li>
             <code>access_type</code>: Can be "online or offline". By default its set to "offline". Indicates if your application needs to access a Google API when the user is not present at the browser.
@@ -148,35 +147,31 @@
         </ul>
 
         <h4>Registering application</h4>
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-warning" role="alert">
           <p>
             Please note that this section might be outdated in the exact way how to get your application registered on Google.
           </p>
         </div>
         <ol>
-          <li>
-            Go to <a target="_blank" href="https://code.google.com/apis/console/">https://code.google.com/apis/console/</a> and create a new project.
+          <li>Go to the <a href="https://console.developers.google.com/apis/library?project=_" target="dev-console">Google Developers Console.</li>
+          <li>From the project drop-down, select a <a href="https://support.google.com/cloud/answer/6158853" target="help">project, or create a new one.</li>
+          <li>Enable the <b>Google+ API</b> service:
+            <ol>
+              <li>In the list of Google APIs, search for the <b>Google+ API</b> service.</li>
+              <li>Select <b>Google+ API</b> from the results list.</li>
+              <li>Press the <b>Enable API</b> button.</li>
+            </ol>
+            When the process completes, <i>Google+ API</i> appears in the list of enabled APIs.
+            To access, select <b>API Manager</b> on the left sidebar menu, then select the
+            <b>Enabled APIs</b> tab.
           </li>
-          <li>
-            Go to <strong>API Access</strong> under <strong>API Project</strong>. After that click on <strong>Create an OAuth 2.0 client ID</strong> to <strong>create a new application</strong>.
-          </li>
-          <li>
-            A pop-up named <strong>"Create Client ID"</strong> will appear, fill out any required fields such as the application name and description.
-          </li>
-          <li>
-            Click on <strong>Next</strong>.
-          </li>
-          <li>
-            On the popup set <strong>Application type</strong> to <strong>Web application</strong> and switch to advanced settings by clicking on <strong>(more options)</strong>.
-          </li>
-          <li>
-            Provide this URL as the Callback URL for your application: <span style="color:green">http://mywebsite.com/path_to_hybridauth/?hauth.done=Google</span>
-          </li>
-          <li>
-            Once you have registered, copy and past the created application credentials (Client ID and Secret) into the HybridAuth <a href="Configuration.html#SETUP_API_KEYS">config file</a>.
-          </li>
+          <li>In the sidebar under "API Manager", select <b>Credentials</b>.</li>
+          <li>In the Credentials tab, select the <b>New credentials</b> drop-down list, and choose <b>OAuth client ID</b>.</li>
+          <li>From the <b>Application type</b> list, choose the <b>Web application</b>.</li>
+          <li>Enter a name and provide this URL as Authorized redirect URIs: <span style="color:green">http://mywebsite.com/path_to_hybridauth/?hauth.done=Google</span>
+              then select <b>Create</b>.</li>
+          <li>Once you have registered, copy and past the created application credentials (Client ID and Secret) into the HybridAuth <a href="Configuration.html#SETUP_API_KEYS">config file</a>.</li>
         </ol>
-
 				<hr />
 				<div style="display: flex;">
 					<a href="https://hybridauth.github.io/hybridauth/userguide/img/setup/google/1.png"><img src="https://hybridauth.github.io/hybridauth/userguide/img/setup/google/1.png" class="span4 thumbnail"></a>
