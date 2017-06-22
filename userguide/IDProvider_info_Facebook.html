@@ -151,6 +151,7 @@
           "enabled" => true,
           "keys"    => array ( "id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE" ),
           "scope"   => ['email', 'user_about_me', 'user_birthday', 'user_hometown'], // optional
+          "photo_size" => 200, // optional
     )));
 
     require_once( &quot;/path/to/hybridauth/Hybrid/Auth.php&quot; );
@@ -172,6 +173,8 @@
 			      </a>.
           	<br />
           	Default: <code>scope = email, user_about_me, user_birthday, user_hometown, user_website, offline_access, read_stream, publish_stream, read_friendlists</code></li>
+            <li><code>photo_size</code>: The width and height of user picture in pixels.
+              Default: <code>photo_size = 150</code></li>
           </ul>
 
           <h4 style="border-bottom: 1px solid #DDDDDD;">Registering application</h4>
