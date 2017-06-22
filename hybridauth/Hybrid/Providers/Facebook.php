@@ -246,7 +246,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         $this->user->profile->displayName = (array_key_exists('name', $data)) ? $data['name'] : "";
         $this->user->profile->firstName = (array_key_exists('first_name', $data)) ? $data['first_name'] : "";
         $this->user->profile->lastName = (array_key_exists('last_name', $data)) ? $data['last_name'] : "";
-        $this->user->profile->photoURL = !empty($this->user->profile->identifier) ? "https://graph.facebook.com/" . $this->user->profile->identifier . "/picture?width=150&height=150" : '';
+        $this->user->profile->photoURL = $this->getUserPhoto($this->user->profile->identifier);
         $this->user->profile->profileURL = (array_key_exists('link', $data)) ? $data['link'] : "";
         $this->user->profile->webSiteURL = (array_key_exists('website', $data)) ? $data['website'] : "";
         $this->user->profile->gender = (array_key_exists('gender', $data)) ? $data['gender'] : "";
@@ -313,14 +313,13 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         }
 
         $contacts = [];
-
         foreach ($returnedContacts as $item) {
 
             $uc = new Hybrid_User_Contact();
             $uc->identifier = (array_key_exists("id", $item)) ? $item["id"] : "";
             $uc->displayName = (array_key_exists("name", $item)) ? $item["name"] : "";
             $uc->profileURL = (array_key_exists("link", $item)) ? $item["link"] : "https://www.facebook.com/profile.php?id=" . $uc->identifier;
-            $uc->photoURL = "https://graph.facebook.com/" . $uc->identifier . "/picture?width=150&height=150";
+            $uc->photoURL = $this->getUserPhoto($uc->identifier);
 
             $contacts[] = $uc;
         }
@@ -353,7 +352,6 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         }
 
         $activities = [];
-
         foreach ($response['data'] as $item) {
 
             $ua = new Hybrid_User_Activity();
@@ -381,13 +379,28 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
                 $ua->user->identifier = (array_key_exists("id", $item["from"])) ? $item["from"]["id"] : "";
                 $ua->user->displayName = (array_key_exists("name", $item["from"])) ? $item["from"]["name"] : "";
                 $ua->user->profileURL = "https://www.facebook.com/profile.php?id=" . $ua->user->identifier;
-                $ua->user->photoURL = "https://graph.facebook.com/" . $ua->user->identifier . "/picture?type=square";
+                $ua->user->photoURL = $this->getUserPhoto($ua->user->identifier);
 
                 $activities[] = $ua;
             }
         }
 
         return $activities;
+    }
+
+    /**
+     * Returns a photo URL for give user.
+     *
+     * @param string $id
+     *   The User ID.
+     *
+     * @return string
+     *   A photo URL.
+     */
+    function getUserPhoto($id) {
+        $photo_size = isset($this->config['photo_size']) ? $this->config['photo_size'] : 150;
+
+        return "https://graph.facebook.com/{$id}/picture?width={$photo_size}&height={$photo_size}";
     }
 
 }
