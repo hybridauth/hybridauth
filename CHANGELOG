@@ -6,6 +6,7 @@ Hybridauth Change log
         #843 - [Live] Fix authorize_url
       Improvements:
         #820 - Improved HumanitarianID support and removed thirdparty
+        #845 - [Facebook] Allow to change photo_size in config
       New providers:
         #839 - Authentiq
 
