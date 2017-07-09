@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.9.6 - not released
+2.9.6 - July 9 2017
       Fixes:
         #748 - [Google] Updated default google scopes
         #843 - [Live] Fix authorize_url
