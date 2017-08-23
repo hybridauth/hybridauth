@@ -33,6 +33,7 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
      * from the user. Pass empty array for all scopes.
      *
      * @var array $scope
+     * @see https://developer.paypal.com/docs/integration/direct/identity/attributes
      */
     public $scope = [];
 
@@ -56,8 +57,7 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
     function initialize()
     {
         if (!$this->config["keys"]["id"] || !$this->config["keys"]["secret"]) {
-            throw new Exception("Your application id and secret are required in order to connect to {$this->providerId}.",
-                4);
+            throw new Exception("Your application id and secret are required in order to connect to {$this->providerId}.", 4);
         }
 
         // Set scope from config.
@@ -133,7 +133,6 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
                 $this->token("id_token", $accessToken->getIdToken());
                 $this->token("access_token", $accessToken->getAccessToken());
                 $this->token("refresh_token", $accessToken->getRefreshToken());
-                $this->token("expires_in", $accessToken->getExpiresIn());
             }
         } catch (PayPalConnectionException $e) {
             throw new Hybrid_Exception($e->getMessage(), $e->getCode(), $e);
@@ -145,12 +144,11 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
      */
     function logout()
     {
-
         parent::logout();
-        if ($this->token("id_token")) {
+        if ($idToken = $this->token("id_token")) {
             $url = OpenIdSession::getLogoutUrl(
                 $this->params["hauth_return_to"],
-                $this->token("id_token"),
+                $idToken,
                 $this->api
             );
             // Redirect to PayPal.
@@ -188,17 +186,17 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
             }
 
             if ($birthdate = $userInfo->getBirthday()) {
-                if (strpos($birthdate, ""-"") === false) {
+                if (strpos($birthdate, "-") === FALSE) {
                     if ($birthdate !== "0000") {
                         $profile->birthYear = (int)$birthdate;
                     }
                 } else {
-                    list($birthday_year, $birthday_month, $birthday_day) = explode(""-"", $birthdate);
+                    list($birthday_year, $birthday_month, $birthday_day) = explode("-", $birthdate);
 
-                    $profile->birthDay = (int)$birthday_day;
-                    $profile->birthMonth = (int)$birthday_month;
+                    $profile->birthDay = (int) $birthday_day;
+                    $profile->birthMonth = (int) $birthday_month;
                     if ($birthday_year !== "0000") {
-                        $profile->birthYear = (int)$birthday_year;
+                        $profile->birthYear = (int) $birthday_year;
                     }
                 }
             }
