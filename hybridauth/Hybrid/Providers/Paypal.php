@@ -60,7 +60,6 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
                 4);
         }
 
-
         // Set scope from config.
         if (isset($this->config["scope"])) {
             $scope = $this->config["scope"];
@@ -167,7 +166,6 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
         try {
             $params = array("access_token" => $this->token("access_token"));
             $userInfo = OpenIdUserinfo::getUserinfo($params, $this->api);
-
 
             $profile = new Hybrid_User_Profile();
 
