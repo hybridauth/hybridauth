@@ -1,5 +1,9 @@
 Hybridauth Change log
 =====================
+2.9.7 - not released
+      Fixes:
+        #859 - [Facebook] Cross-site request forgery validation failed. Required param "state" missing
+
 2.9.6 - July 9 2017
       Fixes:
         #748 - [Google] Updated default google scopes
