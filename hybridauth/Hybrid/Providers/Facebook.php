@@ -97,6 +97,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     function loginFinish() {
 
         $helper = $this->api->getRedirectLoginHelper();
+        if (isset($_GET['state'])) {
+          $helper->getPersistentDataHandler()->set('state', $_GET['state']);
+        }
         try {
             $accessToken = $helper->getAccessToken($this->params['login_done']);
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
