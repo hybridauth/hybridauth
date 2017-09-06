@@ -33,6 +33,11 @@ class Vkontakte extends OAuth2
     protected $accessTokenUrl = 'https://api.vk.com/oauth/token';
 
     /**
+	 * {@inheritdoc}
+	 */
+	protected $scope = 'email';
+    
+    /**
     * Need to store user_id as token for later use
     *
     * {@inheritdoc}
