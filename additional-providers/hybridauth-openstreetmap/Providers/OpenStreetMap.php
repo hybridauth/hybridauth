@@ -55,30 +55,4 @@ class Hybrid_Providers_OpenStreetMap extends Hybrid_Provider_Model_OAuth1
 
     return $this->user->profile;
    }
-
-  function httpRequest( $url )
-  {
-    $ch = curl_init();
-
-    $curl_options = array(
-      CURLOPT_URL            => $url,
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_SSL_VERIFYHOST => false,
-      CURLOPT_SSL_VERIFYPEER => false,
-      CURLOPT_USERAGENT      => "WordPress Social Login (https://wordpress.org/plugins/wordpress-social-login/)",
-      CURLOPT_MAXREDIRS      => 3,
-      CURLOPT_TIMEOUT        => 30
-    );
-
-    curl_setopt_array($ch, $curl_options);
-
-    $data = curl_exec($ch);
-
-    return array(
-      'response' => $data,
-      'info'     => curl_getinfo($ch),
-      'error'    => curl_error($ch),
-    );
-  }
 }
