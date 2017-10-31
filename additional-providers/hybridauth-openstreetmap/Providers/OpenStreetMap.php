@@ -33,8 +33,7 @@ class Hybrid_Providers_OpenStreetMap extends Hybrid_Provider_Model_OAuth1
   function getUserProfile()
   { 
     try {
-      $apiUrl = 'https://api.openstreetmap.org/api/0.6/user/details';
-      $response = $this->api->get( $apiUrl, array(), "text/xml" );
+      $response = $this->api->get( 'user/details', array(), "text/xml" );
     }
     catch( Exception $e ) {
       throw new Exception( "User profile request failed! {$this->providerId} returned an error while requesting the user profile.", 6 );
