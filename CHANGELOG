@@ -1,6 +1,8 @@
 Hybridauth Change log
 =====================
-2.9.7 - not released
+2.10.0 - not released
+      New provider:
+        #869 + #873 - Open Street Map
       Fixes:
         #859 - [Facebook] Cross-site request forgery validation failed. Required param "state" missing
 
