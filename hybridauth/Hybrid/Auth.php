@@ -3,7 +3,7 @@
 /**
  * HybridAuth
  * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
- * (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+ * (c) 2009-2017, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
  */
 
 /**
@@ -15,7 +15,7 @@
  */
 class Hybrid_Auth {
 
-	public static $version = "2.9.6";
+	public static $version = "2.10.0-dev";
 
 	/**
 	 * Configuration array

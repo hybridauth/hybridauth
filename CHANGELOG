@@ -1,10 +1,12 @@
 Hybridauth Change log
 =====================
 2.10.0 - not released
-      New provider:
-        #869 + #873 - Open Street Map
       Fixes:
         #859 - [Facebook] Cross-site request forgery validation failed. Required param "state" missing
+      Improvements:
+        #857 - [PayPal] Refactoring paypal to work with official PayPal-PHP-SDK
+      New provider:
+        #869 + #873 - Open Street Map
 
 2.9.6 - July 9 2017
       Fixes:
