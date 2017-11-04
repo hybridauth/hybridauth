@@ -53,20 +53,8 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
         $trustForwarded = isset($this->config['trustForwarded']) ? (bool)$this->config['trustForwarded'] : false;
 
-        // Check if there is Graph SDK in thirdparty/Facebook.
-        if (file_exists(Hybrid_Auth::$config["path_libraries"] . "Facebook/autoload.php")) {
-            require_once Hybrid_Auth::$config["path_libraries"] . "Facebook/autoload.php";
-        }
-        else {
-            // If Composer install was executed, try to find autoload.php.
-            $vendorDir = dirname(Hybrid_Auth::$config['path_base']);
-            do {
-                if (file_exists($vendorDir . "/vendor/autoload.php")) {
-                    require_once $vendorDir . "/vendor/autoload.php";
-                    break;
-                }
-            } while (($vendorDir = dirname($vendorDir)) !== '/');
-        }
+        // Include 3rd-party SDK.
+        $this->autoLoaderInit();
 
         $this->api = new FacebookSDK([
             'app_id' => $this->config["keys"]["id"],

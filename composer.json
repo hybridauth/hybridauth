@@ -20,7 +20,8 @@
     "require": {
         "php": ">=5.2.0",
         "ext-curl": "*",
-        "facebook/graph-sdk": "^5.4"
+        "facebook/graph-sdk": "^5.4",
+        "paypal/rest-api-sdk-php": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "2.*"
