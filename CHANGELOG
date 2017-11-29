@@ -1,6 +1,6 @@
 Hybridauth Change log
 =====================
-2.10.0 - not released
+2.10.0 - November 29 2017
       Fixes:
         #859 - [Facebook] Cross-site request forgery validation failed. Required param "state" missing
       Improvements:
