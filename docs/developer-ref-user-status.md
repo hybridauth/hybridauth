@@ -15,13 +15,13 @@ To know more about providers capabilities, refer to [Supported Providers](provid
 **Twitter example :**
 
 <pre>
-//Instantiate Twitter Adapter
+// Instantiate Twitter Adapter.
 $twitter = new Hybridauth\Provider\Twitter($config);
 
-//Authenticate the user
+// Authenticate the user.
 $twitter->authenticate();
 
-//Update the user status
+// Update the user status.
 $twitter->setUserStatus( "Hello world!" );
 </pre>
 
@@ -30,13 +30,13 @@ $twitter->setUserStatus( "Hello world!" );
 **Tumblr example :**
 
 <pre>
-//Instantiate Tumblr Adapter
+// Instantiate Tumblr Adapter.
 $tumblr = new Hybridauth\Provider\Tumblr($config);
 
-//Authenticate the user
+// Authenticate the user.
 $tumblr->authenticate();
 
-//Post a blog post
+// Post a blog post.
 $tumblr->setUserStatus( "Hello world!" );
 </pre>
 
@@ -47,18 +47,46 @@ $tumblr->setUserStatus( "Hello world!" );
 Facebook supports few extra parameters when posting a new user status :
 
 <pre>
-//Instantiate Facebook Adapter
+// Instantiate Facebook Adapter.
 $facebook = new Hybridauth\Provider\Facebook($config);
 
-//Authenticate the user
+// Authenticate the user.
 $facebook->authenticate();
 
-//Update the user status
+// Update the user status.
 $facebook->setUserStatus(
     array(
         'message' => 'Hello world!',
         'link'    => 'https://example.com/link/to/page',
         'picture' => 'https://example.com/link/to/picture.jpg'
+    )
+);
+</pre>
+
+**LinkedIn example :**
+
+LinkedIn supports few extra parameters when posting a new user status :
+
+<pre>
+// Instantiate LinkedIn Adapter.
+$linkedin = new Hybridauth\Provider\LinkedIn($config);
+
+// Authenticate the user.
+$linkedin->authenticate();
+
+// Update the user status.
+$linkedin->setUserStatus(
+    array(
+        'comment' => 'Check out developer.linkedin.com!',
+        'content' => array(
+            'title' => 'LinkedIn Developers Resources',
+            'description' => "Leverage LinkedIn's APIs to maximize engagement",
+            'submitted-url' => 'https://developer.linkedin.com',
+            'submitted-image-url' => 'https://example.com/logo.png',
+        ),
+        'visibility' => array(
+            'code' => 'anyone',
+        ),
     )
 );
 </pre>
