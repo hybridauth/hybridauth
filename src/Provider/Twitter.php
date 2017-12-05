@@ -19,7 +19,7 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => [ 'key' => '', 'secret' => '' ], // OAuth1 uses 'key' not 'id' 
+ *       'keys'      => [ 'key' => '', 'secret' => '' ], // OAuth1 uses 'key' not 'id'
  *       'authorize' => true
  *   ];
  *
@@ -29,7 +29,7 @@ use Hybridauth\User;
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
- *       $tokens = $adapter->getAccessToken(); 
+ *       $tokens = $adapter->getAccessToken();
  *       $contacts = $adapter->getUserContacts(['screen_name' =>'andypiper']); // get those of @andypiper
  *       $activity = $adapter->getUserActivity('me');
  *   }
@@ -40,33 +40,33 @@ use Hybridauth\User;
 class Twitter extends OAuth1
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.twitter.com/1.1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://api.twitter.com/oauth/authenticate';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $requestTokenUrl = 'https://api.twitter.com/oauth/request_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.twitter.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://dev.twitter.com/web/sign-in/implementing';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function getAuthorizeUrl($parameters = [])
     {
         if ($this->config->get('authorize') === true) {
@@ -77,8 +77,8 @@ class Twitter extends OAuth1
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('account/verify_credentials.json?include_email=true');
@@ -112,8 +112,8 @@ class Twitter extends OAuth1
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserContacts($parameters = [])
     {
         $parameters = [ 'cursor' => '-1'] + $parameters;
@@ -155,8 +155,8 @@ class Twitter extends OAuth1
     }
 
     /**
-    *
-    */
+     *
+     */
     protected function fetchUserContact($item)
     {
         $item = new Data\Collection($item);
@@ -176,18 +176,21 @@ class Twitter extends OAuth1
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function setUserStatus($status)
     {
         if (is_array($status) && isset($status[ 'message' ]) && isset($status[ 'picture' ])) {
-            // @fixme;
+            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+              'media' => base64_encode(file_get_contents($status[ 'picture' ])),
+            ]);
+
             return $this->apiRequest(
                 'statuses/update_with_media.json',
                 'POST',
                 [
                     'status' => $status[ 'message' ],
-                    'media[]' => file_get_contents($status[ 'picture' ])
+                    'media_ids' => $media->media_id,
                 ]
             );
         }
@@ -198,8 +201,8 @@ class Twitter extends OAuth1
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserActivity($stream = 'me')
     {
         $apiUrl = ($stream == 'me')
@@ -222,8 +225,8 @@ class Twitter extends OAuth1
     }
 
     /**
-    *
-    */
+     *
+     */
     protected function fetchUserActivity($item)
     {
         $item = new Data\Collection($item);
