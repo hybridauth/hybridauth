@@ -180,22 +180,23 @@ class Twitter extends OAuth1
      */
     public function setUserStatus($status)
     {
-        if (is_array($status) && isset($status[ 'message' ]) && isset($status[ 'picture' ])) {
-            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
-              'media' => base64_encode(file_get_contents($status[ 'picture' ])),
-            ]);
-
-            return $this->apiRequest(
-                'statuses/update_with_media.json',
-                'POST',
-                [
-                    'status' => $status[ 'message' ],
-                    'media_ids' => $media->media_id,
-                ]
-            );
+        if (is_string($status)) {
+            $status = ['status' => $status];
         }
 
-        $response = $this->apiRequest('statuses/update.json', 'POST', [ 'status' => $status ]);
+        // Prepare request parameters.
+        $params = [];
+        if (isset($status['status'])) {
+            $params['status'] = $status['status'];
+        }
+        if (isset($status['picture'])) {
+            $media = $this->apiRequest('https://upload.twitter.com/1.1/media/upload.json', 'POST', [
+                'media' => base64_encode(file_get_contents($status['picture'])),
+            ]);
+            $params['media_ids'] = $media->media_id;
+        }
+
+        $response = $this->apiRequest('statuses/update.json', 'POST', $params);
 
         return $response;
     }
