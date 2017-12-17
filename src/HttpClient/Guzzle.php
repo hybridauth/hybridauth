@@ -111,9 +111,14 @@ class Guzzle implements HttpClientInterface
     */
     public function request($uri, $method = 'GET', $parameters = [], $headers = [])
     {
-        $this->requestArguments = [ 'uri' => $uri, 'method' => $method, 'parameters' => $parameters, 'headers' => $headers ];
+        $this->requestHeader = array_replace($this->requestHeader, (array) $headers);
 
-        $this->requestHeader = array_replace($this->requestHeader, (array)$headers);
+        $this->requestArguments = [
+            'uri' => $uri,
+            'method' => $method,
+            'parameters' => $parameters,
+            'headers' => $this->requestHeader,
+        ];
 
         $response = null;
 

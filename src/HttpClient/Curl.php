@@ -103,7 +103,14 @@ class Curl implements HttpClientInterface
     */
     public function request($uri, $method = 'GET', $parameters = [], $headers = [])
     {
-        $this->requestArguments = [ 'uri' => $uri, 'method' => $method, 'parameters' => $parameters, 'headers' => $headers ];
+        $this->requestHeader = array_replace($this->requestHeader, (array) $headers);
+
+        $this->requestArguments = [
+            'uri' => $uri,
+            'method' => $method,
+            'parameters' => $parameters,
+            'headers' => $this->requestHeader,
+        ];
 
         $curl = curl_init();
 
@@ -133,10 +140,6 @@ class Curl implements HttpClientInterface
             $this->curlOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
             $this->curlOptions[CURLOPT_POSTFIELDS] = $body_content;
         }
-
-        $this->requestHeader = array_merge($this->requestHeader, (array)$headers);
-
-        $this->requestArguments['headers'] = $this->requestHeader;
 
         $this->curlOptions[CURLOPT_URL]            = $uri;
         $this->curlOptions[CURLOPT_HTTPHEADER]     = $this->prepareRequestHeaders();
