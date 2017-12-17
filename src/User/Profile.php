@@ -167,6 +167,20 @@ final class Profile
     * @var string
     */
     public $zip = null;
+    
+    /**
+    * Number of follower
+    *
+    * @var integer
+    */
+    public $follower_count = null;
+
+    /**
+    * Number of following
+    *
+    * @var integer
+    */
+    public $following_count = null;
 
     /**
     * An extra data which is related to the user

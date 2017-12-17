@@ -99,6 +99,8 @@ class Twitter extends OAuth1
         $userProfile->emailVerified = $data->get('email');
         $userProfile->webSiteURL    = $data->get('url');
         $userProfile->region        = $data->get('location');
+        $userProfile->follower_count  = $data->get('followers_count');
+        $userProfile->following_count = $data->get('friends_count');
 
         $userProfile->profileURL    = $data->exists('screen_name')
                                         ? ('http://twitter.com/' . $data->get('screen_name'))
