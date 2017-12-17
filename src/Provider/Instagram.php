@@ -64,8 +64,9 @@ class Instagram extends OAuth2
         $userProfile->photoURL    = $data->get('profile_picture');
         $userProfile->webSiteURL  = $data->get('website');
         $userProfile->displayName = $data->get('full_name');
-
         $userProfile->displayName = $userProfile->displayName ?: $data->get('username');
+
+        $userProfile->data = (array) $data->get('counts');
 
         return $userProfile;
     }

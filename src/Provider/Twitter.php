@@ -108,6 +108,11 @@ class Twitter extends OAuth1
                                         ? str_replace('_normal', '', $data->get('profile_image_url'))
                                         : '';
 
+        $userProfile->data = [
+          'followed_by' => $data->get('friends_count'),
+          'follows' => $data->get('followers_count'),
+        ];
+
         return $userProfile;
     }
 
