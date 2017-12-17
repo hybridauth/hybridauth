@@ -18,33 +18,33 @@ use Hybridauth\User;
 class LinkedIn extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public $scope = 'r_basicprofile r_emailaddress';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.linkedin.com/v1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://www.linkedin.com/uas/oauth2/authorization';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developer.linkedin.com/docs/oauth2';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -55,8 +55,8 @@ class LinkedIn extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $fields = [
@@ -88,5 +88,27 @@ class LinkedIn extends OAuth2
         $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         return $userProfile;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://developer.linkedin.com/docs/share-on-linkedin
+     */
+    public function setUserStatus($status)
+    {
+        $status = is_string($status) ? [ 'comment' => $status ] : $status;
+        if (!isset($status['visibility'])) {
+            $status['visibility']['code'] = 'anyone';
+        }
+
+        $headers = [
+          'Content-Type' => 'application/json',
+          'x-li-format' => 'json',
+        ];
+
+        $response = $this->apiRequest('people/~/shares?format=json', 'POST', $status, $headers);
+
+        return $response;
     }
 }

@@ -29,7 +29,7 @@ Dribbble            | OAuth2  | [X]            | [X]            |               
 WindowsLive         | OAuth2  | [X]            | [X]            | [X]             |                |
 Foursquare          | OAuth2  | [X]            | [X]            | [X]             |                |
 Instagram           | OAuth2  | [X]            | [X]            |                 |                |
-LinkedIn            | OAuth2  | [X]            | [X]            |                 |                |
+LinkedIn            | OAuth2  | [X]            | [X]            |                 | [X]            |
 Yahoo               | OAuth2  | [X]            | [X]            |                 |                |
 Vkontakte           | OAuth2  |                |                |                 |                |
 Mailru              | OAuth2  |                |                |                 |                |

@@ -23,7 +23,7 @@ $google = new Hybridauth\Provider\Google($config);
 $google->authenticate();
 
 //Retrieve User's contacts
-$userContacts = $google->getUserContatcs(); //Returns an array of Hybridauth\User\Contact objects
+$userContacts = $google->getUserContacts(); //Returns an array of Hybridauth\User\Contact objects
 
 //Iterate over the user contacts list
 foreach( $userContacts as $contact ){

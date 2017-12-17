@@ -564,4 +564,15 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         return $response;
     }
+
+    /**
+    * {@inheritdoc}
+    */
+    public function setAccessToken($tokens = [])
+    {
+        parent::setAccessToken($tokens);
+
+        // Refresh OAuth Consumer.
+        $this->initialize();
+    }
 }
