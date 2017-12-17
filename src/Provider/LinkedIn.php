@@ -20,7 +20,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'r_basicprofile r_emailaddress';
+    public $scope = 'r_basicprofile r_emailaddress w_share';
 
     /**
      * {@inheritdoc}
@@ -41,18 +41,6 @@ class LinkedIn extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developer.linkedin.com/docs/oauth2';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
-        ];
-    }
 
     /**
      * {@inheritdoc}

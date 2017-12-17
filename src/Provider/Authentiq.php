@@ -60,10 +60,6 @@ class Authentiq extends OAuth2
         $this->tokenRefreshHeaders = [
             'Authorization' => 'Basic ' . base64_encode($this->clientId .  ':' . $this->clientSecret)
         ];
-
-        $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
-        ];
     }
 
     /**

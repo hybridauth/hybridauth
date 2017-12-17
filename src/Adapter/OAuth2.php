@@ -280,6 +280,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'grant_type'    => 'refresh_token',
             'refresh_token' => $this->getStoredData('refresh_token'),
         ];
+
+        $this->apiRequestHeaders = [
+            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
+        ];
     }
 
     /**
@@ -644,10 +648,6 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
             $url = $this->apiBaseUrl . $url;
-        }
-
-        if($this->getStoredData('access_token')) {
-            $this->apiRequestParameters[$this->accessTokenName] = $this->getStoredData('access_token');
         }
 
         $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
