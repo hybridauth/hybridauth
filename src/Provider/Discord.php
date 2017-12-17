@@ -45,18 +45,6 @@ class Discord extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
-        ];
-    }
-
-    /**
-    * {@inheritdoc}
-    */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users/@me');

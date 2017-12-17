@@ -63,10 +63,6 @@ class Reddit extends OAuth2
             'Authorization' => 'Basic ' . base64_encode($this->clientId .  ':' . $this->clientSecret)
         ];
 
-        $this->apiRequestHeaders = [
-            'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
-        ];
-
         $this->tokenRefreshHeaders = $this->tokenExchangeHeaders;
     }
 
