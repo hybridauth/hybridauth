@@ -169,6 +169,13 @@ final class Profile
     public $zip = null;
 
     /**
+    * An extra data which is related to the user
+    *
+    * @var array
+    */
+    public $data = [];
+
+    /**
     * Prevent the providers adapters from adding new fields.
     *
     * @var string $name
