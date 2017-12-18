@@ -48,8 +48,16 @@ class LinkedIn extends OAuth2
     public function getUserProfile()
     {
         $fields = [
-            'id', 'email-address', 'first-name', 'last-name', 'headline','location', 'industry',
-            'picture-url', 'public-profile-url',
+            'id',
+            'email-address',
+            'first-name',
+            'last-name',
+            'headline',
+            'location',
+            'industry',
+            'picture-url',
+            'public-profile-url',
+            'num-connections',
         ];
 
         $response = $this->apiRequest('people/~:(' . implode(',', $fields) . ')', 'GET', ['format' => 'json']);
@@ -74,6 +82,8 @@ class LinkedIn extends OAuth2
         $userProfile->emailVerified = $userProfile->email;
 
         $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+
+        $userProfile->data['connections'] = $data->get('numConnections');
 
         return $userProfile;
     }
