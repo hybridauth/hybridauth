@@ -85,7 +85,7 @@ $config = [
             ]
         ],
         'Google'   => ['enabled' => true, 'keys' => [ 'id'  => '...', 'secret' => '...']], //To populate in a similar way to Twitter
-        'Facebook' => ['enabled' => true, 'keys' => [ 'id'  => '...', 'secret' => '...']   //And so on
+        'Facebook' => ['enabled' => true, 'keys' => [ 'id'  => '...', 'secret' => '...']]  //And so on
     ]
 ];
 
