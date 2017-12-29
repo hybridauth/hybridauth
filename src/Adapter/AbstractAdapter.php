@@ -219,6 +219,9 @@ abstract class AbstractAdapter implements AdapterInterface
         foreach ($tokens as $token => $value) {
             $this->storeData($token, $value);
         }
+
+        // Re-initialize token parameters.
+        $this->initialize();
     }
 
     /**
@@ -263,7 +266,8 @@ abstract class AbstractAdapter implements AdapterInterface
     public function setLogger(LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: new Logger(
-            $this->config->get('debug_mode'), $this->config->get('debug_file')
+            $this->config->get('debug_mode'),
+            $this->config->get('debug_file')
         );
 
         if (method_exists($this->httpClient, 'setLogger')) {
@@ -335,7 +339,7 @@ abstract class AbstractAdapter implements AdapterInterface
 
         $status = $this->httpClient->getResponseHttpCode();
 
-        if ($status < 200 || $status > 299 ) {
+        if ($status < 200 || $status > 299) {
             throw new HttpRequestFailedException(
                 $error . 'HTTP error '.$this->httpClient->getResponseHttpCode().
                 '. Raw Provider API response: '.$this->httpClient->getResponseBody().'.'

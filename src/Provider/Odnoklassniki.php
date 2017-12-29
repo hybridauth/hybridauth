@@ -52,7 +52,7 @@ class Odnoklassniki extends OAuth2
         );
 
         $parameters = [
-            'access_token' => $this->getStoredData('access_token'),
+            'access_token'    => $this->getStoredData('access_token'),
             'application_key' => $this->config->get('keys')['key'],
             'method'          => 'users.getCurrentUser',
             'fields'          => implode(',', $fields),
