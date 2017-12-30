@@ -67,7 +67,7 @@ $facebook->setUserStatus([
 <meta property="og:type" content="article" />
 <meta property="og:title" content="Hybridauth Social Login PHP Library" />
 <meta property="og:description" content="Welcome to Hybridauth documentation" />
-<meta property="og:image" content="https://getstream.imgix.net/images/logo_php.svg" />
+<meta property="og:image" content="https://example.com/logo.png" />
 ```
 > More info here: https://developers.facebook.com/docs/sharing/webmasters/
 
