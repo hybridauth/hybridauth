@@ -71,6 +71,8 @@ $facebook->setUserStatus([
 ```
 > More info here: https://developers.facebook.com/docs/sharing/webmasters/
 
+<hr />
+
 **LinkedIn example :**
 
 LinkedIn supports few [extra parameters](https://developer.linkedin.com/docs/share-on-linkedin) when posting a new user status:
