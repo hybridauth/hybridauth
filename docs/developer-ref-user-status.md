@@ -22,7 +22,10 @@ $twitter = new Hybridauth\Provider\Twitter($config);
 $twitter->authenticate();
 
 // Update the user status.
-$twitter->setUserStatus( "Hello world!" );
+$twitter->setUserStatus([
+    'status' => 'Hello world!',
+    'picture' => 'https://example.com/logo.png',
+]);
 </pre>
 
 <hr />
@@ -37,14 +40,12 @@ $tumblr = new Hybridauth\Provider\Tumblr($config);
 $tumblr->authenticate();
 
 // Post a blog post.
-$tumblr->setUserStatus( "Hello world!" );
+$tumblr->setUserStatus("Hello world!");
 </pre>
 
 <hr />
 
 **Facebook example :**
-
-Facebook supports few extra parameters when posting a new user status :
 
 <pre>
 // Instantiate Facebook Adapter.
@@ -54,18 +55,25 @@ $facebook = new Hybridauth\Provider\Facebook($config);
 $facebook->authenticate();
 
 // Update the user status.
-$facebook->setUserStatus(
-    array(
-        'message' => 'Hello world!',
-        'link'    => 'https://example.com/link/to/page',
-        'picture' => 'https://example.com/link/to/picture.jpg'
-    )
-);
+$facebook->setUserStatus([
+    'message' => 'Hello world!',
+    'link'    => 'https://example.com/link/to/page',
+]);
 </pre>
+
+> As of April 18, 2017, the (picture, name, caption, description) parameters are no longer supported by Graph API versions 2.9 and higher. As solution, you can add OG tags to page which is going to be posted like this:
+```html
+<meta property="og:url" content="https://hybridauth.github.io" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Hybridauth Social Login PHP Library" />
+<meta property="og:description" content="Welcome to Hybridauth documentation" />
+<meta property="og:image" content="https://getstream.imgix.net/images/logo_php.svg" />
+```
+> More info here: https://developers.facebook.com/docs/sharing/webmasters/
 
 **LinkedIn example :**
 
-LinkedIn supports few extra parameters when posting a new user status :
+LinkedIn supports few [extra parameters](https://developer.linkedin.com/docs/share-on-linkedin) when posting a new user status:
 
 <pre>
 // Instantiate LinkedIn Adapter.
@@ -75,18 +83,16 @@ $linkedin = new Hybridauth\Provider\LinkedIn($config);
 $linkedin->authenticate();
 
 // Update the user status.
-$linkedin->setUserStatus(
-    array(
-        'comment' => 'Check out developer.linkedin.com!',
-        'content' => array(
-            'title' => 'LinkedIn Developers Resources',
-            'description' => "Leverage LinkedIn's APIs to maximize engagement",
-            'submitted-url' => 'https://developer.linkedin.com',
-            'submitted-image-url' => 'https://example.com/logo.png',
-        ),
-        'visibility' => array(
-            'code' => 'anyone',
-        ),
-    )
-);
+$linkedin->setUserStatus([
+    'comment' => 'Check out developer.linkedin.com!',
+    'content' => [
+        'title' => 'LinkedIn Developers Resources',
+        'description' => "Leverage LinkedIn's APIs to maximize engagement",
+        'submitted-url' => 'https://developer.linkedin.com',
+        'submitted-image-url' => 'https://example.com/logo.png',
+    ],
+    'visibility' => [
+        'code' => 'anyone',
+     ],
+]);
 </pre>
