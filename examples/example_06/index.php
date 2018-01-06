@@ -3,7 +3,7 @@
  * Build a simple HTML page with multiple providers.
  */
 
-include '../../vendor/autoload.php';
+include 'vendor/autoload.php';
 include 'config.php';
 
 use Hybridauth\Hybridauth;

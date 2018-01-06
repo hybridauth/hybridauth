@@ -3,7 +3,7 @@
  * A simple example that shows how to use multiple providers.
  */
 
-include '../../vendor/autoload.php';
+include 'vendor/autoload.php';
 include 'config.php';
 
 use Hybridauth\Exception\Exception;
