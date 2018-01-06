@@ -53,7 +53,7 @@ try {
     /**
      * Redirects user to home page (i.e., index.php in our case)
      */
-    HttpClient\Util::redirect('http://hybridauth.docksal/examples/example_06');
+    HttpClient\Util::redirect('https://path/to/hybridauth/examples/example_06');
 } catch (Exception $e) {
     echo $e->getMessage();
 }
