@@ -51,8 +51,6 @@ class Steam extends OpenID
         }
 
         try {
-            $result = [];
-
             $apiKey = $this->config->filter('keys')->get('secret');
 
             // if api key is provided, we attempt to use steam web api
@@ -89,16 +87,16 @@ class Steam extends OpenID
         $data = json_decode($response);
 
         $data = isset($data->response->players[0]) ? $data->response->players[0] : null;
-        
+
         $data = new Data\Collection($data);
 
         $userProfile = [];
 
-        $userProfile['displayName'] = (string) $data->get('personaname');
-        $userProfile['firstName'  ] = (string) $data->get('realname');
-        $userProfile['photoURL'   ] = (string) $data->get('avatarfull');
-        $userProfile['profileURL' ] = (string) $data->get('profileurl');
-        $userProfile['country'    ] = (string) $data->get('loccountrycode');
+        $userProfile['displayName'] = (string)$data->get('personaname');
+        $userProfile['firstName'] = (string)$data->get('realname');
+        $userProfile['photoURL'] = (string)$data->get('avatarfull');
+        $userProfile['profileURL'] = (string)$data->get('profileurl');
+        $userProfile['country'] = (string)$data->get('loccountrycode');
 
         return $userProfile;
     }
@@ -120,14 +118,14 @@ class Steam extends OpenID
 
         $userProfile = [];
 
-        $userProfile['displayName' ] = (string) $data->get('steamID');
-        $userProfile['firstName'   ] = (string) $data->get('realname');
-        $userProfile['photoURL'    ] = (string) $data->get('avatarFull');
-        $userProfile['description' ] = (string) $data->get('summary');
-        $userProfile['region'      ] = (string) $data->get('location');
-        $userProfile['profileURL'  ] = (string) $data->get('customURL')
-                                            ? 'http://steamcommunity.com/id/' . (string) $data->get('customURL') . '/'
-                                            : 'http://steamcommunity.com/profiles/' . $steam64 . '/';
+        $userProfile['displayName'] = (string)$data->get('steamID');
+        $userProfile['firstName'] = (string)$data->get('realname');
+        $userProfile['photoURL'] = (string)$data->get('avatarFull');
+        $userProfile['description'] = (string)$data->get('summary');
+        $userProfile['region'] = (string)$data->get('location');
+        $userProfile['profileURL'] = (string)$data->get('customURL')
+          ? 'http://steamcommunity.com/id/' . (string)$data->get('customURL')
+          : 'http://steamcommunity.com/profiles/' . $steam64;
 
         return $userProfile;
     }

@@ -9,14 +9,10 @@ namespace Hybridauth;
 
 use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedValueException;
-use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Storage\StorageInterface;
-use Hybridauth\Storage\Session;
 use Hybridauth\Logger\LoggerInterface;
 use Hybridauth\Logger\Logger;
 use Hybridauth\HttpClient\HttpClientInterface;
-use Hybridauth\HttpClient\Curl as HttpClient;
-use Hybridauth\Deprecated\DeprecatedHybridauthTrait;
 
 /**
  * Hybridauth\Hybridauth
@@ -65,7 +61,7 @@ class Hybridauth
     * @throws InvalidArgumentException
     */
     public function __construct(
-        $config = [],
+        $config,
         HttpClientInterface $httpClient = null,
         StorageInterface $storage = null,
         LoggerInterface $logger = null
@@ -73,7 +69,7 @@ class Hybridauth
         if (is_string($config) && file_exists($config)) {
             $config = include $config;
         } elseif (! is_array($config)) {
-            throw new InvalidArgumentException('Hybriauth config does not exist on the given path.');
+            throw new InvalidArgumentException('Hybridauth config does not exist on the given path.');
         }
 
         $this->config = $config + [
@@ -96,7 +92,9 @@ class Hybridauth
     *
     * @param string $name adapter's name (case insensitive)
     *
-    * @return Adapter\AdapterInterface
+    * @return \Hybridauth\Adapter\AdapterInterface
+    * @throws InvalidArgumentException
+    * @throws UnexpectedValueException
     */
     public function authenticate($name)
     {
@@ -112,7 +110,9 @@ class Hybridauth
     *
     * @param string $name adapter's name (case insensitive)
     *
-    * @return Adapter\AdapterInterface
+    * @return \Hybridauth\Adapter\AdapterInterface
+    * @throws InvalidArgumentException
+    * @throws UnexpectedValueException
     */
     public function getAdapter($name)
     {
@@ -128,8 +128,8 @@ class Hybridauth
     *
     * @param string $name adapter's name (case insensitive)
     *
-    * @throws Exception\UnexpectedValueException
-    * @throws Exception\InvalidArgumentException
+    * @throws UnexpectedValueException
+    * @throws InvalidArgumentException
     *
     * @return array
     */
@@ -162,6 +162,8 @@ class Hybridauth
     * @param string $name adapter's name (case insensitive)
     *
     * @return boolean
+    * @throws InvalidArgumentException
+    * @throws UnexpectedValueException
     */
     public function isConnectedWith($name)
     {
@@ -169,16 +171,36 @@ class Hybridauth
     }
 
     /**
+    * Returns a list of enabled adapters names
+    *
+    * @return array
+    */
+    public function getProviders()
+    {
+        $providers = [];
+
+        foreach ($this->config['providers'] as $name => $config) {
+            if ($config['enabled']) {
+                $providers[] = $name;
+            }
+        }
+
+        return $providers;
+    }
+
+    /**
     * Returns a list of currently connected adapters names
     *
     * @return array
+    * @throws InvalidArgumentException
+    * @throws UnexpectedValueException
     */
     public function getConnectedProviders()
     {
         $providers = [];
 
-        foreach ($this->config['providers'] as $name => $config) {
-            if ($config['enabled'] && $this->isConnectedWith($name)) {
+        foreach ($this->getProviders() as $name) {
+            if ($this->isConnectedWith($name)) {
                  $providers[] = $name;
             }
         }
@@ -189,19 +211,19 @@ class Hybridauth
     /**
     * Returns a list of new instances of currently connected adapters
     *
-    * @return array
+    * @return \Hybridauth\Adapter\AdapterInterface[]
+    * @throws InvalidArgumentException
+    * @throws UnexpectedValueException
     */
     public function getConnectedAdapters()
     {
         $adapters = [];
 
-        foreach ($this->config['providers'] as $name => $config) {
-            if ($config['enabled']) {
-                $adapter = $this->getAdapter($name);
+        foreach ($this->getProviders() as $name) {
+            $adapter = $this->getAdapter($name);
 
-                if ($adapter->isConnected()) {
-                    $adapters[$name] = $adapter;
-                }
+            if ($adapter->isConnected()) {
+                $adapters[$name] = $adapter;
             }
         }
 
@@ -213,13 +235,11 @@ class Hybridauth
     */
     public function disconnectAllAdapters()
     {
-        foreach ($this->config['providers'] as $name => $config) {
-            if ($config['enabled']) {
-                $adapter = $this->getAdapter($name);
+        foreach ($this->getProviders() as $name) {
+            $adapter = $this->getAdapter($name);
 
-                if ($adapter->isConnected()) {
-                    $adapter->disconnect();
-                }
+            if ($adapter->isConnected()) {
+                $adapter->disconnect();
             }
         }
     }

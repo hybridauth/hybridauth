@@ -8,7 +8,6 @@
 namespace Hybridauth\Storage;
 
 use Hybridauth\Exception\RuntimeException;
-use Hybridauth\Deprecated\DeprecatedStorageTrait;
 
 /**
  * HybridAuth storage manager

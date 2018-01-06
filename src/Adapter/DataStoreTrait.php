@@ -7,11 +7,16 @@
 
 namespace Hybridauth\Adapter;
 
+/**
+ * Trait DataStoreTrait
+ */
 trait DataStoreTrait
 {
     /**
-    * Returns storage instance
-    */
+     * Returns storage instance
+     *
+     * @return \Hybridauth\Storage\StorageInterface
+     */
     abstract public function getStorage();
 
     /**
@@ -22,14 +27,12 @@ trait DataStoreTrait
      *
      * @param string $name
      * @param mixed  $value
-     *
-     * @return mixed
      */
     protected function storeData($name, $value = null)
     {
         // if empty, we simply delete the thing as we'd want to only store necessary data
         if (empty($value)) {
-            return $this->deleteStoredData($name);
+            $this->deleteStoredData($name);
         }
 
         $this->getStorage()->set($this->providerId.'.'.$name, $value);

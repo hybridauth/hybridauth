@@ -12,68 +12,71 @@ use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Logger\LoggerInterface;
 
 /**
- *
+ * Interface AdapterInterface
  */
 interface AdapterInterface
 {
     /**
-    * Initiate the appropriate protocol and process/automate the authentication or authorization flow.
-    *
-    * @return boolean|null
-    */
+     * Initiate the appropriate protocol and process/automate the authentication or authorization flow.
+     *
+     * @return boolean|null
+     */
     public function authenticate();
 
     /**
-    * Returns TRUE if the user is connected
-    *
-    * @return boolean
-    */
+     * Returns TRUE if the user is connected
+     *
+     * @return boolean
+     */
     public function isConnected();
 
     /**
-    * Clear all access token in storage
-    *
-    * @return boolean
-    */
+     * Clear all access token in storage
+     */
     public function disconnect();
 
     /**
-    * Retrieve the connected user profile
-    *
-    * @return \Hybridauth\User\Profile
-    */
+     * Retrieve the connected user profile
+     *
+     * @return \Hybridauth\User\Profile
+     */
     public function getUserProfile();
 
     /**
-    * Retrieve the connected user contacts list
-    *
-    * @return array of \Hybridauth\User\Contact
-    */
+     * Retrieve the connected user contacts list
+     *
+     * @return \Hybridauth\User\Contact[]
+     */
     public function getUserContacts();
 
     /**
-    * return the user activity stream
-    *
-    * @param string $stream
-    *
-    * @return array of \Hybridauth\User\Activity
-    */
+     * Retrieve the user activity stream
+     *
+     * @param string $stream
+     *
+     * @return \Hybridauth\User\Activity[]
+     */
     public function getUserActivity($stream);
 
     /**
-    * Post a status on user wall|timeline|blog|website|etc.
-    *
-    * @param string|array $status
-    *
-    * @return mixed API response
-    */
+     * Post a status on user wall|timeline|blog|website|etc.
+     *
+     * @param string|array $status
+     *
+     * @return mixed API response
+     */
     public function setUserStatus($status);
 
     /**
-    * Send a signed request to provider API
-    *
-    * @return mixed
-    */
+     * Send a signed request to provider API
+     *
+     * @param string $url
+     * @param string $method
+     * @param array $parameters
+     * @param array $headers
+     *
+     * @return mixed
+     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = []);
 
     /**
@@ -85,11 +88,15 @@ interface AdapterInterface
 
     /**
      * Set oauth access tokens.
+     *
+     * @param array $tokens
      */
     public function setAccessToken($tokens = []);
 
     /**
      * Set http client instance.
+     *
+     * @param HttpClientInterface $httpClient
      */
     public function setHttpClient(HttpClientInterface $httpClient = null);
 
@@ -100,6 +107,8 @@ interface AdapterInterface
 
     /**
      * Set storage instance.
+     *
+     * @param StorageInterface $storage
      */
     public function setStorage(StorageInterface $storage = null);
 
@@ -110,6 +119,8 @@ interface AdapterInterface
 
     /**
      * Set Logger instance.
+     *
+     * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger = null);
 

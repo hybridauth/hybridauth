@@ -18,10 +18,9 @@ use Hybridauth\Logger\Logger;
 use Hybridauth\HttpClient\HttpClientInterface;
 use Hybridauth\HttpClient\Curl as HttpClient;
 use Hybridauth\Data;
-use Hybridauth\Deprecated\DeprecatedAdapterTrait;
 
 /**
- *
+ * Class AbstractAdapter
  */
 abstract class AbstractAdapter implements AdapterInterface
 {
@@ -77,9 +76,9 @@ abstract class AbstractAdapter implements AdapterInterface
     public $logger;
 
     /**
-     * Wheteher to validate API status codes of http responses
+     * Whether to validate API status codes of http responses
      *
-     * @var validateApiResponseHttpCode
+     * @var boolean
      */
     protected $validateApiResponseHttpCode = true;
 
@@ -180,8 +179,6 @@ abstract class AbstractAdapter implements AdapterInterface
     public function disconnect()
     {
         $this->clearStoredData();
-
-        return true;
     }
 
     /**
@@ -285,8 +282,10 @@ abstract class AbstractAdapter implements AdapterInterface
 
     /**
     * Set Adapter's API callback url
-     *
-     * @throws InvalidArgumentException
+    *
+    * @param string $callback
+    *
+    * @throws InvalidArgumentException
     */
     protected function setCallback($callback)
     {
@@ -299,8 +298,10 @@ abstract class AbstractAdapter implements AdapterInterface
 
     /**
     * Overwrite Adapter's API endpoints
+    *
+    * @param Data\Collection $endpoints
     */
-    protected function setApiEndpoints($endpoints)
+    protected function setApiEndpoints(Data\Collection $endpoints = null)
     {
         if (empty($endpoints)) {
             return;

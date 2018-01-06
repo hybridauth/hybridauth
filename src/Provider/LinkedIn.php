@@ -101,8 +101,8 @@ class LinkedIn extends OAuth2
         }
 
         $headers = [
-          'Content-Type' => 'application/json',
-          'x-li-format' => 'json',
+            'Content-Type' => 'application/json',
+            'x-li-format' => 'json',
         ];
 
         $response = $this->apiRequest('people/~/shares?format=json', 'POST', $status, $headers);

@@ -71,7 +71,7 @@ class Spotify extends OAuth2
     /**
      * Fetch use birthday
      */
-    protected function fetchBirthday($userProfile, $birthday)
+    protected function fetchBirthday(User\Profile $userProfile, $birthday)
     {
         $result = (new Data\Parser())->parseBirthday($birthday, '-');
 

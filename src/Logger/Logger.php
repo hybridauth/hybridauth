@@ -81,7 +81,7 @@ class Logger implements LoggerInterface
      */
     public function info($message, array $context = [])
     {
-        if(!in_array($this->level, [self::DEBUG, self::INFO])){
+        if (!in_array($this->level, [self::DEBUG, self::INFO])) {
             return;
         }
 
@@ -93,7 +93,7 @@ class Logger implements LoggerInterface
      */
     public function debug($message, array $context = [])
     {
-        if(!in_array($this->level, [self::DEBUG])){
+        if (!in_array($this->level, [self::DEBUG])) {
             return;
         }
 
@@ -105,7 +105,7 @@ class Logger implements LoggerInterface
      */
     public function error($message, array $context = [])
     {
-        if(!in_array($this->level, [self::DEBUG, self::INFO, self::ERROR])){
+        if (!in_array($this->level, [self::DEBUG, self::INFO, self::ERROR])) {
             return;
         }
 
