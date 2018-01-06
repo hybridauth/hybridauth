@@ -66,13 +66,13 @@ final class Contact
     /**
     * Prevent the providers adapters from adding new fields.
     *
-    * @var string $name
-    * @var mixed  $value
+    * @param string $name
+    * @param mixed $value
     *
-    * @throws Exception\UnexpectedValueException
+    * @throws UnexpectedValueException
     */
     public function __set($name, $value)
     {
-        throw new UnexpectedValueException(sprintf('Adding new property "%s\' to %s is not allowed.', $name, __CLASS__));
+        throw new UnexpectedValueException(sprintf('Adding new property "%s" to %s is not allowed.', $name, __CLASS__));
     }
 }

@@ -33,10 +33,10 @@ class Vkontakte extends OAuth2
     protected $accessTokenUrl = 'https://api.vk.com/oauth/token';
 
     /**
-	 * {@inheritdoc}
-	 */
-	protected $scope = 'email';
-    
+    * {@inheritdoc}
+    */
+    protected $scope = 'email';
+
     /**
     * Need to store user_id as token for later use
     *
@@ -83,8 +83,12 @@ class Vkontakte extends OAuth2
                                         : '';
 
         switch ($data->get('sex')) {
-            case 1: $userProfile->gender = 'female'; break;
-            case 2: $userProfile->gender =   'male'; break;
+            case 1:
+                $userProfile->gender = 'female';
+                break;
+            case 2:
+                $userProfile->gender = 'male';
+                break;
         }
 
         return $userProfile;

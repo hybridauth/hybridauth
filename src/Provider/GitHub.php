@@ -85,7 +85,7 @@ class GitHub extends OAuth2
     *
     * https://developer.github.com/v3/users/emails/
     */
-    protected function requestUserEmail($userProfile)
+    protected function requestUserEmail(User\Profile $userProfile)
     {
         $response = $this->apiRequest('user/emails');
 

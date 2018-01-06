@@ -29,7 +29,7 @@ use Hybridauth\User;
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
- *       $tokens = $adapter->getAccessToken(); 
+ *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
  *   }
  *   catch( Exception $e ){
@@ -69,7 +69,7 @@ class Facebook extends OAuth2
 
         // Require proof on all Facebook api calls
         // https://developers.facebook.com/docs/graph-api/securing-requests#appsecret_proof
-        if($accessToken = $this->getStoredData('access_token')) {
+        if ($accessToken = $this->getStoredData('access_token')) {
             $this->apiRequestParameters['appsecret_proof'] = hash_hmac('sha256', $accessToken, $this->clientSecret);
         }
     }
@@ -108,7 +108,7 @@ class Facebook extends OAuth2
 
         $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
 
-        $userProfile = $this->fetchUserRegion($userProfile, $userProfile);
+        $userProfile = $this->fetchUserRegion($userProfile);
 
         $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
 
@@ -118,7 +118,7 @@ class Facebook extends OAuth2
     /**
     *
     */
-    protected function fetchUserRegion($userProfile)
+    protected function fetchUserRegion(User\Profile $userProfile)
     {
         if (! empty($userProfile->region)) {
             $regionArr = explode(',', $userProfile->region);
@@ -135,7 +135,7 @@ class Facebook extends OAuth2
     /**
     *
     */
-    protected function fetchBirthday($userProfile, $birthday)
+    protected function fetchBirthday(User\Profile $userProfile, $birthday)
     {
         $result = (new Data\Parser())->parseBirthday($birthday, '/');
 
@@ -169,8 +169,6 @@ class Facebook extends OAuth2
             }
 
             if ($data->filter('data')->isEmpty()) {
-                $pagedList = false;
-
                 continue;
             }
 

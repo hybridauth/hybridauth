@@ -105,9 +105,7 @@ class WeChat extends OAuth2
         $userProfile->city        = $data->get('city');
         $userProfile->region      = $data->get('province');
         $userProfile->country     = $data->get('country');
-        $userProfile->gender      = array(
-                                        '', 'male', 'female'
-                                    )[(int) $data->get('sex')];
+        $userProfile->gender      = ['', 'male', 'female'][(int)$data->get('sex')];
 
         return $userProfile;
     }

@@ -143,7 +143,7 @@ class Google extends OAuth2
     /**
     * Fetch user email
     */
-    protected function fetchUserEmail($userProfile, $data)
+    protected function fetchUserEmail(User\Profile $userProfile, Data\Collection $data)
     {
         foreach ($data->get('emails') as $email) {
             if ('account' == $email->type) {
@@ -160,7 +160,7 @@ class Google extends OAuth2
     /**
     * Fetch user profile url
     */
-    protected function fetchUserProfileUrl($userProfile, $data)
+    protected function fetchUserProfileUrl(User\Profile $userProfile, Data\Collection $data)
     {
         foreach ($data->get('urls') as $url) {
             if ($url->get('primary')) {
@@ -176,7 +176,7 @@ class Google extends OAuth2
     /**
     * Fetch use birthday
     */
-    protected function fetchBirthday($userProfile, $birthday)
+    protected function fetchBirthday(User\Profile $userProfile, $birthday)
     {
         $result = (new Data\Parser())->parseBirthday($birthday, '-');
 
