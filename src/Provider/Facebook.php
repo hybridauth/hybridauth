@@ -7,6 +7,7 @@
 
 namespace Hybridauth\Provider;
 
+use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
@@ -39,30 +40,33 @@ use Hybridauth\User;
 class Facebook extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
-    protected $scope = 'email, user_hometown, publish_actions, user_status, user_about_me, user_birthday, user_posts, user_website, user_friends';
+     * {@inheritdoc}
+     */
+    protected $scope = 'email, public_profile, user_friends, publish_actions';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://graph.facebook.com/v2.8/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://www.facebook.com/dialog/oauth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://graph.facebook.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developers.facebook.com/docs/facebook-login/overview';
 
+    /**
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -75,8 +79,8 @@ class Facebook extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('me?fields=id,name,first_name,last_name,link,website,gender,locale,about,email,hometown,verified,birthday');
@@ -116,8 +120,12 @@ class Facebook extends OAuth2
     }
 
     /**
-    *
-    */
+     * Retrieve the user region.
+     *
+     * @param User\Profile $userProfile
+     *
+     * @return \Hybridauth\User\Profile
+     */
     protected function fetchUserRegion(User\Profile $userProfile)
     {
         if (! empty($userProfile->region)) {
@@ -133,8 +141,13 @@ class Facebook extends OAuth2
     }
 
     /**
-    *
-    */
+     * Retrieve the user birthday.
+     *
+     * @param User\Profile $userProfile
+     * @param string $birthday
+     *
+     * @return \Hybridauth\User\Profile
+     */
     protected function fetchBirthday(User\Profile $userProfile, $birthday)
     {
         $result = (new Data\Parser())->parseBirthday($birthday, '/');
@@ -147,13 +160,13 @@ class Facebook extends OAuth2
     }
 
     /**
-    * /v2.0/me/friends only returns the user's friends who also use the app.
-    * In the cases where you want to let people tag their friends in stories published by your app,
-    * you can use the Taggable Friends API.
-    *
-    * https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
-    */
-    public function getUserContacts($parameters = [])
+     * /v2.0/me/friends only returns the user's friends who also use the app.
+     * In the cases where you want to let people tag their friends in stories published by your app,
+     * you can use the Taggable Friends API.
+     *
+     * https://developers.facebook.com/docs/apps/faq#unable_full_friend_list
+     */
+    public function getUserContacts()
     {
         $contacts = [];
 
@@ -189,8 +202,12 @@ class Facebook extends OAuth2
     }
 
     /**
-    *
-    */
+     * Parse the user contact.
+     *
+     * @param array $item
+     *
+     * @return \Hybridauth\User\Contact
+     */
     protected function fetchUserContact($item)
     {
         $userContact = new User\Contact();
@@ -209,23 +226,79 @@ class Facebook extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
-    public function setUserStatus($status)
+     * {@inheritdoc}
+     */
+    public function setUserStatus($status, $pageId = 'me')
     {
-        $status = is_string($status) ? [ 'message' => $status ] : $status;
+        $status = is_string($status) ? ['message' => $status] : $status;
 
-        $response = $this->apiRequest('/me/feed', 'POST', $status);
+        $response = $this->apiRequest("{$pageId}/feed", 'POST', $status);
 
         return $response;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
+    public function setPageStatus($status, $pageId)
+    {
+        $status = is_string($status) ? ['message' => $status] : $status;
+
+        // Post on user wall.
+        if ($pageId === 'me') {
+            return $this->setUserStatus($status, $pageId);
+        }
+
+        // Retrieve writable user pages and filter by given one.
+        $pages = $this->getUserPages(true);
+        $pages = array_filter($pages, function ($page) use ($pageId) {
+            return $page->id == $pageId;
+        });
+
+        if (!$pages) {
+            throw new InvalidArgumentException('Could not find a page with given id.');
+        }
+
+        $page = reset($pages);
+
+        // Use page access token instead of user access token.
+        $headers = [
+          'Authorization' => 'Bearer ' . $page->access_token,
+        ];
+
+        // Refresh proof for API call.
+        $parameters = $status + [
+          'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
+        ];
+
+        $response = $this->apiRequest("{$pageId}/feed", 'POST', $parameters, $headers);
+
+        return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserPages($writable = false)
+    {
+        $pages = $this->apiRequest('me/accounts');
+
+        if (!$writable) {
+            return $pages->data;
+        }
+
+        // Filter user pages by CREATE_CONTENT permission.
+        return array_filter($pages->data, function ($page) {
+            return in_array('CREATE_CONTENT', $page->perms);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserActivity($stream = 'me')
     {
-        $apiUrl = $stream == 'me' ? '/me/feed' : '/me/home';
+        $apiUrl = $stream == 'me' ? 'me/feed' : 'me/home';
 
         $response = $this->apiRequest($apiUrl);
 

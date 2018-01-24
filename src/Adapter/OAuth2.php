@@ -666,7 +666,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
-            $url = $this->apiBaseUrl . $url;
+            $url = rtrim($this->apiBaseUrl, '/') . '/' . ltrim($url, '/');
         }
 
         $parameters = array_replace($this->apiRequestParameters, (array) $parameters);
