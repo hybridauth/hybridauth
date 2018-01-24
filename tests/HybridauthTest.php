@@ -2,7 +2,7 @@
 
 use Hybridauth\Hybridauth;
 
-class HybridauthTest extends \PHPUnit_Framework_TestCase
+class HybridauthTest extends \PHPUnit\Framework\TestCase
 {
     public function test_pass()
     {

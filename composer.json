@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "ext-curl": "*",
-        "phpunit/phpunit": "~4.1"
+        "phpunit/phpunit": "~4.8.35"
     },
     "autoload": {
         "psr-4": {

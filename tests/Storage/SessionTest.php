@@ -4,7 +4,7 @@ use Hybridauth\Storage\Session;
 
 session_start(); // they will hate me for this..
 
-class SessionTest extends \PHPUnit_Framework_TestCase
+class SessionTest extends \PHPUnit\Framework\TestCase
 {
     public function some_random_session_data()
     {
