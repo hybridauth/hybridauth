@@ -50,6 +50,13 @@ interface AdapterInterface
     public function getUserContacts();
 
     /**
+     * Retrieve the connected user pages|companies|groups list
+     *
+     * @return array
+     */
+    public function getUserPages();
+
+    /**
      * Retrieve the user activity stream
      *
      * @param string $stream
@@ -66,6 +73,16 @@ interface AdapterInterface
      * @return mixed API response
      */
     public function setUserStatus($status);
+
+    /**
+     * Post a status on page|company|group wall.
+     *
+     * @param string|array $status
+     * @param string $pageId
+     *
+     * @return mixed API response
+     */
+    public function setPageStatus($status, $pageId);
 
     /**
      * Send a signed request to provider API
