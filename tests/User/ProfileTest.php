@@ -2,7 +2,7 @@
 
 use Hybridauth\User\Profile;
 
-class ProfileTest extends \PHPUnit_Framework_TestCase
+class ProfileTest extends \PHPUnit\Framework\TestCase
 {
     public function test_instance_of()
     {

@@ -2,7 +2,7 @@
 
 use Hybridauth\User\Activity;
 
-class ActivityTest extends \PHPUnit_Framework_TestCase
+class ActivityTest extends \PHPUnit\Framework\TestCase
 {
     public function test_instance_of()
     {
