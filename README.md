@@ -1,10 +1,10 @@
-## [Hybridauth](https://hybridauth.github.io/) 3.0-beta
+## [Hybridauth](https://hybridauth.github.io/) 3.0-rc2
 
 [![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=master) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
     IMPORTANT: Hybridauth 3 is currently in beta stage and it might NOT be suitable for production use.
-               The 3.0 will be released in January 2018.
+               The 3.0 might be released in February 2018.
 
 Hybridauth enables developers to easily build social applications and tools to engage websites visitors and customers on a social level that starts off with social sign-in and extends to social sharing, users profiles, friends lists, activities streams, status updates and more.
 
