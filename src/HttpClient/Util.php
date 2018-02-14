@@ -43,9 +43,19 @@ class Util
         if (static::$redirectHandler) {
             return call_user_func(static::$redirectHandler, $url);
         }
-
-        header(sprintf('Location: %s', $url));
-
+  
+        if (!headers_sent()) {
+            header(sprintf('Location: %s', $url));
+        } else {
+            echo '<script type="text/javascript">';
+            echo 'window.location.href="'.$url.'";';
+            echo '</script>';
+            echo '<noscript>';
+            echo '<meta http-equiv="refresh" content="0;url='.$url.'" />';
+            echo '</noscript>';
+        }
+        
+        
         if (static::$exitHandler) {
             return call_user_func(static::$exitHandler);
         }
