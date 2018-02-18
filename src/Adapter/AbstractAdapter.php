@@ -96,7 +96,7 @@ abstract class AbstractAdapter implements AdapterInterface
         StorageInterface    $storage = null,
         LoggerInterface     $logger = null
     ) {
-        $this->providerId = str_replace('Hybridauth\\Provider\\', '', get_class($this));
+        $this->providerId = (new \ReflectionClass($this))->getShortName();
 
         $this->config = new Data\Collection($config);
 
