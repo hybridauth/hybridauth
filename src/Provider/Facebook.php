@@ -263,12 +263,12 @@ class Facebook extends OAuth2
 
         // Use page access token instead of user access token.
         $headers = [
-          'Authorization' => 'Bearer ' . $page->access_token,
+            'Authorization' => 'Bearer ' . $page->access_token,
         ];
 
         // Refresh proof for API call.
         $parameters = $status + [
-          'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
+            'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
         ];
 
         $response = $this->apiRequest("{$pageId}/feed", 'POST', $parameters, $headers);
