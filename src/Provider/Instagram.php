@@ -18,33 +18,46 @@ use Hybridauth\User;
 class Instagram extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = 'basic';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.instagram.com/v1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://api.instagram.com/oauth/authorize/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.instagram.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://www.instagram.com/developer/authentication/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        // The Instagram API requires an access_token from authenticated users
+        // for each endpoint, see https://www.instagram.com/developer/endpoints.
+        $accessToken = $this->getStoredData($this->accessTokenName);
+        $this->apiRequestParameters[$this->accessTokenName] = $accessToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users/self/');
