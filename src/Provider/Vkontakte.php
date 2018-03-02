@@ -58,7 +58,8 @@ class Vkontakte extends OAuth2
         $parameters = [
             'uid'    => $this->getStoredData('user_id'),
             'fields' => 'first_name,last_name,nickname,screen_name,sex,' .
-                            'bdate,timezone,photo_rec,photo_big,photo_max_orig'
+                            'bdate,timezone,photo_rec,photo_big,photo_max_orig',
+            'v' => '3.0'
         ];
 
         $response = $this->apiRequest('users.get', 'GET', $parameters);
