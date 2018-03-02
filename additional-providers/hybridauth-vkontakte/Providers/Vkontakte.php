@@ -39,6 +39,9 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 	  'country' => 'country',     // Will be converted in getUserByResponse()
 	);
 
+	// default VK API version
+	public $version = '3.0';
+
 	/**
 	 * IDp wrappers initializer
 	 */
@@ -51,6 +54,12 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		$this->api->token_url = "https://oauth.vk.com/token";
 		if (!empty($this->config['fields'])) {
 			$this->fields = $this->config['fields'];
+		}
+		if (array_key_exists('version', $this->config)) {
+		    $this->version = $this->config['version'];
+		}
+		if (array_key_exists('v', $this->config)) {
+		    $this->version = $this->config['v'];
 		}
 	}
 
@@ -102,6 +111,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		// Vkontakte requires user id, not just token for api access
 		$params['uid'] = Hybrid_Auth::storage()->get("hauth_session.{$this->providerId}.user_id");
 		$params['fields'] = implode(',', $this->fields);
+		$params['v'] = $this->version;
 
 		// ask vkontakte api for user infos
 		$response = $this->api->api('getProfiles', 'GET', $params);
