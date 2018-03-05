@@ -116,7 +116,9 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		// ask vkontakte api for user infos
 		$response = $this->api->api('getProfiles', 'GET', $params);
 
-		if (!isset($response->response[0]) || !isset($response->response[0]->uid) || isset($response->error)) {
+		if (isset($response->error)) {
+			throw new Exception("User profile request failed! {$this->providerId} returned an error #{$response->error->error_code}: {$response->error->error_msg}", 6);
+		} elseif (!isset($response->response[0]) || !isset($response->response[0]->uid)) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
 		}
 
