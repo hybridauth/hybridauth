@@ -40,13 +40,13 @@ class Util
     */
     public static function redirect($url)
     {
-        if (static::$redirectHandler) {
+        if (self::$redirectHandler) {
             return call_user_func(static::$redirectHandler, $url);
         }
 
         header(sprintf('Location: %s', $url));
 
-        if (static::$exitHandler) {
+        if (self::$exitHandler) {
             return call_user_func(static::$exitHandler);
         }
 
