@@ -433,11 +433,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             );
 
         if ($this->supportRequestState) {
-            $state = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+            if (!isset($this->AuthorizeUrlParameters['state'])) {
+                $this->AuthorizeUrlParameters['state'] = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+            }
 
-            $this->storeData('authorization_state', $state);
-
-            $this->AuthorizeUrlParameters['state'] = $state;
+            $this->storeData('authorization_state', $this->AuthorizeUrlParameters['state']);
         }
 
         return $this->authorizeUrl . '?' . http_build_query($this->AuthorizeUrlParameters, '', '&');
