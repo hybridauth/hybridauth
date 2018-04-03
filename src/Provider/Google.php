@@ -122,7 +122,8 @@ class Google extends OAuth2
         $userProfile->emailVerified = $data->get('verified') ? $userProfile->email : '';
 
         if ($data->filter('image')->exists('url')) {
-            $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2) . 150;
+            $photoSize = $this->config->get('photo_size') ?: '150';
+            $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2) . $photoSize;
         }
 
         if (! $userProfile->email && $data->exists('emails')) {
