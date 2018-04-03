@@ -60,8 +60,12 @@ class LinkedIn extends OAuth2
             'num-connections',
         ];
 
+        if( $this->config->get('photo_size')  == 'original' ){
+            $fields[] = 'picture-urls::(original)';
+        }
+        
         $response = $this->apiRequest('people/~:(' . implode(',', $fields) . ')', 'GET', ['format' => 'json']);
-
+        
         $data = new Data\Collection($response);
 
         if (! $data->exists('id')) {
@@ -79,6 +83,13 @@ class LinkedIn extends OAuth2
         $userProfile->description   = $data->get('headline');
         $userProfile->country       = $data->filter('location')->get('name');
 
+        if( $this->config->get('photo_size')  == 'original' ){
+            $originals = $data->get('pictureUrls');
+            if(count($originals->values) > 0){
+                $userProfile->photoURL = $originals->values[0];
+            }
+        }    
+        
         $userProfile->emailVerified = $userProfile->email;
 
         $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
