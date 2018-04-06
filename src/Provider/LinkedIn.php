@@ -60,7 +60,7 @@ class LinkedIn extends OAuth2
             'num-connections',
         ];
 
-        if( $this->config->get('photo_size')  == 'original' ){
+        if( $this->config->get('photo_size')  === 'original' ){
             $fields[] = 'picture-urls::(original)';
         }
         
@@ -83,9 +83,9 @@ class LinkedIn extends OAuth2
         $userProfile->description   = $data->get('headline');
         $userProfile->country       = $data->filter('location')->get('name');
 
-        if( $this->config->get('photo_size')  == 'original' ){
+        if( $this->config->get('photo_size')  === 'original' ){
             $originals = $data->get('pictureUrls');
-            if(count($originals->values) > 0){
+            if(!empty($originals->values)){
                 $userProfile->photoURL = $originals->values[0];
             }
         }    
