@@ -65,7 +65,6 @@ class LinkedIn extends OAuth2
         }
         
         $response = $this->apiRequest('people/~:(' . implode(',', $fields) . ')', 'GET', ['format' => 'json']);
-        
         $data = new Data\Collection($response);
 
         if (! $data->exists('id')) {
