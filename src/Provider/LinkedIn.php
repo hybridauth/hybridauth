@@ -1,15 +1,15 @@
 <?php
 /*!
-* Hybridauth
-* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
-*/
+ * Hybridauth
+ * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+ *  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
+ */
 
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
 
 /**
@@ -60,28 +60,38 @@ class LinkedIn extends OAuth2
             'num-connections',
         ];
 
+        if ($this->config->get('photo_size') === 'original') {
+            $fields[] = 'picture-urls::(original)';
+        }
+
         $response = $this->apiRequest('people/~:(' . implode(',', $fields) . ')', 'GET', ['format' => 'json']);
+        $data     = new Data\Collection($response);
 
-        $data = new Data\Collection($response);
-
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier    = $data->get('id');
-        $userProfile->firstName     = $data->get('firstName');
-        $userProfile->lastName      = $data->get('lastName');
-        $userProfile->photoURL      = $data->get('pictureUrl');
-        $userProfile->profileURL    = $data->get('publicProfileUrl');
-        $userProfile->email         = $data->get('emailAddress');
-        $userProfile->description   = $data->get('headline');
-        $userProfile->country       = $data->filter('location')->get('name');
+        $userProfile->identifier  = $data->get('id');
+        $userProfile->firstName   = $data->get('firstName');
+        $userProfile->lastName    = $data->get('lastName');
+        $userProfile->photoURL    = $data->get('pictureUrl');
+        $userProfile->profileURL  = $data->get('publicProfileUrl');
+        $userProfile->email       = $data->get('emailAddress');
+        $userProfile->description = $data->get('headline');
+        $userProfile->country     = $data->filter('location')->get('name');
+
+        if ($this->config->get('photo_size') === 'original') {
+            $originals = $data->get('pictureUrls');
+            if (!empty($originals->values)) {
+                $userProfile->photoURL = $originals->values[0];
+            }
+        }
 
         $userProfile->emailVerified = $userProfile->email;
 
-        $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+        $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         $userProfile->data['connections'] = $data->get('numConnections');
 
@@ -95,14 +105,14 @@ class LinkedIn extends OAuth2
      */
     public function setUserStatus($status)
     {
-        $status = is_string($status) ? [ 'comment' => $status ] : $status;
+        $status = is_string($status) ? ['comment' => $status] : $status;
         if (!isset($status['visibility'])) {
             $status['visibility']['code'] = 'anyone';
         }
 
         $headers = [
             'Content-Type' => 'application/json',
-            'x-li-format' => 'json',
+            'x-li-format'  => 'json',
         ];
 
         $response = $this->apiRequest('people/~/shares?format=json', 'POST', $status, $headers);
