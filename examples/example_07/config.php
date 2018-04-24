@@ -2,7 +2,7 @@
 /**
  * Build a configuration array to pass to `Hybridauth\Hybridauth`
  *
- * Set the Authorization callback URL to https://path/to/hybridauth/examples/example_07/callback.php.
+ * Set the Authorization callback URL to https://path/to/hybridauth/examples/example_07/callback.php
  * Understandably, you need to replace 'path/to/hybridauth' with the real path to this script.
  */
 $config = [
