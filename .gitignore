@@ -4,5 +4,3 @@
 *.json
 *.lock
 /vendor
-
-/examples
