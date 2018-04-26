@@ -1,11 +1,21 @@
 ## Summary
 
-* Patch for # Provider Odnoklassniki
+(select one:)
+* Breaking change
+* Addition
+* Patch for #
+* New provider
+
+- [ ] Tested
+  - [ ] Unit tests
+  - [ ] Style
+- [ ] Documentation (PR # )
 
 ## Goal
 
-Correct working with new version API ok.ru
+What do you want to achieve with this PR?
 
 ## Description
 
-Service Odnoklassniki migrate to https and change uri authentification API 
+Your description...
+
