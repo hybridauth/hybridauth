@@ -18,59 +18,54 @@ use Hybridauth\User;
 class TwitchTV extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
-    protected $scope = 'user_read channel_read';
+     * {@inheritdoc}
+     */
+    protected $scope = 'user:read:email';
 
     /**
-    * {@inheritdoc}
-    */
-    protected $apiBaseUrl = 'https://api.twitch.tv/kraken/';
+     * {@inheritdoc}
+     */
+    protected $apiBaseUrl = 'https://api.twitch.tv/helix/';
 
     /**
-    * {@inheritdoc}
-    */
-    protected $authorizeUrl = 'https://api.twitch.tv/kraken/oauth2/authorize';
+     * {@inheritdoc}
+     */
+    protected $authorizeUrl = 'https://id.twitch.tv/oauth2/authorize';
 
     /**
-    * {@inheritdoc}
-    */
-    protected $accessTokenUrl = 'https://api.twitch.tv/kraken/oauth2/token';
+     * {@inheritdoc}
+     */
+    protected $accessTokenUrl = 'https://id.twitch.tv/oauth2/token';
 
     /**
-    * {@inheritdoc}
-    */
-    protected $accessTokenName = 'oauth_token';
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://dev.twitch.tv/docs/authentication/';
 
     /**
-    * {@inheritdoc}
-    */
-    protected $apiDocumentation = 'https://dev.twitch.tv/docs/v5/guides/authentication/';
-
-    /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('user');
+        $response = $this->apiRequest('users');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('_id')) {
+        if (!$data->exists('data')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
+        $users = $data->filter('data')->properties();
+        $user = new Data\Collection($users[0]);
+
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('_id');
-        $userProfile->displayName = $data->get('display_name');
-        $userProfile->photoURL    = $data->get('logo');
-        $userProfile->email       = $data->get('email');
-        $userProfile->description = strip_tags($data->get('bio'));
-
-        $userProfile->profileURL = 'http://www.twitch.tv/' . $data->get('name');
-
-        $userProfile->displayName = $userProfile->displayName ?: $data->get('name');
+        $userProfile->identifier = $user->get('id');
+        $userProfile->displayName = $user->get('display_name');
+        $userProfile->photoURL = $user->get('profile_image_url');
+        $userProfile->email = $user->get('email');
+        $userProfile->description = strip_tags($user->get('description'));
+        $userProfile->profileURL = "https://www.twitch.tv/{$userProfile->displayName}";
 
         return $userProfile;
     }
