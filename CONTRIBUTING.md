@@ -1,36 +1,49 @@
-# Contributing to HybridAuth
+Contributing
+============
+
+HybridAuth is a community driven project, and it needs your help to keep the project going.
 
 
-HybridAuth is a community driven project and accepts contributions of code and documentation from the community. These contributions are made in the form of Issues or [Pull Requests](http://help.github.com/send-pull-requests/) on the [HybridAuth repository](https://github.com/hybridauth/hybridauth/) on GitHub.
+### Report Problems
 
-Issues are a quick way to point out a bug, not to ask general question (for that there is [StackOverflow](https://stackoverflow.com/questions/tagged/hybridauth)). If you find a bug in HybridAuth then please check a few things first:
+A great way to help is to find and submit [bug reports](https://github.com/hybridauth/hybridauth/issues) or to fix the
+existing ones. 
 
-1. There is not already an open Issue.
-2. The issue has already been fixed (check the master branch, or look for closed Issues).
-3. That you have everything setup properly with your providers.
-4. Is it something really obvious that you can fix yourself?
-
-Reporting issues is helpful but an even better approach is to send a Pull Request, which is done by "Forking" the main repository and committing to your own copy. This will require you to use the version control system called Git.
-
-## Guidelines
-
-Before we look into how, here are the guidelines. If your Pull Requests fail
-to pass these guidelines it will be declined and you will need to re-submit
-when you’ve made the changes. This might sound a bit tough, but it is required
-for us to maintain quality of the code-base.
-
-### PHP Style
+When reporting new issues, please provide as much detail and context as possible, otherwise we will be left in the dark
+about the problem you having.
 
 
 ### Documentation
 
-If you change anything that requires a change to documentation then you will need to add it. New providers, methods, parameters, changing default values, etc are all things that will require a change to documentation. The changelog must also be updated for every change.
+You can help improve Hybridauth user documentation (this website) by making it more consistent and readable, and by adding
+missing information, correcting errors and typos.
 
-### Compatibility
+Hybridauth documentation is maintained as plain text markdown files at https://github.com/hybridauth/hybridauth/tree/master/docs/
 
-HybridAuth is compatible with PHP 5.3 so all code supplied must stick to
-this requirement. If PHP 5.4+ functions or features are used then there
-must be a fallback for PHP 5.3.
 
-## License
-Except where otherwise noted, HybridAuth is released under dual licence MIT and GPL.
+### Develop
+
+If you have fixed a bug or implemented a new feature that you would like to share with the community, send a pull request
+against the [dev branch](https://github.com/hybridauth/hybridauth/).
+
+Before contributing code, please consider these guide lines:
+
+**Coding Style**
+
+HybridAuth follows [PSR-1](http://www.php-fig.org/psr/psr-1/) and [PSR-2](http://www.php-fig.org/psr/psr-2/).
+
+Please prevent your IDE for reformatting huge chunks of code/files as it make it nearly impossible to see what changes were
+actually made to a file on your Pull Request.
+
+**Compatibility**
+
+Additional providers, minor enhancements, bugs and typos fixes are most welcome. Large and "breaking" changes should be 
+discussed ahead of time. **Please ask first**.
+
+HybridAuth 3 is compatible with **PHP 5.4** and therefore all code supplied must stick to this requirement.
+
+**License**
+
+Hybridauth PHP Library is released under the terms of MIT License: By contributing your code to the project, you agree to
+license your contribution under the MIT License. (which means, once you donate your code to the community, it become freely
+available to everyone to use, or mis-use).
