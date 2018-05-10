@@ -93,7 +93,14 @@ class Vkontakte extends OAuth2
             'v' => '5.74',
         ];
 
+        $accessToken = $this->getStoredData($this->accessTokenName);
+        $this->apiRequestParameters[$this->accessTokenName] = $accessToken;
+
         $response = $this->apiRequest('users.get', 'GET', $parameters);
+
+        if(property_exists($response, 'error')) {
+            throw new UnexpectedApiResponseException($response->error->error_msg);
+        }
 
         $data = new Collection($response->response[0]);
 
