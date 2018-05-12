@@ -120,12 +120,12 @@ class Hybridauth
 
         $adapter = isset($config['adapter']) ? $config['adapter'] : sprintf('Hybridauth\\Provider\\%s', $name);
 
-        if (! class_exists($adapter)) {
+        if (!class_exists($adapter)) {
             $adapter = null;
             $fs = new \FilesystemIterator(__DIR__ . '/Provider/');
             /** @var \SplFileInfo $file */
             foreach ($fs as $file) {
-                if(! $file->isDir()) {
+                if(!$file->isDir()) {
                     $provider = strtok($file->getFilename(), '.');
                     if ($name === mb_strtolower($provider)) {
                         $adapter = sprintf('Hybridauth\\Provider\\%s', $provider);
