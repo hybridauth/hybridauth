@@ -125,7 +125,7 @@ class Hybridauth
             $fs = new \FilesystemIterator(__DIR__ . '/Provider/');
             /** @var \SplFileInfo $file */
             foreach ($fs as $file) {
-                if(!$file->isDir()) {
+                if (!$file->isDir()) {
                     $provider = strtok($file->getFilename(), '.');
                     if ($name === mb_strtolower($provider)) {
                         $adapter = sprintf('Hybridauth\\Provider\\%s', $provider);
@@ -134,7 +134,7 @@ class Hybridauth
                 }
             }
             if ($adapter === null) {
-                throw new InvalidArgumentException('Provider does not exist.');
+                throw new InvalidArgumentException('Unknown Provider.');
             }
         }
 
