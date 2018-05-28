@@ -83,7 +83,7 @@ class Hybrid_Providers_HumanitarianId extends Hybrid_Provider_Model_OAuth2
       throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
     }
 
-    $this->user->profile->identifier  = @ $data->user_id;
+    $this->user->profile->identifier  = @ $data->id;
     $this->user->profile->displayName = @ $data->name;
     $this->user->profile->email       = @ $data->email;
     $this->user->profile->firstName   = @ $data->given_name;
