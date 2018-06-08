@@ -402,7 +402,12 @@ class Hybrid_Auth {
 		$url = $protocol . $_SERVER['HTTP_HOST'];
 
 		if ($request_uri) {
-			$url .= $_SERVER['REQUEST_URI'];
+			// If $_SERVER['REQUEST_URI'] is already a FQDN, use it
+			if (stripos($_SERVER['REQUEST_URI'], $url) === 0) {
+				$url = $_SERVER['REQUEST_URI'];
+			} else {
+				$url .= $_SERVER['REQUEST_URI'];
+			}
 		} else {
 			$url .= $_SERVER['PHP_SELF'];
 		}
