@@ -1,5 +1,12 @@
 Hybridauth Change log
 =====================
+2.11.0 - June 11 2018
+      Fixes:
+        #925 - [VK] Required api version number in requests.
+        #974 - [Core] Handling the case when REQUEST_URI contains the FQDN.
+      Improvements:
+        #926 - [VK] Improved Exception msg for Vkontakte provider.
+
 2.10.0 - November 29 2017
       Fixes:
         #859 - [Facebook] Cross-site request forgery validation failed. Required param "state" missing
