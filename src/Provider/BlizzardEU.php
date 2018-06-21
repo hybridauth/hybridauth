@@ -18,17 +18,17 @@ use Hybridauth\User;
 class BlizzardEU extends Blizzard
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://eu.api.battle.net/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://eu.battle.net/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://eu.battle.net/oauth/token';
 }
