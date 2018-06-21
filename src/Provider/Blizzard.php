@@ -28,30 +28,30 @@ class Blizzard extends OAuth2
     protected $apiBaseUrl = 'https://us.api.battle.net/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://us.battle.net/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://us.battle.net/oauth/token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://dev.battle.net/docs/read/oauth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('account/user');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
