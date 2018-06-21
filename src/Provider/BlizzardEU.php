@@ -15,13 +15,8 @@ use Hybridauth\User;
 /**
  * Blizzard EU Battle.net OAuth2 provider adapter.
  */
-class BlizzardEU extends OAuth2
+class BlizzardEU extends Blizzard
 {
-    /**
-    * {@inheritdoc}
-    */
-    public $scope = '';
-
     /**
     * {@inheritdoc}
     */
@@ -36,30 +31,4 @@ class BlizzardEU extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://eu.battle.net/oauth/token';
-
-    /**
-    * {@inheritdoc}
-    */
-    protected $apiDocumentation = 'https://dev.battle.net/docs/read/oauth';
-
-    /**
-    * {@inheritdoc}
-    */
-    public function getUserProfile()
-    {
-        $response = $this->apiRequest('account/user');
-
-        $data = new Data\Collection($response);
-
-        if (! $data->exists('id')) {
-            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
-        }
-
-        $userProfile = new User\Profile();
-
-        $userProfile->identifier  = $data->get('id');
-        $userProfile->displayName = $data->get('battletag') ?: $data->get('login');
-
-        return $userProfile;
-    }
 }
