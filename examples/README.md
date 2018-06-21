@@ -9,3 +9,4 @@ example_03.php | An example on how use Access Tokens to access providers APIs, a
 example_04.php | A simple example that shows how to connect users to providers using OpenID.
 example_05.php | A simple example that shows how to use Guzzle as a Http Client for Hybridauth instead of PHP Curl extension.
 example_06/    | A simple example that shows how to organize multiple providers.
+example_07/    | A simple example that shows how to organize multiple providers, using a pop-up.

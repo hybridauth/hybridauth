@@ -91,9 +91,14 @@ class Vkontakte extends OAuth2
             'user_ids' => $this->getStoredData('user_id'),
             'fields' => 'first_name,last_name,nickname,screen_name,sex,bdate,timezone,photo_rec,photo_big,photo_max_orig',
             'v' => '5.74',
+            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
         ];
 
         $response = $this->apiRequest('users.get', 'GET', $parameters);
+
+        if (property_exists($response, 'error')) {
+            throw new UnexpectedApiResponseException($response->error->error_msg);
+        }
 
         $data = new Collection($response->response[0]);
 
