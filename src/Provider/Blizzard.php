@@ -18,13 +18,13 @@ use Hybridauth\User;
 class Blizzard extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public $scope = '';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://us.api.battle.net/';
 
     /**
