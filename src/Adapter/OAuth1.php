@@ -177,8 +177,8 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         $this->sha1Method  = new OAuthSignatureMethodHMACSHA1();
 
         $this->OAuthConsumer = new OAuthConsumer(
-            $this->config->filter('keys')->get('key'),
-            $this->config->filter('keys')->get('secret')
+            $this->consumerKey,
+            $this->consumerSecret
         );
 
         if ($this->getStoredData('request_token')) {

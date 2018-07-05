@@ -23,7 +23,7 @@ GitLab              | OAuth2  | [X]            | [X]            |               
 Reddit              | OAuth2  | [X]            | [X]            |                 |                |
 BitBucket           | OAuth2  | [X]            | [X]            |                 |                |
 WordPress           | OAuth2  | [X]            | [X]            |                 |                |
-Tumblr              | OAuth1  | [X]            | [X]            | [X]             |                |
+Tumblr              | OAuth1  | [X]            | [X]            | [X]             | [X]            |
 Disqus              | OAuth2  | [X]            | [X]            |                 |                |
 Dribbble            | OAuth2  | [X]            | [X]            |                 |                |
 WindowsLive         | OAuth2  | [X]            | [X]            | [X]             |                |
@@ -31,8 +31,8 @@ Foursquare          | OAuth2  | [X]            | [X]            | [X]           
 Instagram           | OAuth2  | [X]            | [X]            |                 |                |
 LinkedIn            | OAuth2  | [X]            | [X]            |                 | [X]            |
 Yahoo               | OAuth2  | [X]            | [X]            |                 |                |
-Vkontakte           | OAuth2  |                |                |                 |                |
-Mailru              | OAuth2  |                |                |                 |                |
+Vkontakte           | OAuth2  | [X]            | [X]            |                 |                |
+Mailru              | OAuth2  | [X]            | [X]            |                 |                |
 Odnoklassniki       | OAuth2  | [X]            | [X]            |                 |                |
 StackExchange       | OAuth2  | [X]            | [X]            |                 |                |
 OpenID              | OpenID  | [X]            | [X]            |                 |                |
@@ -47,7 +47,8 @@ Authentiq           | OAuth2  | [X]            | [X]            |               
 Spotify             | OAuth2  | [X]            | [X]            |                 |                |
 WeChat              | OAuth2  | [X]            | [X]            |                 |                |
 SteemConnect        | OAuth2  | [X]            | [X]            |                 |                |
-MicrosoftGraph		| OAuth2  | [X]            | [X]            | [X]             |                |
+MicrosoftGraph		  | OAuth2  | [X]            | [X]            | [X]             |                |
+Blizzard            | OAuth2  | [X]            | [X]            |                 |                |
 
 {% include callout.html content="Some providers such as Google and Yahoo may use multiple protocols for their APIs and as naming convention we append the protocol's name to the adapter's (Often the case with OpenID adapters as those might be subject to removal by providers in near future due to deprecation of the OpenID protocol)." type="default" %}
 

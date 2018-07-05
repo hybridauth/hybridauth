@@ -30,7 +30,7 @@ class GitLab extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected $authorizeUrl = 'https://gitlab.com/oauth/authorize"';
+    protected $authorizeUrl = 'https://gitlab.com/oauth/authorize';
 
     /**
     * {@inheritdoc}
