@@ -13,7 +13,7 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
 
 /**
- * Windows Live OAuth2 provider adapter.
+ * Microsoft Graph provider adapter.
  */
 class MicrosoftGraph extends OAuth2
 {
@@ -62,7 +62,6 @@ class MicrosoftGraph extends OAuth2
         $userProfile->firstName     = $data->get('givenName');
         $userProfile->lastName      = $data->get('surname');
         $userProfile->email         = $data->get('mail');
-        $userProfile->emailVerified = $data->get('mail');
         $userProfile->language      = $data->get('preferredLanguage');
 
         return $userProfile;
@@ -82,18 +81,17 @@ class MicrosoftGraph extends OAuth2
             if (!$data->exists('value')) {
                 throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
             }
-            foreach ($data->get('value') as $entry) {
+            foreach ($data->filter('value')->toArray() as $entry) {
                 $userContact              = new User\Contact();
-                $userContact->identifier  = $entry->id;
-                $userContact->displayName = $entry->displayName;
-                if (!empty($entry->emailAddresses)) {
-                    $userContact->email = $entry->emailAddresses[0]->address;
+                $userContact->identifier  = $entry->get('id');
+                $userContact->displayName = $entry->get('displayName');
+                if (!empty($entry->get('emailAddresses'))) {
+                    $userContact->email = $entry->get('emailAddresses')[0]->address;
                 }
                 // only add to collection if we have usefull data
                 if (!empty($userContact->displayName) || !empty($userContact->email)) {
                     $contacts[] = $userContact;
                 }
-
             }
 
             if ($data->exists('@odata.nextLink')) {
@@ -104,6 +102,7 @@ class MicrosoftGraph extends OAuth2
                 $pagedList = false;
             }
         } while ($pagedList);
+
         return $contacts;
     }
 }
