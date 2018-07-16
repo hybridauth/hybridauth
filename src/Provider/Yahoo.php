@@ -122,9 +122,9 @@ class Yahoo extends OAuth2
 
         // I ain't getting no emails on my tests. go figures..
         foreach ($data->filter('emails')->toArray() as $item) {
-            if ($data->get('primary')) {
-                $userProfile->email         = $data->get('handle');
-                $userProfile->emailVerified = $data->get('handle');
+            if ($item->primary) {
+                $userProfile->email         = $item->handle;
+                $userProfile->emailVerified = $item->handle;
             }
         }
 
