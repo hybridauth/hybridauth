@@ -233,7 +233,7 @@ class Facebook extends OAuth2
      */
     public function setUserStatus($status, $pageId = 'me')
     {
-        @trigger_error('The ' . __FUNCTION__ . ' function is deprecated since August 1, 2018 and will be removed in Hybridauth 3.0.0.', E_USER_DEPRECATED);
+        @trigger_error('The ' . __METHOD__ . ' method is deprecated since August 1, 2018 and will be removed in Hybridauth 3.0.0.', E_USER_DEPRECATED);
         $status = is_string($status) ? ['message' => $status] : $status;
 
         $response = $this->apiRequest("{$pageId}/feed", 'POST', $status);
