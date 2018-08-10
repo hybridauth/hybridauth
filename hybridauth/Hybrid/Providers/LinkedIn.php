@@ -35,7 +35,14 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         if (is_array($this->scope)) {
             $this->scope = implode(" ", $this->scope);
         }
-        parent::loginBegin();
+        if (isset($this->scope)) {
+            $extra_params['scope'] = $this->scope;
+        }
+        if (!isset($this->state)) {
+            $this->state = hash("sha256",(uniqid(rand(), TRUE)));
+        }
+        $extra_params['state'] = $this->state;
+        Hybrid_Auth::redirect($this->api->authorizeUrl($extra_params));
     }
 
     /**
