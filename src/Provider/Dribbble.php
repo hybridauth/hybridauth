@@ -20,7 +20,7 @@ class Dribbble extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected $apiBaseUrl = 'https://api.dribbble.com/v1/';
+    protected $apiBaseUrl = 'https://api.dribbble.com/v2/';
 
     /**
     * {@inheritdoc}
@@ -35,7 +35,7 @@ class Dribbble extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected $apiDocumentation = 'http://developer.dribbble.com/v1/oauth/';
+    protected $apiDocumentation = 'http://developer.dribbble.com/v2/oauth/';
 
     /**
     * {@inheritdoc}
