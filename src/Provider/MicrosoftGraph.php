@@ -82,6 +82,7 @@ class MicrosoftGraph extends OAuth2
                 throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
             }
             foreach ($data->filter('value')->toArray() as $entry) {
+                $entry = new Data\Collection($entry);
                 $userContact              = new User\Contact();
                 $userContact->identifier  = $entry->get('id');
                 $userContact->displayName = $entry->get('displayName');
