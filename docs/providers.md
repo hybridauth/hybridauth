@@ -15,7 +15,7 @@ The table below lists the social networks and identity providers currently suppo
 
 Adapter Unique Name | Specs   | Authentication | User's Profile | User's Contacts | User's Status  | User's Activity Stream
 ------------------- | ------- | -------------- | -------------- | --------------- | -------------- | ----------------------
-Facebook            | OAuth2  | [X]            | [X]            | [X]             | [X]            | [X]
+Facebook            | OAuth2  | [X]            | [X]            | [X]             | Deprecated     | [X]
 Twitter             | OAuth1  | [X]            | [X]            | [X]             | [X]            | [X]
 Google              | OAuth2  | [X]            | [X]            | [X]             |                |
 GitHub              | OAuth2  | [X]            | [X]            |                 |                |
