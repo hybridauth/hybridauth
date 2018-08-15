@@ -20,22 +20,22 @@ class Tumblr extends OAuth1
     /**
     * {@inheritdoc}
     */
-    protected $apiBaseUrl = 'http://api.tumblr.com/v2/';
+    protected $apiBaseUrl = 'https://api.tumblr.com/v2/';
 
     /**
     * {@inheritdoc}
     */
-    protected $authorizeUrl = 'http://www.tumblr.com/oauth/authorize';
+    protected $authorizeUrl = 'https://www.tumblr.com/oauth/authorize';
 
     /**
     * {@inheritdoc}
     */
-    protected $requestTokenUrl = 'http://www.tumblr.com/oauth/request_token';
+    protected $requestTokenUrl = 'https://www.tumblr.com/oauth/request_token';
 
     /**
     * {@inheritdoc}
     */
-    protected $accessTokenUrl = 'http://www.tumblr.com/oauth/access_token';
+    protected $accessTokenUrl = 'https://www.tumblr.com/oauth/access_token';
 
     /**
     * {@inheritdoc}
