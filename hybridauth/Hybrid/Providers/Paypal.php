@@ -35,7 +35,7 @@ class Hybrid_Providers_Paypal extends Hybrid_Provider_Model
      * @var array $scope
      * @see https://developer.paypal.com/docs/integration/direct/identity/attributes
      */
-    public $scope = [];
+    public $scope = array();
 
     /**
      * The provider api client
