@@ -23,7 +23,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      * @link https://developers.facebook.com/docs/facebook-login/permissions
      * @var array $scope
      */
-    public $scope = ['email', 'public_profile'];
+    public $scope = array('email', 'public_profile');
 
     /**
      * Provider API client
@@ -212,7 +212,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      */
     function getUserProfile() {
         try {
-            $fields = [
+            $fields = array(
                 'id',
                 'name',
                 'first_name',
@@ -226,7 +226,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
                 'hometown',
                 'location',
                 'birthday'
-            ];
+            );
             $response = $this->api->get('/me?fields=' . implode(',', $fields), $this->token('access_token'));
             $data = $response->getDecodedBody();
         } catch (FacebookSDKException $e) {
@@ -284,7 +284,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         }
 
         $apiCall = '?fields=link,name';
-        $returnedContacts = [];
+        $returnedContacts = array();
         $pagedList = true;
 
         while ($pagedList) {
@@ -308,7 +308,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             $returnedContacts = array_merge($returnedContacts, $response['data']);
         }
 
-        $contacts = [];
+        $contacts = array();
         foreach ($returnedContacts as $item) {
 
             $uc = new Hybrid_User_Contact();
@@ -344,10 +344,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         }
 
         if (!$response || !count($response['data'])) {
-            return [];
+            return array();
         }
 
-        $activities = [];
+        $activities = array();
         foreach ($response['data'] as $item) {
 
             $ua = new Hybrid_User_Activity();

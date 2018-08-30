@@ -28,7 +28,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2 {
      *   If empty will be used YDN App scopes.
      * @see https://developer.yahoo.com/oauth2/guide/yahoo_scopes.
      */
-    public $scope = [];
+    public $scope = array();
 
     /**
      * {@inheritdoc}

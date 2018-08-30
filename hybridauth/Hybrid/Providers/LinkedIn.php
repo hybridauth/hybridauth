@@ -56,7 +56,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         $this->refreshToken();
 
         // https://developer.linkedin.com/docs/fields.
-        $fields = isset($this->config["fields"]) ? $this->config["fields"] : [
+        $fields = isset($this->config["fields"]) ? $this->config["fields"] : array(
             "id",
             "email-address",
             "first-name",
@@ -66,7 +66,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
             "industry",
             "picture-url",
             "public-profile-url",
-        ];
+        );
 
         $this->setHeaders();
         $response = $this->api->get(
