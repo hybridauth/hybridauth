@@ -16,7 +16,8 @@
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "firebase/php-jwt": "^5.0"
     },
     "require-dev": {
         "ext-curl": "*",
