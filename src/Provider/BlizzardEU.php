@@ -20,7 +20,7 @@ class BlizzardEU extends Blizzard
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://eu.api.battle.net/';
+    protected $apiBaseUrl = 'https://eu.battle.net/';
 
     /**
      * {@inheritdoc}

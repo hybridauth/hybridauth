@@ -25,7 +25,7 @@ class Blizzard extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://us.api.battle.net/';
+    protected $apiBaseUrl = 'https://us.battle.net/';
 
     /**
      * {@inheritdoc}
@@ -40,14 +40,14 @@ class Blizzard extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://dev.battle.net/docs/read/oauth';
+    protected $apiDocumentation = 'https://develop.battle.net/documentation';
 
     /**
      * {@inheritdoc}
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('account/user');
+        $response = $this->apiRequest('oauth/userinfo');
 
         $data = new Data\Collection($response);
 
