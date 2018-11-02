@@ -45,7 +45,7 @@ $tumblr->setUserStatus("Hello world!");
 
 <hr />
 
-**Facebook example :**
+**Facebook example (Deprecated since August 1, 2018) :**
 
 <pre>
 // Instantiate Facebook Adapter.

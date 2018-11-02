@@ -42,7 +42,7 @@ class Facebook extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'email, public_profile, user_friends, publish_actions';
+    protected $scope = 'email, public_profile';
 
     /**
      * {@inheritdoc}
@@ -128,7 +128,7 @@ class Facebook extends OAuth2
      */
     protected function fetchUserRegion(User\Profile $userProfile)
     {
-        if (! empty($userProfile->region)) {
+        if (!empty($userProfile->region)) {
             $regionArr = explode(',', $userProfile->region);
 
             if (count($regionArr) > 1) {
@@ -225,9 +225,13 @@ class Facebook extends OAuth2
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated since August 1, 2018. Scheduled for removal before Hybridauth 3.0.0.
+     *   See https://developers.facebook.com/docs/graph-api/changelog/breaking-changes#login-4-24 for more info.
      */
     public function setUserStatus($status, $pageId = 'me')
     {
+        @trigger_error('The ' . __METHOD__ . ' method is deprecated since August 1, 2018 and will be removed in Hybridauth 3.0.0.', E_USER_DEPRECATED);
         $status = is_string($status) ? ['message' => $status] : $status;
 
         $response = $this->apiRequest("{$pageId}/feed", 'POST', $status);

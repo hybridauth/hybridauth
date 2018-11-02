@@ -168,7 +168,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $openidAttributes = $this->openIdClient->getAttributes();
 
         if (! $this->openIdClient->identity) {
-            throw new UnexpectedApiResponseException('Provider returned an expected response.');
+            throw new UnexpectedApiResponseException('Provider returned an unexpected response.');
         }
 
         $userProfile = $this->fetchUserProfile($openidAttributes);
@@ -267,7 +267,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $userProfile = $this->storage->get($this->providerId . '.user');
 
         if (! is_object($userProfile)) {
-            throw new UnexpectedApiResponseException('Provider returned an expected response.');
+            throw new UnexpectedApiResponseException('Provider returned an unexpected response.');
         }
 
         return $userProfile;

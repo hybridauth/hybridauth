@@ -20,7 +20,7 @@ class BlizzardAPAC extends Blizzard
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://apac.api.battle.net/';
+    protected $apiBaseUrl = 'https://apac.battle.net/';
 
     /**
      * {@inheritdoc}
