@@ -44,7 +44,7 @@ class Steam extends OpenID
 
         $userProfile = $this->storage->get($this->providerId . '.user');
 
-        $userProfile->identifier = str_ireplace('http://steamcommunity.com/openid/id/', '', $userProfile->identifier);
+        $userProfile->identifier = str_ireplace(array('http://steamcommunity.com/openid/id/', 'https://steamcommunity.com/openid/id/'), '', $userProfile->identifier);
 
         if (! $userProfile->identifier) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
