@@ -27,6 +27,11 @@
            "Hybridauth\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+           "HybridauthTest\\Hybridauth\\": "test/"
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
