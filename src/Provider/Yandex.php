@@ -8,6 +8,7 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
+use Hybridauth\Exception\Exception;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
@@ -54,41 +55,16 @@ class Yandex extends OAuth2
     protected $accessTokenUrl = 'https://oauth.yandex.ru/token';
 
     /**
-     * {@inheritdoc}
-     */
-    public function hasAccessTokenExpired()
-    {
-        // As we using offline scope, $expired will be false.
-        $expired = $this->getStoredData('expires_in')
-            ? $this->getStoredData('expires_at') <= time()
-            : false;
-
-        return $expired;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function validateAccessTokenExchange($response)
-    {
-        $data = parent::validateAccessTokenExchange($response);
-
-        // Need to store user_id as token for later use.
-        $this->storeData('user_id', $data->get('user_id'));
-        $this->storeData('email', $data->get('email'));
-    }
-
-    /**
      * load the user profile from the IDp api client
      *
-     * @throws Exc
+     * @throws Exception
      */
     public function getUserProfile()
     {
 
         $this->scope = implode(',', []);
 
-        $response = $this->apiRequest($this->apiBaseUrl . "?format=json", 'GET');
+        $response = $this->apiRequest($this->apiBaseUrl . "?format=json");
 
         if (!isset($response->id)) {
             throw new UnexpectedApiResponseException("User profile request failed! {$this->providerId} returned an invalid response.", 6);
