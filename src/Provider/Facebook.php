@@ -181,12 +181,10 @@ class Facebook extends OAuth2
                 throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
             }
 
-            if ($data->filter('data')->isEmpty()) {
-                continue;
-            }
-
-            foreach ($data->filter('data')->toArray() as $item) {
-                $contacts[] = $this->fetchUserContact($item);
+            if (!$data->filter('data')->isEmpty()) {
+                foreach ($data->filter('data')->toArray() as $item) {
+                    $contacts[] = $this->fetchUserContact($item);
+                }
             }
 
             if ($data->filter('paging')->exists('next')) {
