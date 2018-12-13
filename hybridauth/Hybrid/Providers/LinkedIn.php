@@ -102,6 +102,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
      *   - content: A collection of fields describing the shared content.
      *   - comment: A comment by the member to associated with the share.
      *   - visibility: A collection of visibility information about the share.
+     * @param string $companyId (optional) User company id
      *
      * @return object
      *   An object containing:
@@ -110,7 +111,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
      * @throws Exception
      * @see https://developer.linkedin.com/docs/share-on-linkedin
      */
-    function setUserStatus($status) {
+    function setUserStatus($status, $companyId = null) {
         // Refresh tokens if needed.
         $this->setHeaders("token");
         $this->refreshToken();
@@ -122,8 +123,8 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
             }
 
             $this->setHeaders("share");
-            $response = $this->api->post(
-                "people/~/shares?format=json",
+            $url = $companyId ? "companies/{$companyId}/shares?format=json" : "people/~/shares?format=json";
+            $response = $this->api->post($url,
                 array(
                     "body" => $status,
                 )
