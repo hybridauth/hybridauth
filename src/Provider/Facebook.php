@@ -109,9 +109,7 @@ class Facebook extends OAuth2
         $userProfile->description = $data->get('about');
         $userProfile->email = $data->get('email');
 
-        /**
-         * Fallback for profile URL in case Facebook does not provide "pretty" link with username (if user set it).
-         */
+        // Fallback for profile URL in case Facebook does not provide "pretty" link with username (if user set it).
         if (empty($userProfile->profileURL)) {
             $userProfile->profileURL = $this->getProfileUrl($userProfile->identifier);
         }
@@ -373,7 +371,7 @@ class Facebook extends OAuth2
      * @param int $identity User ID.
      * @return string|null NULL when identity is not provided.
      */
-    public function getProfileUrl($identity)
+    protected function getProfileUrl($identity)
     {
         if (!is_numeric($identity)) {
             return null;
