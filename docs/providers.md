@@ -47,6 +47,7 @@ The table below lists the social networks and identity providers currently suppo
 |        WeChat       | OAuth2 |       [X]      |       [X]      |                 |               |                        |
 |     WindowsLive     | OAuth2 |       [X]      |       [X]      |       [X]       |               |                        |
 |      WordPress      | OAuth2 |       [X]      |       [X]      |                 |               |                        |
+|        Yandex       | OAuth2 |       [X]      |       [X]      |                 |               |                        |
 |        Yahoo        | OAuth2 |       [X]      |       [X]      |                 |               |                        |
 |     YahooOpenID     | OpenID |       [X]      |       [X]      |                 |               |                        |
 
