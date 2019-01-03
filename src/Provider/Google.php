@@ -20,7 +20,7 @@ use Hybridauth\User;
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'profile https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read',
+ *       'scope'    => 'https://www.googleapis.com/auth/userinfo.profile',
  *
  *        // google's custom auth url params
  *       'authorize_url_parameters' => [
@@ -50,12 +50,12 @@ class Google extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'profile https://www.googleapis.com/auth/plus.profile.emails.read';
+    public $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
     /**
     * {@inheritdoc}
     */
-    protected $apiBaseUrl = 'https://www.googleapis.com/plus/v1/';
+    protected $apiBaseUrl = 'https://www.googleapis.com/';
 
     /**
     * {@inheritdoc}
@@ -91,99 +91,36 @@ class Google extends OAuth2
 
     /**
     * {@inheritdoc}
+    *
+    * See: https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo
     */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('people/me');
+        $response = $this->apiRequest('oauth2/v3/userinfo');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (! $data->exists('sub')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
-        $userProfile->firstName   = $data->filter('name')->get('givenName');
-        $userProfile->lastName    = $data->filter('name')->get('familyName');
-        $userProfile->displayName = $data->get('displayName');
-        $userProfile->photoURL    = $data->get('image');
-        $userProfile->profileURL  = $data->get('url');
-        $userProfile->description = $data->get('aboutMe');
+        $userProfile->identifier  = $data->get('sub');
+        $userProfile->firstName   = $data->get('given_name');
+        $userProfile->lastName    = $data->get('family_name');
+        $userProfile->displayName = $data->get('name');
+        $userProfile->photoURL    = $data->get('picture');
+        $userProfile->profileURL  = $data->get('profile');
         $userProfile->gender      = $data->get('gender');
-        $userProfile->language    = $data->get('language');
+        $userProfile->language    = $data->get('locale');
         $userProfile->email       = $data->get('email');
-        $userProfile->phone       = $data->get('phone');
-        $userProfile->country     = $data->get('country');
-        $userProfile->region      = $data->get('region');
-        $userProfile->zip         = $data->get('zip');
 
-        $userProfile->emailVerified = $data->get('verified') ? $userProfile->email : '';
+        $userProfile->emailVerified = ($data->get('email_verified') === true || $data->get('email_verified') === 1) ? $userProfile->email : '';
 
-        if ($data->filter('image')->exists('url')) {
-            $photoSize = $this->config->get('photo_size') ?: '150';
-            $userProfile->photoURL = substr($data->filter('image')->get('url'), 0, -2) . $photoSize;
+        if ($this->config->get('photo_size')) {
+            $userProfile->photoURL .= '?sz=' . $this->config->get('photo_size');
         }
-
-        if (! $userProfile->email && $data->exists('emails')) {
-            $userProfile = $this->fetchUserEmail($userProfile, $data);
-        }
-
-        if (! $userProfile->profileURL && $data->exists('urls')) {
-            $userProfile = $this->fetchUserProfileUrl($userProfile, $data);
-        }
-
-        if (! $userProfile->profileURL && $data->exists('urls')) {
-            $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
-        }
-
-        return $userProfile;
-    }
-
-    /**
-    * Fetch user email
-    */
-    protected function fetchUserEmail(User\Profile $userProfile, Data\Collection $data)
-    {
-        foreach ($data->get('emails') as $email) {
-            if ('account' == $email->type) {
-                $userProfile->email         = $email->value;
-                $userProfile->emailVerified = $email->value;
-
-                break;
-            }
-        }
-
-        return $userProfile;
-    }
-
-    /**
-    * Fetch user profile url
-    */
-    protected function fetchUserProfileUrl(User\Profile $userProfile, Data\Collection $data)
-    {
-        foreach ($data->get('urls') as $url) {
-            if ($url->get('primary')) {
-                $userProfile->webSiteURL = $url->get('value');
-
-                break;
-            }
-        }
-
-        return $userProfile;
-    }
-
-    /**
-    * Fetch use birthday
-    */
-    protected function fetchBirthday(User\Profile $userProfile, $birthday)
-    {
-        $result = (new Data\Parser())->parseBirthday($birthday, '-');
-
-        $userProfile->birthDay   = (int) $result[0];
-        $userProfile->birthMonth = (int) $result[1];
-        $userProfile->birthYear  = (int) $result[2];
 
         return $userProfile;
     }
@@ -198,11 +135,6 @@ class Google extends OAuth2
         // Google Gmail and Android contacts
         if (false !== strpos($this->scope, '/m8/feeds/') || false !== strpos($this->scope, '/auth/contacts.readonly')) {
             return $this->getGmailContacts($parameters);
-        }
-
-        // Google social contacts
-        if (false !== strpos($this->scope, '/auth/plus.login')) {
-            return $this->getGplusContacts($parameters);
         }
     }
 
@@ -250,36 +182,6 @@ class Google extends OAuth2
 
                 $contacts[] = $uc;
             }
-        }
-
-        return $contacts;
-    }
-
-    /**
-    * Retrieve Google plus contacts
-    */
-    protected function getGplusContacts($parameters = [])
-    {
-        $contacts = [];
-
-        $url = 'https://www.googleapis.com/plus/v1/people/me/people/visible?'
-                    . http_build_query($parameters);
-
-        $response = $this->apiRequest($url);
-
-        $data = new Data\Collection($response);
-
-        foreach ($data->get('items') as $item) {
-            $userContact = new User\Contact();
-
-            $userContact->identifier  = $item->get('id');
-            $userContact->email       = $item->get('email');
-            $userContact->displayName = $item->get('displayName');
-            $userContact->description = $item->get('objectType');
-            $userContact->photoURL    = $item->filter('image')->get('url');
-            $userContact->profileURL  = $item->get('url');
-
-            $contacts[] = $userContact;
         }
 
         return $contacts;
