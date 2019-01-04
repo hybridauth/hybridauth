@@ -19,7 +19,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	 * default permissions
 	 * {@inheritdoc}
 	 */
-	public $scope = "https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.profile.emails.read https://www.google.com/m8/feeds/";
+	public $scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds/";
 
 	/**
 	 * {@inheritdoc}
@@ -72,122 +72,21 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 		// refresh tokens if needed
 		$this->refreshToken();
 
-		// ask google api for user infos
-		if (strpos($this->scope, '/auth/plus.profile.emails.read') !== false) {
-			$verified = $this->api->api("https://www.googleapis.com/plus/v1/people/me");
-
-			if (!isset($verified->id) || isset($verified->error))
-				$verified = new stdClass();
-		} else {
-			$verified = $this->api->api("https://www.googleapis.com/plus/v1/people/me/openIdConnect");
-
-			if (!isset($verified->sub) || isset($verified->error))
-				$verified = new stdClass();
-		}
-
-		$response = $this->api->api("https://www.googleapis.com/plus/v1/people/me");
-		if (!isset($response->id) || isset($response->error)) {
+		$response = $this->api->api("https://www.googleapis.com/oauth2/v3/userinfo");
+		if (!isset($response->sub) || isset($response->error)) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response:" . Hybrid_Logger::dumpData( $response ), 6);
 		}
 
-		$this->user->profile->identifier = (property_exists($verified, 'id')) ? $verified->id : ((property_exists($response, 'id')) ? $response->id : "");
-		$this->user->profile->firstName = (property_exists($response, 'name')) ? $response->name->givenName : "";
-		$this->user->profile->lastName = (property_exists($response, 'name')) ? $response->name->familyName : "";
-		$this->user->profile->displayName = (property_exists($response, 'displayName')) ? $response->displayName : "";
-		$this->user->profile->photoURL = (property_exists($response, 'image')) ? ((property_exists($response->image, 'url')) ? substr($response->image->url, 0, -2) . "200" : '') : '';
-		$this->user->profile->profileURL = (property_exists($response, 'url')) ? $response->url : "";
-		$this->user->profile->description = (property_exists($response, 'aboutMe')) ? $response->aboutMe : "";
+		$this->user->profile->identifier = (property_exists($response, 'sub')) ? $response->sub : "";
+		$this->user->profile->firstName = (property_exists($response, 'given_name')) ? $response->given_name : "";
+		$this->user->profile->lastName = (property_exists($response, 'family_name')) ? $response->family_name : "";
+		$this->user->profile->displayName = (property_exists($response, 'name')) ? $response->name : "";
+		$this->user->profile->photoURL = (property_exists($response, 'picture')) ? $response->picture : "";
+		$this->user->profile->profileURL = (property_exists($response, 'profile')) ? $response->profile : "";
 		$this->user->profile->gender = (property_exists($response, 'gender')) ? $response->gender : "";
-		$this->user->profile->language = (property_exists($response, 'locale')) ? $response->locale : ((property_exists($verified, 'locale')) ? $verified->locale : "");
-		$this->user->profile->email = (property_exists($response, 'email')) ? $response->email : ((property_exists($verified, 'email')) ? $verified->email : "");
-		$this->user->profile->emailVerified = (property_exists($verified, 'email')) ? $verified->email : "";
-		if (property_exists($response, 'emails')) {
-			if (count($response->emails) == 1) {
-				$this->user->profile->email = $response->emails[0]->value;
-			} else {
-				foreach ($response->emails as $email) {
-					if ($email->type == 'account') {
-						$this->user->profile->email = $email->value;
-						break;
-					}
-				}
-			}
-			if (property_exists($verified, 'emails')) {
-				if (count($verified->emails) == 1) {
-					$this->user->profile->emailVerified = $verified->emails[0]->value;
-				} else {
-					foreach ($verified->emails as $email) {
-						if ($email->type == 'account') {
-							$this->user->profile->emailVerified = $email->value;
-							break;
-						}
-					}
-				}
-			}
-		}
-		$this->user->profile->phone = (property_exists($response, 'phone')) ? $response->phone : "";
-		$this->user->profile->country = (property_exists($response, 'country')) ? $response->country : "";
-		$this->user->profile->region = (property_exists($response, 'region')) ? $response->region : "";
-		$this->user->profile->zip = (property_exists($response, 'zip')) ? $response->zip : "";
-		if (property_exists($response, 'placesLived')) {
-			$this->user->profile->city = "";
-			$this->user->profile->address = "";
-			foreach ($response->placesLived as $c) {
-				if (property_exists($c, 'primary')) {
-					if ($c->primary == true) {
-						$this->user->profile->address = $c->value;
-						$this->user->profile->city = $c->value;
-						break;
-					}
-				} else {
-					if (property_exists($c, 'value')) {
-						$this->user->profile->address = $c->value;
-						$this->user->profile->city = $c->value;
-					}
-				}
-			}
-		}
-
-		// google API returns multiple urls, but a "website" only if it is verified
-		// see http://support.google.com/plus/answer/1713826?hl=en
-		if (property_exists($response, 'urls')) {
-			foreach ($response->urls as $u) {
-				if (property_exists($u, 'primary') && $u->primary == true)
-					$this->user->profile->webSiteURL = $u->value;
-			}
-		} else {
-			$this->user->profile->webSiteURL = '';
-		}
-		// google API returns age ranges min and/or max as of https://developers.google.com/+/web/api/rest/latest/people#resource
-		if (property_exists($response, 'ageRange')) {
-			if (property_exists($response->ageRange, 'min') && property_exists($response->ageRange, 'max')) {
-				$this->user->profile->age = $response->ageRange->min . ' - ' . $response->ageRange->max;
-			} else {
-				if (property_exists($response->ageRange, 'min')) {
-					$this->user->profile->age = '>= ' . $response->ageRange->min;
-				} else {
-					if (property_exists($response->ageRange, 'max')) {
-						$this->user->profile->age = '<= ' . $response->ageRange->max;
-					} else {
-						$this->user->profile->age = '';
-					}
-				}
-			}
-		} else {
-			$this->user->profile->age = '';
-		}
-		// google API returns birthdays only if a user set 'show in my account'
-		if (property_exists($response, 'birthday')) {
-			list($birthday_year, $birthday_month, $birthday_day) = explode('-', $response->birthday);
-
-			$this->user->profile->birthDay = (int) $birthday_day;
-			$this->user->profile->birthMonth = (int) $birthday_month;
-			$this->user->profile->birthYear = (int) $birthday_year;
-		} else {
-			$this->user->profile->birthDay = 0;
-			$this->user->profile->birthMonth = 0;
-			$this->user->profile->birthYear = 0;
-		}
+		$this->user->profile->language = (property_exists($response, 'locale')) ? $response->locale : "";
+		$this->user->profile->email = (property_exists($response, 'email')) ? $response->email : "";
+		$this->user->profile->emailVerified = (property_exists($response, 'email_verified')) ? ($response->email_verified === true || $response->email_verified === 1 ? $response->email : "") : "";
 
 		return $this->user->profile;
 	}
@@ -252,31 +151,6 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 					
 					$contacts[] = $uc;
 				}
-			}
-		}
-		
-		// Google social contacts
-		if (strpos($this->scope, '/auth/plus.login') !== false) {
-			
-			$response = $this->api->api("https://www.googleapis.com/plus/v1/people/me/people/visible?"
-					. http_build_query($this->config['contacts_param']));
-			
-			if (!$response) {
-				return array();
-			}
-			
-			foreach ($response->items as $idx => $item) {
-				$uc = new Hybrid_User_Contact();
-				$uc->email = (property_exists($item, 'email')) ? $item->email : '';
-				$uc->displayName = (property_exists($item, 'displayName')) ? $item->displayName : '';
-				$uc->identifier = (property_exists($item, 'id')) ? $item->id : '';
-				
-				$uc->description = (property_exists($item, 'objectType')) ? $item->objectType : '';
-				$uc->photoURL = (property_exists($item, 'image')) ? ((property_exists($item->image, 'url')) ? $item->image->url : '') : '';
-				$uc->profileURL = (property_exists($item, 'url')) ? $item->url : '';
-				$uc->webSiteURL = '';
-				
-				$contacts[] = $uc;
 			}
 		}
 		
