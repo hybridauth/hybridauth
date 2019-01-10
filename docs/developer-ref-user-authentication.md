@@ -59,11 +59,12 @@ $config = [
     * Hybridauth allows you to overwrite all the provider's API end point, which might be useful in some cases like when
     * there is a need to use a different API version for example.
     */
-    'endpoints' => [
-        'api_base_url'     => 'https://www.googleapis.com/plus/v1/',
-        'authorize_url'    => 'https://accounts.google.com/o/oauth2/auth',
+    'endpoints' => new Hybridauth\Data\Collection([
+        'api_base_url' => 'https://www.googleapis.com/plus/v1/',
+        'authorize_url' => 'https://accounts.google.com/o/oauth2/auth',
         'access_token_url' => 'https://accounts.google.com/o/oauth2/token',
-    ],
+    ]),
+
 
     /**
     * Optional: Custom Provider's Authorize Url Parameters
