@@ -82,15 +82,15 @@
             </tr>
             <tr>
               <td><strong>&nbsp;IDp URL</strong></td>
-              <td>http://www.google.com/</td>
+              <td>https://www.google.com/</td>
             </tr>
             <tr>
               <td><strong>&nbsp;Keys registeration</strong></td>
-              <td>https://code.google.com/apis/console/</td>
+              <td>https://console.developers.google.com/cloud-resource-manager</td>
             </tr>
             <tr>
               <td><strong>&nbsp;Dev documentation</strong></td>
-              <td>https://developers.google.com/+/web/api/rest/oauth</td>
+              <td>https://developers.google.com/identity/sign-in/web/sign-in</td>
             </tr>
             <tr>
               <td><strong>&nbsp;Since</strong></td>
@@ -114,9 +114,6 @@
         "Google" => array (
           "enabled" => true,
           "keys"    => array ( "id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE" ),
-          "scope"   => "https://www.googleapis.com/auth/plus.login ". // optional
-                       "https://www.googleapis.com/auth/plus.me ". // optional
-                       "https://www.googleapis.com/auth/plus.profile.emails.read", // optional
           "access_type"     => "offline",   // optional
           "approval_prompt" => "force",     // optional
           "hd"              => "domain.com" // optional
@@ -134,9 +131,6 @@
           For <strong>Google</strong> you can configure several extra options: (refer to <a href="https://developers.google.com/accounts/docs/OAuth2WebServer#formingtheurl">https://developers.google.com/accounts/docs/OAuth2WebServer#formingtheurl</a>")
         </p>
         <ul>
-        	<li>
-            <code>scope</code>: A space delimited set of <a href="https://developers.google.com/+/web/api/rest/oauth#authorization-scopes" target="help">permissions</a> the application requests. Indicates the Google API access your application is requesting.
-        	</li>
         	<li>
             <code>access_type</code>: Can be "online or offline". By default its set to "offline". Indicates if your application needs to access a Google API when the user is not present at the browser.
         	</li>
@@ -157,16 +151,6 @@
         <ol>
           <li>Go to the <a href="https://console.developers.google.com/apis/library?project=_" target="dev-console">Google Developers Console.</a></li>
           <li>From the project drop-down, select a <a href="https://support.google.com/cloud/answer/6158853" target="help">project</a>, or create a new one.</li>
-          <li>Enable the <b>Google+ API</b> service:
-            <ol>
-              <li>In the list of Google APIs, search for the <b>Google+ API</b> service.</li>
-              <li>Select <b>Google+ API</b> from the results list.</li>
-              <li>Press the <b>Enable API</b> button.</li>
-            </ol>
-            When the process completes, <i>Google+ API</i> appears in the list of enabled APIs.
-            To access, select <b>API Manager</b> on the left sidebar menu, then select the
-            <b>Enabled APIs</b> tab.
-          </li>
           <li>In the sidebar under "API Manager", select <b>Credentials</b>.</li>
           <li>In the Credentials tab, select the <b>New credentials</b> drop-down list, and choose <b>OAuth client ID</b>.</li>
           <li>From the <b>Application type</b> list, choose the <b>Web application</b>.</li>
