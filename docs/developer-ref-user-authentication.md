@@ -60,10 +60,11 @@ $config = [
     * there is a need to use a different API version for example.
     */
     'endpoints' => [
-        'api_base_url'     => 'https://www.googleapis.com/plus/v1/',
-        'authorize_url'    => 'https://accounts.google.com/o/oauth2/auth',
+        'api_base_url' => 'https://www.googleapis.com/plus/v1/',
+        'authorize_url' => 'https://accounts.google.com/o/oauth2/auth',
         'access_token_url' => 'https://accounts.google.com/o/oauth2/token',
     ],
+
 
     /**
     * Optional: Custom Provider's Authorize Url Parameters
