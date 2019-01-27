@@ -113,8 +113,10 @@ class Foursquare extends OAuth2
     }
 
     /**
-    *
-    */
+     * @param $item
+     *
+     * @return User\Contact
+     */
     protected function fetchUserContact($item)
     {
         $photoSize = $this->config->get('photo_size') ?: '150x150';

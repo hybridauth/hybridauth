@@ -139,8 +139,12 @@ class Google extends OAuth2
     }
 
     /**
-    * Retrieve Gmail contacts
-    */
+     * Retrieve Gmail contacts
+     *
+     * @param array $parameters
+     *
+     * @return array
+     */
     protected function getGmailContacts($parameters = [])
     {
         $url = 'https://www.google.com/m8/feeds/contacts/default/full?'

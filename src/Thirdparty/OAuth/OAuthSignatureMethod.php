@@ -7,6 +7,11 @@
 
 namespace Hybridauth\Thirdparty\OAuth;
 
+/**
+ * Class OAuthSignatureMethod
+ *
+ * @package Hybridauth\Thirdparty\OAuth
+ */
 abstract class OAuthSignatureMethod
 {
     /**

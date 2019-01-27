@@ -7,8 +7,18 @@
 
 namespace Hybridauth\Thirdparty\OAuth;
 
+/**
+ * Class OAuthUtil
+ *
+ * @package Hybridauth\Thirdparty\OAuth
+ */
 class OAuthUtil
 {
+    /**
+     * @param $input
+     *
+     * @return array|mixed|string
+     */
     public static function urlencode_rfc3986($input)
     {
         if (is_array($input)) {
@@ -26,6 +36,11 @@ class OAuthUtil
     // This decode function isn't taking into consideration the above
     // modifications to the encoding process. However, this method doesn't
     // seem to be used anywhere so leaving it as is.
+    /**
+     * @param $string
+     *
+     * @return string
+     */
     public static function urldecode_rfc3986($string)
     {
         return urldecode($string);
@@ -36,6 +51,12 @@ class OAuthUtil
     // Can filter out any non-oauth parameters if needed (default behaviour)
     // May 28th, 2010 - method updated to tjerk.meesters for a speed improvement.
     // see http://code.google.com/p/oauth/issues/detail?id=163
+    /**
+     * @param      $header
+     * @param bool $only_allow_oauth_parameters
+     *
+     * @return array
+     */
     public static function split_header($header, $only_allow_oauth_parameters = true)
     {
         $params = array();
@@ -51,6 +72,10 @@ class OAuthUtil
     }
     
     // helper to try to sort out headers for people who aren't running apache
+
+    /**
+     * @return array
+     */
     public static function get_headers()
     {
         if (function_exists('apache_request_headers')) {
@@ -94,6 +119,11 @@ class OAuthUtil
     // This function takes a input like a=b&a=c&d=e and returns the parsed
     // parameters like this
     // array('a' => array('b','c'), 'd' => 'e')
+    /**
+     * @param $input
+     *
+     * @return array
+     */
     public static function parse_parameters($input)
     {
         if (!isset($input) || !$input) {
@@ -128,6 +158,11 @@ class OAuthUtil
         return $parsed_parameters;
     }
 
+    /**
+     * @param $params
+     *
+     * @return string
+     */
     public static function build_http_query($params)
     {
         if (!$params) {

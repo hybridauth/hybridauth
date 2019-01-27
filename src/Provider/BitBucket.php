@@ -78,8 +78,12 @@ class BitBucket extends OAuth2
     }
 
     /**
-    * Request user email
-    */
+     * Request user email
+     *
+     * @param $userProfile
+     *
+     * @return User\Profile
+     */
     protected function requestUserEmail($userProfile)
     {
         $response = $this->apiRequest('user/emails');

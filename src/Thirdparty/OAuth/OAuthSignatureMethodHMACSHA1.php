@@ -7,13 +7,28 @@
 
 namespace Hybridauth\Thirdparty\OAuth;
 
+/**
+ * Class OAuthSignatureMethodHMACSHA1
+ *
+ * @package Hybridauth\Thirdparty\OAuth
+ */
 class OAuthSignatureMethodHMACSHA1 extends OAuthSignatureMethod
 {
+    /**
+     * @return string
+     */
     public function get_name()
     {
         return "HMAC-SHA1";
     }
 
+    /**
+     * @param $request
+     * @param $consumer
+     * @param $token
+     *
+     * @return string
+     */
     public function build_signature($request, $consumer, $token)
     {
         $base_string = $request->get_signature_base_string();
