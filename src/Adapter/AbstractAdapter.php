@@ -315,15 +315,15 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * Overwrite Adapter's API endpoints
      *
-     * @param array $endpoints
+     * @param array|Data\Collection $endpoints
      */
-    protected function setApiEndpoints(array $endpoints = [])
+    protected function setApiEndpoints($endpoints = null)
     {
         if (empty($endpoints)) {
             return;
         }
 
-        $collection = new Data\Collection($endpoints);
+        $collection = is_array($endpoints) ? new Data\Collection($endpoints) : $endpoints;
 
         $this->apiBaseUrl = $collection->get('api_base_url') ?: $this->apiBaseUrl;
         $this->authorizeUrl = $collection->get('authorize_url') ?: $this->authorizeUrl;
