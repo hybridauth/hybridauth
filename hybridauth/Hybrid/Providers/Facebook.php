@@ -24,6 +24,14 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      * @var array $scope
      */
     public $scope = array('email', 'public_profile');
+    
+    /**
+     * Default display window size
+     * by default facebook login will open in page size window possible size definitions are 
+     * page|popup
+     * @var string $display
+     */
+    public $display = 'page';
 
     /**
      * Provider API client
@@ -50,7 +58,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             $scope = array_map('trim', $scope);
             $this->scope = $scope;
         }
-
+        if (isset($this->config['display']) && in_array($this->config['display'],['page', 'popup'])) {
+            $this->display = $this->config['display'];
+        }
         $trustForwarded = isset($this->config['trustForwarded']) ? (bool)$this->config['trustForwarded'] : false;
 
         // Include 3rd-party SDK.
@@ -74,6 +84,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
         // Use re-request, because this will trigger permissions window if not all permissions are granted.
         $url = $helper->getReRequestUrl($this->endpoint, $this->scope);
+        if ($this->display == 'popup'){
+            $url .= "display=popup";
+        }
 
         // Redirect to Facebook
         Hybrid_Auth::redirect($url);
