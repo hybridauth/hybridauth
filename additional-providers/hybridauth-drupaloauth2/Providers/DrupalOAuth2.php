@@ -54,6 +54,7 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
    */
   function loginBegin()
   {
+
     if (!isset($this->state)) {
       $this->state = md5(uniqid(rand(), TRUE));
     }
@@ -116,7 +117,6 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
   function post($url) {
     $this->api->curl_header =
       array(
-	    'Authorization: Bearer ' . $this->api->access_token,
 	    'Content-Type: application/x-www-form-urlencoded',
 	    'Accept: application/json',
 	    );
@@ -132,12 +132,16 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
     $this->refreshToken();
 
     // Get user profile.
-    $response = $this->post('/oauth2/user/profile');
-    if (!isset($response->uid)) {
+    $response = $this->post('/oauth2/userinfo');
+    if (!isset($response->sub)) {
       throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
     }
     // Covert the response to an array.
     $response = json_decode(json_encode($response), true);
+
+    //insert profileURL that is missing from $response
+    $base_url = substr($this->config['oauth2_server'],-1) == '/' ? $this->config['oauth2_server'] : $this->config['oauth2_server'] . '/';
+    $response['profileURL'] = $base_url . 'user/' . $response['sub'];
 
     // Get profile field mappings.
     // Config settings will override default settings.
@@ -147,12 +151,13 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
       $fields += $this->config['profile_fields'];
     }
     $fields += array(
-      'identifier' => 'uid',
-      'displayName' => 'name',
-      'photoURL' => 'picture.url',
-      'email' => 'mail',
-      'emailVerified' => 'mail',
-      'language' => 'language',
+      'identifier' => 'sub',
+      'username' => 'name',
+      'photoURL' => 'photoURL',
+      'emailVerified' => 'email',
+      'email' => 'email',
+      'language' => 'locale',
+      'profileURL' => 'profileURL',
     );
 
     // Match the fields of the returned data with
@@ -170,7 +175,6 @@ class Hybrid_Providers_DrupalOAuth2 extends Hybrid_Provider_Model_OAuth2
         }
         else {
           $value = NULL;
-          break;
         }
         $profile->$field = $value;
       }
