@@ -39,7 +39,7 @@ class OAuth2Client
 
   public $http_code             = "";
   public $http_info             = "";
-  protected $response           = null;
+  public $response           = null;
 
   //--
 
@@ -202,7 +202,7 @@ class OAuth2Client
 
   // -- utilities
 
-  private function request( $url, $params=false, $type="GET" )
+  public function request( $url, $params=false, $type="GET" )
   {
     Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
     Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
