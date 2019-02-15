@@ -132,7 +132,7 @@ class OAuth2Client
       $url = $this->api_base_url . $url;
     }
 
-    $parameters[$this->sign_token_name] = $this->access_token;
+    //$parameters[$this->sign_token_name] = $this->access_token;
     $response = null;
 
     switch( $method ){
@@ -207,9 +207,9 @@ class OAuth2Client
     Hybrid_Logger::info( "Enter OAuth2Client::request( $url )" );
     Hybrid_Logger::debug( "OAuth2Client::request(). dump request params: ", serialize( $params ) );
 
-	$urlEncodedParams = http_build_query($params, '', '&');
+    $urlEncodedParams = http_build_query($params, '', '&');
 
-    if( $type == "GET" ){
+    if( $type == "GET" && !empty($urlEncodedParams) ){
       $url = $url . ( strpos( $url, '?' ) ? '&' : '?' ) . $urlEncodedParams;
     }
 

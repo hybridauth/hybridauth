@@ -1,5 +1,5 @@
 {
-    "name": "hybridauth/hybridauth",
+    "name": "ym-careers/hybridauth",
     "description": "Open source social sign on PHP library.",
     "keywords": ["hybridauth", "login", "oauth", "social", "openid", "facebook", "google", "twitter", "yahoo"],
     "homepage": "http://hybridauth.sourceforge.net",
@@ -7,8 +7,8 @@
     "license": "(MIT or GPL-3.0+)",
     "authors": [
         {
-            "name": "Miled",
-            "email": "hybridauth@gmail.com"
+            "name": "ajay tidake",
+            "email": "ajay.tidake@communitybrands.com"
         }
     ],
     "support": {

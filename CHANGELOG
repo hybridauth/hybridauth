@@ -1,1 +1,8 @@
 see https://github.com/hybridauth/hybridauth/releases
+
+v2.13.1 
+Files affected
+/var/www/html/hybridauthnew/hybridauth/hybridauth/Hybrid/Providers/LinkedIn.php
+/var/www/html/hybridauthnew/hybridauth/hybridauth/Hybrid/thirdparty/OAuth/OAuth2Client.php
+
+Files modified for LinkedIn v2 API

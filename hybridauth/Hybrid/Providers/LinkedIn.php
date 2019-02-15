@@ -14,7 +14,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
     /**
      * {@inheritdoc}
      */
-    public $scope = "r_basicprofile r_emailaddress";
+    public $scope = "r_liteprofile r_emailaddress";
 
     /**
      * {@inheritdoc}
@@ -23,7 +23,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         parent::initialize();
 
         // Provider api end-points.
-        $this->api->api_base_url = "https://api.linkedin.com/v1/";
+        $this->api->api_base_url = "https://api.linkedin.com/v2/";
         $this->api->authorize_url = "https://www.linkedin.com/oauth/v2/authorization";
         $this->api->token_url = "https://www.linkedin.com/oauth/v2/accessToken";
     }
@@ -58,36 +58,33 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
         // https://developer.linkedin.com/docs/fields.
         $fields = isset($this->config["fields"]) ? $this->config["fields"] : array(
             "id",
-            "email-address",
-            "first-name",
-            "last-name",
-            "headline",
-            "location",
-            "industry",
-            "picture-url",
-            "public-profile-url",
+            "firstName",
+            "lastName"
         );
 
         $this->setHeaders();
+        
+        // Request for r_liteprofile
         $response = $this->api->get(
-            "people/~:(" . implode(",", $fields) . ")",
-            array(
-                "format" => "json",
-            )
+            "me?fields=" . implode(",", $fields)
         );
-
+        // Request for r_emailaddress
+        $emailresponse = json_decode(
+            json_encode(
+                $this->api->get(
+                    "emailAddress?q=members&projection=(elements*(handle~))"
+                )
+            ), true
+        );
+        
         if (!isset($response->id)) {
             throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData($response), 6);
         }
 
         $this->user->profile->identifier = isset($response->id) ? $response->id : "";
-        $this->user->profile->firstName = isset($response->firstName) ? $response->firstName : "";
-        $this->user->profile->lastName = isset($response->lastName) ? $response->lastName : "";
-        $this->user->profile->photoURL = isset($response->pictureUrl) ? $response->pictureUrl : "";
-        $this->user->profile->profileURL = isset($response->publicProfileUrl) ? $response->publicProfileUrl : "";
-        $this->user->profile->email = isset($response->emailAddress) ? $response->emailAddress : "";
-        $this->user->profile->description = isset($response->headline) ? $response->headline : "";
-        $this->user->profile->country = isset($response->location) ? $response->location->name : "";
+        $this->user->profile->firstName = isset($response->firstName->localized->en_US) ? $response->firstName->localized->en_US : "";
+        $this->user->profile->lastName = isset($response->lastName->localized->en_US) ? $response->lastName->localized->en_US : "";
+        $this->user->profile->email = isset($emailresponse['elements'][0]['handle~']['emailAddress']) ? $emailresponse['elements'][0]['handle~']['emailAddress'] : "";
         $this->user->profile->emailVerified = $this->user->profile->email;
         $this->user->profile->displayName = trim($this->user->profile->firstName . " " . $this->user->profile->lastName);
 
@@ -149,6 +146,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
      * @return void
      */
     private function setHeaders($api_type = null) {
+        
         $this->api->curl_header = array(
             "Authorization: Bearer {$this->api->access_token}",
         );
