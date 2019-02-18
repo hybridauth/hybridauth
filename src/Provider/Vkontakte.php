@@ -11,6 +11,8 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
+use Hybridauth\Data;
+use Hybridauth\User;
 
 /**
  * Vkontakte provider adapter.
@@ -83,6 +85,25 @@ class Vkontakte extends OAuth2
     }
 
     /**
+     * Parse the user contact.
+     *
+     * @param array $item
+     *
+     * @return \Hybridauth\User\Contact
+     */
+    protected function fetchUserContact($item)
+    {
+        $userContact = new User\Contact();
+
+        $item = new Data\Collection($item);
+
+        $userContact->identifier = $item->get('id');
+        $userContact->displayName = sprintf('%s %s', $item->get('first_name'), $item->get('last_name'));
+
+        return $userContact;
+    }
+
+    /**
     * {@inheritdoc}
     */
     public function getUserProfile()
@@ -129,6 +150,35 @@ class Vkontakte extends OAuth2
         }
 
         return $userProfile;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserContacts()
+    {
+        $contacts = [];
+
+        $parameters = [
+            'user_id' => $this->getStoredData('user_id'),
+            'fields' => 'uid,name',
+            'v' => '5.92',
+            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
+        ];
+
+        $response = $this->apiRequest('friends.get', 'GET', $parameters);
+
+        $data = new Data\Collection($response);
+        if (!$data->exists('response') ) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
+        if (!$data->filter('response')->filter('items')->isEmpty()) {
+            foreach ($data->filter('response')->filter('items')->toArray() as $item) {
+                $contacts[] = $this->fetchUserContact($item);
+            }
+        }
+
+        return $contacts;
     }
 
 }
