@@ -122,9 +122,11 @@ class Yahoo extends OAuth2
 
         // E-mail is returned only with sdpp-w scope ( Read/Write (Public and Private) )
         foreach ($data->filter('emails')->toArray() as $item) {
-            if ($item->primary) {
-                $userProfile->email         = $item->handle;
-                $userProfile->emailVerified = $item->handle;
+            $item = new Data\Collection($item);
+
+            if ($item->get('primary')) {
+                $userProfile->email = $item->get('handle');
+                $userProfile->emailVerified = $item->get('handle');
             }
         }
 
