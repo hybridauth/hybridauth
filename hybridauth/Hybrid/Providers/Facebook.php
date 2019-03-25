@@ -59,7 +59,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         $this->api = new FacebookSDK([
             'app_id' => $this->config["keys"]["id"],
             'app_secret' => $this->config["keys"]["secret"],
-            'default_graph_version' => 'v2.8',
+            'default_graph_version' => !empty($this->config['default_graph_version']) ? $this->config['default_graph_version'] : 'v2.12',
             'trustForwarded' => $trustForwarded,
         ]);
     }
