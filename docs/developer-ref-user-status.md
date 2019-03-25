@@ -75,7 +75,7 @@ $facebook->setUserStatus([
 
 **LinkedIn example :**
 
-LinkedIn supports few [extra parameters](https://developer.linkedin.com/docs/share-on-linkedin) when posting a new user status:
+LinkedIn supports few [extra parameters](https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin) when posting a new user status:
 
 <pre>
 // Instantiate LinkedIn Adapter.
@@ -85,16 +85,6 @@ $linkedin = new Hybridauth\Provider\LinkedIn($config);
 $linkedin->authenticate();
 
 // Update the user status.
-$linkedin->setUserStatus([
-    'comment' => 'Check out developer.linkedin.com!',
-    'content' => [
-        'title' => 'LinkedIn Developers Resources',
-        'description' => "Leverage LinkedIn's APIs to maximize engagement",
-        'submitted-url' => 'https://developer.linkedin.com',
-        'submitted-image-url' => 'https://example.com/logo.png',
-    ],
-    'visibility' => [
-        'code' => 'anyone',
-     ],
-]);
+$profile = $linkedin->getUserProfile();
+$linkedin->setUserStatus('Check out developer.linkedin.com!', $profile->identifier);
 </pre>
