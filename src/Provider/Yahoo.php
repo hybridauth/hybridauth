@@ -20,7 +20,7 @@ class Yahoo extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected $scope = 'sdps-r';
+    protected $scope = 'sdpp-w';
 
     /**
     * {@inheritdoc}
@@ -120,11 +120,13 @@ class Yahoo extends OAuth2
             $userProfile->gender = 'male';
         }
 
-        // I ain't getting no emails on my tests. go figures..
+        // E-mail is returned only with sdpp-w scope ( Read/Write (Public and Private) )
         foreach ($data->filter('emails')->toArray() as $item) {
-            if ($data->get('primary')) {
-                $userProfile->email         = $data->get('handle');
-                $userProfile->emailVerified = $data->get('handle');
+            $item = new Data\Collection($item);
+
+            if ($item->get('primary')) {
+                $userProfile->email = $item->get('handle');
+                $userProfile->emailVerified = $item->get('handle');
             }
         }
 
