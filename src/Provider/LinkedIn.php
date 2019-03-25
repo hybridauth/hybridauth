@@ -20,12 +20,12 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'r_basicprofile r_emailaddress w_share';
+    public $scope = 'r_liteprofile r_emailaddress w_member_social';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://api.linkedin.com/v1/';
+    protected $apiBaseUrl = 'https://api.linkedin.com/v2/';
 
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://developer.linkedin.com/docs/oauth2';
+    protected $apiDocumentation = 'https://docs.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow';
 
     /**
      * {@inheritdoc}
@@ -49,22 +49,13 @@ class LinkedIn extends OAuth2
     {
         $fields = [
             'id',
-            'email-address',
-            'first-name',
-            'last-name',
-            'headline',
-            'location',
-            'industry',
-            'picture-url',
-            'public-profile-url',
-            'num-connections',
+            'firstName',
+            'lastName',
+            'profilePicture(displayImage~:playableStreams)',
         ];
 
-        if ($this->config->get('photo_size') === 'original') {
-            $fields[] = 'picture-urls::(original)';
-        }
 
-        $response = $this->apiRequest('people/~:(' . implode(',', $fields) . ')', 'GET', ['format' => 'json']);
+        $response = $this->apiRequest('me?projection=(' . implode(',', $fields) . ')');
         $data     = new Data\Collection($response);
 
         if (!$data->exists('id')) {
@@ -74,48 +65,96 @@ class LinkedIn extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier  = $data->get('id');
-        $userProfile->firstName   = $data->get('firstName');
-        $userProfile->lastName    = $data->get('lastName');
-        $userProfile->photoURL    = $data->get('pictureUrl');
-        $userProfile->profileURL  = $data->get('publicProfileUrl');
-        $userProfile->email       = $data->get('emailAddress');
-        $userProfile->description = $data->get('headline');
-        $userProfile->country     = $data->filter('location')->get('name');
-
-        if ($this->config->get('photo_size') === 'original') {
-            $originals = $data->get('pictureUrls');
-            if (!empty($originals->values)) {
-                $userProfile->photoURL = $originals->values[0];
-            }
-        }
-
+        $userProfile->firstName   = $data->filter('firstName')->filter('localized')->get('en_US');
+        $userProfile->lastName    = $data->filter('lastName')->filter('localized')->get('en_US');
+        $userProfile->photoURL    = $this->getUserPhotoUrl($data->filter('profilePicture')->filter('displayImage~')->get('elements'));
+        $userProfile->email       = $this->getUserEmail();
         $userProfile->emailVerified = $userProfile->email;
 
         $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
-
-        $userProfile->data['connections'] = $data->get('numConnections');
 
         return $userProfile;
     }
 
     /**
+     * Returns a user photo.
+     *
+     * @param array $elements
+     *   List of file identifiers related to this artifact.
+     *
+     * @return string
+     *   The user photo URL.
+     *
+     * @see https://docs.microsoft.com/en-us/linkedin/shared/references/v2/profile/profile-picture
+     */
+    public function getUserPhotoUrl($elements)
+    {
+        if (is_array($elements)) {
+            // Get the largest picture from the list which is the last one.
+            $element = end($elements);
+            if (!empty($element->identifiers)) {
+                return reset($element->identifiers)->identifier;
+            }
+        }
+
+        return NULL;
+    }
+
+    /**
+     * Returns an email address of user.
+     *
+     * @return string
+     *   The user email address.
+     */
+    public function getUserEmail()
+    {
+        $response = $this->apiRequest('emailAddress?q=members&projection=(elements*(handle~))');
+        $data     = new Data\Collection($response);
+
+        foreach ($data->filter('elements')->toArray() as $element) {
+            $item = new Data\Collection($element);
+
+            if ($email = $item->filter('handle~')->get('emailAddress')) {
+                return $email;
+            }
+        }
+
+        return NULL;
+    }
+
+    /**
      * {@inheritdoc}
      *
-     * @see https://developer.linkedin.com/docs/share-on-linkedin
+     * @see https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin
      */
-    public function setUserStatus($status)
+    public function setUserStatus($status, $userID = null)
     {
-        $status = is_string($status) ? ['comment' => $status] : $status;
-        if (!isset($status['visibility'])) {
-            $status['visibility']['code'] = 'anyone';
+        if (is_string($status)) {
+            $status = [
+                'author' => 'urn:li:person:' . $userID,
+                'lifecycleState' => 'PUBLISHED',
+                'specificContent' => [
+                    'com.linkedin.ugc.ShareContent' => [
+                        'shareCommentary' => [
+                            'text' => $status,
+                        ],
+                        'shareMediaCategory' => 'NONE',
+                    ],
+                ],
+                'visibility' => [
+                    'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC',
+                ],
+            ];
         }
+
 
         $headers = [
             'Content-Type' => 'application/json',
             'x-li-format'  => 'json',
+            'X-Restli-Protocol-Version'  => '2.0.0',
         ];
 
-        $response = $this->apiRequest('people/~/shares?format=json', 'POST', $status, $headers);
+        $response = $this->apiRequest("ugcPosts", 'POST', $status, $headers);
 
         return $response;
     }
