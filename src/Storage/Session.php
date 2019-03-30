@@ -19,22 +19,28 @@ class Session implements StorageInterface
      *
      * @var string
      */
-    protected $storeNamespace = 'HYBRIDAUTH::STORAGE';
+    protected $storeNamespace;
 
     /**
      * Key prefix
      *
      * @var string
      */
-    protected $keyPrefix = '';
+    protected $keyPrefix;
 
     /**
     * Initiate a new session
     *
+    * @param string $storeNamespace
+    * @param string $keyPrefix
+    *
     * @throws RuntimeException
     */
-    public function __construct()
+    public function __construct($storeNamespace = 'HYBRIDAUTH::STORAGE', $keyPrefix = '')
     {
+        $this->storeNamespace = $storeNamespace;
+        $this->keyPrefix = $keyPrefix;
+
         if (session_id()) {
             return;
         }
