@@ -96,6 +96,13 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     protected $consumerToken = null;
 
     /**
+    * Authorization Url Parameters
+    *
+    * @var boolean
+    */
+    protected $AuthorizeUrlParameters = [];
+
+    /**
     * @var string
     */
     protected $requestTokenMethod = 'POST';
@@ -297,13 +304,16 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     */
     protected function getAuthorizeUrl($parameters = [])
     {
-        $defaults = [
-            'oauth_token' => $this->getStoredData('request_token')
-        ];
+        $this->AuthorizeUrlParameters = !empty($parameters)
+                    ? $parameters
+                    : array_replace(
+                        (array) $this->AuthorizeUrlParameters,
+                        (array) $this->config->get('authorize_url_parameters')
+                    );
 
-        $parameters = array_replace($defaults, (array)$parameters);
+        $this->AuthorizeUrlParameters['oauth_token'] = $this->getStoredData('request_token');
 
-        return $this->authorizeUrl . '?' . http_build_query($parameters, '', '&');
+        return $this->authorizeUrl . '?' . http_build_query($this->AuthorizeUrlParameters, '', '&');
     }
 
     /**
