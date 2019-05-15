@@ -121,6 +121,15 @@ class Curl implements HttpClientInterface
             $uri = $uri . (strpos($uri, '?') ? '&' : '?') . http_build_query($parameters);
         }
 
+        if ('DELETE' == $method) {
+            unset($this->curlOptions[CURLOPT_POST]);
+            unset($this->curlOptions[CURLOPT_POSTFIELDS]);
+
+            $uri = $uri . (strpos($uri, '?') ? '&' : '?') . http_build_query($parameters);
+
+            $this->curlOptions[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+        }
+
         if ('POST' == $method) {
             $body_content = http_build_query($parameters);
             if (isset($this->requestHeader['Content-Type']) && $this->requestHeader['Content-Type'] == 'application/json') {

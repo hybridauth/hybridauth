@@ -127,6 +127,10 @@ class Guzzle implements HttpClientInterface
                 $response = $this->client->get($uri, ['query' => $parameters, 'headers' => $this->requestHeader]);
             }
 
+            if ('DELETE' == $method) {
+                $response = $this->client->delete($uri, ['query' => $parameters, 'headers' => $this->requestHeader]);
+            }
+
             if ('POST' == $method) {
                 $body_content = 'form_params';
 
