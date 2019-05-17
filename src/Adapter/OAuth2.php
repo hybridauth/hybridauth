@@ -652,13 +652,14 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * @param string $method
     * @param array $parameters
     * @param array $headers
+    * @param bool $multipart
     *
     * @return mixed
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     * @throws InvalidAccessTokenException
     */
-    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
         // refresh tokens if needed
         if ($this->hasAccessTokenExpired() === true) {
@@ -676,7 +677,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $url,
             $method,     // HTTP Request Method. Defaults to GET.
             $parameters, // Request Parameters
-            $headers     // Request Headers
+            $headers,    // Request Headers
+            $multipart   // Is request multipart
         );
 
         $this->validateApiResponse('Signed API request has returned an error');
