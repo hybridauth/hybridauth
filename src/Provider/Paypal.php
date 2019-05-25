@@ -87,7 +87,7 @@ class Paypal extends OAuth2
         $userProfile->zip         = $data->filter('address')->get('postal_code');
 
         $emails = reset($data->filter('emails')->toArray());
-        $userProfile->email       = emails['value'];
+        $userProfile->email       = $emails['value'];
 
         $userProfile->emailVerified = ($data->get('verified_account') === true) ? $userProfile->email : '';
 
