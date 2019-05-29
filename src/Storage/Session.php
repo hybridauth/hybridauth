@@ -109,7 +109,7 @@ class Session implements StorageInterface
         if (!$this->storeNamespace && isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
 
-        } else if ($_SESSION[$this->storeNamespace][$key])) {
+        } else if (isset($_SESSION[$this->storeNamespace][$key])) {
             unset($_SESSION[$this->storeNamespace][$key]);
         }
     }
