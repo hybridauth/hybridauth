@@ -1,9 +1,9 @@
 <?php
 
-/* !
+/*!
  * Hybridauth
  * https://hybridauth.github.io/hybridauth | https://github.com/hybridauth/hybridauth
- * (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
+ *  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
  */
 
 /**
@@ -14,80 +14,84 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
     /**
      * {@inheritdoc}
      */
-    public $scope = "r_basicprofile r_emailaddress";
+    public $scope = 'r_liteprofile r_emailaddress w_member_social';
+
+    /**
+     * The 'state' variable helps to prevent CSRF attacks,
+     * and can also be used to identify the authentication request.
+     */
+    protected $state = NULL;
 
     /**
      * {@inheritdoc}
      */
-    function initialize() {
+    public function initialize() {
         parent::initialize();
 
         // Provider api end-points.
-        $this->api->api_base_url = "https://api.linkedin.com/v1/";
+        $this->api->api_base_url = "https://api.linkedin.com/v2/";
         $this->api->authorize_url = "https://www.linkedin.com/oauth/v2/authorization";
         $this->api->token_url = "https://www.linkedin.com/oauth/v2/accessToken";
+
+        if ($this->api->access_token) {
+            $this->api->curl_header[] = 'Authorization: Bearer ' . $this->api->access_token;
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    function loginBegin() {
+    public function loginBegin() {
         if (is_array($this->scope)) {
             $this->scope = implode(" ", $this->scope);
-        }
-        if (isset($this->scope)) {
-            $extra_params['scope'] = $this->scope;
         }
         if (!isset($this->state)) {
             $this->state = hash("sha256",(uniqid(rand(), TRUE)));
         }
-        $extra_params['state'] = $this->state;
+
+        $extra_params = [
+          'scope' => $this->scope,
+          'state' => $this->state,
+        ];
         Hybrid_Auth::redirect($this->api->authorizeUrl($extra_params));
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @see https://developer.linkedin.com/docs/rest-api
      */
-    function getUserProfile() {
-        // Refresh tokens if needed.
-        $this->setHeaders("token");
+    public function getUserProfile() {
         $this->refreshToken();
 
-        // https://developer.linkedin.com/docs/fields.
-        $fields = isset($this->config["fields"]) ? $this->config["fields"] : array(
-            "id",
-            "email-address",
-            "first-name",
-            "last-name",
-            "headline",
-            "location",
-            "industry",
-            "picture-url",
-            "public-profile-url",
-        );
+        $fields = [
+          'id',
+          'firstName',
+          'lastName',
+          'profilePicture(displayImage~:playableStreams)',
+        ];
 
-        $this->setHeaders();
-        $response = $this->api->get(
-            "people/~:(" . implode(",", $fields) . ")",
-            array(
-                "format" => "json",
-            )
-        );
+        $response = $this->api->get('me?projection=(' . implode(',', $fields) . ')', [], false);
+        $response = $response ? json_decode($response, true) : [];
 
-        if (!isset($response->id)) {
-            throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData($response), 6);
+        if (empty($response['id'])) {
+            throw new Exception($response['message'], 6);
         }
 
-        $this->user->profile->identifier = isset($response->id) ? $response->id : "";
-        $this->user->profile->firstName = isset($response->firstName) ? $response->firstName : "";
-        $this->user->profile->lastName = isset($response->lastName) ? $response->lastName : "";
-        $this->user->profile->photoURL = isset($response->pictureUrl) ? $response->pictureUrl : "";
-        $this->user->profile->profileURL = isset($response->publicProfileUrl) ? $response->publicProfileUrl : "";
-        $this->user->profile->email = isset($response->emailAddress) ? $response->emailAddress : "";
-        $this->user->profile->description = isset($response->headline) ? $response->headline : "";
-        $this->user->profile->country = isset($response->location) ? $response->location->name : "";
+        // Handle localized names.
+        $locale = $this->getPreferredLocale($response, 'firstName');
+        $this->user->profile->firstName = isset($response['firstName']['localized'][$locale]) ?
+          $response['firstName']['localized'][$locale] : '';
+
+        $locale = $this->getPreferredLocale($response, 'lastName');
+        $this->user->profile->lastName = isset($response['lastName']['localized'][$locale]) ?
+          $response['lastName']['localized'][$locale] : '';
+
+        // Handle amazing profile picture structure.
+        $this->user->profile->photoURL = !empty($response['profilePicture']['displayImage~']['elements']) ?
+          $this->getUserPhotoUrl($response['profilePicture']['displayImage~']['elements']) : '';
+
+        // Handle other details.
+        $this->user->profile->identifier = $response['id'];
+        $this->user->profile->email = $this->getUserEmail();
         $this->user->profile->emailVerified = $this->user->profile->email;
         $this->user->profile->displayName = trim($this->user->profile->firstName . " " . $this->user->profile->lastName);
 
@@ -95,84 +99,119 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
     }
 
     /**
-     * {@inheritdoc}
+     * Returns a user photo.
      *
-     * @param array $status
-     *   An associative array containing:
-     *   - content: A collection of fields describing the shared content.
-     *   - comment: A comment by the member to associated with the share.
-     *   - visibility: A collection of visibility information about the share.
-     * @param string $companyId (optional) User company id
+     * @param array $elements
+     *   List of file identifiers related to this artifact.
      *
-     * @return object
-     *   An object containing:
-     *   - updateKey - A unique ID for the shared content posting that was just created.
-     *   - updateUrl - A direct link to the newly shared content on LinkedIn.com that you can direct the user's web browser to.
-     * @throws Exception
-     * @see https://developer.linkedin.com/docs/share-on-linkedin
+     * @return string
+     *   The user photo URL.
+     *
+     * @see https://docs.microsoft.com/en-us/linkedin/shared/references/v2/profile/profile-picture
      */
-    function setUserStatus($status, $companyId = null) {
-        // Refresh tokens if needed.
-        $this->setHeaders("token");
-        $this->refreshToken();
-
-        try {
-            // Define default visibility.
-            if (!isset($status["visibility"])) {
-                $status["visibility"]["code"] = "anyone";
+    public function getUserPhotoUrl($elements)
+    {
+        if (is_array($elements)) {
+            // Get the largest picture from the list which is the last one.
+            $element = end($elements);
+            if (!empty($element['identifiers'])) {
+                return $element['identifiers'][0]['identifier'];
             }
-
-            $this->setHeaders("share");
-            $url = $companyId ? "companies/{$companyId}/shares?format=json" : "people/~/shares?format=json";
-            $response = $this->api->post($url,
-                array(
-                    "body" => $status,
-                )
-            );
-        } catch (Exception $e) {
-            throw new Exception("Update user status failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
         }
 
-        if (!isset($response->updateKey)) {
-            throw new Exception("Update user status failed! {$this->providerId} returned an error: {$response->message}", $response->errorCode);
-        }
-
-        return $response;
+        return null;
     }
 
     /**
-     * Set correct request headers.
+     * Returns an email address of user.
      *
-     * @param string $api_type
-     *   (optional) Specify api type.
+     * @return string
+     *   The user email address.
      *
-     * @return void
+     * @throws \Exception
      */
-    private function setHeaders($api_type = null) {
-        $this->api->curl_header = array(
-            "Authorization: Bearer {$this->api->access_token}",
-        );
+    public function getUserEmail()
+    {
+        $this->refreshToken();
+        $response = $this->api->get('emailAddress?q=members&projection=(elements*(handle~))', [], false);
+        $response = $response ? json_decode($response, true) : [];
 
-        switch ($api_type) {
-            case "share":
-                $this->api->curl_header = array_merge(
-                    $this->api->curl_header,
-                    array(
-                        "Content-Type: application/json",
-                        "x-li-format: json",
-                    )
-                );
-                break;
-
-            case "token":
-                $this->api->curl_header = array_merge(
-                    $this->api->curl_header,
-                    array(
-                        "Content-Type: application/x-www-form-urlencoded",
-                    )
-                );
-                break;
+        if (empty($response['elements'])) {
+            throw new Exception($response['message'], 6);
         }
+
+        foreach ($response['elements'] as $element) {
+            if (isset($element['handle~']['emailAddress'])) {
+                return $element['handle~']['emailAddress'];
+            }
+        }
+
+        return null;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin
+     */
+    public function setUserStatus($status, $userID = null)
+    {
+        $this->refreshToken();
+        if (is_string($status)) {
+            $status = [
+              'author' => 'urn:li:person:' . $userID,
+              'lifecycleState' => 'PUBLISHED',
+              'specificContent' => [
+                'com.linkedin.ugc.ShareContent' => [
+                  'shareCommentary' => [
+                    'text' => $status,
+                  ],
+                  'shareMediaCategory' => 'NONE',
+                ],
+              ],
+              'visibility' => [
+                'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC',
+              ],
+            ];
+        }
+
+        // Set a new headers for POST request and back to original ones
+        // when request is done.
+        $curl_header = $this->api->curl_header;
+        $this->api->curl_header[] = 'Content-Type: application/json';
+        $this->api->curl_header[] = 'x-li-format: json';
+        $this->api->curl_header[] = 'X-Restli-Protocol-Version: 2.0.0';
+
+        $response = $this->api->post("ugcPosts", ['body' => $status], false);
+        $response = $response ? json_decode($response, true) : [];
+        $this->api->curl_header = $curl_header;
+
+        if (empty($response['id'])) {
+            throw new Exception($response['message'], 6);
+        }
+
+        return $response['id'];
+    }
+
+    /**
+     * Returns a preferred locale for given field.
+     *
+     * @param array $data
+     *   A data to check.
+     * @param string $field_name
+     *   A field name to perform.
+     *
+     * @return string
+     *   A field locale.
+     */
+    protected function getPreferredLocale($data, $field_name)
+    {
+        if (!empty($data[$field_name]['preferredLocale'])) {
+            $locale = $data[$field_name]['preferredLocale'];
+
+            return $locale['language'] . '_' . $locale['country'];
+        }
+
+        return 'en_US';
+    }
 }
