@@ -114,31 +114,33 @@ class Curl implements HttpClientInterface
 
         $curl = curl_init();
 
-        if ('GET' == $method) {
-            unset($this->curlOptions[CURLOPT_POST]);
-            unset($this->curlOptions[CURLOPT_POSTFIELDS]);
+        switch ($method) {
+            case 'GET':
+            case 'DELETE':
+                unset($this->curlOptions[CURLOPT_POST]);
+                unset($this->curlOptions[CURLOPT_POSTFIELDS]);
 
-            $uri = $uri . (strpos($uri, '?') ? '&' : '?') . http_build_query($parameters);
-        }
+                $uri = $uri . (strpos($uri, '?') ? '&' : '?') . http_build_query($parameters);
+                if ($method === 'DELETE') {
+                    $this->curlOptions[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+                }
+                break;
+            case 'PUT':
+            case 'POST':
+                $body_content = http_build_query($parameters);
+                if (isset($this->requestHeader['Content-Type'])
+                    && $this->requestHeader['Content-Type'] == 'application/json'
+                ) {
+                    $body_content = json_encode($parameters);
+                }
 
-        if ('POST' == $method) {
-            $body_content = http_build_query($parameters);
-            if (isset($this->requestHeader['Content-Type']) && $this->requestHeader['Content-Type'] == 'application/json') {
-                $body_content = json_encode($parameters);
-            }
-
-            $this->curlOptions[CURLOPT_POST] = true;
-            $this->curlOptions[CURLOPT_POSTFIELDS] = $body_content;
-        }
-
-        if ('PUT' == $method) {
-            $body_content = http_build_query($parameters);
-            if (isset($this->requestHeader['Content-Type']) && $this->requestHeader['Content-Type'] == 'application/json') {
-                $body_content = json_encode($parameters);
-            }
-
-            $this->curlOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
-            $this->curlOptions[CURLOPT_POSTFIELDS] = $body_content;
+                if ($method === 'PUT') {
+                    $this->curlOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
+                } else {
+                    $this->curlOptions[CURLOPT_POST] = true;
+                }
+                $this->curlOptions[CURLOPT_POSTFIELDS] = $body_content;
+                break;
         }
 
         $this->curlOptions[CURLOPT_URL]            = $uri;
