@@ -97,11 +97,11 @@
             </tr>
             <tr>
               <td><strong>&nbsp;Keys registration</strong></td>
-              <td>https://www.linkedin.com/developer/apps</td>
+              <td>https://www.linkedin.com/developers/apps</td>
             </tr>
             <tr>
               <td><strong>&nbsp;Dev documentation</strong></td>
-              <td>https://developer.linkedin.com/docs</td>
+              <td>https://www.linkedin.com/developers</td>
             </tr>
             <tr>
               <td width="19%"><strong>&nbsp;Wrapper</strong></td>
@@ -121,8 +121,7 @@
         "LinkedIn"  => array(
           "enabled" => true,
           "keys"    => array("id" => "PUT_YOURS_HERE", "secret" => "PUT_YOURS_HERE"),
-          "scope"   => array("r_basicprofile", "r_emailaddress", "w_share"), // optional
-          "fields"  => array("id", "email-address", "first-name", "last-name"), // optional
+          "scope"   => array("r_liteprofile", "r_emailaddress", "w_member_social"), // optional
         ),
       ),
     );
@@ -135,31 +134,14 @@
 
     $user_profile = $adapter->getUserProfile();
 
-    $status = $adapter->setUserStatus(array(
-      "comment" => "Check out developer.linkedin.com!",
-      "content" => array(
-        "title" => "LinkedIn Developers Resources",
-        "description" => "Leverage LinkedIn's APIs to maximize engagement",
-        "submitted-url" => "https://developer.linkedin.com",
-        "submitted-image-url" => "https://example.com/logo.png",
-      ),
-      "visibility" => array(
-        "code" => "anyone",
-      ),
-    ));
+    $status = $adapter->setUserStatus("Check out developer.linkedin.com!", $user_profile->identifier);
 </pre>
           <p>
             For <strong>LinkedIn</strong> you can configure several extra options:
           </p>
           <ul>
             <li><code>scope</code>: An array of permissions you want to request
-              from the user. Possible values: "r_basicprofile", "r_emailaddress", "w_share".
-            </li>
-            <li><code>fields</code>: An array of profile fields you want to request
-              from the user. Refer to the <a target="_blank" href="https://developer.linkedin.com/docs/fields/basic-profile">
-                Basic Profile Fields
-              </a> page for a complete list of the basic member profile
-              fields.
+              from the user. Possible values: "r_liteprofile", "r_emailaddress", "w_member_social".
             </li>
           </ul>
 
@@ -167,7 +149,7 @@
           <ol>
             <li>
               Go to <a target="_blank"
-                       href="https://www.linkedin.com/developer/apps">https://www.linkedin.com/developer/apps</a> and <strong>create
+                       href="https://www.linkedin.com/developers/apps">https://www.linkedin.com/developers/apps</a> and <strong>create
               a new application</strong> by clicking "Create Application".
             </li>
             <li>
