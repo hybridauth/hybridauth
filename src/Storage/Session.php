@@ -64,7 +64,7 @@ class Session implements StorageInterface
         if (!$this->storeNamespace && isset($_SESSION[$key])) {
             return $_SESSION[$key];
 
-        } else if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
+        } else if (isset($_SESSION[$this->storeNamespace][$key])) {
             return $_SESSION[$this->storeNamespace][$key];
         }
 
@@ -109,7 +109,7 @@ class Session implements StorageInterface
         if (!$this->storeNamespace && isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
 
-        } else if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
+        } else if ($_SESSION[$this->storeNamespace][$key])) {
             unset($_SESSION[$this->storeNamespace][$key]);
         }
     }
@@ -128,7 +128,7 @@ class Session implements StorageInterface
                 }
             }
 
-        } else if (isset($_SESSION[$this->storeNamespace]) && count($_SESSION[$this->storeNamespace])) {
+        } else if (isset($_SESSION[$this->storeNamespace]) && is_array($_SESSION[$this->storeNamespace])) {
             foreach ($_SESSION[$this->storeNamespace] as $k => $v) {
                 if (strstr($k, $key)) {
                     unset($_SESSION[$this->storeNamespace][$k]);
