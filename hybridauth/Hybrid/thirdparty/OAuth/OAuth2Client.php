@@ -132,9 +132,16 @@ class OAuth2Client
       $url = $this->api_base_url . $url;
     }
 
-    $parameters[$this->sign_token_name] = $this->access_token;
-    $response = null;
 
+    // Add access_token only if it's not available in curl headers.
+    $auth_header = array_filter($this->curl_header, function ($header) {
+        return strpos($header, 'Authorization:') === 0;
+    });
+    if (!$auth_header) {
+        $parameters[$this->sign_token_name] = $this->access_token;
+    }
+
+    $response = null;
     switch( $method ){
       case 'GET'  : $response = $this->request( $url, $parameters, "GET"  ); break;
       case 'POST' : $response = $this->request( $url, $parameters, "POST" ); break;
