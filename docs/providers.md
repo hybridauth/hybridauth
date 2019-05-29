@@ -34,6 +34,7 @@ The table below lists the social networks and identity providers currently suppo
 |    MicrosoftGraph   | OAuth2 |       [X]      |       [X]      |       [X]       |               |                        |
 |    Odnoklassniki    | OAuth2 |       [X]      |       [X]      |                 |               |                        |
 |        OpenID       | OpenID |       [X]      |       [X]      |                 |               |                        |
+|        Paypal       | OpenID |       [X]      |       [X]      |                 |               |                        |
 |     PaypalOpenID    | OpenID |       [X]      |       [X]      |                 |               |                        |
 |        Reddit       | OAuth2 |       [X]      |       [X]      |                 |               |                        |
 |       Spotify       | OAuth2 |       [X]      |       [X]      |                 |               |                        |
