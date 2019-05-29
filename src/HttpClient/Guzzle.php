@@ -94,7 +94,7 @@ class Guzzle implements HttpClientInterface
     /**
     * GuzzleHttp client
     *
-    * @var object
+    * @var \GuzzleHttp\Client
     */
     protected $client = null;
 
@@ -123,33 +123,31 @@ class Guzzle implements HttpClientInterface
         $response = null;
 
         try {
-            if ('GET' == $method) {
-                $response = $this->client->get($uri, ['query' => $parameters, 'headers' => $this->requestHeader]);
+            switch ($method) {
+                case 'GET':
+                case 'DELETE':
+                    $response = $this->client->request($method, $uri, [
+                      'query' => $parameters,
+                      'headers' => $this->requestHeader,
+                    ]);
+                    break;
+                case 'PUT':
+                case 'POST':
+                    $body_content = 'form_params';
+
+                    if (isset($this->requestHeader['Content-Type'])
+                        && $this->requestHeader['Content-Type'] === 'application/json'
+                    ) {
+                        $body_content = 'json';
+                    }
+
+                    $response = $this->client->request($method, $uri, [
+                      $body_content => $parameters,
+                      'headers' => $this->requestHeader,
+                    ]);
+                    break;
             }
-
-            if ('POST' == $method) {
-                $body_content = 'form_params';
-
-                if (isset($this->requestHeader['Content-Type']) && $this->requestHeader['Content-Type'] == 'application/json') {
-                    $body_content = 'json';
-                }
-
-                $response = $this->client->post($uri, [$body_content => $parameters, 'headers' => $this->requestHeader]);
-            }
-
-            if ('PUT' == $method) {
-                $body_content = 'form_params';
-
-                if (isset($this->requestHeader['Content-Type']) && $this->requestHeader['Content-Type'] == 'application/json') {
-                    $body_content = 'json';
-                }
-
-                $response = $this->client->put($uri, [$body_content => $parameters, 'headers' => $this->requestHeader]);
-            }
-        }
-
-        // guess this will do it for now
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $response = $e->getResponse();
 
             $this->responseClientError = $e->getMessage();
