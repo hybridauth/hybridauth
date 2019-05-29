@@ -64,11 +64,20 @@ class LinkedIn extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
-        $userProfile->firstName   = $data->filter('firstName')->filter('localized')->get('en_US');
-        $userProfile->lastName    = $data->filter('lastName')->filter('localized')->get('en_US');
-        $userProfile->photoURL    = $this->getUserPhotoUrl($data->filter('profilePicture')->filter('displayImage~')->get('elements'));
-        $userProfile->email       = $this->getUserEmail();
+        // Handle localized names.
+        $userProfile->firstName = $data
+          ->filter('firstName')
+          ->filter('localized')
+          ->get($this->getPreferredLocale($data, 'firstName'));
+
+        $userProfile->lastName = $data
+          ->filter('lastName')
+          ->filter('localized')
+          ->get($this->getPreferredLocale($data, 'lastName'));
+
+        $userProfile->identifier = $data->get('id');
+        $userProfile->photoURL = $this->getUserPhotoUrl($data->filter('profilePicture')->filter('displayImage~')->get('elements'));
+        $userProfile->email = $this->getUserEmail();
         $userProfile->emailVerified = $userProfile->email;
 
         $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
@@ -157,5 +166,25 @@ class LinkedIn extends OAuth2
         $response = $this->apiRequest("ugcPosts", 'POST', $status, $headers);
 
         return $response;
+    }
+
+    /**
+     * Returns a preferred locale for given field.
+     *
+     * @param \Hybridauth\Data\Collection $data
+     *   A data to check.
+     * @param string $field_name
+     *   A field name to perform.
+     *
+     * @return string
+     *   A field locale.
+     */
+    protected function getPreferredLocale($data, $field_name) {
+        $locale = $data->filter($field_name)->filter('preferredLocale');
+        if ($locale) {
+            return $locale->get('language') . '_' . $locale->get('country');
+        }
+
+        return 'en_US';
     }
 }
