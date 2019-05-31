@@ -1,4 +1,4 @@
-## [Hybridauth](https://hybridauth.github.io/) 3.0-RC
+## [Hybridauth](https://hybridauth.github.io/) 3.0
 
 [![Build Status](https://travis-ci.org/hybridauth/hybridauth.svg?branch=master)](https://travis-ci.org/hybridauth/hybridauth) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hybridauth/hybridauth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hybridauth/hybridauth/?branch=master) [![Latest Stable Version](https://poser.pugx.org/hybridauth/hybridauth/v/stable.png)](https://packagist.org/packages/hybridauth/hybridauth) [![Join the chat at https://gitter.im/hybridauth/hybridauth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hybridauth/hybridauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -49,8 +49,8 @@ To install Hybridauth we recommend [Composer](https://getcomposer.org/), the now
 
 [hybridauth-2-repo]: https://github.com/hybridauth/hybridauth/tree/v2
 [hybridauth-3-repo]: https://github.com/hybridauth/hybridauth/
-[hybridauth-2-docs]: http://hybridauth.github.io/hybridauth/
-[hybridauth-3-docs]: http://hybridauth.github.io/
+[hybridauth-2-docs]: https://hybridauth.github.io/hybridauth/
+[hybridauth-3-docs]: https://hybridauth.github.io/
 
 #### Questions, Help and Support?
 

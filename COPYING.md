@@ -2,7 +2,7 @@ Except where otherwise noted in the source code (i.e., LightOpenID and OAuth
 Library, which are covered by similar licences but with different Copyright
 notices) all the files are:
 
- Copyright (C) 2009-2015, HybridAuth authors. All Rights Reserved.
+ Copyright (C) 2009-2019, HybridAuth authors. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 HybridAuth includes a copy of LightOpenID, licensed as follows:
 
- Copyright (c) 2013 Mewp <mewp151 at gmail dot com>
+ Copyright (c) 2013-2016 Mewp (mewp151 at gmail dot com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@ THE SOFTWARE.
 
 HybridAuth includes a modified copy of OAuth PHP Library, licensed as follows:
 
- Copyright (c) 2007 Andy Smith
+ Copyright (c) 2007-2011 Andy Smith
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
