@@ -18,7 +18,7 @@ about the problem you having.
 You can help improve Hybridauth user documentation (this website) by making it more consistent and readable, and by adding
 missing information, correcting errors and typos.
 
-Hybridauth documentation is maintained as plain text markdown files at https://github.com/hybridauth/hybridauth/tree/master/docs/
+Hybridauth documentation is maintained as plain text markdown files at https://github.com/hybridauth/hybridauth.github.io
 
 
 ### Develop

@@ -4,6 +4,6 @@
 | Patch: Bug Fix?          |
 | Major: Breaking Change?  |
 | Minor: New Feature?      |
-| Documentation PR         | <!-- If so, add `[skip ci]` to your commit message to skip CI -->
 
 <!-- Describe your changes below in as much detail as possible -->
+<!-- For documentation fixes, pls create a PR in https://github.com/hybridauth/hybridauth.github.io -->
