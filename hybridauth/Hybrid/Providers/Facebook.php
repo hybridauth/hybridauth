@@ -199,7 +199,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
        $wrpages = array();
        foreach ($pages['data'] as $p) {
-           if (isset($p['perms']) && in_array('CREATE_CONTENT', $p['perms'])) {
+           if (in_array('CREATE_CONTENT', $p['tasks'])) {
                $wrpages[] = $p;
            }
        }
