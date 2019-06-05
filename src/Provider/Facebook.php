@@ -280,8 +280,8 @@ class Facebook extends OAuth2
 
         // Refresh proof for API call.
         $parameters = $status + [
-                'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
-            ];
+            'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
+        ];
 
         $response = $this->apiRequest("{$pageId}/feed", 'POST', $parameters, $headers);
 
@@ -301,7 +301,7 @@ class Facebook extends OAuth2
 
         // Filter user pages by CREATE_CONTENT permission.
         return array_filter($pages->data, function ($page) {
-            return in_array('CREATE_CONTENT', $page->perms);
+            return in_array('CREATE_CONTENT', $page->tasks);
         });
     }
 
