@@ -87,9 +87,10 @@ class Vkontakte extends OAuth2
     */
     public function getUserProfile()
     {
+        $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
         $parameters = [
             'user_ids' => $this->getStoredData('user_id'),
-            'fields' => 'first_name,last_name,screen_name,sex,has_photo,photo_max_orig',
+            'fields' => 'first_name,last_name,screen_name,sex,has_photo,' . $photoField,
             'v' => '5.74',
             $this->accessTokenName => $this->getStoredData($this->accessTokenName),
         ];
@@ -113,7 +114,7 @@ class Vkontakte extends OAuth2
         $userProfile->firstName   = $data->get('first_name');
         $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
-        $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get('photo_max_orig') : '';
+        $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
 
         $screen_name = 'https://vk.com/' . ($data->get('screen_name') ?: 'id' . $data->get('id'));
         $userProfile->profileURL  = $screen_name;
