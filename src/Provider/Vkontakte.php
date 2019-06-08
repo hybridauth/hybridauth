@@ -92,7 +92,7 @@ class Vkontakte extends OAuth2
             'user_ids' => $this->getStoredData('user_id'),
             // Required fields: id,first_name,last_name
             'fields' => 'screen_name,sex,has_photo,' . $photoField,
-            'v' => '5.74',
+            'v' => '5.95',
             $this->accessTokenName => $this->getStoredData($this->accessTokenName),
         ];
 
