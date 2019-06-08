@@ -90,7 +90,8 @@ class Vkontakte extends OAuth2
         $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
         $parameters = [
             'user_ids' => $this->getStoredData('user_id'),
-            'fields' => 'first_name,last_name,screen_name,sex,has_photo,' . $photoField,
+            // Required fields: id,first_name,last_name
+            'fields' => 'screen_name,sex,has_photo,' . $photoField,
             'v' => '5.74',
             $this->accessTokenName => $this->getStoredData($this->accessTokenName),
         ];
