@@ -5,13 +5,10 @@
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
-    >
+>
     <testsuites>
-        <testsuite>
+        <testsuite name="unit">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-    <logging>
-        <log type="junit" target="tests/junit.xml" logIncompleteSkipped="false" />
-    </logging>
 </phpunit>
