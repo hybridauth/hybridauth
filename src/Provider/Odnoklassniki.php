@@ -54,6 +54,19 @@ class Odnoklassniki extends OAuth2
     /**
     * {@inheritdoc}
     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $this->tokenRefreshParameters += [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret
+        ];
+    }
+
+    /**
+    * {@inheritdoc}
+    */
     public function getUserProfile()
     {
         $fields = array(
