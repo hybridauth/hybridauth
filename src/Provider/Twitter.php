@@ -109,8 +109,8 @@ class Twitter extends OAuth1
                                         : '';
 
         $userProfile->data = [
-          'followed_by' => $data->get('friends_count'),
-          'follows' => $data->get('followers_count'),
+          'followed_by' => $data->get('followers_count'),
+          'follows' => $data->get('friends_count'),
         ];
 
         return $userProfile;
