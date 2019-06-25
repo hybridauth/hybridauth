@@ -19,7 +19,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 	// default user fields map
 	public $fields = array(
 		// Old that saved for backward-compability
-	  'identifier' => 'uid',
+	  'identifier' => 'id',
 	  'firstName' => 'first_name',
 	  'lastName' => 'last_name',
 	  'displayName' => 'screen_name',
@@ -40,7 +40,7 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 	);
 
 	// default VK API version
-	public $version = '3.0';
+	public $version = '5.0';
 
 	/**
 	 * IDp wrappers initializer
@@ -109,16 +109,16 @@ class Hybrid_Providers_Vkontakte extends Hybrid_Provider_Model_OAuth2 {
 		$this->refreshToken();
 
 		// Vkontakte requires user id, not just token for api access
-		$params['uid'] = Hybrid_Auth::storage()->get("hauth_session.{$this->providerId}.user_id");
+		$params['user_ids'] = Hybrid_Auth::storage()->get("hauth_session.{$this->providerId}.user_id");
 		$params['fields'] = implode(',', $this->fields);
 		$params['v'] = $this->version;
 
 		// ask vkontakte api for user infos
-		$response = $this->api->api('getProfiles', 'GET', $params);
+		$response = $this->api->api('users.get', 'GET', $params);
 
 		if (isset($response->error)) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an error #{$response->error->error_code}: {$response->error->error_msg}", 6);
-		} elseif (!isset($response->response[0]) || !isset($response->response[0]->uid)) {
+		} elseif (!isset($response->response[0]) || !isset($response->response[0]->id)) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
 		}
 
