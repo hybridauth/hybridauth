@@ -7,6 +7,11 @@
 
 namespace Hybridauth\Thirdparty\OAuth;
 
+/**
+ * Class OAuthRequest
+ *
+ * @package Hybridauth\Thirdparty\OAuth
+ */
 class OAuthRequest
 {
     public $parameters;
@@ -17,6 +22,13 @@ class OAuthRequest
     public static $version = '1.0';
     public static $POST_INPUT = 'php://input';
 
+    /**
+     * OAuthRequest constructor.
+     *
+     * @param      $http_method
+     * @param      $http_url
+     * @param null $parameters
+     */
     public function __construct($http_method, $http_url, $parameters = null)
     {
         $parameters = ($parameters) ? $parameters : array();
@@ -25,9 +37,15 @@ class OAuthRequest
         $this->http_method = $http_method;
         $this->http_url    = $http_url;
     }
-    
+
     /**
      * attempt to build up a request from what was passed to the server
+     *
+     * @param null $http_method
+     * @param null $http_url
+     * @param null $parameters
+     *
+     * @return OAuthRequest
      */
     public static function from_request($http_method = null, $http_url = null, $parameters = null)
     {
@@ -63,10 +81,16 @@ class OAuthRequest
         
         return new OAuthRequest($http_method, $http_url, $parameters);
     }
-    
+
     /**
      * pretty much a helper function to set up the request
-     */
+     * @param      $consumer
+     * @param      $token
+     * @param      $http_method
+     * @param      $http_url
+     * @param null $parameters
+     * @return OAuthRequest
+*/
     public static function from_consumer_and_token($consumer, $token, $http_method, $http_url, $parameters = null)
     {
         $parameters = ($parameters) ? $parameters : array();
@@ -85,6 +109,11 @@ class OAuthRequest
         return new OAuthRequest($http_method, $http_url, $parameters);
     }
 
+    /**
+     * @param      $name
+     * @param      $value
+     * @param bool $allow_duplicates
+     */
     public function set_parameter($name, $value, $allow_duplicates = true)
     {
         if ($allow_duplicates && isset($this->parameters[$name])) {
@@ -102,16 +131,28 @@ class OAuthRequest
             $this->parameters[$name] = $value;
         }
     }
+
+    /**
+     * @param $name
+     *
+     * @return |null
+     */
     public function get_parameter($name)
     {
         return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
 
+    /**
+     * @return array
+     */
     public function get_parameters()
     {
         return $this->parameters;
     }
 
+    /**
+     * @param $name
+     */
     public function unset_parameter($name)
     {
         unset($this->parameters[$name]);
@@ -203,10 +244,12 @@ class OAuthRequest
     {
         return OAuthUtil::build_http_query($this->parameters);
     }
-    
+
     /**
      * builds the Authorization: header
-     */
+     * @param null $realm
+     * @return array
+*/
     public function to_header($realm = null)
     {
         $first = true;
@@ -234,11 +277,19 @@ class OAuthRequest
         ); //- hacked into this to make it return an array. 15/11/2014.
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->to_url();
     }
 
+    /**
+     * @param $signature_method
+     * @param $consumer
+     * @param $token
+     */
     public function sign_request($signature_method, $consumer, $token)
     {
         $this->set_parameter("oauth_signature_method", $signature_method->get_name(), false);
@@ -246,6 +297,13 @@ class OAuthRequest
         $this->set_parameter("oauth_signature", $signature, false);
     }
 
+    /**
+     * @param $signature_method
+     * @param $consumer
+     * @param $token
+     *
+     * @return mixed
+     */
     public function build_signature($signature_method, $consumer, $token)
     {
         $signature = $signature_method->build_signature($this, $consumer, $token);

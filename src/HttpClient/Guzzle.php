@@ -99,8 +99,10 @@ class Guzzle implements HttpClientInterface
     protected $client = null;
 
     /**
-    * ..
-    */
+     * ..
+     * @param null  $client
+     * @param array $config
+     */
     public function __construct($client = null, $config = [])
     {
         $this->client = $client ? $client : new Client($config);

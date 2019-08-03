@@ -76,8 +76,13 @@ class Steam extends OpenID
     }
 
     /**
-    * Fetch user profile on Steam web API
-    */
+     * Fetch user profile on Steam web API
+     *
+     * @param $apiKey
+     * @param $steam64
+     *
+     * @return array
+     */
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
         $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . $apiKey . '&steamids=' . $steam64;
@@ -102,8 +107,10 @@ class Steam extends OpenID
     }
 
     /**
-    * Fetch user profile on community API
-    */
+     * Fetch user profile on community API
+     * @param $steam64
+     * @return array
+*/
     public function getUserProfileLegacyAPI($steam64)
     {
         libxml_use_internal_errors(false);

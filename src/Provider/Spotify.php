@@ -70,6 +70,11 @@ class Spotify extends OAuth2
 
     /**
      * Fetch use birthday
+     *
+     * @param User\Profile $userProfile
+     * @param              $birthday
+     *
+     * @return User\Profile
      */
     protected function fetchBirthday(User\Profile $userProfile, $birthday)
     {

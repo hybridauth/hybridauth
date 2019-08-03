@@ -81,10 +81,13 @@ class GitHub extends OAuth2
     }
 
     /**
-    * Request connected user email
-    *
-    * https://developer.github.com/v3/users/emails/
-    */
+     * Request connected user email
+     *
+     * https://developer.github.com/v3/users/emails/
+     * @param User\Profile $userProfile
+     *
+     * @return User\Profile
+     */
     protected function requestUserEmail(User\Profile $userProfile)
     {
         $response = $this->apiRequest('user/emails');

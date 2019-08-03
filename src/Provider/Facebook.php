@@ -330,7 +330,9 @@ class Facebook extends OAuth2
     }
 
     /**
+     * @param $item
      *
+     * @return User\Activity
      */
     protected function fetchUserActivity($item)
     {

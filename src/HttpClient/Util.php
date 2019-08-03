@@ -28,16 +28,18 @@ class Util
     */
     protected static $exitHandler;
 
-   /**
-    * Redirect to a given URL.
-    *
-    * In case your application need to perform certain required actions before Hybridauth redirect users
-    * to IDPs websites, the default behaviour can be altered in one of two ways:
-    *   If callable $redirectHandler is defined, it will be called instead.
-    *   If callable $exitHandler is defined, it will be called instead of exit().
-    *
-    * @param string $url
-    */
+    /**
+     * Redirect to a given URL.
+     *
+     * In case your application need to perform certain required actions before Hybridauth redirect users
+     * to IDPs websites, the default behaviour can be altered in one of two ways:
+     *   If callable $redirectHandler is defined, it will be called instead.
+     *   If callable $exitHandler is defined, it will be called instead of exit().
+     *
+     * @param string $url
+     *
+     * @return mixed
+     */
     public static function redirect($url)
     {
         if (static::$redirectHandler) {

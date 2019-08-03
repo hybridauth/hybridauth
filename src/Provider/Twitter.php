@@ -160,7 +160,9 @@ class Twitter extends OAuth1
     }
 
     /**
+     * @param $item
      *
+     * @return User\Contact
      */
     protected function fetchUserContact($item)
     {
@@ -231,7 +233,8 @@ class Twitter extends OAuth1
     }
 
     /**
-     *
+     * @param $item
+     * @return User\Activity
      */
     protected function fetchUserActivity($item)
     {

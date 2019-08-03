@@ -12,6 +12,11 @@ namespace Hybridauth\Thirdparty\OpenID;
 use Hybridauth\Exception\Exception;
 use Hybridauth\Exception\ExceptionInterface;
 
+/**
+ * Class ErrorException
+ *
+ * @package Hybridauth\Thirdparty\OpenID
+ */
 class ErrorException extends Exception implements ExceptionInterface
 {
 }
@@ -81,6 +86,14 @@ class LightOpenID
         'pref/timezone'           => 'timezone',
         );
 
+    /**
+     * LightOpenID constructor.
+     *
+     * @param      $host
+     * @param null $proxy
+     *
+     * @throws ErrorException
+     */
     public function __construct($host, $proxy = null)
     {
         $this->set_realm($host);
@@ -95,12 +108,21 @@ class LightOpenID
             throw new ErrorException('You must have either https wrappers or curl enabled.');
         }
     }
-    
+
+    /**
+     * @param $name
+     *
+     * @return bool
+     */
     public function __isset($name)
     {
         return in_array($name, array('identity', 'trustRoot', 'realm', 'xrdsOverride', 'mode'));
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         switch ($name) {
@@ -133,6 +155,11 @@ class LightOpenID
         }
     }
 
+    /**
+     * @param $name
+     *
+     * @return |null
+     */
     public function __get($name)
     {
         switch ($name) {
@@ -148,7 +175,12 @@ class LightOpenID
             return empty($this->data['openid_mode']) ? null : $this->data['openid_mode'];
         }
     }
-    
+
+    /**
+     * @param $proxy
+     *
+     * @throws ErrorException
+     */
     public function set_proxy($proxy)
     {
         if (!empty($proxy)) {
@@ -178,7 +210,7 @@ class LightOpenID
     /**
      * Checks if the server specified in the url exists.
      *
-     * @param $url url to check
+     * @param $url string url to check
      * @return true, if the server exists; false otherwise
      */
     public function hostExists($url)
@@ -195,7 +227,10 @@ class LightOpenID
 
         return !!gethostbynamel($server);
     }
-    
+
+    /**
+     * @param $uri
+     */
     protected function set_realm($uri)
     {
         $realm = '';
@@ -211,7 +246,10 @@ class LightOpenID
         
         $this->trustRoot = $realm;
     }
-    
+
+    /**
+     * @return string
+     */
     protected function get_realm_protocol()
     {
         if (!empty($_SERVER['HTTPS'])) {
@@ -227,6 +265,15 @@ class LightOpenID
         return $use_secure_protocol ? 'https://' : 'http://';
     }
 
+    /**
+     * @param        $url
+     * @param string $method
+     * @param array  $params
+     * @param        $update_claimed_id
+     *
+     * @return array|bool|string
+     * @throws ErrorException
+     */
     protected function request_curl($url, $method='GET', $params=array(), $update_claimed_id)
     {
         $params = http_build_query($params, '', '&');
@@ -327,6 +374,12 @@ class LightOpenID
         return $response;
     }
 
+    /**
+     * @param $array
+     * @param $update_claimed_id
+     *
+     * @return array
+     */
     protected function parse_header_array($array, $update_claimed_id)
     {
         $headers = array();
@@ -357,6 +410,15 @@ class LightOpenID
         return $headers;
     }
 
+    /**
+     * @param        $url
+     * @param string $method
+     * @param array  $params
+     * @param        $update_claimed_id
+     *
+     * @return array|false|string
+     * @throws ErrorException
+     */
     protected function request_streams($url, $method='GET', $params=array(), $update_claimed_id)
     {
         if (!$this->hostExists($url)) {
@@ -494,6 +556,15 @@ class LightOpenID
         return $data;
     }
 
+    /**
+     * @param        $url
+     * @param string $method
+     * @param array  $params
+     * @param bool   $update_claimed_id
+     *
+     * @return array|bool|false|string
+     * @throws ErrorException
+     */
     protected function request($url, $method='GET', $params=array(), $update_claimed_id=false)
     {
         $use_curl = false;
@@ -520,7 +591,10 @@ class LightOpenID
                 ? $this->request_curl($url, $method, $params, $update_claimed_id)
                 : $this->request_streams($url, $method, $params, $update_claimed_id);
     }
-    
+
+    /**
+     * @return string
+     */
     protected function proxy_url()
     {
         $result = '';
@@ -542,6 +616,12 @@ class LightOpenID
         return $result;
     }
 
+    /**
+     * @param $url
+     * @param $parts
+     *
+     * @return string
+     */
     protected function build_url($url, $parts)
     {
         if (isset($url['query'], $parts['query'])) {
@@ -564,6 +644,14 @@ class LightOpenID
     /**
      * Helper function used to scan for <meta>/<link> tags and extract information
      * from them
+     *
+     * @param $content
+     * @param $tag
+     * @param $attrName
+     * @param $attrValue
+     * @param $valueName
+     *
+     * @return bool
      */
     protected function htmlTag($content, $tag, $attrName, $attrValue, $valueName)
     {
@@ -729,7 +817,12 @@ class LightOpenID
         }
         throw new ErrorException('Endless redirection!', 500);
     }
-    
+
+    /**
+     * @param $content_type
+     *
+     * @return bool
+     */
     protected function is_allowed_type($content_type)
     {
         # Apparently, some providers return XRDS documents as text/html.
@@ -751,7 +844,12 @@ class LightOpenID
         
         return false;
     }
-    
+
+    /**
+     * @param $provider_url
+     *
+     * @return string
+     */
     protected function get_provider_name($provider_url)
     {
         $result = '';
@@ -770,6 +868,9 @@ class LightOpenID
         return $result;
     }
 
+    /**
+     * @return array
+     */
     protected function sregParams()
     {
         $params = array();
@@ -801,6 +902,9 @@ class LightOpenID
         return $params;
     }
 
+    /**
+     * @return array
+     */
     protected function axParams()
     {
         $params = array();
@@ -846,6 +950,11 @@ class LightOpenID
         return $params;
     }
 
+    /**
+     * @param $immediate
+     *
+     * @return string
+     */
     protected function authUrl_v1($immediate)
     {
         $returnUrl = $this->returnUrl;
@@ -866,6 +975,11 @@ class LightOpenID
         return $this->build_url(parse_url($this->server), array('query' => http_build_query($params, '', '&')));
     }
 
+    /**
+     * @param $immediate
+     *
+     * @return string
+     */
     protected function authUrl_v2($immediate)
     {
         $params = array(
@@ -908,10 +1022,10 @@ class LightOpenID
 
     /**
      * Returns authentication url. Usually, you want to redirect your user to it.
+     * @param bool $immediate
      * @return String The authentication url.
-     * @param String $select_identifier Whether to request OP to select identity for an user in OpenID 2. Does not affect OpenID 1.
      * @throws ErrorException
-     */
+*/
     public function authUrl($immediate = false)
     {
         if ($this->setup_url && !$immediate) {
@@ -993,6 +1107,9 @@ class LightOpenID
         return preg_match('/is_valid\s*:\s*true/i', $response);
     }
 
+    /**
+     * @return array
+     */
     protected function getAxAttributes()
     {
         $result = array();
@@ -1039,6 +1156,9 @@ class LightOpenID
         return $result;
     }
 
+    /**
+     * @return array
+     */
     protected function getSregAttributes()
     {
         $attributes = array();
@@ -1066,9 +1186,9 @@ class LightOpenID
      * or that there will be no other attributes besides those specified.
      * In other words. OP may provide whatever information it wants to.
      *     * SREG names will be mapped to AX names.
-     *     * @return Array Array of attributes with keys being the AX schema names, e.g. 'contact/email'
-     * @see http://www.axschema.org/types/
-     */
+     *     *
+     * @return array Array of attributes with keys being the AX schema names, e.g. 'contact/email' @see http://www.axschema.org/types/
+*/
     public function getAttributes()
     {
         if (isset($this->data['openid_ns'])
