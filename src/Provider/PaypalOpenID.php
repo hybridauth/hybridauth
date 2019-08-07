@@ -9,6 +9,8 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OpenID;
 use Hybridauth\HttpClient;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * PayPal OpenID provider adapter.
@@ -23,7 +25,7 @@ class PaypalOpenID extends OpenID
     /**
     * {@inheritdoc}
     */
-    public function authenticateBegin()
+    public function authenticateBegin(ServerRequestInterface $request)
     {
         $this->openIdClient->identity  = $this->openidIdentifier;
         $this->openIdClient->returnUrl = $this->callback;
@@ -60,6 +62,10 @@ class PaypalOpenID extends OpenID
             'company/name',
             'company/title',
         ];
+
+        if (!$this->isGeneratedRequest($request)) {
+            return new RedirectResponse($this->openIdClient->authUrl());
+        }
 
         HttpClient\Util::redirect($this->openIdClient->authUrl());
     }
