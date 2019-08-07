@@ -18,6 +18,8 @@ use Hybridauth\Thirdparty\OAuth\OAuthConsumer;
 use Hybridauth\Thirdparty\OAuth\OAuthRequest;
 use Hybridauth\Thirdparty\OAuth\OAuthSignatureMethodHMACSHA1;
 use Hybridauth\Thirdparty\OAuth\OAuthUtil;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * This class  can be used to simplify the authorization flow of OAuth 1 based service providers.
@@ -206,8 +208,9 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     /**
     * {@inheritdoc}
     */
-    public function authenticate()
+    public function authenticate(ServerRequestInterface $request = null)
     {
+        $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 
         if ($this->isConnected()) {
@@ -216,9 +219,11 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         try {
             if (! $this->getStoredData('request_token')) {
-                $this->authenticateBegin();
-            } elseif (! $this->getStoredData('access_token')) {
-                $this->authenticateFinish();
+                return $this->authenticateBegin($request);
+            }
+
+            if (! $this->getStoredData('access_token')) {
+                $this->authenticateFinish($request);
             }
         } catch (Exception $exception) {
             $this->clearStoredData();
@@ -230,13 +235,20 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Initiate the authorization protocol
-    *
-    * 1. Obtaining an Unauthorized Request Token
-    * 2. Build Authorization URL for Authorization Request and redirect the user-agent to the
-    *    Authorization Server.
-    */
-    protected function authenticateBegin()
+     * Initiate the authorization protocol
+     *
+     * 1. Obtaining an Unauthorized Request Token
+     * 2. Build Authorization URL for Authorization Request and redirect the user-agent to the
+     *    Authorization Server.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return RedirectResponse|void
+     * @throws InvalidOauthTokenException
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     */
+    protected function authenticateBegin(ServerRequestInterface $request)
     {
         $response = $this->requestAuthToken();
 
@@ -246,29 +258,35 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
 
+        if (!$this->isGeneratedRequest($request)) {
+            return new RedirectResponse($authUrl);
+        }
+
         HttpClient\Util::redirect($authUrl);
     }
 
     /**
      * Finalize the authorization process
      *
+     * @param ServerRequestInterface $request
+     *
      * @throws AuthorizationDeniedException
-     * @throws \Hybridauth\Exception\HttpClientFailureException
-     * @throws \Hybridauth\Exception\HttpRequestFailedException
      * @throws InvalidAccessTokenException
      * @throws InvalidOauthTokenException
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
      */
-    protected function authenticateFinish()
+    protected function authenticateFinish(ServerRequestInterface $request)
     {
         $this->logger->debug(
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
-            [HttpClient\Util::getCurrentUrl(true)]
+            [(string)$request->getUri()]
         );
 
-        $denied         = filter_input(INPUT_GET, 'denied');
-        $oauth_problem  = filter_input(INPUT_GET, 'oauth_problem');
-        $oauth_token    = filter_input(INPUT_GET, 'oauth_token');
-        $oauth_verifier = filter_input(INPUT_GET, 'oauth_verifier');
+        $denied         = $this->getQueryParamFromRequest('denied', $request);
+        $oauth_problem  = $this->getQueryParamFromRequest('oauth_problem', $request);
+        $oauth_token    = $this->getQueryParamFromRequest('oauth_token', $request);
+        $oauth_verifier = $this->getQueryParamFromRequest('oauth_verifier', $request);
 
         if ($denied) {
             throw new AuthorizationDeniedException(

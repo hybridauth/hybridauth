@@ -14,6 +14,8 @@ use Hybridauth\Exception\InvalidAuthorizationCodeException;
 use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * This class  can be used to simplify the authorization flow of OAuth 2 based service providers.
@@ -285,10 +287,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
-    public function authenticate()
+     * {@inheritdoc}
+     */
+    public function authenticate(ServerRequestInterface $request = null)
     {
+        $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 
         if ($this->isConnected()) {
@@ -296,15 +299,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         try {
-            $this->authenticateCheckError();
+            $this->authenticateCheckError($request);
 
-            $code = filter_input(INPUT_GET, 'code');
+            $code = $this->getQueryParamFromRequest('code', $request);
 
             if (empty($code)) {
-                $this->authenticateBegin();
-            } else {
-                $this->authenticateFinish();
+                return $this->authenticateBegin($request);
             }
+
+            $this->authenticateFinish($request);
         } catch (Exception $e) {
             $this->clearStoredData();
 
@@ -315,21 +318,24 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Authorization Request Error Response
-    *
-    * RFC6749: If the request fails due to a missing, invalid, or mismatching
-    * redirection URI, or if the client identifier is missing or invalid,
-    * the authorization server SHOULD inform the resource owner of the error.
-    *
-    * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
-    */
-    protected function authenticateCheckError()
+     * Authorization Request Error Response
+     *
+     * RFC6749: If the request fails due to a missing, invalid, or mismatching
+     * redirection URI, or if the client identifier is missing or invalid,
+     * the authorization server SHOULD inform the resource owner of the error.
+     *
+     * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+     * @param ServerRequestInterface|null $request
+     *
+     * @throws InvalidAuthorizationCodeException
+     */
+    protected function authenticateCheckError(ServerRequestInterface $request)
     {
-        $error = filter_input(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
+        $error = filter_var($this->getQueryParamFromRequest('error', $request), FILTER_SANITIZE_SPECIAL_CHARS);
 
         if (! empty($error)) {
-            $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
-            $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_description = filter_var($this->getQueryParamFromRequest('error_description', $request), FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_uri = filter_var($this->getQueryParamFromRequest('error_uri', $request), FILTER_SANITIZE_SPECIAL_CHARS);
 
             throw new InvalidAuthorizationCodeException(
                 sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri)
@@ -338,37 +344,47 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Initiate the authorization protocol
-    *
-    * Build Authorization URL for Authorization Request and redirect the user-agent to the
-    * Authorization Server.
-    */
-    protected function authenticateBegin()
+     * Initiate the authorization protocol
+     *
+     * Build Authorization URL for Authorization Request and redirect the user-agent to the
+     * Authorization Server.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return RedirectResponse|void
+     */
+    protected function authenticateBegin(ServerRequestInterface $request)
     {
         $authUrl = $this->getAuthorizeUrl();
 
         $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
 
+        if (!$this->isGeneratedRequest($request)) {
+            return new RedirectResponse($authUrl);
+        }
+
         HttpClient\Util::redirect($authUrl);
     }
 
     /**
-    * Finalize the authorization process
-    *
-    * @throws \Hybridauth\Exception\HttpClientFailureException
-    * @throws \Hybridauth\Exception\HttpRequestFailedException
-    * @throws InvalidAccessTokenException
-    * @throws InvalidAuthorizationStateException
-    */
-    protected function authenticateFinish()
+     * Finalize the authorization process
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @throws InvalidAccessTokenException
+     * @throws InvalidAuthorizationStateException
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     */
+    protected function authenticateFinish(ServerRequestInterface $request)
     {
         $this->logger->debug(
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
-            [HttpClient\Util::getCurrentUrl(true)]
+            [(string)$request->getUri()]
         );
 
-        $state = filter_input(INPUT_GET, 'state');
-        $code = filter_input(INPUT_GET, 'code');
+        $state = $this->getQueryParamFromRequest('state', $request);
+        $code = $this->getQueryParamFromRequest('code', $request);
 
         /**
         * Authorization Request State

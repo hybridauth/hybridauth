@@ -10,6 +10,8 @@ namespace Hybridauth\Adapter;
 use Hybridauth\HttpClient\HttpClientInterface;
 use Hybridauth\Storage\StorageInterface;
 use Hybridauth\Logger\LoggerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface AdapterInterface
@@ -19,9 +21,12 @@ interface AdapterInterface
     /**
      * Initiate the appropriate protocol and process/automate the authentication or authorization flow.
      *
-     * @return boolean|null
+     * @param ServerRequestInterface|null $request
+     *
+     * @return boolean|ResponseInterface|null If already connected, returns true.
+     * If $request is not null a RedirectResponse is returned.
      */
-    public function authenticate();
+    public function authenticate(ServerRequestInterface $request = null);
 
     /**
      * Returns TRUE if the user is connected

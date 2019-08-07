@@ -16,7 +16,8 @@
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "zendframework/zend-diactoros": "^1.4||^2.0"
     },
     "require-dev": {
         "ext-curl": "*",
@@ -29,7 +30,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-           "HybridauthTest\\Hybridauth\\": "test/"
+           "HybridauthTest\\Hybridauth\\": "tests/"
         }
     },
     "extra": {
