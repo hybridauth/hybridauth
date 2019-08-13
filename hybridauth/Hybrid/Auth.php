@@ -49,7 +49,7 @@ class Hybrid_Auth {
 	 * refer to the Configuration section:
 	 * http://hybridauth.sourceforge.net/userguide/Configuration.html
 	 *
-	 * @param array $config Configuration array or path to a configratuion file
+	 * @param array|string $config Configuration array or path to a configratuion file
 	 */
 	function __construct($config) {
 		Hybrid_Auth::initialize($config);
@@ -58,7 +58,7 @@ class Hybrid_Auth {
 	/**
 	 * Try to initialize Hybrid_Auth with given $config hash or file
 	 *
-	 * @param array $config Configuration array or path to a configratuion file
+	 * @param array|string $config Configuration array or path to a configratuion file
 	 * @return void
 	 * @throws Exception
 	 */
@@ -217,7 +217,7 @@ class Hybrid_Auth {
 	 *           google_service: can be "Users" for Google user accounts service or "Apps" for Google hosted Apps
 	 *
 	 * @param string $providerId ID of the provider
-	 * @param array  $params      Params
+	 * @param array|null  $params      Params
 	 * @return
 	 */
 	public static function authenticate($providerId, $params = null) {
@@ -238,7 +238,7 @@ class Hybrid_Auth {
 	/**
 	 * Return the adapter instance for an authenticated provider
 	 *
-	 * @param string $providerId ID of the provider
+	 * @param string|null $providerId ID of the provider
 	 * @return Hybrid_Provider_Adapter
 	 */
 	public static function getAdapter($providerId = null) {
@@ -250,7 +250,7 @@ class Hybrid_Auth {
 	 * Setup an adapter for a given provider
 	 *
 	 * @param string $providerId ID of the provider
-	 * @param array  $params     Adapter params
+	 * @param array|null  $params     Adapter params
 	 * @return Hybrid_Provider_Adapter
 	 */
 	public static function setup($providerId, $params = null) {
