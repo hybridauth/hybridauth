@@ -34,35 +34,35 @@ abstract class AbstractAdapter implements AdapterInterface
     protected $providerId = '';
 
     /**
-     * Specific Provider config.
+     * Specific provider config.
      *
      * @var mixed
      */
     protected $config = [];
 
     /**
-     * Extra Provider parameters.
+     * Extra provider parameters.
      *
      * @var array
      */
     protected $params;
 
     /**
-     * Callback url
+     * Callback URL
      *
      * @var string
      */
     protected $callback = '';
 
     /**
-     * Storage.
+     * Data storage
      *
      * @var StorageInterface
      */
     public $storage;
 
     /**
-     * HttpClient.
+     * HTTP client.
      *
      * @var HttpClientInterface
      */
@@ -78,7 +78,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * Whether to validate API status codes of http responses
      *
-     * @var boolean
+     * @var bool
      */
     protected $validateApiResponseHttpCode = true;
 
@@ -96,7 +96,7 @@ abstract class AbstractAdapter implements AdapterInterface
         StorageInterface    $storage = null,
         LoggerInterface     $logger = null
     ) {
-        $this->providerId = (new \ReflectionClass($this))->getShortName();
+        $this->providerId = str_replace('\\', '_', get_class($this));
 
         $this->config = new Data\Collection($config);
 
@@ -114,13 +114,13 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Load adapter's configuration
-    */
+     * Load adapter's configuration
+     */
     abstract protected function configure();
 
     /**
-    * Adapter initializer
-    */
+     * Adapter initializer
+     */
     abstract protected function initialize();
 
     /**
@@ -344,26 +344,28 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     protected function validateApiResponse($error = '')
     {
-        $error .= !empty($error) ? '. ' : '';
+        $error .= $error ? '. ' : '';
 
         if ($this->httpClient->getResponseClientError()) {
-            throw new HttpClientFailureException(
-                $error.'HTTP client error: '.$this->httpClient->getResponseClientError().'.'
-            );
+            throw new HttpClientFailureException(sprintf(
+                '%sHTTP client error: %s.'
+                $error,
+                $this->httpClient->getResponseClientError()
+            ));
         }
 
-        // if validateApiResponseHttpCode is set to false, we by pass verification of http status code
-        if (! $this->validateApiResponseHttpCode) {
-            return;
-        }
+        // Verification of HTTP status code
+        if ($this->validateApiResponseHttpCode) {
+            $status = $this->httpClient->getResponseHttpCode();
 
-        $status = $this->httpClient->getResponseHttpCode();
-
-        if ($status < 200 || $status > 299) {
-            throw new HttpRequestFailedException(
-                $error . 'HTTP error '.$this->httpClient->getResponseHttpCode().
-                '. Raw Provider API response: '.$this->httpClient->getResponseBody().'.'
-            );
+            if ($status < 200 || $status > 299) {
+                throw new HttpRequestFailedException(sprintf(
+                    '%sHTTP error %d. Raw provider API response: %s.',
+                    $error,
+                    $status,
+                    $this->httpClient->getResponseBody()
+                ));
+            }
         }
     }
 }
