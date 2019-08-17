@@ -33,7 +33,7 @@ class TempFile implements StorageInterface
      */
     public function __construct()
     {
-        $this->path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'HybridauthStorage.tmp';
+        $this->path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'HybridauthStorage' . md5(get_current_user()) . '.tmp';
         if (file_exists($this->path)) {
             $this->data = unserialize(file_get_contents($this->path));
         }
