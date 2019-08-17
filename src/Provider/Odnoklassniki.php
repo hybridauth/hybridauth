@@ -34,25 +34,40 @@ use Hybridauth\User;
 class Odnoklassniki extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     * @see https://apiok.ru/en/ext/oauth/permissions
+     */
     protected $scope = 'VALUABLE_ACCESS;LONG_ACCESS_TOKEN;GET_EMAIL';
     
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.ok.ru/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://connect.ok.ru/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.ok.ru/oauth/token.do';
 
+    /**
+     * {@inheritdoc}
+     * @see https://apiok.ru/en/ext/oauth/server
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $this->tokenRefreshParameters += [
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret,
+        ];
+    }
+    
     /**
      * Calculate request signature (sig).
      * 
@@ -119,7 +134,7 @@ class Odnoklassniki extends OAuth2
             list($userProfile->birthYear, $userProfile->birthMonth, $profile->birthDay) = explode('-', $data->get('birthday'));
         }
         if ($address = $data->get('location')) {
-            $userProfile->address = implode(', ', $address);
+            $userProfile->address = implode(', ', array_filter($address));
             $userProfile->country = isset($address['country']) ? $address['country'] : null;
             $userProfile->region  = isset($address['region']) ? $address['region'] : null;
             $userProfile->city    = isset($address['city']) ? $address['city'] : null;
