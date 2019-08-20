@@ -131,11 +131,12 @@ class Odnoklassniki extends OAuth2
         $userProfile->age         = $data->get('age');
         $userProfile->email       = $data->get('email');
         if ($data->get('birthday')) {
-            list($userProfile->birthYear, $userProfile->birthMonth, $profile->birthDay) = explode('-', $data->get('birthday'));
+            list($userProfile->birthYear, $userProfile->birthMonth, $userProfile->birthDay) = explode('-', $data->get('birthday'));
         }
         if ($address = $data->get('location')) {
             $userProfile->address = implode(', ', array_filter($address));
             $userProfile->country = isset($address['country']) ? $address['country'] : null;
+            // not exist, but maybe adds in future
             $userProfile->region  = isset($address['region']) ? $address['region'] : null;
             $userProfile->city    = isset($address['city']) ? $address['city'] : null;
         }
