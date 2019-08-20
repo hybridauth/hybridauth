@@ -37,6 +37,8 @@ use Hybridauth\User\Profile;
  */
 class Vkontakte extends OAuth2
 {
+    const API_VERSION = '5.100';
+    
     /**
      * {@inheritdoc}
      */
@@ -55,8 +57,8 @@ class Vkontakte extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'email,offline';
-
+    protected $scope = 'email,status,offline';
+    
 	/**
 	 * {@inheritdoc}
 	 */
@@ -83,16 +85,18 @@ class Vkontakte extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     * @see https://vk.com/dev/users.get  
+     */
     public function getUserProfile()
     {
         $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
         $parameters = [
             'user_ids' => $this->getStoredData('user_id'),
-            // Required fields: id,first_name,last_name
-            'fields' => 'screen_name,sex,has_photo,' . $photoField,
-            'v' => '5.95',
+            // Required fields: id, first_name, last_name, is_closed, can_access_closed
+            'fields' => 'screen_name,sex,bdate,city,country,has_photo' . $photoField,
+            'v' => self::API_VERSION,
+            'name_case' => 'nom',
             $this->accessTokenName => $this->getStoredData($this->accessTokenName),
         ];
 
@@ -104,7 +108,7 @@ class Vkontakte extends OAuth2
 
         $data = new Collection($response->response[0]);
 
-        if (!$data->exists('id')) {
+        if (! $data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -116,21 +120,20 @@ class Vkontakte extends OAuth2
         $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
-
+        if ($data->get('bdate')) {
+            list($userProfile->birthDay, $userProfile->birthMonth, $userProfile->birthYear) = explode('.', $data->get('bdate'));
+        }
+        if ($country = $data->get('country')) {
+            $userProfile->country = $country['title'];
+        }
+        if ($city = $data->get('city')) {
+            $userProfile->city = $city['title'];
+        }
+        
         $screen_name = 'https://vk.com/' . ($data->get('screen_name') ?: 'id' . $data->get('id'));
         $userProfile->profileURL  = $screen_name;
-
-        switch ($data->get('sex')) {
-            case 1:
-                $userProfile->gender = 'female';
-                break;
-
-            case 2:
-                $userProfile->gender = 'male';
-                break;
-        }
+        $userProfile->gender = $data->get('sex') == 1 ? 'female' : 'male';
 
         return $userProfile;
     }
-
 }
