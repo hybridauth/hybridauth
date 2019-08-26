@@ -14,7 +14,7 @@ class TempFile implements StorageInterface
     /**
      * @var string Key prefix
      */
-    protected $keyPrefix = '';
+    protected $keyPrefix;
 
     /**
      * @var string Path to storage file
@@ -29,11 +29,13 @@ class TempFile implements StorageInterface
     /**
      * Sets storage file and load data.
      *
+     * @param string $keyPrefix
      * @return void
      */
-    public function __construct()
+    public function __construct($keyPrefix = '')
     {
-        $this->path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'HybridauthStorage' . md5(get_current_user()) . '.tmp';
+        $this->keyPrefix = md5($keyPrefix ?: get_current_user());
+        $this->path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'hybridauth_storage.tmp';
         if (file_exists($this->path)) {
             $this->data = unserialize(file_get_contents($this->path));
         }
