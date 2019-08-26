@@ -1,9 +1,9 @@
 <?php
 /*!
-* Hybridauth
-* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
-*/
+ * Hybridauth
+ * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+ *  (c) 2017-2019 Hybridauth authors | https://hybridauth.github.io/license.html
+ */
 
 namespace Hybridauth\Adapter;
 
@@ -16,7 +16,7 @@ use Hybridauth\Data;
 use Hybridauth\HttpClient;
 
 /**
- * This class  can be used to simplify the authorization flow of OAuth 2 based service providers.
+ * This class can be used to simplify the authorization flow of OAuth2 based service providers.
  *
  * Subclasses (i.e., providers adapters) can either use the already provided methods or override
  * them when necessary.
@@ -29,7 +29,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * RFC6749: client_id REQUIRED. The client identifier issued to the client during
     * the registration process described by Section 2.2.
     *
-    * http://tools.ietf.org/html/rfc6749#section-2.2
+    * @link http://tools.ietf.org/html/rfc6749#section-2.2
     *
     * @var string
     */
@@ -41,7 +41,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * RFC6749: client_secret REQUIRED. The client secret. The client MAY omit the
     * parameter if the client secret is an empty string.
     *
-    * http://tools.ietf.org/html/rfc6749#section-2.2
+    * @link http://tools.ietf.org/html/rfc6749#section-2.2
     *
     * @var string
     */
@@ -53,7 +53,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * RFC6749: The authorization and token endpoints allow the client to specify the
     * scope of the access request using the "scope" request parameter.
     *
-    * http://tools.ietf.org/html/rfc6749#section-3.3
+    * @link http://tools.ietf.org/html/rfc6749#section-3.3
     *
     * @var string
     */
@@ -69,12 +69,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $apiBaseUrl = '';
 
     /**
-    * Authorization Endpoint
-    *
+    * Authorization endpoint.
     * RFC6749: The authorization endpoint is used to interact with the resource
     * owner and obtain an authorization grant.
     *
-    * http://tools.ietf.org/html/rfc6749#section-3.1
+    * @link http://tools.ietf.org/html/rfc6749#section-3.1
     *
     * @var string
     */
@@ -86,61 +85,56 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * RFC6749: The token endpoint is used by the client to obtain an access token by
     * presenting its authorization grant or refresh token.
     *
-    * http://tools.ietf.org/html/rfc6749#section-3.2
+    * @link http://tools.ietf.org/html/rfc6749#section-3.2
     *
     * @var string
     */
     protected $accessTokenUrl = '';
 
     /**
-    * TokenInfo endpoint
-    *
-    * Access token validation. OPTIONAL.
+    * TokenInfo endpoint.
+    * Access token validation, OPTIONAL.
     *
     * @var string
     */
     protected $accessTokenInfoUrl = '';
 
     /**
-    * IPD API Documentation
-    *
-    * OPTIONAL.
+    * IPD API documentation, OPTIONAL.
     *
     * @var string
     */
     protected $apiDocumentation = '';
 
     /**
-    * Redirection Endpoint or Callback
-    *
+    * Redirection endpoint or callback.
     * RFC6749: After completing its interaction with the resource owner, the
     * authorization server directs the resource owner's user-agent back to
     * the client.
     *
-    * http://tools.ietf.org/html/rfc6749#section-3.1.2
+    * @link http://tools.ietf.org/html/rfc6749#section-3.1.2
     *
     * @var string
     */
     protected $callback = '';
 
     /**
-    * Authorization Url Parameters
+    * Authorization URL parameters.
     *
-    * @var boolean
+    * @var array
     */
     protected $AuthorizeUrlParameters = [];
 
     /**
-    * Authorization Request State
+    * Authorization request state
     *
-    * @var boolean
+    * @var bool
     */
     protected $supportRequestState = true;
 
     /**
-    * Access Token name
-    *
-    * While most providers will use 'access_token' as name for the Access Token attribute, other do not.
+    * Access token name.
+    * While most providers will use 'access_token' as name for the access token attribute, other do not.
     * On the latter case, this should be set by sub classes.
     *
     * @var string
@@ -148,7 +142,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $accessTokenName = 'access_token';
 
     /**
-    * Authorization Request HTTP method.
+    * Authorization request HTTP method.
     *
     * @see exchangeCodeForAccessToken()
     *
@@ -157,8 +151,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $tokenExchangeMethod = 'POST';
 
     /**
-    * Authorization Request URL parameters.
-    *
+    * Authorization request URL parameters.
     * Sub classes may change add any additional parameter when necessary.
     *
     * @see exchangeCodeForAccessToken()
@@ -169,7 +162,6 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
     /**
     * Authorization Request HTTP headers.
-    *
     * Sub classes may add any additional header when necessary.
     *
     * @see exchangeCodeForAccessToken()
@@ -179,7 +171,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $tokenExchangeHeaders = [];
 
     /**
-    * Refresh Token Request HTTP method.
+    * Refresh token request HTTP method.
     *
     * @see refreshAccessToken()
     *
@@ -188,8 +180,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $tokenRefreshMethod = 'POST';
 
     /**
-    * Refresh Token Request URL parameters.
-    *
+    * Refresh token request URL parameters.
     * Sub classes may change add any additional parameter when necessary.
     *
     * @see refreshAccessToken()
@@ -199,8 +190,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $tokenRefreshParameters = [];
 
     /**
-    * Refresh Token Request HTTP headers.
-    *
+    * Refresh token request HTTP headers.
     * Sub classes may add any additional header when necessary.
     *
     * @see refreshAccessToken()
@@ -210,8 +200,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $tokenRefreshHeaders = [];
 
     /**
-    * Authorization Request URL parameters.
-    *
+    * Authorization request URL parameters.
     * Sub classes may change add any additional parameter when necessary.
     *
     * @see apiRequest()
@@ -221,8 +210,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $apiRequestParameters = [];
 
     /**
-    * Authorization Request HTTP headers.
-    *
+    * Authorization request HTTP headers.
     * Sub classes may add any additional header when necessary.
     *
     * @see apiRequest()
@@ -232,8 +220,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     protected $apiRequestHeaders = [];
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->clientId     = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key');
@@ -256,8 +244,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         $this->AuthorizeUrlParameters = [
@@ -285,8 +273,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function authenticate()
     {
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
@@ -298,12 +286,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         try {
             $this->authenticateCheckError();
 
-            $code = filter_input(INPUT_GET, 'code');
-
-            if (empty($code)) {
-                $this->authenticateBegin();
-            } else {
+            if (filter_input(INPUT_GET, 'code')) {
                 $this->authenticateFinish();
+            } else {
+                $this->authenticateBegin();
             }
         } catch (Exception $e) {
             $this->clearStoredData();
@@ -315,13 +301,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Authorization Request Error Response
-    *
+    * Authorization request error response.
     * RFC6749: If the request fails due to a missing, invalid, or mismatching
     * redirection URI, or if the client identifier is missing or invalid,
     * the authorization server SHOULD inform the resource owner of the error.
     *
-    * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+    * @link http://tools.ietf.org/html/rfc6749#section-4.1.2.1
     */
     protected function authenticateCheckError()
     {
@@ -338,22 +323,22 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Initiate the authorization protocol
-    *
-    * Build Authorization URL for Authorization Request and redirect the user-agent to the
-    * Authorization Server.
+    * Initiate the authorization protocol.
+    * Build Authorization URL for authorization request and redirect the user-agent to the
+    * authorization server.
     */
     protected function authenticateBegin()
     {
         $authUrl = $this->getAuthorizeUrl();
 
-        $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
+        $message = sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this));
+        $this->logger->debug($message, [$authUrl]);
 
         HttpClient\Util::redirect($authUrl);
     }
 
     /**
-    * Finalize the authorization process
+    * Finalize the authorization process.
     *
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
@@ -371,13 +356,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $code = filter_input(INPUT_GET, 'code');
 
         /**
-        * Authorization Request State
-        *
-        * RFC6749: state : RECOMMENDED. An opaque value used by the client to maintain
+        * Authorization request state.
+        * RFC6749: state: RECOMMENDED. An opaque value used by the client to maintain
         * state between the request and callback. The authorization server includes
         * this value when redirecting the user-agent back to the client.
         *
-        * http://tools.ietf.org/html/rfc6749#section-4.1.1
+        * @link http://tools.ietf.org/html/rfc6749#section-4.1.1
         */
         if ($this->supportRequestState
             &&  $this->getStoredData('authorization_state') != $state
@@ -389,12 +373,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         /**
-        * Authorization Request Code
-        *
+        * Authorization request code.
         * RFC6749: If the resource owner grants the access request, the authorization
         * server issues an authorization code and delivers it to the client:
         *
-        * http://tools.ietf.org/html/rfc6749#section-4.1.2
+        * @link http://tools.ietf.org/html/rfc6749#section-4.1.2
         */
         $response = $this->exchangeCodeForAccessToken($code);
 
@@ -404,8 +387,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Build Authorization URL for Authorization Request
-    *
+    * Build authorization URL for authorization request.
     * RFC6749: The client constructs the request URI by adding the following
     * $parameters to the query component of the authorization endpoint URI:
     *
@@ -415,7 +397,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *    - scope          OPTIONAL.
     *    - state          RECOMMENDED.
     *
-    * http://tools.ietf.org/html/rfc6749#section-4.1.1
+    * @link http://tools.ietf.org/html/rfc6749#section-4.1.1
     *
     * Sub classes may redefine this method when necessary.
     *
@@ -433,7 +415,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             );
 
         if ($this->supportRequestState) {
-            if (!isset($this->AuthorizeUrlParameters['state'])) {
+            if (! isset($this->AuthorizeUrlParameters['state'])) {
                 $this->AuthorizeUrlParameters['state'] = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
             }
 
@@ -457,11 +439,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *    - redirect_uri  REQUIRED.
     *    - client_id     REQUIRED.
     *
-    * http://tools.ietf.org/html/rfc6749#section-4.1.3
+    * @link http://tools.ietf.org/html/rfc6749#section-4.1.3
     *
     * @param string $code
     *
-    * @return string Raw Provider API response
+    * @return string Raw provider API response
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     */
@@ -482,8 +464,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Validate Access Token Response
-    *
+    * Validate access token response.
     * RFC6749: If the access token request is valid and authorized, the
     * authorization server issues an access token and optional refresh token.
     * If the request client authentication failed or is invalid, the authorization
@@ -504,9 +485,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *      "example_parameter":"example_value"
     *  }
     *
-    * http://tools.ietf.org/html/rfc6749#section-4.1.4
+    * @link http://tools.ietf.org/html/rfc6749#section-4.1.4
     *
-    * This method uses Data_Parser to attempt to decodes the raw $response (usually JSON)
+    * This method uses Data\Parser to attempt to decodes the raw $response (usually JSON)
     * into a data collection.
     *
     * @param string $response
@@ -535,10 +516,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         // calculate when the access token expire
         if ($collection->exists('expires_in')) {
-            $expires_at = time() + (int) $collection->get('expires_in');
-
-            $this->storeData('expires_in', $collection->get('expires_in'));
-            $this->storeData('expires_at', $expires_at);
+            $expires_in = (int) $collection->get('expires_in');
+            $this->storeData('expires_in', $expires_in);
+            $this->storeData('expires_at', time() + $expires_in);
         }
 
         $this->deleteStoredData('authorization_state');
@@ -549,8 +529,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Refreshing an Access Token
-    *
+    * Refreshing an access token.
     * RFC6749: If the authorization server issued a refresh token to the
     * client, the client makes a refresh request to the token endpoint by
     * adding the following parameters ... in the HTTP request entity-body:
@@ -559,14 +538,14 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *    - refresh_token  REQUIRED. The refresh token issued to the client.
     *    - scope          OPTIONAL.
     *
-    * http://tools.ietf.org/html/rfc6749#section-6
+    * @link http://tools.ietf.org/html/rfc6749#section-6
     *
     * This method is similar to exchangeCodeForAccessToken(). The only
-    * difference is here we exchange refresh_token for a new access_token.
+    * difference is here we exchange refresh_token for a new 'access_token'.
     *
     * @param array $parameters
     *
-    * @return string Raw Provider API response
+    * @return string Raw provider API response
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     * @throws InvalidAccessTokenException
@@ -592,39 +571,33 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Check whether access token has expired
+    * Check whether access token has expired.
     *
-    * @return string Raw Provider API response
+    * @return bool|null
     */
     public function hasAccessTokenExpired()
     {
         if (! $this->getStoredData('expires_at')) {
             return null;
         }
-
-        if ($this->getStoredData('expires_at') <= time()) {
-            return true;
-        }
-
-        return false;
+        return $this->getStoredData('expires_at') <= time();
     }
 
     /**
-    * Validate Refresh Access Token Request
-    *
+    * Validate refresh access token request.
     * RFC6749: If valid and authorized, the authorization server issues an
-    * access token as described in Section 5.1.  If the request failed
+    * access token as described in Section 5.1. If the request failed
     * verification or is invalid, the authorization server returns an error
     * response as described in Section 5.2.
     *
-    * http://tools.ietf.org/html/rfc6749#section-6
-    * http://tools.ietf.org/html/rfc6749#section-5.1
-    * http://tools.ietf.org/html/rfc6749#section-5.2
+    * @link http://tools.ietf.org/html/rfc6749#section-6
+    * @link http://tools.ietf.org/html/rfc6749#section-5.1
+    * @link http://tools.ietf.org/html/rfc6749#section-5.2
     *
     * This method simply use validateAccessTokenExchange(), however sub
     * classes may redefine it when necessary.
     *
-    * @param $response
+    * @param string $response
     *
     * @return \Hybridauth\Data\Collection
     * @throws InvalidAccessTokenException
@@ -635,8 +608,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Send a signed request to provider API
-    *
+    * Send a signed request to provider API.
     * RFC6749: Accessing Protected Resources: The client accesses protected
     * resources by presenting the access token to the resource server. The
     * resource server MUST validate the access token and ensure that it has
@@ -646,7 +618,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * RFC6749 and OAuth specifications, Hybridauth will consider any HTTP
     * status code that is different than '200 OK' as an ERROR.
     *
-    * http://tools.ietf.org/html/rfc6749#section-7
+    * @link http://tools.ietf.org/html/rfc6749#section-7
     *
     * @param string $url
     * @param string $method
@@ -674,15 +646,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         $response = $this->httpClient->request(
             $url,
-            $method,     // HTTP Request Method. Defaults to GET.
+            $method,     // HTTP request method. Defaults to GET.
             $parameters, // Request Parameters
             $headers     // Request Headers
         );
 
         $this->validateApiResponse('Signed API request has returned an error');
 
-        $response = (new Data\Parser())->parse($response);
-
-        return $response;
+        return (new Data\Parser)->parse($response);
     }
 }
