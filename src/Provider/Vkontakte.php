@@ -1,16 +1,16 @@
 <?php
 /*!
-* Hybridauth
-* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
-*/
+ * Hybridauth
+ * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+ *  (c) 2017-2019 Hybridauth authors | https://hybridauth.github.io/license.html
+ */
 
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
-use Hybridauth\User\Profile;
+use Hybridauth\User;
 
 /**
  * Vkontakte provider adapter.
@@ -21,23 +21,19 @@ use Hybridauth\User\Profile;
  *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'      => ['id' => '', 'secret' => ''],
  *   ];
- *
  *   $adapter = new Hybridauth\Provider\Vkontakte($config);
- *
  *   try {
  *       if (!$adapter->isConnected()) {
  *           $adapter->authenticate();
  *       }
- *
  *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
+ *   } catch (\Exception $e) {
  *       print $e->getMessage() ;
  *   }
  */
 class Vkontakte extends OAuth2
 {
-    const API_VERSION = '5.100';
+    const API_VERSION = '5.101';
     
     /**
      * {@inheritdoc}
@@ -46,30 +42,30 @@ class Vkontakte extends OAuth2
 
     /**
      * {@inheritdoc}
+     * @see https://vk.com/dev/authcode_flow_user
      */
-    protected $authorizeUrl = 'https://api.vk.com/oauth/authorize';
+    protected $authorizeUrl = 'https://oauth.vk.com/authorize';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://api.vk.com/oauth/token';
+    protected $accessTokenUrl = 'https://oauth.vk.com/access_token';
 
     /**
      * {@inheritdoc}
+     * @todo Overwrite methods setUserStatus/getUserActivity(status), getUserPages/setPageStatus(pages), 
+     *       getUserContacts(friends)
      */
-    protected $scope = 'email,status,offline';
+    protected $scope = 'offline,email,status,pages,friends';
     
 	/**
 	 * {@inheritdoc}
+     * As we using offline scope, expires_in contains 0 - the token is unlimited.
+     * @see https://vk.com/dev/permissions
 	 */
 	public function hasAccessTokenExpired()
 	{
-		// As we using offline scope, $expired will be false.
-		$expired = $this->getStoredData('expires_in')
-			? $this->getStoredData('expires_at') <= time()
-			: false;
-
-		return $expired;
+		return ! $this->getStoredData('expires_at');
 	}
 
     /**
@@ -79,7 +75,7 @@ class Vkontakte extends OAuth2
     {
         $data = parent::validateAccessTokenExchange($response);
 
-        // Need to store user_id as token for later use.
+        // Need to store user_id, email as token for use later.
         $this->storeData('user_id', $data->get('user_id'));
         $this->storeData('email', $data->get('email'));
     }
@@ -112,14 +108,14 @@ class Vkontakte extends OAuth2
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
-        $userProfile = new Profile();
+        $userProfile = new User\Profile;
 
         $userProfile->identifier  = $data->get('id');
         $userProfile->email       = $this->getStoredData('email');
         $userProfile->firstName   = $data->get('first_name');
         $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
-        $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
+        $userProfile->photoURL    = $data->get('has_photo') ? $data->get($photoField) : '';
         if ($data->get('bdate')) {
             list($userProfile->birthDay, $userProfile->birthMonth, $userProfile->birthYear) = explode('.', $data->get('bdate'));
         }
@@ -131,7 +127,7 @@ class Vkontakte extends OAuth2
         }
         
         $screen_name = 'https://vk.com/' . ($data->get('screen_name') ?: 'id' . $data->get('id'));
-        $userProfile->profileURL  = $screen_name;
+        $userProfile->profileURL = $screen_name;
         $userProfile->gender = $data->get('sex') == 1 ? 'female' : 'male';
 
         return $userProfile;
