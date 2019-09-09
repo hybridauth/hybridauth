@@ -123,7 +123,7 @@ class Facebook extends OAuth2
         // Don't use $data->get('verified') here, as Facebook will only return an email if it is validated first:
         // https://developers.facebook.com/docs/graph-api/reference/v2.0/user
         // "The User's primary email address listed on their profile. This field will not be returned if no valid email address is available."
-        $userProfile->emailVerified = !empty($userProfile->email);
+        $userProfile->emailVerified = $userProfile->email;
 
         $userProfile = $this->fetchUserRegion($userProfile);
 
