@@ -120,7 +120,10 @@ class Facebook extends OAuth2
 
         $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . '/picture?width=' . $photoSize . '&height=' . $photoSize;
 
-        $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
+        // Don't use $data->get('verified') here, as Facebook will only return an email if it is validated first:
+        // https://developers.facebook.com/docs/graph-api/reference/v2.0/user
+        // "The User's primary email address listed on their profile. This field will not be returned if no valid email address is available."
+        $userProfile->emailVerified = !empty($userProfile->email);
 
         $userProfile = $this->fetchUserRegion($userProfile);
 
