@@ -100,6 +100,11 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         return $userProfile;
     }
     
+    /**
+    * 
+    * See: https://telegram.im/widget-login.php
+    * See: https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
+    */
     protected function authenticateCheckError()
     {
         $auth_data = $this->parseAuthData();
@@ -130,6 +135,10 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         }
     }
     
+    /**
+    * 
+    * See: https://telegram.im/widget-login.php
+    */
     protected function authenticateBegin()
     {
         $this->logger->debug(
