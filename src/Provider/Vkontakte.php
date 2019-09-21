@@ -90,7 +90,7 @@ class Vkontakte extends OAuth2
         $parameters = [
             'user_ids' => $this->getStoredData('user_id'),
             // Required fields: id, first_name, last_name, is_closed, can_access_closed
-            'fields' => 'screen_name,sex,bdate,city,country,has_photo' . $photoField,
+            'fields' => 'screen_name,sex,bdate,city,country,has_photo,' . $photoField,
             'v' => self::API_VERSION,
             'name_case' => 'nom',
             $this->accessTokenName => $this->getStoredData($this->accessTokenName),
