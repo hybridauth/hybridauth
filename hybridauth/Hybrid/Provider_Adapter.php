@@ -107,94 +107,10 @@ class Hybrid_Provider_Adapter {
 	 * Hybrid_Provider_Adapter::login(), prepare the user session and the authentication request
 	 * for index.php
 	 * @return void
-	 * @throw Exception
 	 */
 	function login() {
-		Hybrid_Logger::info("Enter Hybrid_Provider_Adapter::login( {$this->id} ) ");
-
-		if (!$this->adapter) {
-			throw new Exception("Hybrid_Provider_Adapter::login() should not directly used.");
-		}
-
-		// clear all unneeded params
-		foreach (Hybrid_Auth::$config["providers"] as $idpid => $params) {
-			Hybrid_Auth::storage()->delete("hauth_session.{$idpid}.hauth_return_to");
-			Hybrid_Auth::storage()->delete("hauth_session.{$idpid}.hauth_endpoint");
-			Hybrid_Auth::storage()->delete("hauth_session.{$idpid}.id_provider_params");
-		}
-
-		// make a fresh start
-		$this->logout();
-
-		# get hybridauth base url
-		if (empty(Hybrid_Auth::$config["base_url"])) {
-			// the base url wasn't provide, so we must use the current
-			// url (which makes sense actually)
-			$url = empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off' ? 'http' : 'https';
-			$url .= '://' . $_SERVER['HTTP_HOST'];
-			$url .= $_SERVER['REQUEST_URI'];
-			$HYBRID_AUTH_URL_BASE = $url;
-		} else {
-			$HYBRID_AUTH_URL_BASE = Hybrid_Auth::$config["base_url"];
-		}
-
-		// make sure params is array
-		if (!is_array($this->params)) {
-			$this->params = array();
-		}
-
-		# we make use of session_id() as storage hash to identify the current user
-		# using session_regenerate_id() will be a problem, but ..
-		$this->params["hauth_token"] = session_id();
-
-		# set request timestamp
-		$this->params["hauth_time"] = time();
-
-		# for default HybridAuth endpoint url hauth_login_start_url
-		# 	auth.start  required  the IDp ID
-		# 	auth.time   optional  login request timestamp
-		if (!isset($this->params["login_start"]) ) {
-			$this->params["login_start"] = $HYBRID_AUTH_URL_BASE . ( strpos($HYBRID_AUTH_URL_BASE, '?') ? '&' : '?' ) . "hauth.start={$this->id}&hauth.time={$this->params["hauth_time"]}";
-		}
-
-		# for default HybridAuth endpoint url hauth_login_done_url
-		# 	auth.done   required  the IDp ID
-		if (!isset($this->params["login_done"]) ) {
-			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE . ( strpos($HYBRID_AUTH_URL_BASE, '?') ? '&' : '?' ) . "hauth.done={$this->id}";
-		}
-
-		# workaround to solve windows live authentication since microsoft disallowed redirect urls to contain any parameters
-		# http://mywebsite.com/path_to_hybridauth/?hauth.done=Live will not work
-		if ($this->id=="Live") { 
-			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE."live.php"; 
-		}
-
-		# Workaround to fix broken callback urls for the Facebook OAuth client
-		if ($this->adapter->useSafeUrls) {
-				$this->params['login_done'] = str_replace('hauth.done', 'hauth_done', $this->params['login_done']);
-		}
-
-		if (isset($this->params["hauth_return_to"])) {
-			Hybrid_Auth::storage()->set("hauth_session.{$this->id}.hauth_return_to", $this->params["hauth_return_to"]);
-		}
-		if (isset($this->params["login_done"])) {
-			Hybrid_Auth::storage()->set("hauth_session.{$this->id}.hauth_endpoint", $this->params["login_done"]);
-		}
-		Hybrid_Auth::storage()->set("hauth_session.{$this->id}.id_provider_params", $this->params);
-
-		// store config to be used by the end point
-		Hybrid_Auth::storage()->config("CONFIG", Hybrid_Auth::$config);
-
-		// move on
-		Hybrid_Logger::debug("Hybrid_Provider_Adapter::login( {$this->id} ), redirect the user to login_start URL.");
-
-		// redirect
-		if (empty($this->params["redirect_mode"])) {
-			Hybrid_Auth::redirect($this->params["login_start"]);	
-		} else {
-			Hybrid_Auth::redirect($this->params["login_start"],$this->params["redirect_mode"]);
-		}
-	}
+	  $this->adapter->login();
+  }
 
 	/**
 	 * Let hybridauth forget all about the user for the current provider
@@ -203,8 +119,6 @@ class Hybrid_Provider_Adapter {
 	function logout() {
 		$this->adapter->logout();
 	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	 * Return true if the user is connected to the current provider

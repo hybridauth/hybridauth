@@ -156,10 +156,100 @@ abstract class Hybrid_Provider_Model {
   }
 
   /**
-   * Generic logout, just erase current provider adapter stored data to let Hybrid_Auth all forget about it
+   * Generic login.
+   */
+  public function login() {
+    Hybrid_Logger::info("Enter Hybrid_Provider_Model::login( {$this->providerId} )");
+
+    // Clear all unneeded params.
+    foreach (Hybrid_Auth::$config["providers"] as $idpid => $params) {
+      Hybrid_Auth::storage()->delete("hauth_session.{$idpid}.hauth_return_to");
+      Hybrid_Auth::storage()->delete("hauth_session.{$idpid}.hauth_endpoint");
+      Hybrid_Auth::storage()->delete("hauth_session.{$idpid}.id_provider_params");
+    }
+
+    // Make a fresh start.
+    $this->logout();
+
+    // Get hybridauth base url.
+    if (empty(Hybrid_Auth::$config["base_url"])) {
+      // The base url wasn't provide, so we must use the current
+      // url (which makes sense actually)
+      $url = empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off' ? 'http' : 'https';
+      $url .= '://' . $_SERVER['HTTP_HOST'];
+      $url .= $_SERVER['REQUEST_URI'];
+      $base_url = $url;
+    }
+    else {
+      $base_url = Hybrid_Auth::$config["base_url"];
+    }
+
+    // Make sure params is array.
+    if (!is_array($this->params)) {
+      $this->params = [];
+    }
+
+    // We make use of session_id() as storage hash to identify the current user
+    // using session_regenerate_id() will be a problem, but ..
+    $this->params["hauth_token"] = session_id();
+
+    // Set request timestamp.
+    $this->params["hauth_time"] = time();
+
+    // For default HybridAuth endpoint url hauth_login_start_url
+    // auth.start  required  the IDp ID
+    // auth.time   optional  login request timestamp.
+    if (!isset($this->params["login_start"])) {
+      $this->params["login_start"] = $base_url . (strpos($base_url, '?') ? '&' : '?') . "hauth.start={$this->providerId}&hauth.time={$this->params["hauth_time"]}";
+    }
+
+    // For default HybridAuth endpoint url hauth_login_done_url
+    // auth.done required the IDp ID.
+    if (!isset($this->params["login_done"])) {
+      $this->params["login_done"] = $base_url . (strpos($base_url, '?') ? '&' : '?') . "hauth.done={$this->providerId}";
+    }
+
+    // Workaround to solve windows live authentication
+    // since microsoft disallowed redirect urls to contain any parameters
+    // http://mywebsite.com/path_to_hybridauth/?hauth.done=Live will not work.
+    if ($this->providerId === "Live") {
+      $this->params["login_done"] = $base_url . "live.php";
+    }
+
+    // Workaround to fix broken callback urls for the Facebook OAuth client.
+    if ($this->useSafeUrls) {
+      $this->params['login_done'] = str_replace('hauth.done', 'hauth_done', $this->params['login_done']);
+    }
+
+    if (isset($this->params["hauth_return_to"])) {
+      Hybrid_Auth::storage()->set("hauth_session.{$this->providerId}.hauth_return_to", $this->params["hauth_return_to"]);
+    }
+    if (isset($this->params["login_done"])) {
+      Hybrid_Auth::storage()->set("hauth_session.{$this->providerId}.hauth_endpoint", $this->params["login_done"]);
+    }
+    Hybrid_Auth::storage()->set("hauth_session.{$this->providerId}.id_provider_params", $this->params);
+
+    // Store config to be used by the end point.
+    Hybrid_Auth::storage()->config("CONFIG", Hybrid_Auth::$config);
+
+    // Move on.
+    Hybrid_Logger::debug("Hybrid_Provider_Model::login( {$this->providerId} ), redirect the user to login_start URL.");
+
+    // Redirect.
+    if (empty($this->params["redirect_mode"])) {
+      Hybrid_Auth::redirect($this->params["login_start"]);
+    }
+    else {
+      Hybrid_Auth::redirect($this->params["login_start"], $this->params["redirect_mode"]);
+    }
+  }
+
+  /**
+   * Generic logout, just erase current provider adapter stored data.
+   *
    * @return bool
    */
-  function logout() {
+  public function logout() {
     Hybrid_Logger::info("Enter [{$this->providerId}]::logout()");
     $this->clearTokens();
     return true;
