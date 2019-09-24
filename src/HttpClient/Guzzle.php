@@ -144,22 +144,21 @@ class Guzzle implements HttpClientInterface
                     $body_content = $parameters;
                     if ($multipart) {
                         $body_content = [];
-                        foreach($parameters as $key => $val) {
-
+                        foreach ($parameters as $key => $val) {
                             if ($val instanceof \CURLFile) {
                                 $val = fopen($val->getFilename(), 'r');
                             }
 
                             $body_content[] = [
-                                    'name' => $key,
-                                    'contents' => $val,
+                                'name' => $key,
+                                'contents' => $val,
                             ];
                         }
                     }
 
                     $response = $this->client->request($method, $uri,
-                      $body_type => $body_content,
-                      'headers' => $this->requestHeader,
+                        $body_type => $body_content,
+                        'headers' => $this->requestHeader,
                     ]);
                     break;
             }
@@ -169,7 +168,7 @@ class Guzzle implements HttpClientInterface
             $this->responseClientError = $e->getMessage();
         }
 
-        if (! $this->responseClientError) {
+        if (!$this->responseClientError) {
             $this->responseBody     = $response->getBody();
             $this->responseHttpCode = $response->getStatusCode();
             $this->responseHeader   = $response->getHeaders();
