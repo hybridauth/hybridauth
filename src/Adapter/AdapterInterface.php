@@ -91,10 +91,11 @@ interface AdapterInterface
      * @param string $method
      * @param array $parameters
      * @param array $headers
+     * @param bool $multipart
      *
      * @return mixed
      */
-    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = []);
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false);
 
     /**
      * Return oauth access tokens.

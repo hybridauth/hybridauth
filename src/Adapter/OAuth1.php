@@ -523,12 +523,13 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     * @param string $method
     * @param array $parameters
     * @param array $headers
+    * @param bool $multipart
     *
     * @return mixed
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     */
-    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [])
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
             $url = rtrim($this->apiBaseUrl, '/') . '/' . ltrim($url, '/');
@@ -538,7 +539,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         $headers = array_replace($this->apiRequestHeaders, (array)$headers);
 
-        $response = $this->oauthRequest($url, $method, $parameters, $headers);
+        $response = $this->oauthRequest($url, $method, $parameters, $headers, $multipart);
 
         $response = (new Data\Parser())->parse($response);
 
@@ -554,19 +555,25 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     * @param string $method
     * @param array $parameters
     * @param array $headers
+    * @param bool $multipart
     *
     * @return string Raw Provider API response
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     */
-    protected function oauthRequest($uri, $method = 'GET', $parameters = [], $headers = [])
+    protected function oauthRequest($uri, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
+        $signing_parameters = $parameters;
+        if ($multipart) {
+            $signing_parameters = [];
+        }
+
         $request = OAuthRequest::from_consumer_and_token(
             $this->OAuthConsumer,
             $this->consumerToken,
             $method,
             $uri,
-            $parameters
+            $signing_parameters
         );
 
         $request->sign_request(
@@ -576,14 +583,15 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
         );
 
         $uri        = $request->get_normalized_http_url();
-        $parameters = $request->parameters;
+        $parameters = array_replace($parameters, $request->parameters);
         $headers    = array_replace($request->to_header(), (array) $headers);
 
         $response = $this->httpClient->request(
             $uri,
             $method,
             $parameters,
-            $headers
+            $headers,
+            $multipart
         );
 
         $this->validateApiResponse('Signed API request has returned an error');
