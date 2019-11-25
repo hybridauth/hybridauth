@@ -127,6 +127,7 @@ class Curl implements HttpClientInterface
                 break;
             case 'PUT':
             case 'POST':
+            case 'PATCH':
                 $body_content = $multipart ? $parameters : http_build_query($parameters);
                 if (isset($this->requestHeader['Content-Type'])
                     && $this->requestHeader['Content-Type'] == 'application/json'
@@ -134,10 +135,10 @@ class Curl implements HttpClientInterface
                     $body_content = json_encode($parameters);
                 }
 
-                if ($method === 'PUT') {
-                    $this->curlOptions[CURLOPT_CUSTOMREQUEST] = 'PUT';
-                } else {
+                if ($method === 'POST') {
                     $this->curlOptions[CURLOPT_POST] = true;
+                } else {
+                    $this->curlOptions[CURLOPT_CUSTOMREQUEST] = $method;
                 }
                 $this->curlOptions[CURLOPT_POSTFIELDS] = $body_content;
                 break;
