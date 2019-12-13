@@ -19,7 +19,7 @@ final class Parser
     * Decodes a string into an object.
     *
     * This method will first attempt to parse data as a JSON string (since most providers use this format)
-    * then parse_str.
+    * then XML and parse_str.
     *
     * @param string $raw
     *
@@ -30,7 +30,11 @@ final class Parser
         $data = $this->parseJson($raw);
 
         if (! $data) {
-            $data = $this->parseQueryString($raw);
+            $data = $this->parseXml($raw);
+            
+            if (! $data) {
+                $data = $this->parseQueryString($raw);
+            }
         }
 
         return $data;
@@ -46,6 +50,32 @@ final class Parser
     public function parseJson($result)
     {
         return json_decode($result);
+    }
+
+    /**
+     * Decodes a XML string
+     *
+     * @param $result
+     *
+     * @return mixed
+     */
+    public function parseXml($result)
+    {
+        libxml_use_internal_errors(true);
+
+        $result = preg_replace('/([<<\/])([a-z0-9-]+):/i', '$1', $result);
+        $xml = simplexml_load_string($result);
+        
+        libxml_use_internal_errors(false);
+        
+        if (! $xml) {
+            return [];
+        }
+
+        $arr = json_decode(json_encode((array) $xml), true);
+        $arr = array($xml->getName() => $arr);
+
+        return $arr;
     }
 
     /**
