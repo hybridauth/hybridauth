@@ -112,7 +112,7 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1 {
 		$includeEmail = isset($this->config['includeEmail']) ? (bool) $this->config['includeEmail'] : false;
 		$response = $this->api->get('account/verify_credentials.json'. ($includeEmail ? '?include_email=true' : ''));
 
-		// check the last HTTP status code returned
+		// check the last HTTP status code returned.
 		if ($this->api->http_code != 200) {
 			throw new Exception("User profile request failed! {$this->providerId} returned an error. " . $this->errorMessageByStatus($this->api->http_code), 6);
 		}
@@ -121,12 +121,17 @@ class Hybrid_Providers_Twitter extends Hybrid_Provider_Model_OAuth1 {
 			throw new Exception("User profile request failed! {$this->providerId} api returned an invalid response: " . Hybrid_Logger::dumpData( $response ), 6);
 		}
 
-		# store the user profile.  
+		// store the user profile.  
 		$this->user->profile->identifier = (property_exists($response, 'id')) ? $response->id : "";
 		$this->user->profile->displayName = (property_exists($response, 'screen_name')) ? $response->screen_name : "";
 		$this->user->profile->description = (property_exists($response, 'description')) ? $response->description : "";
 		$this->user->profile->firstName = (property_exists($response, 'name')) ? $response->name : "";
-		$this->user->profile->photoURL = (property_exists($response, 'profile_image_url')) ? (str_replace('_normal', '', $response->profile_image_url)) : "";
+
+		// see https://developer.twitter.com/en/docs/accounts-and-users/user-profile-images-and-banners.
+		$photo_size = isset($this->config['photo_size']) ? $this->config['photo_size'] : 'original';
+		$photo_size = $photo_size === 'original' ? '' : "_{$photo_size}";
+		$this->user->profile->photoURL = (property_exists($response, 'profile_image_url_https')) ? (str_replace('_normal', $photo_size, $response->profile_image_url_https)) : "";
+
 		$this->user->profile->profileURL = (property_exists($response, 'screen_name')) ? ("http://twitter.com/" . $response->screen_name) : "";
 		$this->user->profile->webSiteURL = (property_exists($response, 'url')) ? $response->url : "";
 		$this->user->profile->region = (property_exists($response, 'location')) ? $response->location : "";
