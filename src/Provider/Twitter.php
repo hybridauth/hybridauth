@@ -104,8 +104,10 @@ class Twitter extends OAuth1
                                         ? ('http://twitter.com/' . $data->get('screen_name'))
                                         : '';
 
-        $userProfile->photoURL      = $data->exists('profile_image_url')
-                                        ? str_replace('_normal', '', $data->get('profile_image_url'))
+        $photoSize = $this->config->get('photo_size') ?: 'original';
+        $photoSize = $photoSize === 'original' ? '' : "_{$photoSize}";
+        $userProfile->photoURL      = $data->exists('profile_image_url_https')
+                                        ? str_replace('_normal', $photoSize, $data->get('profile_image_url_https'))
                                         : '';
 
         $userProfile->data = [
