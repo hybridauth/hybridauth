@@ -55,7 +55,7 @@ class TwitchTV extends OAuth2
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
-        $users = $data->filter('data')->properties();
+        $users = $data->filter('data')->values();
         $user = new Data\Collection($users[0]);
 
         $userProfile = new User\Profile();
