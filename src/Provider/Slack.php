@@ -23,7 +23,7 @@ class Slack extends OAuth2
     public $scope = 'identity.basic identity.email identity.avatar';
 
     /**
-     {@inheritdoc}
+    * {@inheritdoc}
     */
     protected $apiBaseUrl = 'https://slack.com/';
 
@@ -65,6 +65,17 @@ class Slack extends OAuth2
         return $userProfile;
     }
 
+    /**
+    * Returns the url of the image with the highest resolution in the user object.
+    *
+    * Slack sends multiple image urls with different resolutions. As they make no guarantees
+    * which resolutions will be included we have to search all <code>image_*</code> properties
+    * for the one with the highest resolution. The resolution is attached to the property
+     * name such as <code>image_32</code> or <code>image_192</code>.
+    *
+    * @param Data\Collection $data response object as returned by <code>api/users.identity</code>
+    * @return string|null the value of the <code>image_*</code> property with the highest resolution.
+    */
     private function findLargestImage(Data\Collection $data)
     {
         $maxSize = 0;
