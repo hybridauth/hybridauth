@@ -158,7 +158,7 @@ class Guzzle implements HttpClientInterface
                         }
                     }
 
-                    $response = $this->client->request($method, $uri,
+                    $response = $this->client->request($method, $uri, [
                         $body_type => $body_content,
                         'headers' => $this->requestHeader,
                     ]);
