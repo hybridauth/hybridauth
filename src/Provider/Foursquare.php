@@ -51,7 +51,10 @@ class Foursquare extends OAuth2
 
         $apiVersion = $this->config->get('api_version') ?: '20140201';
 
-        $this->apiRequestParameters = ['oauth_token' => $this->getStoredData('access_token') ,'v' => $apiVersion ];
+        $this->apiRequestParameters = [
+            'oauth_token' => $this->getStoredData('access_token'), 
+            'v' => $apiVersion,
+        ];
     }
 
     /**
