@@ -166,7 +166,12 @@ class Hybridauth
         }
 
         $config = $providersConfig[$name];
-
+        
+        $config = $config + array(
+            'debug_mode'=> $this->config['debug_mode'],
+            'debug_file'=> $this->config['debug_file']
+        );
+        
         if (! isset($config['callback']) && isset($this->config['callback'])) {
             $config['callback'] = $this->config['callback'];
         }
