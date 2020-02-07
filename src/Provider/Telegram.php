@@ -113,7 +113,9 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         $data_check_arr = [];
         
         foreach ($auth_data as $key => $value) {
-            $data_check_arr[] = $key . '=' . $value;
+            if ($value !== '') {
+                $data_check_arr[] = $key . '=' . $value;
+            }
         }
         sort($data_check_arr);
         
