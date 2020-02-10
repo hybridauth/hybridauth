@@ -11,6 +11,8 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
+use Hybridauth\Data;
+use Hybridauth\User;
 
 /**
  * Vkontakte provider adapter.
@@ -37,6 +39,11 @@ use Hybridauth\User\Profile;
  */
 class Vkontakte extends OAuth2
 {
+
+    const API_VERSION = '5.95';
+
+    const URL = 'https://vk.com/';
+
     /**
      * {@inheritdoc}
      */
@@ -92,7 +99,7 @@ class Vkontakte extends OAuth2
             'user_ids' => $this->getStoredData('user_id'),
             // Required fields: id,first_name,last_name
             'fields' => 'screen_name,sex,has_photo,' . $photoField,
-            'v' => '5.95',
+            'v' => static::API_VERSION,
             $this->accessTokenName => $this->getStoredData($this->accessTokenName),
         ];
 
@@ -117,7 +124,7 @@ class Vkontakte extends OAuth2
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
 
-        $screen_name = 'https://vk.com/' . ($data->get('screen_name') ?: 'id' . $data->get('id'));
+        $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
         $userProfile->profileURL  = $screen_name;
 
         switch ($data->get('sex')) {
@@ -131,6 +138,55 @@ class Vkontakte extends OAuth2
         }
 
         return $userProfile;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserContacts()
+    {
+        $contacts = [];
+
+        $parameters = [
+            'user_id' => $this->getStoredData('user_id'),
+            'fields' => 'uid,name,photo_200_orig',
+            'v' => static::API_VERSION,
+            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
+        ];
+
+        $response = $this->apiRequest('friends.get', 'GET', $parameters);
+
+        $data = new Data\Collection($response);
+        if (!$data->exists('response') ) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
+        if (!$data->filter('response')->filter('items')->isEmpty()) {
+            foreach ($data->filter('response')->filter('items')->toArray() as $item) {
+                $contacts[] = $this->fetchUserContact($item);
+            }
+        }
+
+        return $contacts;
+    }
+
+    /**
+     * Parse the user contact.
+     *
+     * @param array $item
+     *
+     * @return \Hybridauth\User\Contact
+     */
+    protected function fetchUserContact($item)
+    {
+        $userContact = new User\Contact();
+        $data = new Data\Collection($item);
+
+        $userContact->identifier = $data->get('id');
+        $userContact->displayName = sprintf('%s %s', $data->get('first_name'), $data->get('last_name'));
+        $userContact->profileURL = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
+        $userContact->photoURL = $data->get('photo_200_orig');
+
+        return $userContact;
     }
 
 }
