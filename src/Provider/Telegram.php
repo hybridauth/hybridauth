@@ -30,7 +30,7 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
  *       $userProfile = $adapter->getUserProfile();
  *   }
  *   catch(\Exception $e) {
- *       print $e->getMessage() ;
+ *       print $e->getMessage();
  *   }
  */
 class Telegram extends AbstractAdapter implements AdapterInterface
@@ -51,7 +51,7 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         $this->botSecret = $this->config->filter('keys')->get('secret');
         $this->callbackUrl = $this->config->get('callback');
 
-        if (! $this->botId || !$this->botSecret) {
+        if (!$this->botId || !$this->botSecret) {
             throw new InvalidApplicationCredentialsException(
                 'Your application id is required in order to connect to ' . $this->providerId
             );
@@ -113,7 +113,7 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         $data_check_arr = [];
         
         foreach ($auth_data as $key => $value) {
-            if ($value !== '') {
+            if (!empty($value)) {
                 $data_check_arr[] = $key . '=' . $value;
             }
         }
