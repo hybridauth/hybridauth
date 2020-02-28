@@ -100,14 +100,14 @@ abstract class AbstractAdapter implements AdapterInterface
 
         $this->config = new Data\Collection($config);
 
-        $this->configure();
-
         $this->setHttpClient($httpClient);
 
         $this->setStorage($storage);
 
         $this->setLogger($logger);
 
+        $this->configure();
+        
         $this->logger->debug(sprintf('Initialize %s, config: ', get_class($this)), $config);
 
         $this->initialize();
