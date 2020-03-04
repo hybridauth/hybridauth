@@ -22,7 +22,7 @@
     },
     "require-dev": {
         "ext-curl": "*",
-        "phpunit/phpunit": "^4.8.35"
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
         "psr-4": {
