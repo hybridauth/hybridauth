@@ -18,33 +18,33 @@ use Hybridauth\User;
 class Strava extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public $scope = 'profile:read_all';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://www.strava.com/api/v3/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://www.strava.com/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://www.strava.com/oauth/token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developers.strava.com/docs/reference/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('athlete');
