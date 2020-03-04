@@ -2,7 +2,6 @@
 
 namespace HybridauthTest\Hybridauth\User;
 
-use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\User\Activity;
 
 class ActivityTest extends \PHPUnit\Framework\TestCase
@@ -32,10 +31,11 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
         $activity->user = true;
     }
 
+    /**
+     * @expectedException \Hybridauth\Exception\UnexpectedValueException
+     */
     public function test_property_overloading()
     {
-        $this->expectException(UnexpectedValueException::class);
-
         $activity = new Activity;
         $activity->slug = true;
     }

@@ -2,7 +2,6 @@
 
 namespace HybridauthTest\Hybridauth\User;
 
-use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\User\Profile;
 
 class ProfileTest extends \PHPUnit\Framework\TestCase
@@ -68,10 +67,11 @@ class ProfileTest extends \PHPUnit\Framework\TestCase
         $profile->zip = true;
     }
 
+    /**
+     * @expectedException \Hybridauth\Exception\UnexpectedValueException
+     */
     public function test_property_overloading()
     {
-        $this->expectException(UnexpectedValueException::class);
-
         $profile = new Profile;
         $profile->slug = true;
     }
