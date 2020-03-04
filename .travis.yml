@@ -16,9 +16,9 @@ env:
 jobs:
   include:
     - php: 7.2
-      env: PHPCS=1 PHPUNIT=1
+      env: PHPCS=0 PHPUNIT=1
     - php: 7.3
-      env: PHPCS=1 PHPUNIT=1
+      env: PHPCS=0 PHPUNIT=1
 
 before_script:
   - composer self-update
