@@ -5,23 +5,20 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - 7.1
   - 7.2
   - 7.3
 
 env:
-  - PHPCS=1 DEFAULT=1
+  - PHPCS=1 PHPUNIT=0
 
+# run tests for php 7.2+
 jobs:
   include:
-    - php: 5.4
-      env: PHPCS=1 DEFAULT=0
-    - php: 5.5
-      env: PHPCS=1 DEFAULT=0
-  exclude:
-    - php: 5.4
-      env: PHPCS=1 DEFAULT=1
-    - php: 5.5
-      env: PHPCS=1 DEFAULT=1
+    - php: 7.2
+      env: PHPCS=1 PHPUNIT=1
+    - php: 7.3
+      env: PHPCS=1 PHPUNIT=1
 
 before_script:
   - composer self-update
@@ -29,7 +26,7 @@ before_script:
   - sh -c "if [ '$PHPCS' = '1' ]; then composer require squizlabs/php_codesniffer=*; fi"
 
 script:
-  - sh -c "if [ '$DEFAULT' = '1' ]; then vendor/bin/phpunit; fi"
+  - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
 
 notifications:
