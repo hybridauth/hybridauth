@@ -49,14 +49,15 @@ class OpenStreetMap extends OAuth1
     {
         $response = $this->apiRequest('user/details');
 
-        $response = new \SimpleXMLElement($response);
+        $data = new Data\Collection($response);
+        $user = $data->get('user');
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier    = (string) $response->user['id'];
-        $userProfile->displayName   = (string) $response->user['display_name'];
-        $userProfile->description   = (string) $response->user->description;
-        $userProfile->photoURL      = (string) $response->user->img['href'];
+        $userProfile->identifier    = (string) $user['id'];
+        $userProfile->displayName   = (string) $user['display_name'];
+        $userProfile->description   = (string) $user->get('description');
+        $userProfile->photoURL      = (string) $user->get('img')['href'];
         $userProfile->profileURL    = 'https://www.openstreetmap.org/user/' . $userProfile->displayName;
 
         return $userProfile;
