@@ -107,7 +107,7 @@ abstract class AbstractAdapter implements AdapterInterface
         $this->setLogger($logger);
 
         $this->configure();
-        
+
         $this->logger->debug(sprintf('Initialize %s, config: ', get_class($this)), $config);
 
         $this->initialize();
