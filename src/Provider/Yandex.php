@@ -13,7 +13,6 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
 
-
 /**
  * Yandex provider adapter.
  *

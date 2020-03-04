@@ -7,7 +7,6 @@ use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
 use Hybridauth\Adapter\AbstractAdapter;
 use Hybridauth\Adapter\AdapterInterface;
-
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\InvalidAuthorizationCodeException;
 use Hybridauth\Exception\UnexpectedApiResponseException;
@@ -143,12 +142,10 @@ class Telegram extends AbstractAdapter implements AdapterInterface
      */
     protected function authenticateBegin()
     {
-        $this->logger->debug(
-            sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this))
-        );
+        $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)));
 
         exit(
-<<<HTML
+            <<<HTML
 <center>
     <script async src="https://telegram.org/js/telegram-widget.js?7"
             data-telegram-login="{$this->botId}"
@@ -182,5 +179,4 @@ HTML
             'hash'          => filter_input(INPUT_GET, 'hash'),
         ];
     }
-
 }
