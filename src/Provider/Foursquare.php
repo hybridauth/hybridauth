@@ -52,7 +52,7 @@ class Foursquare extends OAuth2
         $apiVersion = $this->config->get('api_version') ?: '20140201';
 
         $this->apiRequestParameters = [
-            'oauth_token' => $this->getStoredData('access_token'), 
+            'oauth_token' => $this->getStoredData('access_token'),
             'v' => $apiVersion,
         ];
     }
@@ -87,7 +87,8 @@ class Foursquare extends OAuth2
         if ($data->exists('photo')) {
             $photoSize = $this->config->get('photo_size') ?: '150x150';
 
-            $userProfile->photoURL = $data->filter('photo')->get('prefix') . $photoSize . $data->filter('photo')->get('suffix');
+            $userProfile->photoURL = $data->filter('photo')->get('prefix');
+            $userProfile->photoURL .= $photoSize . $data->filter('photo')->get('suffix');
         }
 
         return $userProfile;
@@ -128,10 +129,11 @@ class Foursquare extends OAuth2
 
         $userContact = new User\Contact();
 
-        $userContact->identifier  = $item->get('id');
-        $userContact->photoURL    = $item->filter('photo')->get('prefix') . $photoSize . $item->filter('photo')->get('suffix');
+        $userContact->identifier = $item->get('id');
+        $userContact->photoURL = $item->filter('photo')->get('prefix');
+        $userContact->photoURL .= $photoSize . $item->filter('photo')->get('suffix');
         $userContact->displayName = trim($item->get('firstName') . ' ' . $item->get('lastName'));
-        $userContact->email       = $item->filter('contact')->get('email');
+        $userContact->email = $item->filter('contact')->get('email');
 
         return $userContact;
     }

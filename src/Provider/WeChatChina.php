@@ -7,12 +7,6 @@
 
 namespace Hybridauth\Provider;
 
-use Hybridauth\Adapter\OAuth2;
-use Hybridauth\Provider\WeChat;
-use Hybridauth\Exception\UnexpectedApiResponseException;
-use Hybridauth\Data;
-use Hybridauth\User;
-
 /**
  * WeChat China OAuth2 provider adapter.
  */
@@ -38,5 +32,4 @@ class WeChatChina extends WeChat
      * {@ịnheritdoc}
      */
     protected $accessTokenInfoUrl = 'https://api.weixin.qq.com/sns/auth';
-
 }

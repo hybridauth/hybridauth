@@ -35,16 +35,16 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
  */
 class Telegram extends AbstractAdapter implements AdapterInterface
 {
-    
+
     protected $botId = '';
-    
+
     protected $botSecret = '';
-    
+
     protected $callbackUrl = '';
-    
+
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->botId = $this->config->filter('keys')->get('id');
@@ -59,13 +59,15 @@ class Telegram extends AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
-    protected function initialize() {}
+     * {@inheritdoc}
+     */
+    protected function initialize()
+    {
+    }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function authenticate()
     {
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
@@ -77,10 +79,10 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         }
         return null;
     }
-    
+
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $data = new Collection($this->parseAuthData());
@@ -99,66 +101,66 @@ class Telegram extends AbstractAdapter implements AdapterInterface
 
         return $userProfile;
     }
-    
+
     /**
-    * See: https://telegram.im/widget-login.php
-    * See: https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
-    */
+     * See: https://telegram.im/widget-login.php
+     * See: https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
+     */
     protected function authenticateCheckError()
     {
         $auth_data = $this->parseAuthData();
-        
+
         $check_hash = $auth_data['hash'];
         unset($auth_data['hash']);
         $data_check_arr = [];
-        
+
         foreach ($auth_data as $key => $value) {
             if (!empty($value)) {
                 $data_check_arr[] = $key . '=' . $value;
             }
         }
         sort($data_check_arr);
-        
+
         $data_check_string = implode("\n", $data_check_arr);
         $secret_key = hash('sha256', $this->botSecret, true);
         $hash = hash_hmac('sha256', $data_check_string, $secret_key);
-        
+
         if (strcmp($hash, $check_hash) !== 0) {
             throw new InvalidAuthorizationCodeException(
                 sprintf('Provider returned an error: %s', 'Data is NOT from Telegram')
             );
         }
-        
+
         if ((time() - $auth_data['auth_date']) > 86400) {
             throw new InvalidAuthorizationCodeException(
                 sprintf('Provider returned an error: %s', 'Data is outdated')
             );
         }
     }
-    
+
     /**
-    * See: https://telegram.im/widget-login.php
-    */
+     * See: https://telegram.im/widget-login.php
+     */
     protected function authenticateBegin()
     {
         $this->logger->debug(
             sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this))
         );
-        
-        exit( 
+
+        exit(
 <<<HTML
 <center>
-    <script async src="https://telegram.org/js/telegram-widget.js?7" 
-            data-telegram-login="{$this->botId}" 
-            data-size="large" 
-            data-auth-url="{$this->callbackUrl}" 
+    <script async src="https://telegram.org/js/telegram-widget.js?7"
+            data-telegram-login="{$this->botId}"
+            data-size="large"
+            data-auth-url="{$this->callbackUrl}"
             data-request-access="write">
     </script>
 </center>
 HTML
         );
     }
-    
+
     protected function authenticateFinish()
     {
         $this->logger->debug(
@@ -167,7 +169,7 @@ HTML
         );
         $this->initialize();
     }
-    
+
     protected function parseAuthData()
     {
         return [

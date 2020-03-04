@@ -88,7 +88,21 @@ class Facebook extends OAuth2
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('me?fields=id,name,first_name,last_name,link,website,gender,locale,about,email,hometown,verified,birthday');
+        $fields = [
+            'id',
+            'name',
+            'first_name',
+            'last_name',
+            'link',
+            'website',
+            'gender',
+            'locale',
+            'about',
+            'email',
+            'hometown',
+            'birthday',
+        ];
+        $response = $this->apiRequest('me?fields=' . implode(',', $fields));
 
         $data = new Data\Collection($response);
 
@@ -118,11 +132,9 @@ class Facebook extends OAuth2
 
         $photoSize = $this->config->get('photo_size') ?: '150';
 
-        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . '/picture?width=' . $photoSize . '&height=' . $photoSize;
+        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier;
+        $userProfile->photoURL .= '/picture?width=' . $photoSize . '&height=' . $photoSize;
 
-        // Don't use $data->get('verified') here, as Facebook will only return an email if it is validated first:
-        // https://developers.facebook.com/docs/graph-api/reference/v2.0/user
-        // "The User's primary email address listed on their profile. This field will not be returned if no valid email address is available."
         $userProfile->emailVerified = $userProfile->email;
 
         $userProfile = $this->fetchUserRegion($userProfile);
@@ -238,22 +250,6 @@ class Facebook extends OAuth2
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated since August 1, 2018. Scheduled for removal before Hybridauth 3.0.0.
-     *   See https://developers.facebook.com/docs/graph-api/changelog/breaking-changes#login-4-24 for more info.
-     */
-    public function setUserStatus($status, $pageId = 'me')
-    {
-        @trigger_error('The ' . __METHOD__ . ' method is deprecated since August 1, 2018 and will be removed in Hybridauth 3.0.0.', E_USER_DEPRECATED);
-        $status = is_string($status) ? ['message' => $status] : $status;
-
-        $response = $this->apiRequest("{$pageId}/feed", 'POST', $status);
-
-        return $response;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function setPageStatus($status, $pageId)
     {
@@ -261,7 +257,7 @@ class Facebook extends OAuth2
 
         // Post on user wall.
         if ($pageId === 'me') {
-            return $this->setUserStatus($status, $pageId);
+            return $this->setUserStatus($status);
         }
 
         // Retrieve writable user pages and filter by given one.
@@ -364,7 +360,8 @@ class Facebook extends OAuth2
 
             $userActivity->user->profileURL = $this->getProfileUrl($userActivity->user->identifier);
 
-            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier . '/picture?width=150&height=150';
+            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier;
+            $userActivity->user->photoURL .= '/picture?width=150&height=150';
         }
 
         return $userActivity;

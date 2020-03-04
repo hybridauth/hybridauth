@@ -18,12 +18,12 @@ use Hybridauth\Adapter;
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *
  *       //  authenticate with Yahoo openid
- *       'openid_identifier' => 'https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds' 
+ *       'openid_identifier' => 'https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds'
  *
  *       //  authenticate with stackexchange network openid
  *       // 'openid_identifier' => 'https://openid.stackexchange.com/',
  *
- *       //  authenticate with Steam openid 
+ *       //  authenticate with Steam openid
  *       // 'openid_identifier' => 'http://steamcommunity.com/openid',
  *
  *       // etc.

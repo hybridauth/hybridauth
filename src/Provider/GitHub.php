@@ -17,63 +17,63 @@ use Hybridauth\User;
  */
 class GitHub extends OAuth2
 {
+
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public $scope = 'user:email';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.github.com/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://github.com/login/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://github.com/login/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developer.github.com/v3/oauth/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier = $data->get('id');
         $userProfile->displayName = $data->get('name');
         $userProfile->description = $data->get('bio');
-        $userProfile->photoURL    = $data->get('avatar_url');
-        $userProfile->profileURL  = $data->get('html_url');
-        $userProfile->email       = $data->get('email');
-        $userProfile->webSiteURL  = $data->get('blog');
-        $userProfile->region      = $data->get('location');
+        $userProfile->photoURL = $data->get('avatar_url');
+        $userProfile->profileURL = $data->get('html_url');
+        $userProfile->email = $data->get('email');
+        $userProfile->webSiteURL = $data->get('blog');
+        $userProfile->region = $data->get('location');
 
         $userProfile->displayName = $userProfile->displayName ?: $data->get('login');
 
         if (empty($userProfile->email) && strpos($this->scope, 'user:email') !== false) {
             try {
+                // user email is not mandatory so keep it quite.
                 $userProfile = $this->requestUserEmail($userProfile);
-            }
-            // user email is not mandatory so keep it quite
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
             }
         }
 
@@ -87,16 +87,18 @@ class GitHub extends OAuth2
      * @param User\Profile $userProfile
      *
      * @return User\Profile
+     *
+     * @throws \Exception
      */
     protected function requestUserEmail(User\Profile $userProfile)
     {
         $response = $this->apiRequest('user/emails');
 
         foreach ($response as $idx => $item) {
-            if (! empty($item->primary) && $item->primary == 1) {
+            if (!empty($item->primary) && $item->primary == 1) {
                 $userProfile->email = $item->email;
 
-                if (! empty($item->verified) && $item->verified == 1) {
+                if (!empty($item->verified) && $item->verified == 1) {
                     $userProfile->emailVerified = $userProfile->email;
                 }
 

@@ -40,6 +40,7 @@ class Session implements StorageInterface
         }
 
         if (headers_sent()) {
+            // phpcs:ignore
             throw new RuntimeException('HTTP headers already sent to browser and Hybridauth won\'t be able to start/resume PHP session. To resolve this, session_start() must be called before outputing any data.');
         }
 

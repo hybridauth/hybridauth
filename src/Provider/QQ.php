@@ -10,7 +10,8 @@ use Hybridauth\User\Profile;
 /**
  * Tencent QQ International OAuth2 provider adapter.
  */
-class QQ extends OAuth2 {
+class QQ extends OAuth2
+{
 
     /**
      * {@inheritdoc}

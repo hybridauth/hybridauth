@@ -67,7 +67,7 @@ class Yandex extends OAuth2
         $response = $this->apiRequest($this->apiBaseUrl . "?format=json");
 
         if (!isset($response->id)) {
-            throw new UnexpectedApiResponseException("User profile request failed! {$this->providerId} returned an invalid response.", 6);
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $data = new Collection($response);

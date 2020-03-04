@@ -54,7 +54,7 @@ class Discord extends OAuth2
         if (! $data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
-        
+
         // Makes display name more unique.
         $displayName = $data->get('username') ?: $data->get('login');
         if ($discriminator = $data->get('discriminator')) {
@@ -72,7 +72,8 @@ class Discord extends OAuth2
         }
 
         if ($data->get('avatar')) {
-            $userProfile->photoURL = 'https://cdn.discordapp.com/avatars/' . $data->get('id') . '/' . $data->get('avatar') . '.png';
+            $userProfile->photoURL = 'https://cdn.discordapp.com/avatars/';
+            $userProfile->photoURL .= $data->get('id') . '/' . $data->get('avatar') . '.png';
         }
 
         return $userProfile;

@@ -15,8 +15,10 @@
         "issues": "https://github.com/hybridauth/hybridauth/issues",
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
-    "require": {
-        "php": ">=5.4.0"
+    "config": {
+        "platform": {
+            "php": "5.4"
+        }
     },
     "require-dev": {
         "ext-curl": "*",

@@ -31,6 +31,7 @@ class Curl implements HttpClientInterface
         CURLOPT_MAXREDIRS      => 5,
         CURLINFO_HEADER_OUT    => true,
         CURLOPT_ENCODING       => 'identity',
+        // phpcs:ignore
         CURLOPT_USERAGENT      => 'HybridAuth, PHP Social Authentication Library (https://github.com/hybridauth/hybridauth)',
     ];
 
@@ -160,9 +161,11 @@ class Curl implements HttpClientInterface
         $this->responseClientInfo  = curl_getinfo($curl);
 
         if ($this->logger) {
+            // phpcs:ignore
             $this->logger->debug(sprintf('%s::request( %s, %s ), response:', get_class($this), $uri, $method), $this->getResponse());
 
             if (false === $response) {
+                // phpcs:ignore
                 $this->logger->error(sprintf('%s::request( %s, %s ), error:', get_class($this), $uri, $method), [$this->responseClientError]);
             }
         }

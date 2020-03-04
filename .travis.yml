@@ -9,13 +9,12 @@ php:
   - 7.3
 
 env:
-  global:
-    - PHPCS=1 DEFAULT=1
+  - PHPCS=1 DEFAULT=1
 
 jobs:
-  exclude:
+  include:
     - php: 5.4
-      env: DEFAULT=1
+      env: PHPCS=1 DEFAULT=0
 
 before_script:
   - composer self-update
@@ -24,7 +23,7 @@ before_script:
 
 script:
   - sh -c "if [ '$DEFAULT' = '1' ]; then vendor/bin/phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 ./src ./tests; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
 
 notifications:
   email: false
