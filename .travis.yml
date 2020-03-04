@@ -29,7 +29,7 @@ before_script:
   - sh -c "if [ '$PHPCS' = '1' ]; then composer require squizlabs/php_codesniffer=*; fi"
 
 script:
-  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
+  - sh -c "if [ '$DEFAULT' = '1' ]; then vendor/bin/phpunit; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 ./src ./tests; fi"
 
 notifications:
