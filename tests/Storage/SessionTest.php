@@ -1,4 +1,6 @@
-<?php namespace HybridauthTest\Hybridauth\Storage;
+<?php
+
+namespace HybridauthTest\Hybridauth\Storage;
 
 use Hybridauth\Storage\Session;
 

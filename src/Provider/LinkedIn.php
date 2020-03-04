@@ -40,7 +40,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://docs.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow';
+    protected $apiDocumentation = 'https://docs.microsoft.com/en-us/linkedin/shared/authentication/authentication';
 
     /**
      * {@inheritdoc}
@@ -76,11 +76,15 @@ class LinkedIn extends OAuth2
           ->get($this->getPreferredLocale($data, 'lastName'));
 
         $userProfile->identifier = $data->get('id');
-        $userProfile->photoURL = $this->getUserPhotoUrl($data->filter('profilePicture')->filter('displayImage~')->get('elements'));
         $userProfile->email = $this->getUserEmail();
         $userProfile->emailVerified = $userProfile->email;
-
         $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+
+        $photo_elements = $data
+            ->filter('profilePicture')
+            ->filter('displayImage~')
+            ->get('elements');
+        $userProfile->photoURL = $this->getUserPhotoUrl($photo_elements);
 
         return $userProfile;
     }
@@ -106,7 +110,7 @@ class LinkedIn extends OAuth2
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -114,6 +118,8 @@ class LinkedIn extends OAuth2
      *
      * @return string
      *   The user email address.
+     *
+     * @throws \Exception
      */
     public function getUserEmail()
     {
@@ -128,7 +134,7 @@ class LinkedIn extends OAuth2
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -179,7 +185,8 @@ class LinkedIn extends OAuth2
      * @return string
      *   A field locale.
      */
-    protected function getPreferredLocale($data, $field_name) {
+    protected function getPreferredLocale($data, $field_name)
+    {
         $locale = $data->filter($field_name)->filter('preferredLocale');
         if ($locale) {
             return $locale->get('language') . '_' . $locale->get('country');

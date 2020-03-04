@@ -1,4 +1,6 @@
-<?php namespace HybridauthTest\Hybridauth\User;
+<?php
+
+namespace HybridauthTest\Hybridauth\User;
 
 use Hybridauth\User\Activity;
 
@@ -30,12 +32,11 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @expectedException Hybridauth\Exception\UnexpectedValueException
-    */
+     * @expectedException \Hybridauth\Exception\UnexpectedValueException
+     */
     public function test_property_overloading()
     {
         $activity = new Activity;
-
         $activity->slug = true;
     }
 }

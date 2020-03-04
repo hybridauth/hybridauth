@@ -1,4 +1,6 @@
-<?php namespace HybridauthTest\Hybridauth\Data;
+<?php
+
+namespace HybridauthTest\Hybridauth\Data;
 
 use Hybridauth\Data\Collection;
 

@@ -11,6 +11,7 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
+
 /**
  * Odnoklassniki OAuth2 provider adapter.
  *

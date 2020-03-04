@@ -48,6 +48,7 @@ class Exception extends \Exception implements ExceptionInterface
 
             $obj_dump = print_r($object, true);
 
+            // phpcs:ignore
             $html .= sprintf('<b>' . get_class($object) . '</b> extends <b>' . get_parent_class($object) . '</b><pre>%s</pre>', $obj_dump);
         }
 
@@ -57,6 +58,7 @@ class Exception extends \Exception implements ExceptionInterface
 
         $html .= sprintf('<pre>%s</pre>', $session_dump);
 
+        // phpcs:ignore
         echo sprintf("<html><head><title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{display:inline-block;width:75px;}</style></head><body>%s</body></html>", $title, $html);
     }
 }

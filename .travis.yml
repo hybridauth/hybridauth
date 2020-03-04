@@ -8,33 +8,26 @@ php:
   - 7.1
   - 7.2
   - 7.3
-  - hhvm
 
 env:
-  global:
-    - DEFAULT=1
+  - PHPCS=1 PHPUNIT=0
 
-matrix:
+# run tests for php 7.2+
+jobs:
   include:
-    - php: 5.4
-      env: PHPCS=1 DEFAULT=0
     - php: 7.2
-      env: PHPCS=1 DEFAULT=0
-
-  allow_failures:
-    - env: PHPCS=1 DEFAULT=0
-    - php: 5.4
-    - php: hhvm
+      env: PHPCS=0 PHPUNIT=1
+    - php: 7.3
+      env: PHPCS=0 PHPUNIT=1
 
 before_script:
   - composer self-update
   - composer install
-
   - sh -c "if [ '$PHPCS' = '1' ]; then composer require squizlabs/php_codesniffer=*; fi"
 
 script:
-  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 ./src ./tests; fi"
+  - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
 
 notifications:
   email: false

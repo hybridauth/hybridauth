@@ -64,18 +64,18 @@ class Vkontakte extends OAuth2
      */
     protected $scope = 'email,offline';
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function hasAccessTokenExpired()
-	{
-		// As we using offline scope, $expired will be false.
-		$expired = $this->getStoredData('expires_in')
-			? $this->getStoredData('expires_at') <= time()
-			: false;
+    /**
+     * {@inheritdoc}
+     */
+    public function hasAccessTokenExpired()
+    {
+        // As we using offline scope, $expired will be false.
+        $expired = $this->getStoredData('expires_in')
+            ? $this->getStoredData('expires_at') <= time()
+            : false;
 
-		return $expired;
-	}
+        return $expired;
+    }
 
     /**
      * {@inheritdoc}
@@ -157,7 +157,7 @@ class Vkontakte extends OAuth2
         $response = $this->apiRequest('friends.get', 'GET', $parameters);
 
         $data = new Data\Collection($response);
-        if (!$data->exists('response') ) {
+        if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
         if (!$data->filter('response')->filter('items')->isEmpty()) {
@@ -188,5 +188,4 @@ class Vkontakte extends OAuth2
 
         return $userContact;
     }
-
 }

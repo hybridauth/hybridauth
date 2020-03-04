@@ -88,12 +88,8 @@ class Util
 
         $protocol = 'http://';
 
-        if (
-            (
-                $collection->get('HTTPS') && $collection->get('HTTPS') !== 'off'
-            ) ||
-                $collection->get('HTTP_X_FORWARDED_PROTO') === 'https'
-        ) {
+        if (($collection->get('HTTPS') && $collection->get('HTTPS') !== 'off') ||
+            $collection->get('HTTP_X_FORWARDED_PROTO') === 'https') {
             $protocol = 'https://';
         }
 

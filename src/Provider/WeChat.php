@@ -109,5 +109,4 @@ class WeChat extends OAuth2
 
         return $userProfile;
     }
-
 }

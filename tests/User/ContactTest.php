@@ -1,4 +1,6 @@
-<?php namespace HybridauthTest\Hybridauth\User;
+<?php
+
+namespace HybridauthTest\Hybridauth\User;
 
 use Hybridauth\User\Contact;
 
@@ -36,12 +38,11 @@ class ContactTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @expectedException Hybridauth\Exception\UnexpectedValueException
-    */
+     * @expectedException \Hybridauth\Exception\UnexpectedValueException
+     */
     public function test_property_overloading()
     {
         $contact = new Contact;
-
         $contact->slug = true;
     }
 }

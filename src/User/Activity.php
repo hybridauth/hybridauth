@@ -57,15 +57,17 @@ final class Activity
     }
 
     /**
-    * Prevent the providers adapters from adding new fields.
-    *
-    * @var string $name
-    * @var mixed  $value
-    *
-    * @throws Exception\UnexpectedValueException
-    */
+     * Prevent the providers adapters from adding new fields.
+     *
+     * @var mixed $value
+     *
+     * @var string $name
+     *
+     * @throws UnexpectedValueException
+     */
     public function __set($name, $value)
     {
+        // phpcs:ignore
         throw new UnexpectedValueException(sprintf('Adding new property "%s\' to %s is not allowed.', $name, __CLASS__));
     }
 }
