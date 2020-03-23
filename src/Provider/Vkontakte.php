@@ -67,6 +67,31 @@ class Vkontakte extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        // The VK API requires version and access_token from authenticated users
+        // for each endpoint.
+        $accessToken = $this->getStoredData($this->accessTokenName);
+        $this->apiRequestParameters[$this->accessTokenName] = $accessToken;
+        $this->apiRequestParameters['v'] = static::API_VERSION;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function validateAccessTokenExchange($response)
+    {
+        $data = parent::validateAccessTokenExchange($response);
+
+        // Need to store email for later use.
+        $this->storeData('email', $data->get('email'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasAccessTokenExpired()
     {
         // As we using offline scope, $expired will be false.
@@ -80,30 +105,13 @@ class Vkontakte extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected function validateAccessTokenExchange($response)
-    {
-        $data = parent::validateAccessTokenExchange($response);
-
-        // Need to store user_id as token for later use.
-        $this->storeData('user_id', $data->get('user_id'));
-        $this->storeData('email', $data->get('email'));
-    }
-
-    /**
-    * {@inheritdoc}
-    */
     public function getUserProfile()
     {
         $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
-        $parameters = [
-            'user_ids' => $this->getStoredData('user_id'),
-            // Required fields: id,first_name,last_name
-            'fields' => 'screen_name,sex,has_photo,' . $photoField,
-            'v' => static::API_VERSION,
-            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
-        ];
 
-        $response = $this->apiRequest('users.get', 'GET', $parameters);
+        $response = $this->apiRequest('users.get', 'GET', [
+            'fields' => 'screen_name,sex,education,has_photo,' . $photoField,
+        ]);
 
         if (property_exists($response, 'error')) {
             throw new UnexpectedApiResponseException($response->error->error_msg);
@@ -123,6 +131,10 @@ class Vkontakte extends OAuth2
         $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
+
+        $userProfile->data = [
+            'education' => $data->get('education'),
+        ];
 
         $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
         $userProfile->profileURL  = $screen_name;
@@ -145,21 +157,16 @@ class Vkontakte extends OAuth2
      */
     public function getUserContacts()
     {
-        $contacts = [];
-
-        $parameters = [
-            'user_id' => $this->getStoredData('user_id'),
+        $response = $this->apiRequest('friends.get', 'GET', [
             'fields' => 'uid,name,photo_200_orig',
-            'v' => static::API_VERSION,
-            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
-        ];
-
-        $response = $this->apiRequest('friends.get', 'GET', $parameters);
+        ]);
 
         $data = new Data\Collection($response);
         if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
+
+        $contacts = [];
         if (!$data->filter('response')->filter('items')->isEmpty()) {
             foreach ($data->filter('response')->filter('items')->toArray() as $item) {
                 $contacts[] = $this->fetchUserContact($item);
