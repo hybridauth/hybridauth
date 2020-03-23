@@ -45,6 +45,18 @@ class Instagram extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        // The Instagram API requires an access_token from authenticated users
+        $accessToken = $this->getStoredData($this->accessTokenName);
+        $this->apiRequestParameters[$this->accessTokenName] = $accessToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $parameters = [
@@ -84,19 +96,23 @@ class Instagram extends OAuth2
      *
      * @return \Hybridauth\Data\Collection Response encapsulated in a `Collection`.
      */
-    public function getUserMedia(int $limit = 12, ?string $pageId = null, array $fields = null)
+    public function getUserMedia($limit = 12, $pageId = null, array $fields = null)
     {
         if ($fields === null || count($fields) == 0) {
             $fields = [
-                'id', 'caption', 'media_type', 'media_url',
-                'thumbnail_url', 'permalink', 'timestamp', 'username'
+                'id', 'caption', 'media_type', 'media_url', 'thumbnail_url', 'permalink', 'timestamp', 'username'
             ];
         }
 
-        $fields = implode(',', $fields);
+        $params = [
+            'fields' => implode(',', $fields),
+            'limit' => $limit
+        ];
+        if ($pageId !== null) {
+            $params['after'] = $pageId;
+        }
 
-        $pager = $pageId !== null ? '&after=' . $pageId : '';
-        $response = $this->apiRequest('me/media?fields=' . $fields . '&limit=' . $limit . $pager);
+        $response = $this->apiRequest('me/media', 'GET', $params);
 
         $data = new Collection($response);
         if (!$data->exists('data')) {
@@ -118,14 +134,13 @@ class Instagram extends OAuth2
     {
         if ($fields === null || count($fields) == 0) {
             $fields = [
-                'id', 'caption', 'media_type', 'media_url',
-                'thumbnail_url', 'permalink', 'timestamp', 'username'
+                'id', 'caption', 'media_type', 'media_url', 'thumbnail_url', 'permalink', 'timestamp', 'username'
             ];
         }
 
-        $fields = implode(',', $fields);
-
-        $response = $this->apiRequest($mediaId . '?fields=' . $fields);
+        $response = $this->apiRequest($mediaId, [
+            'fields' => implode(',', $fields)
+        ]);
 
         return $response;
     }
