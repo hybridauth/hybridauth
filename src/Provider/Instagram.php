@@ -20,27 +20,27 @@ class Instagram extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'user_profile,user_media';
+    protected $scope = 'instagram_graph_user_profile,instagram_graph_user_media';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://graph.instagram.com/';
+    protected $apiBaseUrl = 'https://graph.instagram.com';
 
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://api.instagram.com/oauth/authorize/';
+    protected $authorizeUrl = 'https://api.instagram.com/oauth/authorize';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://api.instagram.com/oauth/access_token/';
+    protected $accessTokenUrl = 'https://api.instagram.com/oauth/access_token';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://www.instagram.com/developer/authentication/';
+    protected $apiDocumentation = 'https://developers.facebook.com/docs/instagram-basic-display-api';
 
     /**
      * {@inheritdoc}
@@ -50,6 +50,7 @@ class Instagram extends OAuth2
         parent::initialize();
 
         // The Instagram API requires an access_token from authenticated users
+        // for each endpoint.
         $accessToken = $this->getStoredData($this->accessTokenName);
         $this->apiRequestParameters[$this->accessTokenName] = $accessToken;
     }
@@ -59,24 +60,19 @@ class Instagram extends OAuth2
      */
     public function getUserProfile()
     {
-        $parameters = [
+        $response = $this->apiRequest('me', 'GET', [
             'fields' => 'id,username,account_type,media_count',
-            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
-        ];
-
-        $response = $this->apiRequest('me', 'GET', $parameters);
+        ]);
 
         $data = new Collection($response);
-
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
-
         $userProfile->identifier = $data->get('id');
         $userProfile->displayName = $data->get('username');
-        $userProfile->profileURL = "https://instagram.com/{$data->get('username')}";
+        $userProfile->profileURL = "https://instagram.com/{$userProfile->displayName}";
         $userProfile->data = [
             'account_type' => $data->get('account_type'),
             'media_count' => $data->get('media_count'),
@@ -92,21 +88,31 @@ class Instagram extends OAuth2
      * @param string $pageId Current pager ID.
      * @param array|null $fields Fields to fetch per media.
      *
-     * @throws \Hybridauth\Exception\UnexpectedApiResponseException If API's response is not valid.
+     * @return \Hybridauth\Data\Collection
      *
-     * @return \Hybridauth\Data\Collection Response encapsulated in a `Collection`.
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
+     * @throws \Hybridauth\Exception\UnexpectedApiResponseException
      */
     public function getUserMedia($limit = 12, $pageId = null, array $fields = null)
     {
-        if ($fields === null || count($fields) == 0) {
+        if (empty($fields)) {
             $fields = [
-                'id', 'caption', 'media_type', 'media_url', 'thumbnail_url', 'permalink', 'timestamp', 'username'
+                'id',
+                'caption',
+                'media_type',
+                'media_url',
+                'thumbnail_url',
+                'permalink',
+                'timestamp',
+                'username',
             ];
         }
 
         $params = [
             'fields' => implode(',', $fields),
-            'limit' => $limit
+            'limit' => $limit,
         ];
         if ($pageId !== null) {
             $params['after'] = $pageId;
@@ -128,20 +134,37 @@ class Instagram extends OAuth2
      * @param string $mediaId Media ID.
      * @param array|null $fields Fields to fetch per media.
      *
-     * @return object Raw response.
+     * @return \Hybridauth\Data\Collection
+     *
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
+     * @throws \Hybridauth\Exception\UnexpectedApiResponseException
      */
     public function getMedia($mediaId, array $fields = null)
     {
-        if ($fields === null || count($fields) == 0) {
+        if (empty($fields)) {
             $fields = [
-                'id', 'caption', 'media_type', 'media_url', 'thumbnail_url', 'permalink', 'timestamp', 'username'
+                'id',
+                'caption',
+                'media_type',
+                'media_url',
+                'thumbnail_url',
+                'permalink',
+                'timestamp',
+                'username',
             ];
         }
 
-        $response = $this->apiRequest($mediaId, [
-            'fields' => implode(',', $fields)
+        $response = $this->apiRequest($mediaId, 'GET', [
+            'fields' => implode(',', $fields),
         ]);
 
-        return $response;
+        $data = new Collection($response);
+        if (!$data->exists('id')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
+
+        return $data;
     }
 }
