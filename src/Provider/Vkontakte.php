@@ -110,7 +110,7 @@ class Vkontakte extends OAuth2
         $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
 
         $response = $this->apiRequest('users.get', 'GET', [
-            'fields' => 'screen_name,sex,education,has_photo,' . $photoField,
+            'fields' => 'screen_name,sex,education,bdate,has_photo,' . $photoField,
         ]);
 
         if (property_exists($response, 'error')) {
@@ -131,6 +131,14 @@ class Vkontakte extends OAuth2
         $userProfile->lastName    = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
+
+        // Handle b-date.
+        if ($data->get('bdate')) {
+            $bday = explode('.', $data->get('bdate'));
+            $userProfile->birthDay = (int) $bday[0];
+            $userProfile->birthMonth = (int) $bday[1];
+            $userProfile->birthYear = (int) $bday[2];
+        }
 
         $userProfile->data = [
             'education' => $data->get('education'),
