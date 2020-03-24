@@ -87,9 +87,6 @@ class Vkontakte extends OAuth2
 
         // Need to store email for later use.
         $this->storeData('email', $data->get('email'));
-        
-        // Need to store bdate for later use.
-        $this->storeData('bdate', $data->get('bdate'));
     }
 
     /**
@@ -135,9 +132,16 @@ class Vkontakte extends OAuth2
         $userProfile->displayName = $data->get('screen_name');
         $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
 
+        // Handle b-date.
+        if ($data->get('bdate')) {
+            $bday = explode('.', $data->get('bdate'));
+            $userProfile->birthDay = (int) $bday[0];
+            $userProfile->birthMonth = (int) $bday[1];
+            $userProfile->birthYear = (int) $bday[2];
+        }
+
         $userProfile->data = [
             'education' => $data->get('education'),
-            'bdate' => $data->get('bdate')
         ];
 
         $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
