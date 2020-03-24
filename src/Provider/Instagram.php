@@ -13,14 +13,14 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
 
 /**
- * Instagram OAuth2 provider adapter via Facebook Graph API.
+ * Instagram OAuth2 provider adapter via Instagram Basic Display API.
  */
 class Instagram extends OAuth2
 {
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'instagram_graph_user_profile,instagram_graph_user_media';
+    protected $scope = 'user_profile,user_media';
 
     /**
      * {@inheritdoc}
