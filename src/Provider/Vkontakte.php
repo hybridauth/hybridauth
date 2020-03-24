@@ -87,6 +87,9 @@ class Vkontakte extends OAuth2
 
         // Need to store email for later use.
         $this->storeData('email', $data->get('email'));
+        
+        // Need to store bdate for later use.
+        $this->storeData('bdate', $data->get('bdate'));
     }
 
     /**
@@ -110,7 +113,7 @@ class Vkontakte extends OAuth2
         $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
 
         $response = $this->apiRequest('users.get', 'GET', [
-            'fields' => 'screen_name,sex,education,has_photo,' . $photoField,
+            'fields' => 'screen_name,sex,education,bdate,has_photo,' . $photoField,
         ]);
 
         if (property_exists($response, 'error')) {
@@ -134,6 +137,7 @@ class Vkontakte extends OAuth2
 
         $userProfile->data = [
             'education' => $data->get('education'),
+            'bdate' => $data->get('bdate')
         ];
 
         $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
