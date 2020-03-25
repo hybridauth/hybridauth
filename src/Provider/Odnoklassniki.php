@@ -109,6 +109,14 @@ class Odnoklassniki extends OAuth2
         $userProfile->displayName = $data->get('name');
         $userProfile->photoURL    = $data->get('pic1024x768');
         $userProfile->profileURL  = 'http://ok.ru/profile/' . $data->get('uid');
+        
+        // Handle birthday.
+        if ($data->get('birthday')) {
+            $bday                    = explode('-', $data->get('birthday'));
+            $userProfile->birthDay   = (int)$bday[0];
+            $userProfile->birthMonth = (int)$bday[1];
+            $userProfile->birthYear  = (int)$bday[2];
+        }
 
         return $userProfile;
     }
