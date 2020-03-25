@@ -51,6 +51,11 @@ class Odnoklassniki extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://api.ok.ru/oauth/token.do';
+    
+    /**
+	 * {@inheritdoc}
+	 */
+	protected $scope = 'GET_EMAIL';
 
     /**
     * {@inheritdoc}
