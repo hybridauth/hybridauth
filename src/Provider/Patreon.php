@@ -68,7 +68,7 @@ class Patreon extends OAuth2
         $userProfile = new Profile();
 
         $data = $collection->filter('data');
-        $attributes = $data->get('attributes');
+        $attributes = $data->filter('attributes');
 
         $userProfile->identifier = $data->get('id');
         $userProfile->email = $attributes->get('email');
