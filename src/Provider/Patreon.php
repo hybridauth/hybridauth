@@ -13,72 +13,73 @@ use Hybridauth\User\Profile;
 use Hybridauth\Data\Collection;
 
 /**
- * Patreon OAuth2 provider adapter
+ * Patreon OAuth2 provider adapter.
  */
 class Patreon extends OAuth2
 {
-  /**
-   * {@inheritdoc}
-   */
-  public $scope = 'identity identity[email]';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $apiBaseUrl = 'https://www.patreon.com/api';
+    /**
+     * {@inheritdoc}
+     */
+    public $scope = 'identity identity[email]';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $authorizeUrl = 'https://www.patreon.com/oauth2/authorize';
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiBaseUrl = 'https://www.patreon.com/api';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $accessTokenUrl = 'https://www.patreon.com/api/oauth2/token';
+    /**
+     * {@inheritdoc}
+     */
+    protected $authorizeUrl = 'https://www.patreon.com/oauth2/authorize';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function initialize()
-  {
-      parent::initialize();
+    /**
+     * {@inheritdoc}
+     */
+    protected $accessTokenUrl = 'https://www.patreon.com/api/oauth2/token';
 
-      $this->tokenRefreshParameters += [
-          'client_id' => $this->clientId,
-          'client_secret' => $this->clientSecret,
-      ];
-  }
+    /**
+     * {@inheritdoc}
+     */
+    protected function initialize()
+    {
+        parent::initialize();
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getUserProfile()
-  {
-    $response = $this->apiRequest('oauth2/v2/identity', 'GET', [
-        'fields[user]' => 'created,first_name,last_name,email,full_name,is_email_verified,thumb_url,url',
-    ]);
-
-    $collection = new Collection($response);
-    if (!$collection->exists('data')) {
-        throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        $this->tokenRefreshParameters += [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+        ];
     }
 
-    $userProfile = new Profile();
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserProfile()
+    {
+        $response = $this->apiRequest('oauth2/v2/identity', 'GET', [
+            'fields[user]' => 'created,first_name,last_name,email,full_name,is_email_verified,thumb_url,url',
+        ]);
 
-    $data = $collection->filter('data');
-    $attributes = $data->get('attributes');
+        $collection = new Collection($response);
+        if (!$collection->exists('data')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
 
-    $userProfile->identifier  = $data->get('id');
-    $userProfile->email       = $attributes->get('email');
-    $userProfile->firstName   = $attributes->get('first_name');
-    $userProfile->lastName    = $attributes->get('last_name');
-    $userProfile->displayName = $attributes->get('full_name') ?: $data->get('id');
-    $userProfile->photoURL    = $attributes->get('thumb_url');
-    $userProfile->profileURL  = $attributes->get('url');
+        $userProfile = new Profile();
 
-    $userProfile->emailVerified = $attributes->get('is_email_verified') ? $userProfile->email : '';
+        $data = $collection->filter('data');
+        $attributes = $data->get('attributes');
 
-    return $userProfile;
-  }
+        $userProfile->identifier = $data->get('id');
+        $userProfile->email = $attributes->get('email');
+        $userProfile->firstName = $attributes->get('first_name');
+        $userProfile->lastName = $attributes->get('last_name');
+        $userProfile->displayName = $attributes->get('full_name') ?: $data->get('id');
+        $userProfile->photoURL = $attributes->get('thumb_url');
+        $userProfile->profileURL = $attributes->get('url');
+
+        $userProfile->emailVerified = $attributes->get('is_email_verified') ? $userProfile->email : '';
+
+        return $userProfile;
+    }
 }
