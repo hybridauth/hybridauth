@@ -46,7 +46,7 @@ class Patreon extends OAuth2
 
       $this->tokenRefreshParameters += [
           'client_id' => $this->clientId,
-          'client_secret' => $this->clientSecret
+          'client_secret' => $this->clientSecret,
       ];
   }
 
@@ -56,25 +56,24 @@ class Patreon extends OAuth2
   public function getUserProfile()
   {
     $response = $this->apiRequest('oauth2/v2/identity', 'GET', [
-      'fields[user]' => 'created,first_name,last_name,email,full_name,is_email_verified,thumb_url,url'
+        'fields[user]' => 'created,first_name,last_name,email,full_name,is_email_verified,thumb_url,url',
     ]);
 
     $collection = new Collection($response);
-
     if (!$collection->exists('data')) {
-      throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
     }
 
     $userProfile = new Profile();
 
-    $data = $collection->get('data');
-    $attributes = new Collection($data->attributes);
+    $data = $collection->filter('data');
+    $attributes = $data->get('attributes');
 
-    $userProfile->identifier  = $data->id;
+    $userProfile->identifier  = $data->get('id');
     $userProfile->email       = $attributes->get('email');
     $userProfile->firstName   = $attributes->get('first_name');
     $userProfile->lastName    = $attributes->get('last_name');
-    $userProfile->displayName = $attributes->get('full_name') ?: $data->id;
+    $userProfile->displayName = $attributes->get('full_name') ?: $data->get('id');
     $userProfile->photoURL    = $attributes->get('thumb_url');
     $userProfile->profileURL  = $attributes->get('url');
 
