@@ -31,7 +31,7 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2 {
    * {@inheritdoc}
    */
   public function getUserProfile() {
-    $data = $this->api->api("me", [
+    $data = $this->api->api("me", "GET", [
       'fields' => 'id,username,account_type,media_count',
     ]);
 
