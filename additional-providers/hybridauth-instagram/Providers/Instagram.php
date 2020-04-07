@@ -32,15 +32,15 @@ class Hybrid_Providers_Instagram extends Hybrid_Provider_Model_OAuth2 {
    */
   public function getUserProfile() {
     $data = $this->api->api("me", "GET", [
-      'fields' => 'id,username,account_type,media_count',
+      'fields' => 'id,username,media_count',
     ]);
 
-    if ($data->meta->code != 200) {
+    if (empty($data->id)) {
       throw new Exception("User profile request failed! {$this->providerId} returned an invalid response.", 6);
     }
 
-    $this->user->profile->identifier = $data->data->id;
-    $this->user->profile->displayName = $data->data->username;
+    $this->user->profile->identifier = $data->id;
+    $this->user->profile->displayName = $data->username;
     $this->user->profile->profileURL = "https://instagram.com/{$data->data->username}";
 
     return $this->user->profile;
