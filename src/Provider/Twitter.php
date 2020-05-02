@@ -81,9 +81,9 @@ class Twitter extends OAuth1
      */
     public function getUserProfile()
     {
-		$response = $this->apiRequest('account/verify_credentials.json', 'GET', [
-    		'include_email' => $this->config->get('include_email') === false ? 'false' : 'true',
-		]);
+        $response = $this->apiRequest('account/verify_credentials.json', 'GET', [
+            'include_email' => $this->config->get('include_email') === false ? 'false' : 'true',
+        ]);
 
         $data = new Data\Collection($response);
 
