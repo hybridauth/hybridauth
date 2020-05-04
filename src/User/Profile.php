@@ -17,154 +17,154 @@ final class Profile
     /**
     * The Unique user's ID on the connected provider
     *
-    * @var integer
+    * @var integer|null
     */
     public $identifier = null;
 
     /**
     * User website, blog, web page
     *
-    * @var string
+    * @var string|null
     */
     public $webSiteURL = null;
 
     /**
     * URL link to profile page on the IDp web site
     *
-    * @var string
+    * @var string|null
     */
     public $profileURL = null;
 
     /**
     * URL link to user photo or avatar
     *
-    * @var string
+    * @var string|null
     */
     public $photoURL = null;
 
     /**
     * User displayName provided by the IDp or a concatenation of first and last name.
     *
-    * @var string
+    * @var string|null
     */
     public $displayName = null;
 
     /**
     * A short about_me
     *
-    * @var string
+    * @var string|null
     */
     public $description = null;
 
     /**
     * User's first name
     *
-    * @var string
+    * @var string|null
     */
     public $firstName = null;
 
     /**
     * User's last name
     *
-    * @var string
+    * @var string|null
     */
     public $lastName = null;
 
     /**
     * male or female
     *
-    * @var string
+    * @var string|null
     */
     public $gender = null;
 
     /**
     * Language
     *
-    * @var string
+    * @var string|null
     */
     public $language = null;
 
     /**
     * User age, we don't calculate it. we return it as is if the IDp provide it.
     *
-    * @var integer
+    * @var integer|null
     */
     public $age = null;
 
     /**
     * User birth Day
     *
-    * @var integer
+    * @var integer|null
     */
     public $birthDay = null;
 
     /**
     * User birth Month
     *
-    * @var integer
+    * @var integer|null
     */
     public $birthMonth = null;
 
     /**
     * User birth Year
     *
-    * @var integer
+    * @var integer|null
     */
     public $birthYear = null;
 
     /**
     * User email. Note: not all of IDp grant access to the user email
     *
-    * @var string
+    * @var string|null
     */
     public $email = null;
 
     /**
     * Verified user email. Note: not all of IDp grant access to verified user email
     *
-    * @var string
+    * @var string|null
     */
     public $emailVerified = null;
 
     /**
     * Phone number
     *
-    * @var string
+    * @var string|null
     */
     public $phone = null;
 
     /**
     * Complete user address
     *
-    * @var string
+    * @var string|null
     */
     public $address = null;
 
     /**
     * User country
     *
-    * @var string
+    * @var string|null
     */
     public $country = null;
 
     /**
     * Region
     *
-    * @var string
+    * @var string|null
     */
     public $region = null;
 
     /**
     * City
     *
-    * @var string
+    * @var string|null
     */
     public $city = null;
 
     /**
     * Postal code
     *
-    * @var string
+    * @var string|null
     */
     public $zip = null;
 
