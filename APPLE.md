@@ -54,5 +54,5 @@ See https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-app
 
 User information is **only** sent by Apple in the POST request as response to the first `authenticate()` call as a JSON Objekt in `$_POST['user']`. Make sure you save this information, there is no way to get it delivered a second time.
 
-Different to Facebook and Google, Apple sends the code value as a **POST** request.
-
+Because a scope is defined, Apple always sends the `code` value as a **POST** request. Therefore the `response_mode` is currently hardcoded set to `form_post` (@todo make it configurable). Facebook and Google return the code as a query parameter.
+@todo We could get the code as a query parameter if no scope is used.
