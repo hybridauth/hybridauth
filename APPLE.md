@@ -2,8 +2,8 @@
 
 ## Online documentation
 
-https://developer.apple.com/sign-in-with-apple/get-started/
-https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-apple
+https://developer.apple.com/sign-in-with-apple/get-started/    
+https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-apple    
 https://sarunw.com/posts/sign-in-with-apple-2/
 
 ## Enable email delivery
