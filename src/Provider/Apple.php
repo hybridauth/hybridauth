@@ -9,10 +9,14 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedApiResponseException;
+use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
+
+use \Firebase\JWT\JWT;
+
 
 /**
  * Apple OAuth2 provider adapter.
@@ -42,6 +46,8 @@ use Hybridauth\User;
  *   catch( Exception $e ){
  *       echo $e->getMessage() ;
  *   }
+ *
+ * requires require firebase/php-jwt: composer require firebase/php-jwt
  *
  * @see https://github.com/sputnik73/hybridauth-sign-in-with-apple
  * @see https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api
@@ -96,6 +102,16 @@ class Apple extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected function exchangeCodeForAccessToken($code)
+    {
+        $this->tokenExchangeParameters['client_secret'] = $this->getSecret();
+        return parent::exchangeCodeForAccessToken($code);
+    }
+
+    /**
+     * @todo rewrite: get user information from access token!
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         if (empty($_REQUEST['user'])) {
@@ -113,13 +129,67 @@ class Apple extends OAuth2
         $userProfile = new User\Profile();
 
         $name = $data->get('name');
-        $userProfile->identifier  = $data->get('email');
-        $userProfile->firstName   = $name->firstName;
-        $userProfile->lastName    = $name->lastName;
+        $userProfile->identifier = $data->get('email');
+        $userProfile->firstName = $name->firstName;
+        $userProfile->lastName = $name->lastName;
         $userProfile->displayName = join(' ', array($userProfile->firstName,
             $userProfile->lastName));
-        $userProfile->email       = $data->get('email');
+        $userProfile->email = $data->get('email');
 
         return $userProfile;
+    }
+
+    /**
+     * @return string secret token
+     */
+    private function getSecret()
+    {
+        // Your 10-character Team ID
+        if (!$team_id = $this->config->filter('keys')->get('team_id')) {
+            throw new InvalidApplicationCredentialsException(
+                'Your team id is required generate the JWS token.'
+            );
+        }
+
+        // Your Services ID, e.g. com.aaronparecki.services
+        if (!$client_id = $this->clientId) {
+            throw new InvalidApplicationCredentialsException(
+                'Your client id is required generate the JWS token.'
+            );
+        }
+
+        // Find the 10-char Key ID value from the portal
+        if (!$key_id = $this->config->filter('keys')->get('key_id')) {
+            throw new InvalidApplicationCredentialsException(
+                'Your key id is required generate the JWS token.'
+            );
+        }
+
+        // Save your private key from Apple in a file called `key.txt`
+        if (!$key_file = $this->config->filter('keys')->get('key_file')) {
+            throw new InvalidApplicationCredentialsException(
+                'Your key file is required generate the JWS token.'
+            );
+        }
+
+        if (!file_exists($key_file)) {
+            throw new InvalidApplicationCredentialsException(
+                "Your key file $key_file does not exist."
+            );
+        }
+
+        $key = file_get_contents($key_file);
+
+        $data = [
+            'iat' => time(),
+            'exp' => time() + 86400 * 180,
+            'iss' => $team_id,
+            'aud' => 'https://appleid.apple.com',
+            'sub' => $client_id
+        ];
+
+        $secret = JWT::encode($data, $key,'ES256', $key_id);
+
+        return $secret;
     }
 }

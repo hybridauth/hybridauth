@@ -50,7 +50,26 @@ See https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-app
 
 ## Differences to other providers
 
-`getUserProfile()` is not implemented, since Apple does not provide an API for that.
+The secret is generated from a signed JWT token. Instead of a secret you have to provide your team id, key id and key file.
+
+```
+    "providers" => [
+        "Apple" => [
+            "enabled" => true,
+            "keys" => [
+                "id" => MYHYBRIDAUTH_APPLE_ID,
+                "secret" => 'foo',
+                "team_id" => MYHYBRIDAUTH_APPLE_TEAM_ID,
+                "key_id" => MYHYBRIDAUTH_APPLE_KEY_ID,
+                "key_file" => MYHYBRIDAUTH_APPLE_KEY_FULLPATH
+                ],
+            "scope" => "name email"
+        ]
+    ]
+```
+
+To generate the token, additional libraries are required:   
+`composer require firebase/php-jwt`
 
 User information is **only** sent by Apple in the POST request as response to the **first** `authenticate()` call as a JSON Objekt in `$_POST['user']`. Make sure you save this information, there is no way to get it delivered a second time.
 
