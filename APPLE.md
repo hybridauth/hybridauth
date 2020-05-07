@@ -52,6 +52,6 @@ See https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-app
 
 `getUserProfile()` is not implemented, since Apple does not provide an API for that.
 
-User information is **only** sent by Apple in the POST request as response to the first `authenticate()` call as a JSON Objekt in `$_POST['user']`. Make sure you save this information, there is no way to get it delivered a second time.
+User information is **only** sent by Apple in the POST request as response to the **first** `authenticate()` call as a JSON Objekt in `$_POST['user']`. Make sure you save this information, there is no way to get it delivered a second time.
 
-Because a scope is defined, Apple always sends the `code` value as a **POST** request. Therefore the `response_mode` is currently hardcoded set to `form_post` (@todo make it configurable). Facebook and Google return the code as a query parameter.
+The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined). If a scope is defined, Apple **always** sends the `code` value as a **POST** request. Facebook and Google return the code as a query parameter.
