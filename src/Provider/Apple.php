@@ -21,7 +21,13 @@ use Hybridauth\User;
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'name email'
+ *       'scope'    => 'name email',
+ *
+ *        // Apple's custom auth url params
+ *       'authorize_url_parameters' => [
+ *              'response_mode' => 'form_post', // query, fragment, form_post. form_post is always used if scope is defined.
+ *              // etc.
+ *       ]
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Apple( $config );
