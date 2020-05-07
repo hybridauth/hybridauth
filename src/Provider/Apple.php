@@ -9,6 +9,7 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedApiResponseException;
+use Hybridauth\Exception\UnexpectedValueException;
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
@@ -90,5 +91,35 @@ class Apple extends OAuth2
         $this->AuthorizeUrlParameters += [
             'response_mode' => 'form_post'
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserProfile()
+    {
+        if (empty($_REQUEST['user'])) {
+            return false;
+        }
+
+        $response = json_decode($_REQUEST['user']);
+
+        $data = new Data\Collection($response);
+
+        if (!$data->exists('email')) {
+            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        }
+
+        $userProfile = new User\Profile();
+
+        $name = $data->get('name');
+        $userProfile->identifier  = $data->get('email');
+        $userProfile->firstName   = $name->firstName;
+        $userProfile->lastName    = $name->lastName;
+        $userProfile->displayName = join(' ', array($userProfile->firstName,
+            $userProfile->lastName));
+        $userProfile->email       = $data->get('email');
+
+        return $userProfile;
     }
 }
