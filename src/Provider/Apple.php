@@ -15,6 +15,7 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
 
+use CoderCat\JWKToPEM\JWKConverter;
 use \Firebase\JWT\JWT;
 
 
@@ -108,33 +109,56 @@ class Apple extends OAuth2
         return parent::exchangeCodeForAccessToken($code);
     }
 
-    /**
-     * @todo rewrite: get user information from access token!
-     * {@inheritdoc}
-     */
+    protected function validateAccessTokenExchange($response)
+    {
+        $data = (new Data\Parser())->parse($response);
+
+        $collection = new Data\Collection($data);
+
+        if (!$collection->exists('id_token')) {
+            throw new InvalidAccessTokenException(
+                'Provider returned an invalid access_token: ' . htmlentities($response)
+            );
+        }
+
+        $json = file_get_contents('https://appleid.apple.com/auth/keys');
+        $public_keys = json_decode($json, true);
+
+        $jwkConverter = new JWKConverter();
+        $pem = $jwkConverter->toPEM($public_keys['keys'][0]);
+
+        $token = JWT::decode($collection->get('id_token'), $pem, ['RS256']);
+        $this->storeData('token_payload', $token);
+
+        parent::validateAccessTokenExchange($response);
+    }
+
     public function getUserProfile()
     {
-        if (empty($_REQUEST['user'])) {
+        if (empty($tokenPayload = $this->getStoredData('token_payload'))) {
             return false;
         }
 
-        $response = json_decode($_REQUEST['user']);
+        $token = new Data\Collection($tokenPayload);
 
-        $data = new Data\Collection($response);
-
-        if (!$data->exists('email')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+        if (!$token->exists('sub')) {
+            throw new UnexpectedValueException('Missing token payload.');
         }
 
         $userProfile = new User\Profile();
+        $userProfile->identifier = $token->get('sub');
+        $userProfile->email = $token->get('email');
 
-        $name = $data->get('name');
-        $userProfile->identifier = $data->get('email');
-        $userProfile->firstName = $name->firstName;
-        $userProfile->lastName = $name->lastName;
-        $userProfile->displayName = join(' ', array($userProfile->firstName,
-            $userProfile->lastName));
-        $userProfile->email = $data->get('email');
+        if (!empty($_REQUEST['user'])) {
+            $objUser = json_decode($_REQUEST['user']);
+            $user = new Data\Collection($objUser);
+
+            $name = $user->get('name');
+            $userProfile->firstName = $name->firstName;
+            $userProfile->lastName = $name->lastName;
+            $userProfile->displayName = join(' ', array($userProfile->firstName,
+                $userProfile->lastName));
+        }
 
         return $userProfile;
     }
@@ -188,7 +212,7 @@ class Apple extends OAuth2
             'sub' => $client_id
         ];
 
-        $secret = JWT::encode($data, $key,'ES256', $key_id);
+        $secret = JWT::encode($data, $key, 'ES256', $key_id);
 
         return $secret;
     }
