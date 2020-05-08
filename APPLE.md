@@ -60,5 +60,6 @@ The secret is generated from a signed JWT token. Instead of a secret you have to
 
 To generate the token, additional libraries are required:   
 `composer require firebase/php-jwt`
+`composer require codercat/jwk-to-pem`
 
 The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined). If a scope is defined, Apple **always** sends the `code` value as a **POST** request. Facebook and Google return the code as a query parameter.
