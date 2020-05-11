@@ -17,7 +17,7 @@ use Hybridauth\User;
 
 use CoderCat\JWKToPEM\JWKConverter;
 use \Firebase\JWT\JWT;
-
+use \Firebase\JWT\JWK;
 
 /**
  * Apple OAuth2 provider adapter.
