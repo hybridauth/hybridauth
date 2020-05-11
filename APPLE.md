@@ -12,9 +12,13 @@ https://sarunw.com/posts/sign-in-with-apple-2/
 
 ## Enable email delivery
 
+Sign in to https://developer.apple.com/account/resources
+
 Click on "More ..." and add domains and email addresses (requires SPF and DKIM, probably also an Apple ID in .well-known)
 
 ## Keys & IDs
+
+Sign in to Sign in to https://developer.apple.com/account/resources
 
 ### Identifiers
 
