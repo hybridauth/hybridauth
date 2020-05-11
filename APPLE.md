@@ -48,8 +48,8 @@ This is your Account ID at the top right of the account information (2nd line)
 
 ## Differences to other providers
 
-* The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your team id, key id and key file in your configuration.    
-However the secret is generated, **you still have to configure a `secret` parameter** in your provider configuration (any non-empty string) because secrets are compulsory in HybridAuth for all OAuth2 Providers, and I didn't want change things there since I am not involved in the project.
+* The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your *team_id*, *key_id* and *key_file* in your configuration.    
+Altough the secret is generated, you still have to **configure a `secret` parameter** in your provider configuration (any non-empty string) because secrets are compulsory in HybridAuth for all OAuth2 Providers, and I don't want change things there since I am not involved in the project.
 
 
 ```
