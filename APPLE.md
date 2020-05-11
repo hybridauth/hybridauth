@@ -65,5 +65,9 @@ This is your Account ID at the top right of the account information (2nd line)
 
 * Although the secret is generated, **you have to configure a `secret` parameter** in your provider configuration (any non-empty string) because secrets are compulsory in HybridAuth for all OAuth2 Providers, and I didn't want change things there since I am not involved in the project.
 
+* The token returned after authentication is a signed JWT object. Validating the signature is optional (default: true) and requires an a additional library and an additional lookup (@todo caching).    
+Validation can be disabled by setting.   `"verifyTokenSignature" => false`.  
+in the Configuration.
+
 * The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined).    
 If a scope is defined, Apple **always** sends the `code` value as a **POST** request (Facebook and Google return the code as a query parameter).
