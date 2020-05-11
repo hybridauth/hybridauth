@@ -18,7 +18,7 @@ Click on "More ..." and add domains and email addresses (requires SPF and DKIM, 
 
 ## Keys & IDs
 
-Sign in to Sign in to https://developer.apple.com/account/resources
+Sign in to https://developer.apple.com/account/resources
 
 ### Identifiers
 
