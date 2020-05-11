@@ -121,14 +121,24 @@ class Apple extends OAuth2
             );
         }
 
-        $json = file_get_contents('https://appleid.apple.com/auth/keys');
-        $public_keys = json_decode($json, true);
+        $verifyTokenSignature = ($this->config->exists('verifyTokenSignature')) ? $this->config->get('verifyTokenSignature') : true;
 
-        $jwkConverter = new JWKConverter();
-        $pem = $jwkConverter->toPEM($public_keys['keys'][0]);
+        if (!$verifyTokenSignature) {
+            // payload extraction by https://github.com/omidborjian
+            // https://github.com/hybridauth/hybridauth/issues/1095#issuecomment-626479263
+            // JWT splits the string to 3 components 1) first is header 2) is payload 3) is signature
+            $payload = explode('.', $collection->get('id_token'))[1];
+            $payload = json_decode(base64_decode($payload));
+        } else {
+            // validate the token signature and get the payload
+            $json = file_get_contents('https://appleid.apple.com/auth/keys');
+            $public_keys = json_decode($json, true);
+            $jwkConverter = new JWKConverter();
+            $pem = $jwkConverter->toPEM($public_keys['keys'][0]);
+            $payload = JWT::decode($collection->get('id_token'), $pem, ['RS256']);
+        }
 
-        $token = JWT::decode($collection->get('id_token'), $pem, ['RS256']);
-        $this->storeData('token_payload', $token);
+        $this->storeData('token_payload', $payload);
 
         parent::validateAccessTokenExchange($response);
     }
