@@ -1,6 +1,6 @@
 # Howto: Sign in with Apple
 
-### Dependencies
+## Dependencies
  * `composer require firebase/php-jwt`
  * `composer require codercat/jwk-to-pem` (for optional token signature validation only)
 
