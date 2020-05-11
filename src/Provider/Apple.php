@@ -48,7 +48,11 @@ use \Firebase\JWT\JWK;
  *       echo $e->getMessage() ;
  *   }
  *
- * requires require firebase/php-jwt: composer require firebase/php-jwt
+ * Requires:
+ *
+ * composer require codercat/jwk-to-pem
+ * composer require firebase/php-jwt
+
  *
  * @see https://github.com/sputnik73/hybridauth-sign-in-with-apple
  * @see https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api

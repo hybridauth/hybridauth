@@ -1,5 +1,9 @@
 # Howto: Sign in with Apple
 
+### Dependencies
+ * `composer require firebase/php-jwt`
+ * `composer require codercat/jwk-to-pem` (for optional token signature validation only)
+
 ## Online documentation
 
 https://developer.apple.com/sign-in-with-apple/get-started/    
@@ -53,7 +57,8 @@ This is your Account ID at the top right of the account information (2nd line)
                 "key_id" => MYHYBRIDAUTH_APPLE_KEY_ID,
                 "key_file" => MYHYBRIDAUTH_APPLE_KEY_FULLPATH
                 ],
-            "scope" => "name email"
+            "scope" => "name email",
+            "verifyTokenSignature" => true
         ]
     ]
 ```
