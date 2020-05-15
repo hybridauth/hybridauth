@@ -134,7 +134,7 @@ class Apple extends OAuth2
      */
     public function isConnected()
     {
-        return (bool) $this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
+        return (bool)$this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
     }
 
     /**
@@ -178,7 +178,7 @@ class Apple extends OAuth2
             \Firebase\JWT\JWT::$leeway = 60;
             $jwkConverter = new JWKConverter();
 
-            foreach($publicKeys->keys as $publicKey) {
+            foreach ($publicKeys->keys as $publicKey) {
                 try {
                     $pem = $jwkConverter->toPEM((array)$publicKey);
                     $payload = JWT::decode($id_token, $pem, ['RS256']);
