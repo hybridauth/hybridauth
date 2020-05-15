@@ -67,7 +67,7 @@ class Apple extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = null; // No API available
+    protected $apiBaseUrl = 'https://appleid.apple.com/auth/';
 
     /**
      * {@inheritdoc}
