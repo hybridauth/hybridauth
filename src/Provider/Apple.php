@@ -61,7 +61,29 @@ class Apple extends OAuth2
         $this->AuthorizeUrlParameters['response_mode'] = 'form_post';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAuthorizeUrl($parameters = [])
+    {
+        $this->AuthorizeUrlParameters = !empty($parameters)
+            ? $parameters
+            : array_replace(
+                (array) $this->AuthorizeUrlParameters,
+                (array) $this->config->get('authorize_url_parameters')
+            );
 
+        if ($this->supportRequestState) {
+            if (!isset($this->AuthorizeUrlParameters['state'])) {
+                $this->AuthorizeUrlParameters['state'] = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+            }
+
+            $this->storeData('authorization_state', $this->AuthorizeUrlParameters['state']);
+        }
+
+        return $this->authorizeUrl . '?' . http_build_query($this->AuthorizeUrlParameters, '', '&', PHP_QUERY_RFC3986);
+    }
+    
     /**
      * {@inheritdoc}
      */
