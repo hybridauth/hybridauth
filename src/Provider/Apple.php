@@ -196,15 +196,15 @@ class Apple extends OAuth2
             }
         }
 
-        $token = new Data\Collection($payload);
+        $data = new Data\Collection($payload);
 
-        if (!$token->exists('sub')) {
+        if (!$data->exists('sub')) {
             throw new UnexpectedValueException('Missing token payload.');
         }
 
         $userProfile = new User\Profile();
-        $userProfile->identifier = $token->get('sub');
-        $userProfile->email = $token->get('email');
+        $userProfile->identifier = $data->get('sub');
+        $userProfile->email = $data->get('email');
 
         if (!empty($_REQUEST['user'])) {
             $objUser = json_decode($_REQUEST['user']);
