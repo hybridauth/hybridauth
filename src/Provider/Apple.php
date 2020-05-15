@@ -82,7 +82,7 @@ class Apple extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api';
+    protected $apiDocumentation = 'https://developer.apple.com/documentation/sign_in_with_apple';
 
     /**
      * {@inheritdoc}
