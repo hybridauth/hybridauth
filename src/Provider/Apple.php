@@ -99,8 +99,34 @@ class Apple extends OAuth2
     {
         parent::initialize();
         $this->AuthorizeUrlParameters['response_mode'] = 'form_post';
+    }
 
+    /**
+     * {@inheritdoc}
+     *
+     * include id_token $tokenNames
+     */
+    public function getAccessToken()
+    {
+        $tokenNames = [
+            'access_token',
+            'id_token',
+            'access_token_secret',
+            'token_type',
+            'refresh_token',
+            'expires_in',
+            'expires_at',
         ];
+
+        $tokens = [];
+
+        foreach ($tokenNames as $name) {
+            if ($this->getStoredData($name)) {
+                $tokens[$name] = $this->getStoredData($name);
+            }
+        }
+
+        return $tokens;
     }
 
     /**
