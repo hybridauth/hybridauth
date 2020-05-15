@@ -5,6 +5,8 @@
 *  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
+namespace Hybridauth\Provider;
+
 use Hybridauth\Adapter\OAuth2;
 
 /**
@@ -53,8 +55,8 @@ class Apple extends OAuth2
     /**
     * {@inheritdoc}
     */
-    protected function initialize(){
-
+    protected function initialize()
+    {
         parent::initialize();
         $this->AuthorizeUrlParameters['response_mode'] = 'form_post';
     }
@@ -105,5 +107,4 @@ class Apple extends OAuth2
     {
 
     }
-
 }
