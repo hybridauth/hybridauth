@@ -109,7 +109,6 @@ class Apple extends OAuth2
      */
     public function isConnected()
     {
-        return false;
         return (bool) $this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
     }
 
