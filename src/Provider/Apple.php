@@ -105,6 +105,6 @@ class Apple extends OAuth2
      */
     public function getUserProfile()
     {
-
+        return null;
     }
 }
