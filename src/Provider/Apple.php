@@ -142,6 +142,7 @@ class Apple extends OAuth2
             // validate the token signature and get the payload
             $publicKeys = $this->apiRequest('keys');
 
+            \Firebase\JWT\JWT::$leeway = 60;
             $jwkConverter = new JWKConverter();
 
             foreach($publicKeys->keys as $publicKey) {
