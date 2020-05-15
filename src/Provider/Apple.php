@@ -98,9 +98,8 @@ class Apple extends OAuth2
     protected function initialize()
     {
         parent::initialize();
+        $this->AuthorizeUrlParameters['response_mode'] = 'form_post';
 
-        $this->AuthorizeUrlParameters += [
-            'response_mode' => 'form_post'
         ];
     }
 
