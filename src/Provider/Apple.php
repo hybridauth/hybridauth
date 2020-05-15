@@ -2,7 +2,7 @@
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
+*  (c) 2020 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -11,6 +11,7 @@ use Hybridauth\Exception\InvalidArgumentException;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\UnexpectedValueException;
+
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
@@ -52,7 +53,6 @@ use \Firebase\JWT\JWK;
  *
  * composer require codercat/jwk-to-pem
  * composer require firebase/php-jwt
-
  *
  * @see https://github.com/sputnik73/hybridauth-sign-in-with-apple
  * @see https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api
