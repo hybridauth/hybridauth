@@ -113,17 +113,21 @@ class Apple extends OAuth2
         return parent::exchangeCodeForAccessToken($code);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function validateAccessTokenExchange($response)
     {
-        $data = (new Data\Parser())->parse($response);
+        $collection = parent::validateAccessTokenExchange($response);
 
-        $collection = new Data\Collection($data);
+        $this->storeData('id_token', $collection->get('id_token'));
 
-        if (!$collection->exists('id_token')) {
-            throw new InvalidAccessTokenException(
-                'Provider returned an invalid access_token: ' . htmlentities($response)
-            );
-        }
+        return $collection;
+    }
+
+    public function getUserProfile()
+    {
+        $id_token = $this->getStoredData('id_token');
 
         $verifyTokenSignature = ($this->config->exists('verifyTokenSignature')) ? $this->config->get('verifyTokenSignature') : true;
 
@@ -131,29 +135,34 @@ class Apple extends OAuth2
             // payload extraction by https://github.com/omidborjian
             // https://github.com/hybridauth/hybridauth/issues/1095#issuecomment-626479263
             // JWT splits the string to 3 components 1) first is header 2) is payload 3) is signature
-            $payload = explode('.', $collection->get('id_token'))[1];
+            $payload = explode('.', $id_token)[1];
             $payload = json_decode(base64_decode($payload));
+
         } else {
             // validate the token signature and get the payload
-            $json = file_get_contents('https://appleid.apple.com/auth/keys');
-            $public_keys = json_decode($json, true);
+            $publicKeys = $this->apiRequest('keys');
+
             $jwkConverter = new JWKConverter();
-            $pem = $jwkConverter->toPEM($public_keys['keys'][0]);
-            $payload = JWT::decode($collection->get('id_token'), $pem, ['RS256']);
+
+            foreach($publicKeys->keys as $publicKey) {
+                try {
+                    $pem = $jwkConverter->toPEM((array)$publicKey);
+                    $payload = JWT::decode($id_token, $pem, ['RS256']);
+                    $error = false;
+                    break;
+                } catch (\Exception $e) {
+                    $error = $e->getMessage();
+                    if ($e instanceof \Firebase\JWT\ExpiredException) {
+                        break;
+                    }
+                }
+            }
+            if ($error) {
+                throw new \Exception($error);
+            }
         }
 
-        $this->storeData('token_payload', $payload);
-
-        parent::validateAccessTokenExchange($response);
-    }
-
-    public function getUserProfile()
-    {
-        if (empty($tokenPayload = $this->getStoredData('token_payload'))) {
-            return false;
-        }
-
-        $token = new Data\Collection($tokenPayload);
+        $token = new Data\Collection($payload);
 
         if (!$token->exists('sub')) {
             throw new UnexpectedValueException('Missing token payload.');
