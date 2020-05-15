@@ -107,6 +107,15 @@ class Apple extends OAuth2
     /**
      * {@inheritdoc}
      */
+    public function isConnected()
+    {
+        return false;
+        return (bool) $this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function exchangeCodeForAccessToken($code)
     {
         $this->tokenExchangeParameters['client_secret'] = $this->getSecret();
