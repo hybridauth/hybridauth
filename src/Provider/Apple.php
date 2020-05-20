@@ -205,6 +205,7 @@ class Apple extends OAuth2
         $userProfile = new User\Profile();
         $userProfile->identifier = $data->get('sub');
         $userProfile->email = $data->get('email');
+        $this->storeData('expires_at', $data->get('exp'));
 
         if (!empty($_REQUEST['user'])) {
             $objUser = json_decode($_REQUEST['user']);
