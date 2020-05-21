@@ -107,7 +107,9 @@ class Apple extends OAuth2
      */
     protected function configure()
     {
-        $this->config->filter('keys')->set('secret', $this->getSecret());
+        $keys = $this->config->get('keys');
+        $keys['secret'] = $this->getSecret();
+        $this->config->set('keys', $keys);
         return parent::configure();
     }
 
