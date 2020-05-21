@@ -18,7 +18,7 @@
     "require": {
         "php": ">=5.4.0",
         "firebase/php-jwt": "*",
-        "codercat/jwk-to-pem": "*"
+        "phpseclib/phpseclib": "~2.0"
     },
     "require-dev": {
         "ext-curl": "*",

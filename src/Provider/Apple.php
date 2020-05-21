@@ -16,7 +16,9 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
 
-use CoderCat\JWKToPEM\JWKConverter;
+use phpseclib\Crypt\RSA;
+use phpseclib\Math\BigInteger;
+
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\JWK;
 
@@ -175,12 +177,21 @@ class Apple extends OAuth2
             // validate the token signature and get the payload
             $publicKeys = $this->apiRequest('keys');
 
-            \Firebase\JWT\JWT::$leeway = 60;
-            $jwkConverter = new JWKConverter();
+            \Firebase\JWT\JWT::$leeway = 120;
 
             foreach ($publicKeys->keys as $publicKey) {
                 try {
-                    $pem = $jwkConverter->toPEM((array)$publicKey);
+                    $rsa = new RSA();
+                    $jwk = (array) $publicKey;
+
+                    $rsa->loadKey(
+                        [
+                            'e' => new BigInteger(base64_decode($jwk['e']), 256),
+                            'n' => new BigInteger(base64_decode(strtr($jwk['n'], '-_', '+/'), true), 256)
+                        ]
+                    );
+                    $pem = $rsa->getPublicKey();
+
                     $payload = JWT::decode($id_token, $pem, ['RS256']);
                     $error = false;
                     break;

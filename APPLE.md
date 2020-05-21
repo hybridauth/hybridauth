@@ -2,7 +2,7 @@
 
 ## Dependencies
  * `composer require firebase/php-jwt`
- * `composer require codercat/jwk-to-pem`
+ * `composer require phpseclib/phpseclib`
 
 ## Online documentation
 
