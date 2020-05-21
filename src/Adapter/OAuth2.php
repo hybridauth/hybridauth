@@ -449,11 +449,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->storeData('authorization_state', $this->AuthorizeUrlParameters['state']);
         }
 
-        return $this->authorizeUrl . '?' . http_build_query(
-            $this->AuthorizeUrlParameters,
-            '',
-            '&',
-            $this->AuthorizeUrlParametersEncType);
+        $queryParams = http_build_query($this->AuthorizeUrlParameters, '', '&', $this->AuthorizeUrlParametersEncType);
+        return $this->authorizeUrl . '?' . $queryParams;
     }
 
     /**
