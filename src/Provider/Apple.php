@@ -172,7 +172,6 @@ class Apple extends OAuth2
             // JWT splits the string to 3 components 1) first is header 2) is payload 3) is signature
             $payload = explode('.', $id_token)[1];
             $payload = json_decode(base64_decode($payload));
-
         } else {
             // validate the token signature and get the payload
             $publicKeys = $this->apiRequest('keys');
