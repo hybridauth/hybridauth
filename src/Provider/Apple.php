@@ -244,7 +244,7 @@ class Apple extends OAuth2
         }
 
         // Your Services ID, e.g. com.aaronparecki.services
-        if (!$client_id = $this->clientId) {
+        if (!$client_id = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key')) {
             throw new InvalidApplicationCredentialsException(
                 'Your client id is required generate the JWS token.'
             );
