@@ -126,7 +126,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     /**
     * Authorization Url Parameters
     *
-    * @var string
+    * @var array
     */
     protected $AuthorizeUrlParameters = [];
 
