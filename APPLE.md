@@ -2,7 +2,7 @@
 
 ## Dependencies
  * `composer require firebase/php-jwt`
- * `composer require codercat/jwk-to-pem` (for optional token signature validation only)
+ * `composer require codercat/jwk-to-pem`
 
 ## Online documentation
 
@@ -24,20 +24,20 @@ Sign in to https://developer.apple.com/account/resources
 
 #### App ID
 
-Create the primary ID for "Sign in".
+Create the primary ID for "Sign in" service.
 
 #### Service ID
 
 Create a service ID of the type *Sign in with Apple* and assign it to the app ID, then fill in your domains.
 
-(Apple *Service ID* = OAuth2 *Client ID*)
+The Apple Service ID is **your OAuth2 Client ID**.
 
 ### Key ID and private key
 
 Create a new key for your Sign-In Service.
-This gets you a key ID (under details) and the private key (download)
+This gets you a **key ID** (under details) and the **private key** (download)
 
-#### Attention:
+#### Hints:
 
 * Don't forget to fill in the key name (there will be no error message if you forget).
 * Downloading the privacy key is only possible once.
@@ -46,10 +46,10 @@ This gets you a key ID (under details) and the private key (download)
 
 This is your Account ID at the top right of the account information (2nd line)
 
-## Differences to other providers
+## Notes
 
 * The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your *team_id*, *key_id* and *key_file* in your configuration.    
-Altough the secret is generated, you still have to **configure a `secret` parameter** in your provider configuration (any non-empty string) because secrets are compulsory in HybridAuth for all OAuth2 Providers, and I don't want change things there since I am not involved in the project.
+Altough the secret is generated, you still have to **configure a `secret` parameter** in your provider configuration (any non-empty string) because secrets are compulsory in HybridAuth for all OAuth2 Providers, and I don't want to change things there.
 
 
 ```
@@ -70,9 +70,8 @@ Altough the secret is generated, you still have to **configure a `secret` parame
 ```
 
 
-* The token returned after authentication is a signed JWT. Validating the signature is optional (default: true) and requires an a additional library and an additional lookup (@todo caching).    
-Validation can be disabled by setting.   `"verifyTokenSignature" => false`.  
-in the Configuration.
+* The token returned after authentication is a signed JWT.  Validating requires an a additional library. It can be disabled by setting   `"verifyTokenSignature" => false` 
+in the configuration.
 
 * The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined).    
 If a scope is defined, Apple **always** sends the `code` value as a **POST** request (Facebook and Google return the code as a query parameter).
