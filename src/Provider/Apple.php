@@ -222,12 +222,12 @@ class Apple extends OAuth2
         if (!empty($_REQUEST['user'])) {
             $objUser = json_decode($_REQUEST['user']);
             $user = new Data\Collection($objUser);
-
-            $name = $user->get('name');
-            $userProfile->firstName = $name->firstName;
-            $userProfile->lastName = $name->lastName;
-            $userProfile->displayName = join(' ', array($userProfile->firstName,
-                $userProfile->lastName));
+            if (!$user->isEmpty()) {
+                $name = $user->get('name');
+                $userProfile->firstName = $name->firstName;
+                $userProfile->lastName = $name->lastName;
+                $userProfile->displayName = join(' ', [ $userProfile->firstName, $userProfile->lastName ]);
+            }
         }
 
         return $userProfile;
