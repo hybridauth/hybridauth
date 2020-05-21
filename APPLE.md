@@ -66,9 +66,13 @@ This is your Account ID at the top right of the account information (2nd line)
     ]
 ```
 
-
 * The token returned after authentication is a signed JWT.  Validating requires an a additional library. It can be disabled by setting   `"verifyTokenSignature" => false` 
 in the configuration.
 
 * The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined).    
 If a scope is defined, Apple **always** sends the `code` value as a **POST** request (Facebook and Google return the code as a query parameter).
+
+### Reasons for authentication failures
+* Have the right id (= Service ID, usually in reverse domain name notation e.g. "org.foo.bar"), team id, key id and the full path to your private key file configured.
+* Make sure you have your domain(s) configured correctly in your Service ID.
+* Your server must have the time set correctly (use ntpdate), otherwise signature validation might fail
