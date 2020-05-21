@@ -29,7 +29,7 @@ use \Firebase\JWT\JWK;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
+ *       'keys'     => [ 'id' => '', 'team_id' => '', 'key_id' => '', 'key_file' => '' ],
  *       'scope'    => 'name email',
  *
  *        // Apple's custom auth url params
@@ -104,6 +104,15 @@ class Apple extends OAuth2
 
     /**
      * {@inheritdoc}
+     */
+    protected function configure()
+    {
+        $this->config->filter('keys')->set('secret', $this->getSecret());
+        return parent::configure();
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * include id_token $tokenNames
      */
@@ -136,15 +145,6 @@ class Apple extends OAuth2
     public function isConnected()
     {
         return (bool)$this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function exchangeCodeForAccessToken($code)
-    {
-        $this->tokenExchangeParameters['client_secret'] = $this->getSecret();
-        return parent::exchangeCodeForAccessToken($code);
     }
 
     /**

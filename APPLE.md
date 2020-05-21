@@ -48,9 +48,7 @@ This is your Account ID at the top right of the account information (2nd line)
 
 ## Notes
 
-* The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your *team_id*, *key_id* and *key_file* in your configuration.    
-Altough the secret is generated, you still have to **configure a `secret` parameter** in your provider configuration (any non-empty string) because secrets are compulsory in HybridAuth for all OAuth2 Providers, and I don't want to change things there.
-
+* The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your *team_id*, *key_id* and *key_file* in your configuration. You don't need to generate a secret yourself.
 
 ```
     "providers" => [
@@ -58,7 +56,6 @@ Altough the secret is generated, you still have to **configure a `secret` parame
             "enabled" => true,
             "keys" => [
                 "id" => MYHYBRIDAUTH_APPLE_ID,
-                "secret" => 'dont remove this dummy secret',
                 "team_id" => MYHYBRIDAUTH_APPLE_TEAM_ID,
                 "key_id" => MYHYBRIDAUTH_APPLE_KEY_ID,
                 "key_file" => MYHYBRIDAUTH_APPLE_KEY_FULLPATH
