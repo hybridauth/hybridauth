@@ -34,8 +34,7 @@ use \Firebase\JWT\JWK;
  *
  *        // Apple's custom auth url params
  *       'authorize_url_parameters' => [
- *              'response_mode' => 'form_post', // query, fragment, form_post. form_post is always used if scope is defined.
- *              // etc.
+ *              'response_mode' => 'form_post'
  *       ]
  *   ];
  *
@@ -164,7 +163,8 @@ class Apple extends OAuth2
     {
         $id_token = $this->getStoredData('id_token');
 
-        $verifyTokenSignature = ($this->config->exists('verifyTokenSignature')) ? $this->config->get('verifyTokenSignature') : true;
+        $verifyTokenSignature =
+            ($this->config->exists('verifyTokenSignature')) ? $this->config->get('verifyTokenSignature') : true;
 
         if (!$verifyTokenSignature) {
             // payload extraction by https://github.com/omidborjian
