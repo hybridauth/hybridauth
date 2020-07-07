@@ -241,21 +241,21 @@ class Apple extends OAuth2
         // Your 10-character Team ID
         if (!$team_id = $this->config->filter('keys')->get('team_id')) {
             throw new InvalidApplicationCredentialsException(
-                'Missing parameter team_id: your team id is required generate the JWS token.'
+                'Missing parameter team_id: your team id is required to generate the JWS token.'
             );
         }
 
         // Your Services ID, e.g. com.aaronparecki.services
         if (!$client_id = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key')) {
             throw new InvalidApplicationCredentialsException(
-                'Missing parameter id: your client id is required generate the JWS token.'
+                'Missing parameter id: your client id is required to generate the JWS token.'
             );
         }
 
         // Find the 10-char Key ID value from the portal
         if (!$key_id = $this->config->filter('keys')->get('key_id')) {
             throw new InvalidApplicationCredentialsException(
-                'Missing parameter key_id: your key id is required generate the JWS token.'
+                'Missing parameter key_id: your key id is required to generate the JWS token.'
             );
         }
 
@@ -266,7 +266,7 @@ class Apple extends OAuth2
         if (!$key_content) {
             if (!$key_file = $this->config->filter('keys')->get('key_file')) {
                 throw new InvalidApplicationCredentialsException(
-                    'Missing parameter key_content or key_file: your key is required generate the JWS token.'
+                    'Missing parameter key_content or key_file: your key is required to generate the JWS token.'
                 );
             }
 
