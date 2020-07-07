@@ -6,8 +6,8 @@
 
 ## Online documentation
 
-https://developer.apple.com/sign-in-with-apple/get-started/    
-https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-apple    
+https://developer.apple.com/sign-in-with-apple/get-started/
+https://developer.okta.com/blog/2019/06/04/what-the-heck-is-sign-in-with-apple
 https://sarunw.com/posts/sign-in-with-apple-2/
 
 ## Enable email delivery
@@ -48,17 +48,19 @@ This is your Account ID at the top right of the account information (2nd line)
 
 ## Notes
 
-* The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your *team_id*, *key_id* and *key_file* in your configuration. You don't need to generate a secret yourself.
+* The secret is generated from a signed [JWT (JSON Web Token)](https://jwt.io). Instead of a secret you have to provide your *team_id*, *key_id* and *key_file* or *key_content* in your configuration. You don't need to generate a secret yourself.
 
 ```
     "providers" => [
         "Apple" => [
             "enabled" => true,
             "keys" => [
-                "id" => MYHYBRIDAUTH_APPLE_ID,
-                "team_id" => MYHYBRIDAUTH_APPLE_TEAM_ID,
-                "key_id" => MYHYBRIDAUTH_APPLE_KEY_ID,
-                "key_file" => MYHYBRIDAUTH_APPLE_KEY_FULLPATH
+                "id" => "Your Apple ID",
+                "team_id" => "Your Apple team id",
+                "key_id" => "Your Apple key id",
+                "key_content" => "Your Apple key (content including BEGIN and END lines)"
+                "key_file" => "Full path to your Apple key file (alternative to key_content)"
+
                 ],
             "scope" => "name email",
             "verifyTokenSignature" => true
@@ -66,10 +68,10 @@ This is your Account ID at the top right of the account information (2nd line)
     ]
 ```
 
-* The token returned after authentication is a signed JWT.  Validating requires an a additional library. It can be disabled by setting   `"verifyTokenSignature" => false` 
+* The token returned after authentication is a signed JWT.  Validating requires an a additional library. It can be disabled by setting   `"verifyTokenSignature" => false`
 in the configuration.
 
-* The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined).    
+* The current default value for `response_mode` is `form_post` (you can overrule it with `query` or `fragment` if you don't have a scope defined).
 If a scope is defined, Apple **always** sends the `code` value as a **POST** request (Facebook and Google return the code as a query parameter).
 
 ### Reasons for authentication failures

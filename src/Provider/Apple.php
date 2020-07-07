@@ -29,7 +29,7 @@ use \Firebase\JWT\JWK;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'team_id' => '', 'key_id' => '', 'key_file' => '' ],
+ *       'keys'     => [ 'id' => '', 'team_id' => '', 'key_id' => '', 'key_file' => '', 'key_content' => '' ],
  *       'scope'    => 'name email',
  *
  *        // Apple's custom auth url params
@@ -241,38 +241,43 @@ class Apple extends OAuth2
         // Your 10-character Team ID
         if (!$team_id = $this->config->filter('keys')->get('team_id')) {
             throw new InvalidApplicationCredentialsException(
-                'Your team id is required generate the JWS token.'
+                'Missing parameter team_id: your team id is required generate the JWS token.'
             );
         }
 
         // Your Services ID, e.g. com.aaronparecki.services
         if (!$client_id = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key')) {
             throw new InvalidApplicationCredentialsException(
-                'Your client id is required generate the JWS token.'
+                'Missing parameter id: your client id is required generate the JWS token.'
             );
         }
 
         // Find the 10-char Key ID value from the portal
         if (!$key_id = $this->config->filter('keys')->get('key_id')) {
             throw new InvalidApplicationCredentialsException(
-                'Your key id is required generate the JWS token.'
+                'Missing parameter key_id: your key id is required generate the JWS token.'
             );
         }
+
+        // Find the 10-char Key ID value from the portal
+        $key_content = $this->config->filter('keys')->get('key_content');
 
         // Save your private key from Apple in a file called `key.txt`
-        if (!$key_file = $this->config->filter('keys')->get('key_file')) {
-            throw new InvalidApplicationCredentialsException(
-                'Your key file is required generate the JWS token.'
-            );
-        }
+        if (!$key_content) {
+            if (!$key_file = $this->config->filter('keys')->get('key_file')) {
+                throw new InvalidApplicationCredentialsException(
+                    'Missing parameter key_content or key_file: your key is required generate the JWS token.'
+                );
+            }
 
-        if (!file_exists($key_file)) {
-            throw new InvalidApplicationCredentialsException(
-                "Your key file $key_file does not exist."
-            );
-        }
+            if (!file_exists($key_file)) {
+                throw new InvalidApplicationCredentialsException(
+                    "Your key file $key_file does not exist."
+                );
+            }
 
-        $key = file_get_contents($key_file);
+            $key_content = file_get_contents($key_file);
+        }
 
         $data = [
             'iat' => time(),
@@ -282,7 +287,7 @@ class Apple extends OAuth2
             'sub' => $client_id
         ];
 
-        $secret = JWT::encode($data, $key, 'ES256', $key_id);
+        $secret = JWT::encode($data, $key_content, 'ES256', $key_id);
 
         return $secret;
     }
