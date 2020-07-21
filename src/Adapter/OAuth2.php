@@ -126,9 +126,18 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     /**
     * Authorization Url Parameters
     *
-    * @var boolean
+    * @var array
     */
     protected $AuthorizeUrlParameters = [];
+
+
+    /**
+     * Authorization Url Parameter encoding type
+     * @see https://www.php.net/manual/de/function.http-build-query.php
+     *
+     * @var string
+     */
+    protected $AuthorizeUrlParametersEncType = PHP_QUERY_RFC1738;
 
     /**
     * Authorization Request State
@@ -440,7 +449,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->storeData('authorization_state', $this->AuthorizeUrlParameters['state']);
         }
 
-        return $this->authorizeUrl . '?' . http_build_query($this->AuthorizeUrlParameters, '', '&');
+        $queryParams = http_build_query($this->AuthorizeUrlParameters, '', '&', $this->AuthorizeUrlParametersEncType);
+        return $this->authorizeUrl . '?' . $queryParams;
     }
 
     /**

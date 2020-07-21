@@ -1,7 +1,7 @@
 {
     "name": "hybridauth/hybridauth",
     "description": "PHP Social Authentication Library",
-    "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter"],
+    "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter", "apple"],
     "homepage": "https://hybridauth.github.io",
     "type": "library",
     "license": "MIT",
@@ -16,7 +16,9 @@
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "firebase/php-jwt": "*",
+        "phpseclib/phpseclib": "~2.0"
     },
     "require-dev": {
         "ext-curl": "*",
