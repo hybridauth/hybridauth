@@ -253,7 +253,7 @@ class LightOpenID
     protected function get_realm_protocol()
     {
         if (!empty($_SERVER['HTTPS'])) {
-            $use_secure_protocol = ($_SERVER['HTTPS'] != 'off');
+            $use_secure_protocol = ($_SERVER['HTTPS'] !== 'off');
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
             $use_secure_protocol = ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
         } elseif (isset($_SERVER['HTTP__WSSC'])) {
