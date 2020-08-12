@@ -89,9 +89,9 @@ class DeviantArt extends OAuth2
         $userProfile = new User\Profile();
 
         $full_name = explode(" ", $data->filter('profile')->get('real_name'));
-        if(count($full_name) < 2) {
+        if (count($full_name) < 2) {
             $full_name[1] = "";
-        } 
+        }
 
         $userProfile->identifier  = $data->get('userid');
         $userProfile->displayName = $data->get('username');
