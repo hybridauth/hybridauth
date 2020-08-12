@@ -38,33 +38,33 @@ use Hybridauth\User;
 class DeviantArt extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public $scope = 'user';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://www.deviantart.com/api/v1/oauth2/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://www.deviantart.com/oauth2/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://www.deviantart.com/oauth2/token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://www.deviantart.com/developers/http/v1/20200519';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -76,10 +76,10 @@ class DeviantArt extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * See: https://www.deviantart.com/developers/http/v1/20200519/user_whoami/2413749853e66c5812c9beccc0ab3495
-    */
+     * {@inheritdoc}
+     *
+     * See: https://www.deviantart.com/developers/http/v1/20200519/user_whoami/2413749853e66c5812c9beccc0ab3495
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest("user/whoami");
@@ -89,8 +89,7 @@ class DeviantArt extends OAuth2
         $userProfile = new User\Profile();
 
         $full_name = explode(" ", $data->filter('profile')->get('real_name'));
-        if(count($full_name) < 2) 
-        {
+        if(count($full_name) < 2) {
             $full_name[1] = "";
         } 
 
