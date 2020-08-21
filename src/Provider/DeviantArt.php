@@ -71,7 +71,7 @@ class DeviantArt extends OAuth2
 
         $this->tokenRefreshParameters += [
             'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret
+            'client_secret' => $this->clientSecret,
         ];
     }
 
@@ -82,15 +82,15 @@ class DeviantArt extends OAuth2
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest("user/whoami");
+        $response = $this->apiRequest('user/whoami');
 
         $data = new Data\Collection($response);
 
         $userProfile = new User\Profile();
 
-        $full_name = explode(" ", $data->filter('profile')->get('real_name'));
+        $full_name = explode(' ', $data->filter('profile')->get('real_name'));
         if (count($full_name) < 2) {
-            $full_name[1] = "";
+            $full_name[1] = '';
         }
 
         $userProfile->identifier  = $data->get('userid');
