@@ -8,7 +8,7 @@
 namespace Hybridauth\HttpClient;
 
 /**
- * HybridAuth Http clients interface
+ * Hybridauth Http clients interface
  */
 interface HttpClientInterface
 {

@@ -8,7 +8,7 @@
 namespace Hybridauth\Storage;
 
 /**
- * HybridAuth storage manager interface
+ * Hybridauth storage manager interface
  */
 interface StorageInterface
 {
