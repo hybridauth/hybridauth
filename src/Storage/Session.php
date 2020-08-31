@@ -10,7 +10,7 @@ namespace Hybridauth\Storage;
 use Hybridauth\Exception\RuntimeException;
 
 /**
- * HybridAuth storage manager
+ * Hybridauth storage manager
  */
 class Session implements StorageInterface
 {

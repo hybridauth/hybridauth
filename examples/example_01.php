@@ -8,7 +8,7 @@
 /**
  * Step 0: Start PHP session
  *
- * Normally this step is not required as HybridAuth will attempt to start the session for you, however
+ * Normally this step is not required as Hybridauth will attempt to start the session for you, however
  * in some cases it might be better to call session_start() at top of script to avoid cookie-based sessions
  * issues. 
  *
@@ -108,7 +108,7 @@ $github->authenticate();
  *
  * Calling getUserProfile returns an instance of class Hybridauth\User\Profile which contain the 
  * connected user's profile in simple and standardized structure across all the social APIs supported
- * by HybridAuth.
+ * by Hybridauth.
  */
 
 $userProfile = $github->getUserProfile();

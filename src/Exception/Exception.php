@@ -27,7 +27,7 @@ class Exception extends \Exception implements ExceptionInterface
         $trace   = $this->getTraceAsString();
 
         $html  = sprintf('<h1>%s</h1>', $title);
-        $html .= '<p>HybridAuth has encountered the following error:</p>';
+        $html .= '<p>Hybridauth has encountered the following error:</p>';
         $html .= '<h2>Details</h2>';
 
         $html .= sprintf('<div><strong>Exception:</strong> %s</div>', get_class($this));

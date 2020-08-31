@@ -13,7 +13,7 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\TransferException;
 
 /**
- * HybridAuth Guzzle Http client
+ * Hybridauth Guzzle Http client
  *
  * Note: This is just a proof of concept. Feel free to improve it.
  *

@@ -47,7 +47,7 @@ try {
     // Handle invalid provider errors
     //
     if ($error) {
-        error_log('HybridAuth Error: Provider '. json_encode($error) .' not found or not enabled in $config');
+        error_log('Hybridauth Error: Provider '. json_encode($error) .' not found or not enabled in $config');
         // Close the pop-up window
         echo "
             <script>

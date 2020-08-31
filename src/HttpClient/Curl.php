@@ -8,7 +8,7 @@
 namespace Hybridauth\HttpClient;
 
 /**
- * HybridAuth default Http client
+ * Hybridauth default Http client
  */
 class Curl implements HttpClientInterface
 {
@@ -32,7 +32,7 @@ class Curl implements HttpClientInterface
         CURLINFO_HEADER_OUT    => true,
         CURLOPT_ENCODING       => 'identity',
         // phpcs:ignore
-        CURLOPT_USERAGENT      => 'HybridAuth, PHP Social Authentication Library (https://github.com/hybridauth/hybridauth)',
+        CURLOPT_USERAGENT      => 'Hybridauth, PHP Social Authentication Library (https://github.com/hybridauth/hybridauth)',
     ];
 
     /**
