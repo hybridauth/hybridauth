@@ -86,7 +86,7 @@ class StackExchange extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier  = strval($data->get('user_id'));
         $userProfile->displayName = $data->get('display_name');
         $userProfile->photoURL    = $data->get('profile_image');
         $userProfile->profileURL  = $data->get('link');
