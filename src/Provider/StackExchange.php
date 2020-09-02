@@ -20,7 +20,7 @@ use Hybridauth\User;
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'site'     => 'stackoverflow'
+ *       'site'     => 'stackoverflow' // required parameter to call getUserProfile()
  *       'api_key'  => '...' // that thing to receive a higher request quota.
  *   ];
  *
@@ -76,7 +76,7 @@ class StackExchange extends OAuth2
     {
         $site = $this->config->get('site');
 
-        $response = $this->apiRequest('me?site=' . $site);
+        $response = $this->apiRequest('me?site=' . $site, 'GET', [ 'access_token' => $this->getStoredData('access_token') ]);
 
         if (! $response || !isset($response->items) || !isset($response->items[0])) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
