@@ -84,6 +84,7 @@ class Reddit extends OAuth2
         $userProfile->identifier  = $data->get('id');
         $userProfile->displayName = $data->get('name');
         $userProfile->profileURL  = 'https://www.reddit.com/user/' . $data->get('name') . '/';
+        $userProfile->photoURL    = $data->get('icon_img');
 
         return $userProfile;
     }
