@@ -62,6 +62,8 @@ class Yahoo extends OAuth2
         $this->tokenExchangeHeaders = [
             'Authorization' => 'Basic ' . base64_encode($this->clientId .  ':' . $this->clientSecret)
         ];
+
+        $this->tokenRefreshHeaders = $this->tokenExchangeHeaders;
     }
 
     /**
