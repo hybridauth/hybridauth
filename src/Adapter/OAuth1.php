@@ -593,7 +593,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             $multipart
         );
 
-        $this->validateApiResponse('Signed API request has returned an error');
+        $this->validateApiResponse('Signed API request to ' . $url . ' has returned an error');
 
         return $response;
     }
