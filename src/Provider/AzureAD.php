@@ -75,7 +75,6 @@ class AzureAD extends OAuth2
             $userProfile->email,
             $userProfile->data['groups']
         )) {
-
             $profile = new Data\Collection($this->apiRequest($userInfoUrl));
             if (empty($userProfile->displayName)) {
                 $userProfile->displayName = $profile->get('name') ?: $profile->get('nickname');
