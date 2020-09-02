@@ -70,11 +70,11 @@ class AzureAD extends OAuth2
 
         $userInfoUrl = "https://graph.microsoft.com/oidc/userinfo";
         if (!empty($userInfoUrl) && !isset(
-                $userProfile->displayName,
-                $userProfile->photoURL,
-                $userProfile->email,
-                $userProfile->data['groups']
-            )) {
+            $userProfile->displayName,
+            $userProfile->photoURL,
+            $userProfile->email,
+            $userProfile->data['groups']
+        )) {
 
             $profile = new Data\Collection($this->apiRequest($userInfoUrl));
             if (empty($userProfile->displayName)) {
@@ -93,4 +93,4 @@ class AzureAD extends OAuth2
 
         return $userProfile;
     }
-  }
+}
