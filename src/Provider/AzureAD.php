@@ -13,8 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * AzureAD OAuth2 provider adapter.
- *
+ * AzureAD provider
  */
 class AzureAD extends OAuth2
 {
