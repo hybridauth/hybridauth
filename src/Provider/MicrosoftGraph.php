@@ -14,6 +14,32 @@ use Hybridauth\User;
 
 /**
  * Microsoft Graph provider adapter.
+ *
+ * Create an "Azure Active Directory" resource at https://portal.azure.com/
+ * (not from the Visual Studio site).
+ *
+ * The "Supported account types" choice maps to the 'tenant' setting, see "Authority" @
+ * https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-client-application-configuration
+ *
+ * Example:
+ *
+ *   $config = [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys'     => [ 'id' => '', 'secret' => '' ],
+ *       'tenant'   => 'user', // May be 'common', 'organizations' or 'consumers'
+ *   ];
+ *
+ *   $adapter = new Hybridauth\Provider\MicrosoftGraph( $config );
+ *
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken();
+ *   }
+ *   catch( Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class MicrosoftGraph extends OAuth2
 {
@@ -43,6 +69,24 @@ class MicrosoftGraph extends OAuth2
     protected $apiDocumentation = 'https://developer.microsoft.com/en-us/graph/docs/concepts/php';
 
     /**
+    * {@inheritdoc}
+    */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $tenant = $this->config->get('tenant');
+        if (!empty($tenant)) {
+            $adjustedEndpoints = [
+                'authorize_url' => str_replace('/common/', '/'. $tenant .'/', $this->authorizeUrl),
+                'access_token_url' => str_replace('/common/', '/'. $tenant .'/', $this->accessTokenUrl),
+            ];
+
+            $this->setApiEndpoints($adjustedEndpoints);
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getUserProfile()
@@ -61,8 +105,23 @@ class MicrosoftGraph extends OAuth2
         $userProfile->displayName   = $data->get('displayName');
         $userProfile->firstName     = $data->get('givenName');
         $userProfile->lastName      = $data->get('surname');
-        $userProfile->email         = $data->get('mail');
         $userProfile->language      = $data->get('preferredLanguage');
+
+        $userProfile->phone = $data->get('mobilePhone');
+        if (empty($userProfile->phone)) {
+            $businessPhones = $data->get('businessPhones');
+            if (isset($businessPhones[0])) {
+                $userProfile->phone = $businessPhones[0];
+            }
+        }
+
+        $userProfile->email = $data->get('mail');
+        if (empty($userProfile->email)) {
+            $email = $data->get('userPrincipalName');
+            if (strpos($email, '@') !== false) {
+                $userProfile->email = $email;
+            }
+        }
 
         return $userProfile;
     }
