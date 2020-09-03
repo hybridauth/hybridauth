@@ -21,7 +21,10 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => '', 'secret' => ''],
+ *       'keys'      => [
+ *           'id' => '', // App ID
+ *           'secret' => '' // Secure key
+ *       ],
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Vkontakte($config);
