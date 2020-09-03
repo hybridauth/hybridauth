@@ -26,7 +26,8 @@ use Hybridauth\User;
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'tenant'   => 'user', // May be 'common', 'organizations' or 'consumers'
+ *       'tenant'   => 'user',
+ *         // ^ May be 'common', 'organizations' or 'consumers' or a specific tenant ID or a domain
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\MicrosoftGraph( $config );
