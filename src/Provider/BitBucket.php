@@ -13,6 +13,10 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
+ * Set up your OAuth2 at https://bitbucket.org/<yourusername>/workspace/settings/api
+ */
+
+/**
  * BitBucket OAuth2 provider adapter.
  */
 class BitBucket extends OAuth2
@@ -58,6 +62,7 @@ class BitBucket extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier  = $data->get('uuid');
+        $userProfile->profileURL  = 'https://bitbucket.org/' . $data->get('username') . '/';
         $userProfile->displayName = $data->get('display_name');
         $userProfile->email       = $data->get('email');
         $userProfile->webSiteURL  = $data->get('website');
@@ -67,7 +72,7 @@ class BitBucket extends OAuth2
 
         if (empty($userProfile->email) && strpos($this->scope, 'email') !== false) {
             try {
-                // user email is not mandatory so keep it quite
+                // user email is not mandatory so keep it quiet
                 $userProfile = $this->requestUserEmail($userProfile);
             } catch (\Exception $e) {
             }
