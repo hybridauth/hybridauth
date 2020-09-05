@@ -14,26 +14,6 @@ use Hybridauth\User;
 
 /**
  * Odnoklassniki OAuth2 provider adapter.
- *
- * Example:
- *
- *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => '', 'key' => '', 'secret' => ''],
- *   ];
-
- *   $adapter = new Hybridauth\Provider\Odnoklassniki($config);
- *
- *   try {
- *       if (!$adapter->isConnected()) {
- *           $adapter->authenticate();
- *       }
- *
- *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
- *       print $e->getMessage() ;
- *   }
  */
 class Odnoklassniki extends OAuth2
 {
@@ -51,6 +31,11 @@ class Odnoklassniki extends OAuth2
     * {@inheritdoc}
     */
     protected $accessTokenUrl = 'https://api.ok.ru/oauth/token.do';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://apiok.ru/en/ext/oauth/';
 
     /**
     * {@inheritdoc}

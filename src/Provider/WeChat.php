@@ -17,7 +17,6 @@ use Hybridauth\User;
  */
 class WeChat extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
@@ -58,6 +57,11 @@ class WeChat extends OAuth2
      * {@inheritdoc}
      */
     protected $tokenRefreshMethod = 'GET';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 
     /**
     * {@inheritdoc}

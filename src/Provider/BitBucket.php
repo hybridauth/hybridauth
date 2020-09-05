@@ -24,7 +24,7 @@ class BitBucket extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'email';
+    protected $scope = 'email';
 
     /**
     * {@inheritdoc}

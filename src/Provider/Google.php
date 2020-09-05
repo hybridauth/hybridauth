@@ -50,7 +50,7 @@ class Google extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+    protected $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
     /**
     * {@inheritdoc}

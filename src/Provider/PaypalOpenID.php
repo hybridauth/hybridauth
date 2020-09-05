@@ -21,6 +21,11 @@ class PaypalOpenID extends OpenID
     protected $openidIdentifier = 'https://www.sandbox.paypal.com/webapps/auth/server';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://developer.paypal.com/docs/connect-with-paypal/';
+
+    /**
     * {@inheritdoc}
     */
     public function authenticateBegin()

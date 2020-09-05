@@ -43,6 +43,7 @@ use \Firebase\JWT\JWK;
  *   try {
  *       $adapter->authenticate();
  *
+ *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
  *   }

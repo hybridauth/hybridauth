@@ -20,6 +20,11 @@ class YahooOpenID extends OpenID
     protected $openidIdentifier = 'https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
+
+    /**
     * {@inheritdoc}
     */
     public function authenticateFinish()

@@ -20,6 +20,11 @@ class StackExchangeOpenID extends OpenID
     protected $openidIdentifier = 'https://openid.stackexchange.com/';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://openid.stackexchange.com/';
+
+    /**
     * {@inheritdoc}
     */
     public function authenticateFinish()

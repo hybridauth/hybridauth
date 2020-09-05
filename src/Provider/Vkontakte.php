@@ -15,7 +15,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Vkontakte provider adapter.
+ * Vkontakte OAuth2 provider adapter.
  *
  * Example:
  *
@@ -42,7 +42,6 @@ use Hybridauth\User;
  */
 class Vkontakte extends OAuth2
 {
-
     const API_VERSION = '5.95';
 
     const URL = 'https://vk.com/';
@@ -66,6 +65,11 @@ class Vkontakte extends OAuth2
      * {@inheritdoc}
      */
     protected $scope = 'email,offline';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 
     /**
      * {@inheritdoc}

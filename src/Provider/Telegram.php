@@ -34,12 +34,16 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
  */
 class Telegram extends AbstractAdapter implements AdapterInterface
 {
-
     protected $botId = '';
 
     protected $botSecret = '';
 
     protected $callbackUrl = '';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://core.telegram.org/bots';
 
     /**
      * {@inheritdoc}
