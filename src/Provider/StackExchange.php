@@ -76,7 +76,7 @@ class StackExchange extends OAuth2
     {
         $site = $this->config->get('site');
 
-        $response = $this->apiRequest('me?site=' . $site, 'GET', [ 'access_token' => $this->getStoredData('access_token') ]);
+        $response = $this->apiRequest('me', 'GET', [ 'site' => $site, 'access_token' => $this->getStoredData('access_token') ]);
 
         if (! $response || !isset($response->items) || !isset($response->items[0])) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
