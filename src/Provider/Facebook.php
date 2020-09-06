@@ -102,7 +102,7 @@ class Facebook extends OAuth2
             'hometown',
             'birthday',
         ];
-        $response = $this->apiRequest('me?fields=' . implode(',', $fields));
+        $response = $this->apiRequest('me', 'GET', [ 'fields' => implode(',', $fields), 'locale' => 'en_US' ]);
 
         $data = new Data\Collection($response);
 
