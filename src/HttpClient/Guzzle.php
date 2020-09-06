@@ -115,6 +115,10 @@ class Guzzle implements HttpClientInterface
     {
         $this->requestHeader = array_replace($this->requestHeader, (array) $headers);
 
+        if (($method == 'GET' || $method == 'DELETE') && (strpos($uri, '?') !== false)) {
+            parse_str(parse_url($uri, PHP_URL_QUERY), $parameters);
+        }
+
         $this->requestArguments = [
             'uri' => $uri,
             'method' => $method,
