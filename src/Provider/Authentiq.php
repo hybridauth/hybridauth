@@ -64,15 +64,6 @@ class Authentiq extends OAuth2
 
     /**
     * {@inheritdoc}
-    *
-    * Disable functionality as Authentiq Provider doesn't support this yet
-    */
-    public function refreshAccessToken($parameters = [])
-    {
-    }
-
-    /**
-    * {@inheritdoc}
     */
     public function getUserProfile()
     {

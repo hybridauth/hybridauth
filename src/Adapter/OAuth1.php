@@ -230,6 +230,16 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * Checking access_token only works for oauth1 and oauth2, openid will overwrite this method.
+     */
+    public function isConnected()
+    {
+        return (bool)$this->getStoredData('access_token');
+    }
+
+    /**
     * Initiate the authorization protocol
     *
     * 1. Obtaining an Unauthorized Request Token

@@ -82,9 +82,17 @@ class Telegram extends AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function isConnected()
+    {
+        return !empty($this->getStoredData('auth_data'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
-        $data = new Collection($this->parseAuthData());
+        $data = new Collection($this->getStoredData('auth_data'));
 
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
@@ -164,6 +172,9 @@ HTML
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
             [Util::getCurrentUrl(true)]
         );
+
+        $this->storeData('auth_data', $this->parseAuthData());
+
         $this->initialize();
     }
 

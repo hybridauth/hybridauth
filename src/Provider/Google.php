@@ -83,10 +83,12 @@ class Google extends OAuth2
             'access_type' => 'offline'
         ];
 
-        $this->tokenRefreshParameters += [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret
-        ];
+        if (is_array($this->tokenRefreshParameters)) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret
+            ];
+        }
     }
 
     /**

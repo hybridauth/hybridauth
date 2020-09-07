@@ -61,12 +61,12 @@ class QQ extends OAuth2
     {
         parent::initialize();
 
-        $this->tokenRefreshParameters = [
-            'grant_type'    => 'refresh_token',
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'refresh_token' => $this->getStoredData('refresh_token'),
-        ];
+        if (is_array($this->tokenRefreshParameters)) {
+            $this->tokenRefreshParameters = [
+                'client_id'     => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ];
+        }
 
         $this->apiRequestParameters = [
             'access_token' => $this->getStoredData('access_token')

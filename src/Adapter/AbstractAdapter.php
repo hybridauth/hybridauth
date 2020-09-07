@@ -181,16 +181,6 @@ abstract class AbstractAdapter implements AdapterInterface
 
     /**
      * {@inheritdoc}
-     *
-     * Checking access_token only works for oauth1 and oauth2, openid will overwrite this method.
-     */
-    public function isConnected()
-    {
-        return (bool) $this->getStoredData('access_token');
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function disconnect()
     {
