@@ -119,7 +119,7 @@ class Facebook extends OAuth2
      */
     public function exchangeAccessToken()
     {
-        $this->tokenRefreshParameters = [
+        $exchangeTokenParameters = [
             'grant_type'        => 'fb_exchange_token',
             'client_id'         => $this->clientId,
             'client_secret'     => $this->clientSecret,
@@ -129,7 +129,7 @@ class Facebook extends OAuth2
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
             'GET',
-            $this->tokenRefreshParameters
+            $exchangeTokenParameters
         );
 
         $this->validateApiResponse('Unable to exchange the access token');
