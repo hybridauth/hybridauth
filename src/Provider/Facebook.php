@@ -16,12 +16,19 @@ use Hybridauth\User;
 /**
  * Facebook OAuth2 provider adapter.
  *
+ * Facebook doesn't use standard OAuth refresh tokens.
+ * Instead it has a "token exchange" system. You exchange the token prior to
+ * expiry, to push back expiry. You start with a short-lived token and each
+ * exchange gives you a long-lived one (90 days).
+ * We control this with the 'exchange_by_expiry_days' option.
+ *
  * Example:
  *
  *   $config = [
- *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'email, user_status, user_posts'
+ *       'callback'                => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys'                    => [ 'id' => '', 'secret' => '' ],
+ *       'scope'                   => 'email, user_status, user_posts',
+ *       'exchange_by_expiry_days' => 45, // null for no token exchange
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Facebook( $config );
@@ -81,6 +88,55 @@ class Facebook extends OAuth2
         if ($accessToken = $this->getStoredData('access_token')) {
             $this->apiRequestParameters['appsecret_proof'] = hash_hmac('sha256', $accessToken, $this->clientSecret);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
+    {
+        // Handle token exchange prior to the standard handler for an API request
+        $exchange_by_expiry_days = $this->config->get('exchange_by_expiry_days') ?? 45;
+        if ($exchange_by_expiry_days !== null) {
+            $projected_timestamp = time() + 60 * 60 * 24 * $exchange_by_expiry_days;
+            if (
+                ($this->hasAccessTokenExpired() === false) && // Not expired yet
+                ($this->hasAccessTokenExpired($projected_timestamp) === true)) { // But will within projection
+                $this->exchangeAccessToken();
+            }
+        }
+
+        return parent::apiRequest($url, $method, $parameters, $headers, $multipart);
+    }
+
+    /**
+     * Exchange the Access Token with one that expires further in the future.
+     *
+     * @return string Raw Provider API response
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     * @throws InvalidAccessTokenException
+     */
+    public function exchangeAccessToken()
+    {
+        $this->tokenRefreshParameters = [
+            'grant_type'        => 'fb_exchange_token',
+            'client_id'         => $this->clientId,
+            'client_secret'     => $this->clientSecret,
+            'fb_exchange_token' => $this->getStoredData('access_token'),
+        ];
+
+        $response = $this->httpClient->request(
+            $this->accessTokenUrl,
+            'GET',
+            $this->tokenRefreshParameters
+        );
+
+        $this->validateApiResponse('Unable to exchange the access token');
+
+        $this->validateAccessTokenExchange($response);
+
+        return $response;
     }
 
     /**
