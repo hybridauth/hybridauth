@@ -11,6 +11,7 @@ use Hybridauth\Exception\Exception;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\InvalidAuthorizationStateException;
 use Hybridauth\Exception\InvalidAuthorizationCodeException;
+use Hybridauth\Exception\AuthorizationDeniedException;
 use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
@@ -331,6 +332,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * the authorization server SHOULD inform the resource owner of the error.
     *
     * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+    *
+    * @throws \Hybridauth\Exception\InvalidAuthorizationCodeException
+    * @throws \Hybridauth\Exception\AuthorizationDeniedException
     */
     protected function authenticateCheckError()
     {
@@ -340,9 +344,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
             $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
 
-            throw new InvalidAuthorizationCodeException(
-                sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri)
-            );
+            $collated_error = sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri);
+
+            if ($error == 'access_denied') {
+                throw new AuthorizationDeniedException($collated_error);
+            }
+
+            throw new InvalidAuthorizationCodeException($collated_error);
         }
     }
 
