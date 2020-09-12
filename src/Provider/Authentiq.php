@@ -81,7 +81,7 @@ class Authentiq extends OAuth2
         $data = new Data\Collection($response);
 
         if (!$data->exists('sub')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
