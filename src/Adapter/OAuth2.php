@@ -540,7 +540,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         if (! $collection->exists('access_token')) {
             throw new InvalidAccessTokenException(
-                'Provider returned an invalid access_token: ' . htmlentities($response)
+                'Provider returned no access_token: ' . htmlentities($response)
             );
         }
 
