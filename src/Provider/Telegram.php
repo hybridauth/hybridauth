@@ -14,6 +14,17 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 /**
  * Telegram provider adapter.
  *
+ * To set up Telegram you need to interactively create a bot using the
+ * Telegram mobile app, talking to botfather. The minimum conversation
+ * will look like:
+ *
+ * /newbot
+ * My Bot Title
+ * nameofmynewbot
+ * /setdomain
+ * @nameofmynewbot
+ * mydomain.com
+ *
  * Example:
  *
  *   $config = [
