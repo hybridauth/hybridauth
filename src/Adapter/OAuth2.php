@@ -696,7 +696,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $multipart   // Is request multipart
         );
 
-        $this->validateApiResponse('Signed API request has returned an error');
+        $this->validateApiResponse('Signed API request to ' . $url . ' has returned an error');
 
         $response = (new Data\Parser())->parse($response);
 
