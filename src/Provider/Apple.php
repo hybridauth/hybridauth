@@ -145,14 +145,6 @@ class Apple extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public function isConnected()
-    {
-        return (bool)$this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function validateAccessTokenExchange($response)
     {
         $collection = parent::validateAccessTokenExchange($response);

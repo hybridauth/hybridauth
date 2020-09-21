@@ -49,10 +49,12 @@ class Discord extends OAuth2
     {
         parent::initialize();
 
-        $this->tokenRefreshParameters += [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-        ];
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ];
+        }
     }
 
     /**

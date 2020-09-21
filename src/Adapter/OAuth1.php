@@ -230,6 +230,14 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isConnected()
+    {
+        return (bool)$this->getStoredData('access_token');
+    }
+
+    /**
     * Initiate the authorization protocol
     *
     * 1. Obtaining an Unauthorized Request Token

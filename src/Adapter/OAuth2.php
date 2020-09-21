@@ -204,9 +204,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @see refreshAccessToken()
     *
-    * @var array
+    * @var array|null
     */
-    protected $tokenRefreshParameters = [];
+    protected $tokenRefreshParameters = null;
 
     /**
     * Refresh Token Request HTTP headers.
@@ -284,10 +284,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'redirect_uri'  => $this->callback
         ];
 
-        $this->tokenRefreshParameters = [
-            'grant_type'    => 'refresh_token',
-            'refresh_token' => $this->getStoredData('refresh_token'),
-        ];
+        $refreshToken = $this->getStoredData('refresh_token');
+        if (!empty($refreshToken)) {
+            $this->tokenRefreshParameters = [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+            ];
+        }
 
         $this->apiRequestHeaders = [
             'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
@@ -322,6 +325,27 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConnected()
+    {
+        if ((bool)$this->getStoredData('access_token')) {
+            return (!$this->hasAccessTokenExpired() || $this->isRefreshTokenAvailable());
+        }
+        return false;
+    }
+
+    /**
+     * If we can use a refresh token, then an expired token does not stop us being connected.
+     *
+     * @return bool
+     */
+    public function isRefreshTokenAvailable()
+    {
+        return is_array($this->tokenRefreshParameters);
     }
 
     /**
@@ -584,7 +608,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @param array $parameters
     *
-    * @return string Raw Provider API response
+    * @return string|null Raw Provider API response, or null if we cannot refresh
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     * @throws InvalidAccessTokenException
@@ -594,6 +618,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $this->tokenRefreshParameters = !empty($parameters)
             ? $parameters
             : $this->tokenRefreshParameters;
+
+        if (!$this->isRefreshTokenAvailable()) {
+            return null;
+        }
 
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
