@@ -156,7 +156,13 @@ class Facebook extends OAuth2
             'hometown',
             'birthday',
         ];
-        $response = $this->apiRequest('me?fields=' . implode(',', $fields));
+
+        // Note that en_US is needed for gender fields to match convention.
+        $locale = $this->config->get('locale') ?: 'en_US';
+        $response = $this->apiRequest('me', 'GET', [
+            'fields' => implode(',', $fields),
+            'locale' => $locale,
+        ]);
 
         $data = new Data\Collection($response);
 
