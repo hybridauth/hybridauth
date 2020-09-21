@@ -55,7 +55,7 @@ class LinkedIn extends OAuth2
         ];
 
 
-        $response = $this->apiRequest('me?projection=(' . implode(',', $fields) . ')');
+        $response = $this->apiRequest('me', 'GET', [ 'projection' => '(' . implode(',', $fields) . ')' ]);
         $data     = new Data\Collection($response);
 
         if (!$data->exists('id')) {
@@ -123,8 +123,11 @@ class LinkedIn extends OAuth2
      */
     public function getUserEmail()
     {
-        $response = $this->apiRequest('emailAddress?q=members&projection=(elements*(handle~))');
-        $data     = new Data\Collection($response);
+        $response = $this->apiRequest('emailAddress', 'GET', [
+            'q' => 'members',
+            'projection' => '(elements*(handle~))',
+        ]);
+        $data = new Data\Collection($response);
 
         foreach ($data->filter('elements')->toArray() as $element) {
             $item = new Data\Collection($element);
