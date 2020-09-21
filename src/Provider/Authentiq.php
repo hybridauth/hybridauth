@@ -20,7 +20,7 @@ class Authentiq extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'aq:name email~rs aq:push openid';
+    protected $scope = 'aq:name email~rs aq:push openid';
 
     /**
     * {@inheritdoc}
@@ -64,15 +64,6 @@ class Authentiq extends OAuth2
 
     /**
     * {@inheritdoc}
-    *
-    * Disable functionality as Authentiq Provider doesn't support this yet
-    */
-    public function refreshAccessToken($parameters = [])
-    {
-    }
-
-    /**
-    * {@inheritdoc}
     */
     public function getUserProfile()
     {
@@ -81,7 +72,7 @@ class Authentiq extends OAuth2
         $data = new Data\Collection($response);
 
         if (!$data->exists('sub')) {
-            throw new UnexpectedValueException('Provider API returned an unexpected response.');
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();

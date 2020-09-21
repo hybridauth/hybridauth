@@ -14,34 +14,13 @@ use Hybridauth\User;
 
 /**
  * Paypal OAuth2 provider adapter.
- *
- * Example:
- *
- *   $config = [
- *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'openid profile email',
- *   ];
- *
- *   $adapter = new Hybridauth\Provider\Paypal( $config );
- *
- *   try {
- *       $adapter->authenticate();
- *
- *       $userProfile = $adapter->getUserProfile();
- *       $tokens = $adapter->getAccessToken();
- *       $profile = $adapter->getUserProfile();
- *   }
- *   catch( Exception $e ){
- *       echo $e->getMessage() ;
- *   }
  */
 class Paypal extends OAuth2
 {
     /**
     * {@inheritdoc}
     */
-    public $scope = 'openid profile email address';
+    protected $scope = 'openid profile email address';
 
     /**
     * {@inheritdoc}

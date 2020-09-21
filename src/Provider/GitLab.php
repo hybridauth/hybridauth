@@ -20,7 +20,7 @@ class GitLab extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'api';
+    protected $scope = 'api';
 
     /**
     * {@inheritdoc}

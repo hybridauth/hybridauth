@@ -11,6 +11,7 @@ use Hybridauth\Exception\Exception;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\InvalidAuthorizationStateException;
 use Hybridauth\Exception\InvalidAuthorizationCodeException;
+use Hybridauth\Exception\AuthorizationDeniedException;
 use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
@@ -203,9 +204,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @see refreshAccessToken()
     *
-    * @var array
+    * @var array|null
     */
-    protected $tokenRefreshParameters = [];
+    protected $tokenRefreshParameters = null;
 
     /**
     * Refresh Token Request HTTP headers.
@@ -283,10 +284,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'redirect_uri'  => $this->callback
         ];
 
-        $this->tokenRefreshParameters = [
-            'grant_type'    => 'refresh_token',
-            'refresh_token' => $this->getStoredData('refresh_token'),
-        ];
+        $refreshToken = $this->getStoredData('refresh_token');
+        if (!empty($refreshToken)) {
+            $this->tokenRefreshParameters = [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+            ];
+        }
 
         $this->apiRequestHeaders = [
             'Authorization' => 'Bearer ' . $this->getStoredData('access_token')
@@ -324,6 +328,27 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isConnected()
+    {
+        if ((bool)$this->getStoredData('access_token')) {
+            return (!$this->hasAccessTokenExpired() || $this->isRefreshTokenAvailable());
+        }
+        return false;
+    }
+
+    /**
+     * If we can use a refresh token, then an expired token does not stop us being connected.
+     *
+     * @return bool
+     */
+    public function isRefreshTokenAvailable()
+    {
+        return is_array($this->tokenRefreshParameters);
+    }
+
+    /**
     * Authorization Request Error Response
     *
     * RFC6749: If the request fails due to a missing, invalid, or mismatching
@@ -331,6 +356,9 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     * the authorization server SHOULD inform the resource owner of the error.
     *
     * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+    *
+    * @throws \Hybridauth\Exception\InvalidAuthorizationCodeException
+    * @throws \Hybridauth\Exception\AuthorizationDeniedException
     */
     protected function authenticateCheckError()
     {
@@ -340,9 +368,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
             $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
 
-            throw new InvalidAuthorizationCodeException(
-                sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri)
-            );
+            $collated_error = sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri);
+
+            if ($error == 'access_denied') {
+                throw new AuthorizationDeniedException($collated_error);
+            }
+
+            throw new InvalidAuthorizationCodeException($collated_error);
         }
     }
 
@@ -532,7 +564,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
         if (! $collection->exists('access_token')) {
             throw new InvalidAccessTokenException(
-                'Provider returned an invalid access_token: ' . htmlentities($response)
+                'Provider returned no access_token: ' . htmlentities($response)
             );
         }
 
@@ -576,7 +608,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     *
     * @param array $parameters
     *
-    * @return string Raw Provider API response
+    * @return string|null Raw Provider API response, or null if we cannot refresh
     * @throws \Hybridauth\Exception\HttpClientFailureException
     * @throws \Hybridauth\Exception\HttpRequestFailedException
     * @throws InvalidAccessTokenException
@@ -586,6 +618,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $this->tokenRefreshParameters = !empty($parameters)
             ? $parameters
             : $this->tokenRefreshParameters;
+
+        if (!$this->isRefreshTokenAvailable()) {
+            return null;
+        }
 
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
@@ -688,7 +724,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $multipart   // Is request multipart
         );
 
-        $this->validateApiResponse('Signed API request has returned an error');
+        $this->validateApiResponse('Signed API request to ' . $url . ' has returned an error');
 
         $response = (new Data\Parser())->parse($response);
 

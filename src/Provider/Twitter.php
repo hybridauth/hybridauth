@@ -13,7 +13,7 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Twitter provider adapter.
+ * Twitter OAuth1 provider adapter.
  * Uses OAuth1 not OAuth2 because many Twitter endpoints are built around OAuth1.
  *
  * Example:

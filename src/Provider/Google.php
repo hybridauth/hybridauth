@@ -50,7 +50,8 @@ class Google extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+    // phpcs:ignore
+    protected $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
     /**
     * {@inheritdoc}
@@ -83,10 +84,12 @@ class Google extends OAuth2
             'access_type' => 'offline'
         ];
 
-        $this->tokenRefreshParameters += [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret
-        ];
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret
+            ];
+        }
     }
 
     /**

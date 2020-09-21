@@ -12,7 +12,6 @@ use Hybridauth\User\Profile;
  */
 class QQ extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
@@ -57,16 +56,21 @@ class QQ extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected $apiDocumentation = ''; // Not available
+
+    /**
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
 
-        $this->tokenRefreshParameters = [
-            'grant_type'    => 'refresh_token',
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'refresh_token' => $this->getStoredData('refresh_token'),
-        ];
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id'     => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ];
+        }
 
         $this->apiRequestParameters = [
             'access_token' => $this->getStoredData('access_token')

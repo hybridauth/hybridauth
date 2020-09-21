@@ -20,7 +20,7 @@ class WindowsLive extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday';
+    protected $scope = 'wl.basic wl.contacts_emails wl.emails wl.signin wl.share wl.birthday';
 
     /**
     * {@inheritdoc}

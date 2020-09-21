@@ -43,6 +43,7 @@ use \Firebase\JWT\JWK;
  *   try {
  *       $adapter->authenticate();
  *
+ *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
  *   }
@@ -139,14 +140,6 @@ class Apple extends OAuth2
         }
 
         return $tokens;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isConnected()
-    {
-        return (bool)$this->getStoredData('access_token') && !$this->hasAccessTokenExpired();
     }
 
     /**

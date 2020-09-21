@@ -17,11 +17,10 @@ use Hybridauth\User;
  */
 class Slack extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
-    public $scope = 'identity.basic identity.email identity.avatar';
+    protected $scope = 'identity.basic identity.email identity.avatar';
 
     /**
      * {@inheritdoc}

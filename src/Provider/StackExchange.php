@@ -20,15 +20,21 @@ use Hybridauth\User;
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
  *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'site'     => 'stackoverflow'
+ *       'site'     => 'stackoverflow' // required parameter to call getUserProfile()
  *       'api_key'  => '...' // that thing to receive a higher request quota.
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\StackExchange( $config );
  *
- *   $adapter->authenticate();
+ *   try {
+ *       $adapter->authenticate();
  *
- *   $userProfile = $adapter->getUserProfile();
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken();
+ *   }
+ *   catch( \Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class StackExchange extends OAuth2
 {
@@ -76,7 +82,10 @@ class StackExchange extends OAuth2
     {
         $site = $this->config->get('site');
 
-        $response = $this->apiRequest('me', 'GET', [ 'site' => $site ]);
+        $response = $this->apiRequest('me', 'GET', [
+            'site' => $site,
+            'access_token' => $this->getStoredData('access_token'),
+        ]);
 
         if (! $response || !isset($response->items) || !isset($response->items[0])) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
@@ -86,7 +95,7 @@ class StackExchange extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier  = strval($data->get('user_id'));
         $userProfile->displayName = $data->get('display_name');
         $userProfile->photoURL    = $data->get('profile_image');
         $userProfile->profileURL  = $data->get('link');
