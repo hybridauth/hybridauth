@@ -167,10 +167,14 @@ class Telegram extends AbstractAdapter implements AdapterInterface
     {
         $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)));
 
+        $nonce = $this->config->get('nonce');
+        $nonce_code = empty($nonce) ? '' : "nonce=\"{$nonce}\"";
+
         exit(
             <<<HTML
 <center>
     <script async src="https://telegram.org/js/telegram-widget.js?7"
+            {$nonce_code}
             data-telegram-login="{$this->botId}"
             data-size="large"
             data-auth-url="{$this->callbackUrl}"
