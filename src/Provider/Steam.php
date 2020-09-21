@@ -95,7 +95,7 @@ class Steam extends OpenID
      */
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
-        $q = http_build_query(['key' => $apiKey, 'steamid' => $steam64]);
+        $q = http_build_query(['key' => $apiKey, 'steamids' => $steam64]);
         $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?' . $q;
 
         $response = $this->httpClient->request($apiUrl);
