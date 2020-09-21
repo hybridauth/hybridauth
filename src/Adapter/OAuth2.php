@@ -328,8 +328,6 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
     /**
      * {@inheritdoc}
-     *
-     * Checking access_token only works for oauth1 and oauth2, openid will overwrite this method.
      */
     public function isConnected()
     {

@@ -61,8 +61,8 @@ class QQ extends OAuth2
     {
         parent::initialize();
 
-        if (is_array($this->tokenRefreshParameters)) {
-            $this->tokenRefreshParameters = [
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
                 'client_id'     => $this->clientId,
                 'client_secret' => $this->clientSecret,
             ];

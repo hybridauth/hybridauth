@@ -182,6 +182,11 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
+    public abstract function isConnected();
+
+    /**
+     * {@inheritdoc}
+     */
     public function disconnect()
     {
         $this->clearStoredData();
