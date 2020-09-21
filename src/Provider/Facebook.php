@@ -96,12 +96,10 @@ class Facebook extends OAuth2
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
         // Handle token exchange prior to the standard handler for an API request
-        $exchange_by_expiry_days = $this->config->get('exchange_by_expiry_days') ?? 45;
+        $exchange_by_expiry_days = $this->config->get('exchange_by_expiry_days') ?: 45;
         if ($exchange_by_expiry_days !== null) {
             $projected_timestamp = time() + 60 * 60 * 24 * $exchange_by_expiry_days;
-            if (($this->hasAccessTokenExpired() === false) && // Not expired yet
-                ($this->hasAccessTokenExpired($projected_timestamp) === true) // But will within projection
-            ) {
+            if (!$this->hasAccessTokenExpired() && $this->hasAccessTokenExpired($projected_timestamp)) {
                 $this->exchangeAccessToken();
             }
         }
