@@ -122,8 +122,8 @@ class Telegram extends AbstractAdapter implements AdapterInterface
         $userProfile->photoURL      = $data->get('photo_url');
         $username = $data->get('username');
         if (!empty($username)) {
-            // Only some accounts have usernames
-            $userProfile->profileURL    = "https://t.me/" . $username;
+            // Only some accounts have usernames.
+            $userProfile->profileURL = "https://t.me/{$username}";
         }
 
         return $userProfile;
