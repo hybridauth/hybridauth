@@ -19,9 +19,13 @@ $adapters = $hybridauth->getConnectedAdapters();
     <title>Example 07</title>
 
     <script>
-        function auth_popup( provider ){
+        function auth_popup(provider) {
             // replace 'path/to/hybridauth' with the real path to this script
-            var authWindow = window.open('https://path/to/hybridauth/examples/example_07/callback.php?provider='+provider, 'authWindow', 'width=600,height=400,scrollbars=yes');
+            var authWindow = window.open('https://path/to/hybridauth/examples/example_07/callback.php?provider=' + provider, 'authWindow', 'width=600,height=400,scrollbars=yes');
+            window.closeAuthWindow = function () {
+              authWindow.close();
+            }
+
             return false;
         }
     </script>

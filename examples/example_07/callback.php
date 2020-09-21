@@ -51,8 +51,9 @@ try {
         // Close the pop-up window
         echo "
             <script>
-                window.opener.location.reload();
-                window.close();
+                if (window.opener.closeAuthWindow) {
+                    window.opener.closeAuthWindow();
+                }
             </script>";
         exit;
     }
@@ -79,14 +80,15 @@ try {
             'first_name'    => $userProfile->firstName,
             'last_name'     => $userProfile->lastName,
             'photoURL'      => strtok($userProfile->photoURL,'?'),
-            ];
+        ];
         // ...
 
         // Close pop-up window
         echo "
             <script>
-                window.opener.location.reload();
-                window.close();
+                if (window.opener.closeAuthWindow) {
+                    window.opener.closeAuthWindow();
+                }
             </script>";
 
     }
