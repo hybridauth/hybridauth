@@ -126,6 +126,11 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
+    abstract public function isConnected();
+
+    /**
+     * {@inheritdoc}
+     */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
         throw new NotImplementedException('Provider does not support this feature.');
@@ -178,11 +183,6 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         throw new NotImplementedException('Provider does not support this feature.');
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public abstract function isConnected();
 
     /**
      * {@inheritdoc}
