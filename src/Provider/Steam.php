@@ -24,9 +24,14 @@ use Hybridauth\User;
  *
  *   $adapter = new Hybridauth\Provider\Steam( $config );
  *
- *   $adapter->authenticate();
-
- *   $userProfile = $adapter->getUserProfile();
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *   }
+ *   catch( \Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class Steam extends OpenID
 {
@@ -34,6 +39,11 @@ class Steam extends OpenID
     * {@inheritdoc}
     */
     protected $openidIdentifier = 'http://steamcommunity.com/openid';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://steamcommunity.com/dev';
 
     /**
     * {@inheritdoc}

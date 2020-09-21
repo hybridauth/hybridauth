@@ -13,27 +13,7 @@ use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
 
 /**
- * Mailru provider adapter.
- *
- * Example:
- *
- *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => '', 'secret' => ''],
- *   ];
- *
- *   $adapter = new Hybridauth\Provider\Mailru($config);
- *
- *   try {
- *       if (!$adapter->isConnected()) {
- *           $adapter->authenticate();
- *       }
- *
- *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
- *       print $e->getMessage() ;
- *   }
+ * Mailru OAuth2 provider adapter.
  */
 class Mailru extends OAuth2
 {
@@ -52,6 +32,10 @@ class Mailru extends OAuth2
      */
     protected $accessTokenUrl = 'https://connect.mail.ru/oauth/token';
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 
     /**
      * {@inheritdoc}

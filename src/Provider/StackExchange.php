@@ -26,9 +26,15 @@ use Hybridauth\User;
  *
  *   $adapter = new Hybridauth\Provider\StackExchange( $config );
  *
- *   $adapter->authenticate();
+ *   try {
+ *       $adapter->authenticate();
  *
- *   $userProfile = $adapter->getUserProfile();
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken();
+ *   }
+ *   catch( \Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class StackExchange extends OAuth2
 {

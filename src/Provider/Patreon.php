@@ -17,11 +17,10 @@ use Hybridauth\Data\Collection;
  */
 class Patreon extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
-    public $scope = 'identity identity[email]';
+    protected $scope = 'identity identity[email]';
 
     /**
      * {@inheritdoc}
@@ -37,6 +36,11 @@ class Patreon extends OAuth2
      * {@inheritdoc}
      */
     protected $accessTokenUrl = 'https://www.patreon.com/api/oauth2/token';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://docs.patreon.com/#oauth';
 
     /**
      * {@inheritdoc}

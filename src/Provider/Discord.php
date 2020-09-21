@@ -17,11 +17,10 @@ use Hybridauth\User;
  */
 class Discord extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
-    public $scope = 'identify email';
+    protected $scope = 'identify email';
 
     /**
      * {@inheritdoc}

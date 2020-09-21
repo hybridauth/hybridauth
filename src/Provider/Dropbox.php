@@ -2,7 +2,7 @@
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2019 Hybridauth authors | https://hybridauth.github.io/license.html
+*  (c) 2020 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -20,7 +20,7 @@ class Dropbox extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'account_info.read';
+    protected $scope = 'account_info.read';
 
     /**
      * {@inheritdoc}

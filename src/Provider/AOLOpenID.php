@@ -18,4 +18,9 @@ class AOLOpenID extends OpenID
     * {@inheritdoc}
     */
     protected $openidIdentifier = 'http://openid.aol.com/';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 }

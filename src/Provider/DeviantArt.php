@@ -14,33 +14,13 @@ use Hybridauth\User;
 
 /**
  * DeviantArt OAuth2 provider adapter.
- *
- * Example:
- *
- *   $config = [
- *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'user',
- *   ];
- *
- *   $adapter = new Hybridauth\Provider\DeviantArt( $config );
- *
- *   try {
- *       $adapter->authenticate();
- *
- *       $userProfile = $adapter->getUserProfile();
- *       $tokens = $adapter->getAccessToken();
- *   }
- *   catch( Exception $e ){
- *       echo $e->getMessage() ;
- *   }
  */
 class DeviantArt extends OAuth2
 {
     /**
      * {@inheritdoc}
      */
-    public $scope = 'user';
+    protected $scope = 'user';
 
     /**
      * {@inheritdoc}

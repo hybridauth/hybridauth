@@ -12,7 +12,6 @@ use Hybridauth\User\Profile;
  */
 class QQ extends OAuth2
 {
-
     /**
      * {@inheritdoc}
      */
@@ -53,6 +52,11 @@ class QQ extends OAuth2
      * {@inheritdoc}
      */
     protected $tokenRefreshMethod = 'GET';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 
     /**
      * {@inheritdoc}

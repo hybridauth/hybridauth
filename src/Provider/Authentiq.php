@@ -20,7 +20,7 @@ class Authentiq extends OAuth2
     /**
     * {@inheritdoc}
     */
-    public $scope = 'aq:name email~rs aq:push openid';
+    protected $scope = 'aq:name email~rs aq:push openid';
 
     /**
     * {@inheritdoc}

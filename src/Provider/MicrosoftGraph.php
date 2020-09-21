@@ -13,7 +13,7 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
 
 /**
- * Microsoft Graph provider adapter.
+ * Microsoft Graph OAuth2 provider adapter.
  *
  * Create an "Azure Active Directory" resource at https://portal.azure.com/
  * (not from the Visual Studio site).
@@ -47,7 +47,7 @@ class MicrosoftGraph extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'openid user.read contacts.read';
+    protected $scope = 'openid user.read contacts.read';
 
     /**
      * {@inheritdoc}
