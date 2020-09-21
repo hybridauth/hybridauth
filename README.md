@@ -13,7 +13,10 @@ Hybridauth provides a number of basic [examples](https://github.com/hybridauth/h
 ```php
 $config = [
     'callback' => 'https://example.com/path/to/script.php',
-    'keys' => [ 'key' => 'your-twitter-consumer-key', 'secret' => 'your-twitter-consumer-secret' ]
+    'keys' => [
+        'key' => 'your-twitter-consumer-key',
+        'secret' => 'your-twitter-consumer-secret',
+    ],
 ];
 
 try {
