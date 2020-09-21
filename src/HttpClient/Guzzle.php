@@ -115,13 +115,6 @@ class Guzzle implements HttpClientInterface
     {
         $this->requestHeader = array_replace($this->requestHeader, (array) $headers);
 
-        /* TODO: This can be removed in a future version
-           when it is confirmed no calls to apiRequest include an implicit query string
-        */
-        if (($method == 'GET' || $method == 'DELETE') && (strpos($uri, '?') !== false)) {
-            parse_str(parse_url($uri, PHP_URL_QUERY), $parameters);
-        }
-
         $this->requestArguments = [
             'uri' => $uri,
             'method' => $method,
