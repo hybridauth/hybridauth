@@ -25,7 +25,7 @@ interface StorageInterface
     * Add or Update an item to storage
     *
     * @param string $key
-    * @param string $value
+    * @param mixed  $value
     */
     public function set($key, $value);
 
