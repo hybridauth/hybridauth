@@ -99,11 +99,15 @@ class Vkontakte extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public function hasAccessTokenExpired()
+    public function hasAccessTokenExpired($time = null)
     {
+        if ($time === null) {
+            $time = time();
+        }
+
         // If we are using offline scope, $expired will be false.
         $expired = $this->getStoredData('expires_in')
-            ? $this->getStoredData('expires_at') <= time()
+            ? $this->getStoredData('expires_at') <= $time
             : false;
 
         return $expired;
