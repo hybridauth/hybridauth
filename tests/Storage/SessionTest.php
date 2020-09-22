@@ -53,6 +53,22 @@ class SessionTest extends \PHPUnit\Framework\TestCase
 
     /**
     * @dataProvider some_random_session_data
+    * @covers Session::get
+    * @covers Session::set
+    */
+    public function test_set_and_get_data_without_namespace($key, $value)
+    {
+        $storage = new Session('');
+
+        $storage->set($key, $value);
+
+        $data = $storage->get($key);
+
+        $this->assertEquals($value, $data);
+    }
+
+    /**
+    * @dataProvider some_random_session_data
     * @covers Session::delete
     */
     public function test_delete_data($key, $value)
@@ -70,11 +86,45 @@ class SessionTest extends \PHPUnit\Framework\TestCase
 
     /**
     * @dataProvider some_random_session_data
+    * @covers Session::delete
+    */
+    public function test_delete_data_without_namespace($key, $value)
+    {
+        $storage = new Session('');
+
+        $storage->set($key, $value);
+
+        $storage->delete($key);
+
+        $data = $storage->get($key);
+
+        $this->assertNull($data);
+    }
+
+    /**
+    * @dataProvider some_random_session_data
     * @covers Session::clear
     */
     public function test_clear_data($key, $value)
     {
         $storage = new Session;
+
+        $storage->set($key, $value);
+
+        $storage->clear();
+
+        $data = $storage->get($key);
+
+        $this->assertNull($data);
+    }
+
+    /**
+    * @dataProvider some_random_session_data
+    * @covers Session::clear
+    */
+    public function test_clear_data_without_namespace($key, $value)
+    {
+        $storage = new Session('');
 
         $storage->set($key, $value);
 
@@ -106,12 +156,49 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+    * @covers Session::clear
+    */
+    public function test_clear_data_bulk_without_namespace()
+    {
+        $storage = new Session('');
+
+        foreach ((array) $this->some_random_session_data() as $key => $value) {
+            $storage->set($key, $value);
+        }
+
+        $storage->clear();
+
+        foreach ((array) $this->some_random_session_data() as $key => $value) {
+            $data = $storage->get($key);
+
+            $this->assertNull($data);
+        }
+    }
+
+    /**
     * @dataProvider some_random_session_data
     * @covers Session::deleteMatch
     */
     public function test_delete_match_data($key, $value)
     {
         $storage = new Session;
+
+        $storage->set($key, $value);
+
+        $storage->deleteMatch('provider.token.');
+
+        $data = $storage->get('provider.token.request_token');
+
+        $this->assertNull($data);
+    }
+
+    /**
+    * @dataProvider some_random_session_data
+    * @covers Session::deleteMatch
+    */
+    public function test_delete_match_data_without_namespace($key, $value)
+    {
+        $storage = new Session('');
 
         $storage->set($key, $value);
 

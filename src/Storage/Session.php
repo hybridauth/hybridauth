@@ -19,22 +19,28 @@ class Session implements StorageInterface
      *
      * @var string
      */
-    protected $storeNamespace = 'HYBRIDAUTH::STORAGE';
+    protected $storeNamespace;
 
     /**
      * Key prefix
      *
      * @var string
      */
-    protected $keyPrefix = '';
+    protected $keyPrefix;
 
     /**
     * Initiate a new session
     *
+    * @param string $storeNamespace
+    * @param string $keyPrefix
+    *
     * @throws RuntimeException
     */
-    public function __construct()
+    public function __construct($storeNamespace = 'HYBRIDAUTH::STORAGE', $keyPrefix = '')
     {
+        $this->storeNamespace = $storeNamespace;
+        $this->keyPrefix = $keyPrefix;
+
         if (session_id()) {
             return;
         }
@@ -56,7 +62,10 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
+        if (!$this->storeNamespace && isset($_SESSION[$key])) {
+            return $_SESSION[$key];
+
+        } else if (isset($_SESSION[$this->storeNamespace][$key])) {
             return $_SESSION[$this->storeNamespace][$key];
         }
 
@@ -70,7 +79,12 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        $_SESSION[$this->storeNamespace][$key] = $value;
+        if (!$this->storeNamespace) {
+            $_SESSION[$key] = $value;
+
+        } else {
+            $_SESSION[$this->storeNamespace][$key] = $value;
+        }
     }
 
     /**
@@ -78,7 +92,12 @@ class Session implements StorageInterface
     */
     public function clear()
     {
-        $_SESSION[$this->storeNamespace] = [];
+        if (!$this->storeNamespace) {
+            $_SESSION = [];
+
+        } else {
+            $_SESSION[$this->storeNamespace] = [];
+        }
     }
 
     /**
@@ -88,12 +107,11 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
-            $tmp = $_SESSION[$this->storeNamespace];
+        if (!$this->storeNamespace && isset($_SESSION[$key])) {
+            unset($_SESSION[$key]);
 
-            unset($tmp[$key]);
-
-            $_SESSION[$this->storeNamespace] = $tmp;
+        } else if (isset($_SESSION[$this->storeNamespace][$key])) {
+            unset($_SESSION[$this->storeNamespace][$key]);
         }
     }
 
@@ -104,16 +122,19 @@ class Session implements StorageInterface
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (isset($_SESSION[$this->storeNamespace]) && count($_SESSION[$this->storeNamespace])) {
-            $tmp = $_SESSION[$this->storeNamespace];
-
-            foreach ($tmp as $k => $v) {
+        if (!$this->storeNamespace && count($_SESSION)) {
+            foreach ($_SESSION as $k => $v) {
                 if (strstr($k, $key)) {
-                    unset($tmp[ $k ]);
+                    unset($_SESSION[$k]);
                 }
             }
 
-            $_SESSION[$this->storeNamespace] = $tmp;
+        } else if (isset($_SESSION[$this->storeNamespace]) && is_array($_SESSION[$this->storeNamespace])) {
+            foreach ($_SESSION[$this->storeNamespace] as $k => $v) {
+                if (strstr($k, $key)) {
+                    unset($_SESSION[$this->storeNamespace][$k]);
+                }
+            }
         }
     }
 }
