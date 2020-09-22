@@ -216,13 +216,13 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
 
         try {
             if (!$this->getStoredData('request_token')) {
-                // Start a new flow
+                // Start a new flow.
                 $this->authenticateBegin();
-            } elseif ((empty($_GET['oauth_token'])) && (empty($_GET['denied']))) {
-                // A previous authentication was not finished, and this request is not finishing it
+            } elseif (empty($_GET['oauth_token']) && empty($_GET['denied'])) {
+                // A previous authentication was not finished, and this request is not finishing it.
                 $this->authenticateBegin();
             } else {
-                // Finish a flow
+                // Finish a flow.
                 $this->authenticateFinish();
             }
         } catch (Exception $exception) {
