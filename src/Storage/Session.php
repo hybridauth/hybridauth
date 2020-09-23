@@ -29,10 +29,10 @@ class Session implements StorageInterface
     protected $keyPrefix = '';
 
     /**
-    * Initiate a new session
-    *
-    * @throws RuntimeException
-    */
+     * Initiate a new session
+     *
+     * @throws RuntimeException
+     */
     public function __construct()
     {
         if (session_id()) {
@@ -44,14 +44,14 @@ class Session implements StorageInterface
             throw new RuntimeException('HTTP headers already sent to browser and Hybridauth won\'t be able to start/resume PHP session. To resolve this, session_start() must be called before outputing any data.');
         }
 
-        if (! session_start()) {
+        if (!session_start()) {
             throw new RuntimeException('PHP session failed to start.');
         }
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function get($key)
     {
         $key = $this->keyPrefix . strtolower($key);
@@ -64,8 +64,8 @@ class Session implements StorageInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function set($key, $value)
     {
         $key = $this->keyPrefix . strtolower($key);
@@ -74,16 +74,16 @@ class Session implements StorageInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function clear()
     {
         $_SESSION[$this->storeNamespace] = [];
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function delete($key)
     {
         $key = $this->keyPrefix . strtolower($key);
@@ -98,8 +98,8 @@ class Session implements StorageInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function deleteMatch($key)
     {
         $key = $this->keyPrefix . strtolower($key);
@@ -109,7 +109,7 @@ class Session implements StorageInterface
 
             foreach ($tmp as $k => $v) {
                 if (strstr($k, $key)) {
-                    unset($tmp[ $k ]);
+                    unset($tmp[$k]);
                 }
             }
 

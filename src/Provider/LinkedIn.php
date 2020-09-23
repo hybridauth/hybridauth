@@ -55,8 +55,8 @@ class LinkedIn extends OAuth2
         ];
 
 
-        $response = $this->apiRequest('me', 'GET', [ 'projection' => '(' . implode(',', $fields) . ')' ]);
-        $data     = new Data\Collection($response);
+        $response = $this->apiRequest('me', 'GET', ['projection' => '(' . implode(',', $fields) . ')']);
+        $data = new Data\Collection($response);
 
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
@@ -66,14 +66,14 @@ class LinkedIn extends OAuth2
 
         // Handle localized names.
         $userProfile->firstName = $data
-          ->filter('firstName')
-          ->filter('localized')
-          ->get($this->getPreferredLocale($data, 'firstName'));
+            ->filter('firstName')
+            ->filter('localized')
+            ->get($this->getPreferredLocale($data, 'firstName'));
 
         $userProfile->lastName = $data
-          ->filter('lastName')
-          ->filter('localized')
-          ->get($this->getPreferredLocale($data, 'lastName'));
+            ->filter('lastName')
+            ->filter('localized')
+            ->get($this->getPreferredLocale($data, 'lastName'));
 
         $userProfile->identifier = $data->get('id');
         $userProfile->email = $this->getUserEmail();
@@ -168,8 +168,8 @@ class LinkedIn extends OAuth2
 
         $headers = [
             'Content-Type' => 'application/json',
-            'x-li-format'  => 'json',
-            'X-Restli-Protocol-Version'  => '2.0.0',
+            'x-li-format' => 'json',
+            'X-Restli-Protocol-Version' => '2.0.0',
         ];
 
         $response = $this->apiRequest("ugcPosts", 'POST', $status, $headers);

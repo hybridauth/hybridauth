@@ -19,7 +19,7 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'secret' => 'steam-api-key' ]
+ *       'keys' => ['secret' => 'steam-api-key']
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Steam( $config );
@@ -36,8 +36,8 @@ use Hybridauth\User;
 class Steam extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'http://steamcommunity.com/openid';
 
     /**
@@ -46,8 +46,8 @@ class Steam extends OpenID
     protected $apiDocumentation = 'https://steamcommunity.com/dev';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function authenticateFinish()
     {
         parent::authenticateFinish();
@@ -121,7 +121,7 @@ class Steam extends OpenID
      * Fetch user profile on community API
      * @param $steam64
      * @return array
-*/
+     */
     public function getUserProfileLegacyAPI($steam64)
     {
         libxml_use_internal_errors(false);
@@ -142,8 +142,8 @@ class Steam extends OpenID
         $userProfile['description'] = (string)$data->get('summary');
         $userProfile['region'] = (string)$data->get('location');
         $userProfile['profileURL'] = (string)$data->get('customURL')
-          ? 'http://steamcommunity.com/id/' . (string)$data->get('customURL')
-          : 'http://steamcommunity.com/profiles/' . $steam64;
+            ? 'http://steamcommunity.com/id/' . (string)$data->get('customURL')
+            : 'http://steamcommunity.com/profiles/' . $steam64;
 
         return $userProfile;
     }

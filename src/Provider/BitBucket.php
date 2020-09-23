@@ -22,51 +22,51 @@ use Hybridauth\User;
 class BitBucket extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = 'email';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.bitbucket.org/2.0/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://bitbucket.org/site/oauth2/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://bitbucket.org/site/oauth2/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developer.atlassian.com/bitbucket/concepts/oauth2.html';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('uuid')) {
+        if (!$data->exists('uuid')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('uuid');
-        $userProfile->profileURL  = 'https://bitbucket.org/' . $data->get('username') . '/';
+        $userProfile->identifier = $data->get('uuid');
+        $userProfile->profileURL = 'https://bitbucket.org/' . $data->get('username') . '/';
         $userProfile->displayName = $data->get('display_name');
-        $userProfile->email       = $data->get('email');
-        $userProfile->webSiteURL  = $data->get('website');
-        $userProfile->region      = $data->get('location');
+        $userProfile->email = $data->get('email');
+        $userProfile->webSiteURL = $data->get('website');
+        $userProfile->region = $data->get('location');
 
         $userProfile->displayName = $userProfile->displayName ?: $data->get('username');
 
@@ -95,10 +95,10 @@ class BitBucket extends OAuth2
         $response = $this->apiRequest('user/emails');
 
         foreach ($response->values as $idx => $item) {
-            if (! empty($item->is_primary) && $item->is_primary == true) {
+            if (!empty($item->is_primary) && $item->is_primary == true) {
                 $userProfile->email = $item->email;
 
-                if (! empty($item->is_confirmed) && $item->is_confirmed == true) {
+                if (!empty($item->is_confirmed) && $item->is_confirmed == true) {
                     $userProfile->emailVerified = $userProfile->email;
                 }
 

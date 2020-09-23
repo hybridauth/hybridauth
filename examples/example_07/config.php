@@ -12,16 +12,16 @@ $config = [
         'Google' => [
             'enabled' => true,
             'keys' => [
-                'id'     => '...',
+                'id' => '...',
                 'secret' => '...',
             ],
             'scope' => 'email',
         ],
 
-        // 'Yahoo'     => ['enabled' => true, 'keys' => [ 'key'  => '...', 'secret' => '...']],
-        // 'Facebook'  => ['enabled' => true, 'keys' => [ 'id'   => '...', 'secret' => '...']],
-        // 'Twitter'   => ['enabled' => true, 'keys' => [ 'key'  => '...', 'secret' => '...']],
-        // 'Instagram' => ['enabled' => true, 'keys' => [ 'id'   => '...', 'secret' => '...']],
+        // 'Yahoo' => ['enabled' => true, 'keys' => ['key' => '...', 'secret' => '...']],
+        // 'Facebook' => ['enabled' => true, 'keys' => ['id' => '...', 'secret' => '...']],
+        // 'Twitter' => ['enabled' => true, 'keys' => ['key' => '...', 'secret' => '...']],
+        // 'Instagram' => ['enabled' => true, 'keys' => ['id' => '...', 'secret' => '...']],
 
     ],
 ];

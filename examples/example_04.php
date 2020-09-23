@@ -6,7 +6,7 @@
 include 'vendor/autoload.php';
 
 $config = [
-    'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
+    'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
 
     'openid_identifier' => 'https://open.login.yahooapis.com/openid20/www.yahoo.com/xrds',
     // 'openid_identifier' => 'https://openid.stackexchange.com/',
@@ -15,7 +15,7 @@ $config = [
 ];
 
 try {
-    $adapter = new Hybridauth\Provider\OpenID( $config );
+    $adapter = new Hybridauth\Provider\OpenID($config);
 
     $adapter->authenticate();
 
@@ -26,7 +26,6 @@ try {
     // print_r( $userProfile );
 
     $adapter->disconnect();
-}
-catch( Exception $e ){
+} catch (Exception $e) {
     echo $e->getMessage();
 }

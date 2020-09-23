@@ -64,8 +64,8 @@ class WeChat extends OAuth2
     protected $apiDocumentation = ''; // Not available
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -121,13 +121,13 @@ class WeChat extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('openid');
+        $userProfile->identifier = $data->get('openid');
         $userProfile->displayName = $data->get('nickname');
-        $userProfile->photoURL    = $data->get('headimgurl');
-        $userProfile->city        = $data->get('city');
-        $userProfile->region      = $data->get('province');
-        $userProfile->country     = $data->get('country');
-        $userProfile->gender      = ['', 'male', 'female'][(int)$data->get('sex')];
+        $userProfile->photoURL = $data->get('headimgurl');
+        $userProfile->city = $data->get('city');
+        $userProfile->region = $data->get('province');
+        $userProfile->country = $data->get('country');
+        $userProfile->gender = ['', 'male', 'female'][(int)$data->get('sex')];
 
         return $userProfile;
     }

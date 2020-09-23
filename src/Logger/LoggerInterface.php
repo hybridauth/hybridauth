@@ -18,7 +18,7 @@ interface LoggerInterface
      * Example: User logs in, SQL logs.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function info($message, array $context = array());
 
@@ -26,7 +26,7 @@ interface LoggerInterface
      * Detailed debug information.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function debug($message, array $context = array());
 
@@ -35,16 +35,16 @@ interface LoggerInterface
      * be logged and monitored.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function error($message, array $context = array());
 
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed  $level
+     * @param mixed $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function log($level, $message, array $context = array());
 }

@@ -28,8 +28,8 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
  * Example:
  *
  *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => 'your_bot_name', 'secret' => 'your_bot_token'],
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => ['id' => 'your_bot_name', 'secret' => 'your_bot_token'],
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Telegram($config);
@@ -115,11 +115,11 @@ class Telegram extends AbstractAdapter implements AdapterInterface
 
         $userProfile = new Profile();
 
-        $userProfile->identifier    = $data->get('id');
-        $userProfile->firstName     = $data->get('first_name');
-        $userProfile->lastName      = $data->get('last_name');
-        $userProfile->displayName   = $data->get('username');
-        $userProfile->photoURL      = $data->get('photo_url');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->firstName = $data->get('first_name');
+        $userProfile->lastName = $data->get('last_name');
+        $userProfile->displayName = $data->get('username');
+        $userProfile->photoURL = $data->get('photo_url');
         $username = $data->get('username');
         if (!empty($username)) {
             // Only some accounts have usernames.
@@ -205,13 +205,13 @@ HTML
     protected function parseAuthData()
     {
         return [
-            'id'            => filter_input(INPUT_GET, 'id'),
-            'first_name'    => filter_input(INPUT_GET, 'first_name'),
-            'last_name'     => filter_input(INPUT_GET, 'last_name'),
-            'username'      => filter_input(INPUT_GET, 'username'),
-            'photo_url'     => filter_input(INPUT_GET, 'photo_url'),
-            'auth_date'     => filter_input(INPUT_GET, 'auth_date'),
-            'hash'          => filter_input(INPUT_GET, 'hash'),
+            'id' => filter_input(INPUT_GET, 'id'),
+            'first_name' => filter_input(INPUT_GET, 'first_name'),
+            'last_name' => filter_input(INPUT_GET, 'last_name'),
+            'username' => filter_input(INPUT_GET, 'username'),
+            'photo_url' => filter_input(INPUT_GET, 'photo_url'),
+            'auth_date' => filter_input(INPUT_GET, 'auth_date'),
+            'hash' => filter_input(INPUT_GET, 'hash'),
         ];
     }
 }

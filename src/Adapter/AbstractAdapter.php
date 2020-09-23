@@ -78,23 +78,23 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * Whether to validate API status codes of http responses
      *
-     * @var boolean
+     * @var bool
      */
     protected $validateApiResponseHttpCode = true;
 
     /**
      * Common adapters constructor.
      *
-     * @param array               $config
+     * @param array $config
      * @param HttpClientInterface $httpClient
-     * @param StorageInterface    $storage
-     * @param LoggerInterface     $logger
+     * @param StorageInterface $storage
+     * @param LoggerInterface $logger
      */
     public function __construct(
         $config = [],
         HttpClientInterface $httpClient = null,
-        StorageInterface    $storage = null,
-        LoggerInterface     $logger = null
+        StorageInterface $storage = null,
+        LoggerInterface $logger = null
     ) {
         $this->providerId = (new \ReflectionClass($this))->getShortName();
 
@@ -114,13 +114,13 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Load adapter's configuration
-    */
+     * Load adapter's configuration
+     */
     abstract protected function configure();
 
     /**
-    * Adapter initializer
-    */
+     * Adapter initializer
+     */
     abstract protected function initialize();
 
     /**
@@ -210,7 +210,7 @@ abstract class AbstractAdapter implements AdapterInterface
 
         foreach ($tokenNames as $name) {
             if ($this->getStoredData($name)) {
-                $tokens[ $name ] = $this->getStoredData($name);
+                $tokens[$name] = $this->getStoredData($name);
             }
         }
 
@@ -292,15 +292,15 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-    * Set Adapter's API callback url
-    *
-    * @param string $callback
-    *
-    * @throws InvalidArgumentException
-    */
+     * Set Adapter's API callback url
+     *
+     * @param string $callback
+     *
+     * @throws InvalidArgumentException
+     */
     protected function setCallback($callback)
     {
-        if (! filter_var($callback, FILTER_VALIDATE_URL)) {
+        if (!filter_var($callback, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('A valid callback url is required.');
         }
 
@@ -343,12 +343,12 @@ abstract class AbstractAdapter implements AdapterInterface
 
         if ($this->httpClient->getResponseClientError()) {
             throw new HttpClientFailureException(
-                $error.'HTTP client error: '.$this->httpClient->getResponseClientError().'.'
+                $error . 'HTTP client error: ' . $this->httpClient->getResponseClientError() . '.'
             );
         }
 
         // if validateApiResponseHttpCode is set to false, we by pass verification of http status code
-        if (! $this->validateApiResponseHttpCode) {
+        if (!$this->validateApiResponseHttpCode) {
             return;
         }
 
@@ -356,8 +356,8 @@ abstract class AbstractAdapter implements AdapterInterface
 
         if ($status < 200 || $status > 299) {
             throw new HttpRequestFailedException(
-                $error . 'HTTP error '.$this->httpClient->getResponseHttpCode().
-                '. Raw Provider API response: '.$this->httpClient->getResponseBody().'.'
+                $error . 'HTTP error ' . $this->httpClient->getResponseHttpCode() .
+                '. Raw Provider API response: ' . $this->httpClient->getResponseBody() . '.'
             );
         }
     }

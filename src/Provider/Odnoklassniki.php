@@ -18,18 +18,18 @@ use Hybridauth\User;
 class Odnoklassniki extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.ok.ru/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://connect.ok.ru/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.ok.ru/oauth/token.do';
 
     /**
@@ -38,8 +38,8 @@ class Odnoklassniki extends OAuth2
     protected $apiDocumentation = 'https://apiok.ru/en/ext/oauth/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -53,13 +53,13 @@ class Odnoklassniki extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $fields = array(
             'uid', 'locale', 'first_name', 'last_name', 'name', 'gender', 'age', 'birthday',
-            'has_email', 'current_status', 'current_status_id', 'current_status_date','online',
+            'has_email', 'current_status', 'current_status_id', 'current_status_date', 'online',
             'photo_id', 'pic_1', 'pic_2', 'pic1024x768', 'location', 'email'
         );
 
@@ -71,38 +71,38 @@ class Odnoklassniki extends OAuth2
         );
 
         $parameters = [
-            'access_token'    => $this->getStoredData('access_token'),
+            'access_token' => $this->getStoredData('access_token'),
             'application_key' => $this->config->get('keys')['key'],
-            'method'          => 'users.getCurrentUser',
-            'fields'          => implode(',', $fields),
-            'sig'             => $sig,
+            'method' => 'users.getCurrentUser',
+            'fields' => implode(',', $fields),
+            'sig' => $sig,
         ];
 
         $response = $this->apiRequest('fb.do', 'GET', $parameters);
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('uid')) {
+        if (!$data->exists('uid')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
 
-        $userProfile->identifier  = $data->get('uid');
-        $userProfile->email       = $data->get('email');
-        $userProfile->firstName   = $data->get('first_name');
-        $userProfile->lastName    = $data->get('last_name');
+        $userProfile->identifier = $data->get('uid');
+        $userProfile->email = $data->get('email');
+        $userProfile->firstName = $data->get('first_name');
+        $userProfile->lastName = $data->get('last_name');
         $userProfile->displayName = $data->get('name');
-        $userProfile->photoURL    = $data->get('pic1024x768');
-        $userProfile->profileURL  = 'http://ok.ru/profile/' . $data->get('uid');
-        
+        $userProfile->photoURL = $data->get('pic1024x768');
+        $userProfile->profileURL = 'http://ok.ru/profile/' . $data->get('uid');
+
         // Handle birthday.
         if ($data->get('birthday')) {
-            $bday                    = explode('-', $data->get('birthday'));
-            $userProfile->birthDay   = (int)$bday[0];
+            $bday = explode('-', $data->get('birthday'));
+            $userProfile->birthDay = (int)$bday[0];
             $userProfile->birthMonth = (int)$bday[1];
-            $userProfile->birthYear  = (int)$bday[2];
+            $userProfile->birthYear = (int)$bday[2];
         }
 
         return $userProfile;

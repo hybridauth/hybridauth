@@ -57,7 +57,7 @@ class Blizzard extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier = $data->get('id');
         $userProfile->displayName = $data->get('battletag') ?: $data->get('login');
 
         return $userProfile;

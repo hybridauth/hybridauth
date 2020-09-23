@@ -26,7 +26,7 @@ trait DataStoreTrait
      * can be also used by providers to store any other useful data (i.g., user_id, auth_nonce, etc.)
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
     protected function storeData($name, $value = null)
     {
@@ -35,7 +35,7 @@ trait DataStoreTrait
             $this->deleteStoredData($name);
         }
 
-        $this->getStorage()->set($this->providerId.'.'.$name, $value);
+        $this->getStorage()->set($this->providerId . '.' . $name, $value);
     }
 
     /**
@@ -51,7 +51,7 @@ trait DataStoreTrait
      */
     protected function getStoredData($name)
     {
-        return $this->getStorage()->get($this->providerId.'.'.$name);
+        return $this->getStorage()->get($this->providerId . '.' . $name);
     }
 
     /**
@@ -61,7 +61,7 @@ trait DataStoreTrait
      */
     protected function deleteStoredData($name)
     {
-        $this->getStorage()->delete($this->providerId.'.'.$name);
+        $this->getStorage()->delete($this->providerId . '.' . $name);
     }
 
     /**
@@ -69,6 +69,6 @@ trait DataStoreTrait
      */
     protected function clearStoredData()
     {
-        $this->getStorage()->deleteMatch($this->providerId.'.');
+        $this->getStorage()->deleteMatch($this->providerId . '.');
     }
 }
