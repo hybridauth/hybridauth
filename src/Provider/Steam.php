@@ -22,14 +22,13 @@ use Hybridauth\User;
  *       'keys' => ['secret' => 'steam-api-key']
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Steam( $config );
+ *   $adapter = new Hybridauth\Provider\Steam($config);
  *
  *   try {
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch( \Exception $e ){
+ *   } catch (\Exception $e) {
  *       echo $e->getMessage() ;
  *   }
  */

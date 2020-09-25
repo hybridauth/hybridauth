@@ -24,7 +24,7 @@ try {
 
     $userProfile = $adapter->getUserProfile();
 
-    // print_r( $userProfile );
+    // print_r($userProfile);
 
     $adapter->disconnect();
 } catch (Exception $e) {

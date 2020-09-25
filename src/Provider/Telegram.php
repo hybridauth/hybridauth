@@ -38,8 +38,7 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
+ *   } catch (\Exception $e) {
  *       print $e->getMessage();
  *   }
  */

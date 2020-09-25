@@ -22,8 +22,8 @@ try {
     $tokens = $adapter->getAccessToken();
     $userProfile = $adapter->getUserProfile();
 
-    // print_r( $tokens );
-    // print_r( $userProfile );
+    // print_r($tokens);
+    // print_r($userProfile);
 
     $adapter->disconnect();
 } catch (Exception $e) {

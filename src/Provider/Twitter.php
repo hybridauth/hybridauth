@@ -25,7 +25,7 @@ use Hybridauth\User;
  *         // https://developer.twitter.com/en/docs/authentication/oauth-1-0a/obtaining-user-access-tokens
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Twitter( $config );
+ *   $adapter = new Hybridauth\Provider\Twitter($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -34,9 +34,8 @@ use Hybridauth\User;
  *       $tokens = $adapter->getAccessToken();
  *       $contacts = $adapter->getUserContacts(['screen_name' =>'andypiper']); // get those of @andypiper
  *       $activity = $adapter->getUserActivity('me');
- *   }
- *   catch (Exception $e) {
- *       echo $e->getMessage();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
  *   }
  */
 class Twitter extends OAuth1

@@ -38,7 +38,7 @@ use \Firebase\JWT\JWK;
  *       ]
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Apple( $config );
+ *   $adapter = new Hybridauth\Provider\Apple($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -46,9 +46,8 @@ use \Firebase\JWT\JWK;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
- *   }
- *   catch (Exception $e) {
- *       echo $e->getMessage();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
  *   }
  *
  * Requires:
