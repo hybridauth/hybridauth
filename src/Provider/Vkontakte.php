@@ -35,8 +35,7 @@ use Hybridauth\User;
  *       }
  *
  *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
+ *   } catch (\Exception $e) {
  *       print $e->getMessage() ;
  *   }
  */

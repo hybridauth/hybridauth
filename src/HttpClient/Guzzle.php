@@ -20,13 +20,13 @@ use GuzzleHttp\Exception\TransferException;
  * Example:
  *
  * <code>
- *  $guzzle = new Hybridauth\HttpClient\Guzzle( new GuzzleHttp\Client(), [
+ *  $guzzle = new Hybridauth\HttpClient\Guzzle(new GuzzleHttp\Client(), [
  *      'verify' => '/path/to/your/certificate.crt',
  *      'headers' => ['User-Agent' => '..']
  *      // 'proxy' => ...
  *  ]);
  *
- *  $adapter = new Hybridauth\Provider\Github( $config, $guzzle );
+ *  $adapter = new Hybridauth\Provider\Github($config, $guzzle);
  *
  *  $adapter->authenticate();
  * </code>

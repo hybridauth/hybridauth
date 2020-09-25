@@ -32,7 +32,7 @@ use Hybridauth\User;
  *       ]
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Google( $config );
+ *   $adapter = new Hybridauth\Provider\Google($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -40,9 +40,8 @@ use Hybridauth\User;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $contacts = $adapter->getUserContacts(['max-results' => 75]);
- *   }
- *   catch (Exception $e) {
- *       echo $e->getMessage();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
  *   }
  */
 class Google extends OAuth2

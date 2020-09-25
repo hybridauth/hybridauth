@@ -24,15 +24,14 @@ use Hybridauth\User;
  *       'api_key' => '...' // that thing to receive a higher request quota.
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\StackExchange( $config );
+ *   $adapter = new Hybridauth\Provider\StackExchange($config);
  *
  *   try {
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
- *   }
- *   catch( \Exception $e ){
+ *   } catch (\Exception $e ){
  *       echo $e->getMessage() ;
  *   }
  */

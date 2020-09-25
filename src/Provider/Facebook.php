@@ -31,7 +31,7 @@ use Hybridauth\User;
  *       'exchange_by_expiry_days' => 45, // null for no token exchange
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Facebook( $config );
+ *   $adapter = new Hybridauth\Provider\Facebook($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -39,9 +39,8 @@ use Hybridauth\User;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
- *   }
- *   catch (Exception $e) {
- *       echo $e->getMessage();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
  *   }
  */
 class Facebook extends OAuth2

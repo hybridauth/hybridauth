@@ -30,16 +30,15 @@ use Hybridauth\User;
  *         // ^ May be 'common', 'organizations' or 'consumers' or a specific tenant ID or a domain
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\MicrosoftGraph( $config );
+ *   $adapter = new Hybridauth\Provider\MicrosoftGraph($config);
  *
  *   try {
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
- *   }
- *   catch (Exception $e) {
- *       echo $e->getMessage();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
  *   }
  */
 class MicrosoftGraph extends OAuth2
