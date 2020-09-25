@@ -18,33 +18,33 @@ use Hybridauth\User;
 class Foursquare extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.foursquare.com/v2/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://foursquare.com/oauth2/authenticate';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://foursquare.com/oauth2/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenName = 'oauth_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developer.foursquare.com/overview/auth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -58,15 +58,15 @@ class Foursquare extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users/self');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('response')) {
+        if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -74,15 +74,15 @@ class Foursquare extends OAuth2
 
         $data = $data->filter('response')->filter('user');
 
-        $userProfile->identifier    = $data->get('id');
-        $userProfile->firstName     = $data->get('firstName');
-        $userProfile->lastName      = $data->get('lastName');
-        $userProfile->gender        = $data->get('gender');
-        $userProfile->city          = $data->get('homeCity');
-        $userProfile->email         = $data->filter('contact')->get('email');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->firstName = $data->get('firstName');
+        $userProfile->lastName = $data->get('lastName');
+        $userProfile->gender = $data->get('gender');
+        $userProfile->city = $data->get('homeCity');
+        $userProfile->email = $data->filter('contact')->get('email');
         $userProfile->emailVerified = $userProfile->email;
-        $userProfile->profileURL    = 'https://www.foursquare.com/user/' . $userProfile->identifier;
-        $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+        $userProfile->profileURL = 'https://www.foursquare.com/user/' . $userProfile->identifier;
+        $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         if ($data->exists('photo')) {
             $photoSize = $this->config->get('photo_size') ?: '150x150';
@@ -95,15 +95,15 @@ class Foursquare extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserContacts()
     {
         $response = $this->apiRequest('users/self/friends');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('response')) {
+        if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 

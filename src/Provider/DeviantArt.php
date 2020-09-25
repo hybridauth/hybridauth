@@ -75,16 +75,16 @@ class DeviantArt extends OAuth2
             $full_name[1] = '';
         }
 
-        $userProfile->identifier  = $data->get('userid');
+        $userProfile->identifier = $data->get('userid');
         $userProfile->displayName = $data->get('username');
-        $userProfile->profileURL  = $data->get('usericon');
-        $userProfile->webSiteURL  = $data->filter('profile')->get('website');
-        $userProfile->firstName   = $full_name[0];
-        $userProfile->lastName    = $full_name[1];
-        $userProfile->profileURL  = $data->filter('profile')->filter('profile_pic')->get('url');
-        $userProfile->gender      = $data->filter('details')->get('sex');
-        $userProfile->age         = $data->filter('details')->get('age');
-        $userProfile->country     = $data->filter('geo')->get('country');
+        $userProfile->profileURL = $data->get('usericon');
+        $userProfile->webSiteURL = $data->filter('profile')->get('website');
+        $userProfile->firstName = $full_name[0];
+        $userProfile->lastName = $full_name[1];
+        $userProfile->profileURL = $data->filter('profile')->filter('profile_pic')->get('url');
+        $userProfile->gender = $data->filter('details')->get('sex');
+        $userProfile->age = $data->filter('details')->get('age');
+        $userProfile->country = $data->filter('geo')->get('country');
 
         return $userProfile;
     }

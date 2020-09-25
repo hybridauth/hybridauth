@@ -18,28 +18,28 @@ use Hybridauth\User;
 class ORCID extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = '/authenticate';
-    
+
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://pub.orcid.org/v2.1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://orcid.org/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://orcid.org/oauth/token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://members.orcid.org/api/';
 
     /**
@@ -53,8 +53,8 @@ class ORCID extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest($this->getStoredData('orcid') . '/record');
@@ -89,8 +89,8 @@ class ORCID extends OAuth2
     {
         $data = new Data\Collection($data->get('orcid-identifier'));
 
-        $profile->identifier  = $data->get('path');
-        $profile->profileURL  = $data->get('uri');
+        $profile->identifier = $data->get('path');
+        $profile->profileURL = $data->get('uri');
 
         return $profile;
     }
@@ -108,7 +108,7 @@ class ORCID extends OAuth2
         $data = new Data\Collection($data->get('person'));
         $data = new Data\Collection($data->get('biography'));
 
-        $profile->description  = $data->get('content');
+        $profile->description = $data->get('content');
 
         return $profile;
     }
@@ -148,7 +148,7 @@ class ORCID extends OAuth2
     {
         $data = new Data\Collection($data->get('person'));
         $data = new Data\Collection($data->get('name'));
-        
+
         if ($data->exists('credit-name')) {
             $profile->displayName = $data->get('credit-name');
         } else {

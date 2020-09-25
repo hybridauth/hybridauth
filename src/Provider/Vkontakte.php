@@ -20,8 +20,8 @@ use Hybridauth\User;
  * Example:
  *
  *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => [
  *           'id' => '', // App ID
  *           'secret' => '' // Secure key
  *       ],
@@ -136,19 +136,19 @@ class Vkontakte extends OAuth2
 
         $userProfile = new Profile();
 
-        $userProfile->identifier  = $data->get('id');
-        $userProfile->email       = $this->getStoredData('email');
-        $userProfile->firstName   = $data->get('first_name');
-        $userProfile->lastName    = $data->get('last_name');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->email = $this->getStoredData('email');
+        $userProfile->firstName = $data->get('first_name');
+        $userProfile->lastName = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
-        $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
+        $userProfile->photoURL = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
 
         // Handle b-date.
         if ($data->get('bdate')) {
             $bday = explode('.', $data->get('bdate'));
-            $userProfile->birthDay = (int) $bday[0];
-            $userProfile->birthMonth = (int) $bday[1];
-            $userProfile->birthYear = (int) $bday[2];
+            $userProfile->birthDay = (int)$bday[0];
+            $userProfile->birthMonth = (int)$bday[1];
+            $userProfile->birthYear = (int)$bday[2];
         }
 
         $userProfile->data = [
@@ -156,7 +156,7 @@ class Vkontakte extends OAuth2
         ];
 
         $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
-        $userProfile->profileURL  = $screen_name;
+        $userProfile->profileURL = $screen_name;
 
         switch ($data->get('sex')) {
             case 1:

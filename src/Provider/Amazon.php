@@ -57,9 +57,9 @@ class Amazon extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('user_id');
+        $userProfile->identifier = $data->get('user_id');
         $userProfile->displayName = $data->get('name');
-        $userProfile->email       = $data->get('email');
+        $userProfile->email = $data->get('email');
 
         return $userProfile;
     }

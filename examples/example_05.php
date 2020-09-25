@@ -6,13 +6,13 @@
 include 'vendor/autoload.php';
 
 $config = [
-    'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
+    'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
 
-    'keys' => [ 'id' => '', 'secret' => '' ],
+    'keys' => ['id' => '', 'secret' => ''],
 ];
 
 $guzzle = new Hybridauth\HttpClient\Guzzle(null, [
-    // 'verify'  => true, # Set to false to disable SSL certificate verification
+    // 'verify' => true, # Set to false to disable SSL certificate verification
 ]);
 
 try {
@@ -27,7 +27,6 @@ try {
     // print_r( $userProfile );
 
     $adapter->disconnect();
-}
-catch( Exception $e ){
+} catch (Exception $e) {
     echo $e->getMessage();
 }

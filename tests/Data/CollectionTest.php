@@ -32,7 +32,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     public function test_instance_of()
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         $this->assertInstanceOf('\\Hybridauth\\Data\\Collection', $collection);
     }
@@ -49,8 +49,8 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @covers Collection::exists
-    */
+     * @covers Collection::exists
+     */
     public function test_exists()
     {
         $array = $this->some_random_array();
@@ -73,8 +73,8 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @covers Collection::get
-    */
+     * @covers Collection::get
+     */
     public function test_get()
     {
         $array = $this->some_random_array();
@@ -97,8 +97,8 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @covers Collection::filter
-    */
+     * @covers Collection::filter
+     */
     public function test_filter()
     {
         $array = $this->some_random_array();

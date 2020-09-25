@@ -8,7 +8,7 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
 {
     public function test_instance_of()
     {
-        $activity = new Activity;
+        $activity = new Activity();
 
         $this->assertInstanceOf('\\Hybridauth\\User\\Activity', $activity);
     }
@@ -23,7 +23,7 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
 
     public function test_set_attributes()
     {
-        $activity = new Activity;
+        $activity = new Activity();
 
         $activity->id = true;
         $activity->date = true;
@@ -36,7 +36,7 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
      */
     public function test_property_overloading()
     {
-        $activity = new Activity;
+        $activity = new Activity();
         $activity->slug = true;
     }
 }

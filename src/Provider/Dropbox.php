@@ -57,14 +57,14 @@ class Dropbox extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('account_id');
+        $userProfile->identifier = $data->get('account_id');
         $userProfile->displayName = $data->filter('name')->get('display_name');
-        $userProfile->firstName   = $data->filter('name')->get('given_name');
-        $userProfile->lastName    = $data->filter('name')->get('surname');
-        $userProfile->email       = $data->get('email');
-        $userProfile->photoURL    = $data->get('profile_photo_url');
-        $userProfile->language    = $data->get('locale');
-        $userProfile->country     = $data->get('country');
+        $userProfile->firstName = $data->filter('name')->get('given_name');
+        $userProfile->lastName = $data->filter('name')->get('surname');
+        $userProfile->email = $data->get('email');
+        $userProfile->photoURL = $data->get('profile_photo_url');
+        $userProfile->language = $data->get('locale');
+        $userProfile->country = $data->get('country');
         if ($data->get('email_verified')) {
             $userProfile->emailVerified = $data->get('email');
         }

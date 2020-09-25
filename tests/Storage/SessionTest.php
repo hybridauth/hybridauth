@@ -11,38 +11,38 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     public function some_random_session_data()
     {
         return [
-            [ 'foo', 'bar' ],
-            [  1234, 'bar' ],
-            [ 'foo',  1234 ],
+            ['foo', 'bar'],
+            [1234, 'bar'],
+            ['foo', 1234],
 
-            [ 'Bonjour', '안녕하세요' ],
-            [ 'ஹலோ'   , 'Γεια σας' ],
+            ['Bonjour', '안녕하세요'],
+            ['ஹலோ', 'Γεια σας'],
 
-            [ 'array', [ 1, 2, 3 ] ],
-            [ 'string',  json_encode($this) ],
-            [ 'object', $this ],
+            ['array', [1, 2, 3]],
+            ['string', json_encode($this)],
+            ['object', $this],
 
-            [ 'provider.token.request_token', '9DYPEJ&qhvhP3eJ!' ],
-            [ 'provider.token.oauth_token', '80359084-clg1DEtxQF3wstTcyUdHF3wsdHM' ],
-            [ 'provider.token.oauth_token_secret', 'qiHTi1znz6qiH3tTcyUdHnz6qiH3tTcyUdH3xW3wsDvV08e' ],
+            ['provider.token.request_token', '9DYPEJ&qhvhP3eJ!'],
+            ['provider.token.oauth_token', '80359084-clg1DEtxQF3wstTcyUdHF3wsdHM'],
+            ['provider.token.oauth_token_secret', 'qiHTi1znz6qiH3tTcyUdHnz6qiH3tTcyUdH3xW3wsDvV08e'],
         ];
     }
 
     public function test_instance_of()
     {
-        $storage = new Session;
+        $storage = new Session();
 
         $this->assertInstanceOf('\\Hybridauth\\Storage\\StorageInterface', $storage);
     }
 
     /**
-    * @dataProvider some_random_session_data
-    * @covers Session::get
-    * @covers Session::set
-    */
+     * @dataProvider some_random_session_data
+     * @covers       Session::get
+     * @covers       Session::set
+     */
     public function test_set_and_get_data($key, $value)
     {
-        $storage = new Session;
+        $storage = new Session();
 
         $storage->set($key, $value);
 
@@ -52,12 +52,12 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @dataProvider some_random_session_data
-    * @covers Session::delete
-    */
+     * @dataProvider some_random_session_data
+     * @covers       Session::delete
+     */
     public function test_delete_data($key, $value)
     {
-        $storage = new Session;
+        $storage = new Session();
 
         $storage->set($key, $value);
 
@@ -69,12 +69,12 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @dataProvider some_random_session_data
-    * @covers Session::clear
-    */
+     * @dataProvider some_random_session_data
+     * @covers       Session::clear
+     */
     public function test_clear_data($key, $value)
     {
-        $storage = new Session;
+        $storage = new Session();
 
         $storage->set($key, $value);
 
@@ -86,19 +86,19 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @covers Session::clear
-    */
+     * @covers Session::clear
+     */
     public function test_clear_data_bulk()
     {
-        $storage = new Session;
+        $storage = new Session();
 
-        foreach ((array) $this->some_random_session_data() as $key => $value) {
+        foreach ((array)$this->some_random_session_data() as $key => $value) {
             $storage->set($key, $value);
         }
 
         $storage->clear();
 
-        foreach ((array) $this->some_random_session_data() as $key => $value) {
+        foreach ((array)$this->some_random_session_data() as $key => $value) {
             $data = $storage->get($key);
 
             $this->assertNull($data);
@@ -106,12 +106,12 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @dataProvider some_random_session_data
-    * @covers Session::deleteMatch
-    */
+     * @dataProvider some_random_session_data
+     * @covers       Session::deleteMatch
+     */
     public function test_delete_match_data($key, $value)
     {
-        $storage = new Session;
+        $storage = new Session();
 
         $storage->set($key, $value);
 

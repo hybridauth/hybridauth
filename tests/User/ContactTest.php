@@ -8,7 +8,7 @@ class ContactTest extends \PHPUnit\Framework\TestCase
 {
     public function test_instance_of()
     {
-        $contact = new Contact;
+        $contact = new Contact();
 
         $this->assertInstanceOf('\\Hybridauth\\User\\Contact', $contact);
     }
@@ -26,7 +26,7 @@ class ContactTest extends \PHPUnit\Framework\TestCase
 
     public function test_set_attributes()
     {
-        $contact = new Contact;
+        $contact = new Contact();
 
         $contact->identifier = true;
         $contact->webSiteURL = true;
@@ -42,7 +42,7 @@ class ContactTest extends \PHPUnit\Framework\TestCase
      */
     public function test_property_overloading()
     {
-        $contact = new Contact;
+        $contact = new Contact();
         $contact->slug = true;
     }
 }

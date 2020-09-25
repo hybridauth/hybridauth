@@ -15,9 +15,9 @@ use Hybridauth\Exception\InvalidArgumentException;
  */
 class Logger implements LoggerInterface
 {
-    const NONE  = 'none';  // turn logging off
+    const NONE = 'none';  // turn logging off
     const DEBUG = 'debug'; // debug, info and error messages
-    const INFO  = 'info';  // info and error messages
+    const INFO = 'info';  // info and error messages
     const ERROR = 'error'; // only error messages
 
     /**
@@ -38,7 +38,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param bool|string $level One of Logger::NONE, Logger::DEBUG, Logger::INFO, Logger::ERROR
-     * @param string      $file  File where to write messages
+     * @param string $file File where to write messages
      *
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -50,7 +50,7 @@ class Logger implements LoggerInterface
         if ($level && $level !== self::NONE) {
             $this->initialize($file);
 
-            $this->level = $level === true ? Logger::DEBUG :  $level;
+            $this->level = $level === true ? Logger::DEBUG : $level;
             $this->file = $file;
         }
     }
@@ -121,7 +121,7 @@ class Logger implements LoggerInterface
         $datetime = $datetime->format(DATE_ATOM);
 
         $content = sprintf('%s -- %s -- %s -- %s', $level, $_SERVER['REMOTE_ADDR'], $datetime, $message);
-        $content .= ($context ? "\n".print_r($context, true) : '');
+        $content .= ($context ? "\n" . print_r($context, true) : '');
         $content .= "\n";
 
         file_put_contents($this->file, $content, FILE_APPEND);
