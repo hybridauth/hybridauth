@@ -49,6 +49,7 @@ To install Hybridauth we recommend [Composer](https://getcomposer.org/), the now
 |---------|-------------|-------------------------|-------------------------|-------------|
 | 2.x     | Maintenance | [v2][hybridauth-2-repo] | [v2][hybridauth-2-docs] | >= 5.3      |
 | 3.x     | Development | [v3][hybridauth-3-repo] | [v3][hybridauth-3-docs] | >= 5.4      |
+| 4.x     | Future      | --                      | --                      | >= 7.3      |
 
 [hybridauth-2-repo]: https://github.com/hybridauth/hybridauth/tree/v2
 [hybridauth-3-repo]: https://github.com/hybridauth/hybridauth/
