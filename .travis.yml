@@ -13,7 +13,7 @@ before_script:
 
 script:
   - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then ~/.composer/vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then ~/.config/composer/vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
 
 notifications:
   email: false
