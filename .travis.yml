@@ -1,5 +1,4 @@
 language: php
-dist: trusty
 
 php:
   - 7.3
@@ -10,11 +9,11 @@ env:
 before_script:
   - composer self-update
   - composer install
-  - sh -c "if [ '$PHPCS' = '1' ]; then composer require squizlabs/php_codesniffer=*; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then composer global require squizlabs/php_codesniffer=*; fi"
 
 script:
   - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
 
 notifications:
   email: false
