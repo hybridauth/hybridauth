@@ -59,7 +59,7 @@ class Session implements StorageInterface
         if (isset($_SESSION[$this->storeNamespace], $_SESSION[$this->storeNamespace][$key])) {
             $value = $_SESSION[$this->storeNamespace][$key];
 
-            if ((is_array($value)) && (array_key_exists('lateObject', $value))) {
+            if (is_array($value) && array_key_exists('lateObject', $value)) {
                 $value = unserialize($value['lateObject']);
             }
 
@@ -77,7 +77,7 @@ class Session implements StorageInterface
         $key = $this->keyPrefix . strtolower($key);
 
         if (is_object($value)) {
-            // We encapsulate as our classes may be defined after session is initialized
+            // We encapsulate as our classes may be defined after session is initialized.
             $value = ['lateObject' => serialize($value)];
         }
 
