@@ -67,7 +67,7 @@ class QQ extends OAuth2
 
         if ($this->isRefreshTokenAvailable()) {
             $this->tokenRefreshParameters += [
-                'client_id'     => $this->clientId,
+                'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
             ];
         }

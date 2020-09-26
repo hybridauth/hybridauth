@@ -20,8 +20,8 @@ use Hybridauth\User;
  * Example:
  *
  *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => [
  *           'id' => '', // App ID
  *           'secret' => '' // Secure key
  *       ],
@@ -35,8 +35,7 @@ use Hybridauth\User;
  *       }
  *
  *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
+ *   } catch (\Exception $e) {
  *       print $e->getMessage() ;
  *   }
  */
@@ -99,11 +98,15 @@ class Vkontakte extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public function hasAccessTokenExpired()
+    public function hasAccessTokenExpired($time = null)
     {
+        if ($time === null) {
+            $time = time();
+        }
+
         // If we are using offline scope, $expired will be false.
         $expired = $this->getStoredData('expires_in')
-            ? $this->getStoredData('expires_at') <= time()
+            ? $this->getStoredData('expires_at') <= $time
             : false;
 
         return $expired;
@@ -132,19 +135,19 @@ class Vkontakte extends OAuth2
 
         $userProfile = new Profile();
 
-        $userProfile->identifier  = $data->get('id');
-        $userProfile->email       = $this->getStoredData('email');
-        $userProfile->firstName   = $data->get('first_name');
-        $userProfile->lastName    = $data->get('last_name');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->email = $this->getStoredData('email');
+        $userProfile->firstName = $data->get('first_name');
+        $userProfile->lastName = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
-        $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
+        $userProfile->photoURL = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
 
         // Handle b-date.
         if ($data->get('bdate')) {
             $bday = explode('.', $data->get('bdate'));
-            $userProfile->birthDay = (int) $bday[0];
-            $userProfile->birthMonth = (int) $bday[1];
-            $userProfile->birthYear = (int) $bday[2];
+            $userProfile->birthDay = (int)$bday[0];
+            $userProfile->birthMonth = (int)$bday[1];
+            $userProfile->birthYear = (int)$bday[2];
         }
 
         $userProfile->data = [
@@ -152,7 +155,7 @@ class Vkontakte extends OAuth2
         ];
 
         $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
-        $userProfile->profileURL  = $screen_name;
+        $userProfile->profileURL = $screen_name;
 
         switch ($data->get('sex')) {
             case 1:

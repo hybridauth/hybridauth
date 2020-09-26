@@ -15,8 +15,8 @@ use Hybridauth\Adapter\OpenID;
 class StackExchangeOpenID extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'https://openid.stackexchange.com/';
 
     /**
@@ -25,15 +25,15 @@ class StackExchangeOpenID extends OpenID
     protected $apiDocumentation = 'https://openid.stackexchange.com/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function authenticateFinish()
     {
         parent::authenticateFinish();
 
         $userProfile = $this->storage->get($this->providerId . '.user');
 
-        $userProfile->identifier    = !empty($userProfile->identifier) ? $userProfile->identifier : $userProfile->email;
+        $userProfile->identifier = !empty($userProfile->identifier) ? $userProfile->identifier : $userProfile->email;
         $userProfile->emailVerified = $userProfile->email;
 
         // re store the user profile

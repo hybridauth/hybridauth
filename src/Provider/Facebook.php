@@ -25,13 +25,13 @@ use Hybridauth\User;
  * Example:
  *
  *   $config = [
- *       'callback'                => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'                    => [ 'id' => '', 'secret' => '' ],
- *       'scope'                   => 'email, user_status, user_posts',
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'scope' => 'email, user_status, user_posts',
  *       'exchange_by_expiry_days' => 45, // null for no token exchange
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Facebook( $config );
+ *   $adapter = new Hybridauth\Provider\Facebook($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -39,8 +39,7 @@ use Hybridauth\User;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
- *   }
- *   catch( Exception $e ){
+ *   } catch (\Exception $e) {
  *       echo $e->getMessage() ;
  *   }
  */
@@ -118,9 +117,9 @@ class Facebook extends OAuth2
     public function exchangeAccessToken()
     {
         $exchangeTokenParameters = [
-            'grant_type'        => 'fb_exchange_token',
-            'client_id'         => $this->clientId,
-            'client_secret'     => $this->clientSecret,
+            'grant_type' => 'fb_exchange_token',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
             'fb_exchange_token' => $this->getStoredData('access_token'),
         ];
 
@@ -339,8 +338,8 @@ class Facebook extends OAuth2
 
         // Refresh proof for API call.
         $parameters = $status + [
-            'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
-        ];
+                'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
+            ];
 
         $response = $this->apiRequest("{$pageId}/feed", 'POST', $parameters, $headers);
 

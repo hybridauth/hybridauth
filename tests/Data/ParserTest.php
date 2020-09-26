@@ -8,18 +8,18 @@ class ParserTest extends \PHPUnit\Framework\TestCase
 {
     public function test_instance_of()
     {
-        $parser = new Parser;
+        $parser = new Parser();
 
         $this->assertInstanceOf('\\Hybridauth\\Data\\Parser', $parser);
     }
 
     /**
-    * @covers Parser::parse
-    * @covers Parser::parseJson
-    */
+     * @covers Parser::parse
+     * @covers Parser::parseJson
+     */
     public function test_parser_json()
     {
-        $parser = new Parser;
+        $parser = new Parser();
 
         $object = new \StdClass();
         $object->id = 69;
@@ -45,12 +45,12 @@ class ParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * @covers Parser::parse
-    * @covers Parser::parseQueryString
-    */
+     * @covers Parser::parse
+     * @covers Parser::parseQueryString
+     */
     public function test_parser_querystring()
     {
-        $parser = new Parser;
+        $parser = new Parser();
 
         $object = new \StdClass();
         $object->id = 69;

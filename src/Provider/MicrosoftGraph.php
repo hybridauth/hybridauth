@@ -25,20 +25,19 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'tenant'   => 'user',
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'tenant' => 'user',
  *         // ^ May be 'common', 'organizations' or 'consumers' or a specific tenant ID or a domain
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\MicrosoftGraph( $config );
+ *   $adapter = new Hybridauth\Provider\MicrosoftGraph($config);
  *
  *   try {
  *       $adapter->authenticate();
  *
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
- *   }
- *   catch( Exception $e ){
+ *   } catch (\Exception $e) {
  *       echo $e->getMessage() ;
  *   }
  */
@@ -70,8 +69,8 @@ class MicrosoftGraph extends OAuth2
     protected $apiDocumentation = 'https://developer.microsoft.com/en-us/graph/docs/concepts/php';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -79,8 +78,8 @@ class MicrosoftGraph extends OAuth2
         $tenant = $this->config->get('tenant');
         if (!empty($tenant)) {
             $adjustedEndpoints = [
-                'authorize_url' => str_replace('/common/', '/'. $tenant .'/', $this->authorizeUrl),
-                'access_token_url' => str_replace('/common/', '/'. $tenant .'/', $this->accessTokenUrl),
+                'authorize_url' => str_replace('/common/', '/' . $tenant . '/', $this->authorizeUrl),
+                'access_token_url' => str_replace('/common/', '/' . $tenant . '/', $this->accessTokenUrl),
             ];
 
             $this->setApiEndpoints($adjustedEndpoints);
@@ -102,11 +101,11 @@ class MicrosoftGraph extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier    = $data->get('id');
-        $userProfile->displayName   = $data->get('displayName');
-        $userProfile->firstName     = $data->get('givenName');
-        $userProfile->lastName      = $data->get('surname');
-        $userProfile->language      = $data->get('preferredLanguage');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->displayName = $data->get('displayName');
+        $userProfile->firstName = $data->get('givenName');
+        $userProfile->lastName = $data->get('surname');
+        $userProfile->language = $data->get('preferredLanguage');
 
         $userProfile->phone = $data->get('mobilePhone');
         if (empty($userProfile->phone)) {
@@ -132,19 +131,19 @@ class MicrosoftGraph extends OAuth2
      */
     public function getUserContacts()
     {
-        $apiUrl   = 'me/contacts?$top=50';
+        $apiUrl = 'me/contacts?$top=50';
         $contacts = [];
 
         do {
             $response = $this->apiRequest($apiUrl);
-            $data     = new Data\Collection($response);
+            $data = new Data\Collection($response);
             if (!$data->exists('value')) {
                 throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
             }
             foreach ($data->filter('value')->toArray() as $entry) {
                 $entry = new Data\Collection($entry);
-                $userContact              = new User\Contact();
-                $userContact->identifier  = $entry->get('id');
+                $userContact = new User\Contact();
+                $userContact->identifier = $entry->get('id');
                 $userContact->displayName = $entry->get('displayName');
                 if (!empty($entry->get('emailAddresses'))) {
                     $userContact->email = $entry->get('emailAddresses')[0]->address;

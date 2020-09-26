@@ -51,13 +51,13 @@ class Strava extends OAuth2
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier = $data->get('id');
         $userProfile->firstName = $data->get('firstname');
         $userProfile->lastName = $data->get('lastname');
         $userProfile->gender = $data->get('sex');

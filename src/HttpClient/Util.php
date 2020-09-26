@@ -15,17 +15,17 @@ use Hybridauth\Data;
 class Util
 {
     /**
-    * Redirect handler.
-    *
-    * @var callable|null
-    */
+     * Redirect handler.
+     *
+     * @var callable|null
+     */
     protected static $redirectHandler;
 
     /**
-    * Exit handler.
-    *
-    * @var callable|null
-    */
+     * Exit handler.
+     *
+     * @var callable|null
+     */
     protected static $exitHandler;
 
     /**
@@ -56,32 +56,32 @@ class Util
     }
 
     /**
-    * Redirect handler to which the regular redirect() will yield the action of redirecting users.
-    *
-    * @param callable $callback
-    */
+     * Redirect handler to which the regular redirect() will yield the action of redirecting users.
+     *
+     * @param callable $callback
+     */
     public static function setRedirectHandler($callback)
     {
         self::$redirectHandler = $callback;
     }
 
     /**
-    * Exit handler will be called instead of regular exit() when calling Util::redirect() method.
-    *
-    * @param callable $callback
-    */
+     * Exit handler will be called instead of regular exit() when calling Util::redirect() method.
+     *
+     * @param callable $callback
+     */
     public static function setExitHandler($callback)
     {
         self::$exitHandler = $callback;
     }
 
     /**
-    * Returns the Current URL.
-    *
-    * @param bool $requestUri TRUE to use $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
-    *
-    * @return string
-    */
+     * Returns the Current URL.
+     *
+     * @param bool $requestUri TRUE to use $_SERVER['REQUEST_URI'], FALSE for $_SERVER['PHP_SELF']
+     *
+     * @return string
+     */
     public static function getCurrentUrl($requestUri = false)
     {
         $collection = new Data\Collection($_SERVER);
@@ -93,8 +93,8 @@ class Util
             $protocol = 'https://';
         }
 
-        return $protocol.
-               $collection->get('HTTP_HOST').
-               $collection->get($requestUri ? 'REQUEST_URI' : 'PHP_SELF');
+        return $protocol .
+            $collection->get('HTTP_HOST') .
+            $collection->get($requestUri ? 'REQUEST_URI' : 'PHP_SELF');
     }
 }

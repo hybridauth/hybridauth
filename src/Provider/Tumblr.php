@@ -18,40 +18,40 @@ use Hybridauth\User;
 class Tumblr extends OAuth1
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.tumblr.com/v2/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://www.tumblr.com/oauth/authorize';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $requestTokenUrl = 'https://www.tumblr.com/oauth/request_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://www.tumblr.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://www.tumblr.com/docs/en/api/v2';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('user/info');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('response')) {
+        if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -63,9 +63,9 @@ class Tumblr extends OAuth1
             $blog = new Data\Collection($blog);
 
             if ($blog->get('primary') && $blog->exists('url')) {
-                $userProfile->identifier  = $blog->get('url');
-                $userProfile->profileURL  = $blog->get('url');
-                $userProfile->webSiteURL  = $blog->get('url');
+                $userProfile->identifier = $blog->get('url');
+                $userProfile->profileURL = $blog->get('url');
+                $userProfile->webSiteURL = $blog->get('url');
                 $userProfile->description = strip_tags($blog->get('description'));
 
                 $bloghostname = explode('://', $blog->get('url'));
@@ -82,13 +82,13 @@ class Tumblr extends OAuth1
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function setUserStatus($status)
     {
         $status = is_string($status)
-                    ? [ 'type' => 'text', 'body' => $status ]
-                    : $status;
+            ? ['type' => 'text', 'body' => $status]
+            : $status;
 
         $response = $this->apiRequest('blog/' . $this->getStoredData('primary_blog') . '/post', 'POST', $status);
 

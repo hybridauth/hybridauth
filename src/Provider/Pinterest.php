@@ -53,21 +53,21 @@ class Pinterest extends OAuth2
 
         $data = $data->filter('data');
 
-        if (! $data->exists('id')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier = $data->get('id');
         $userProfile->description = $data->get('bio');
-        $userProfile->photoURL    = $data->get('image');
+        $userProfile->photoURL = $data->get('image');
         $userProfile->displayName = $data->get('username');
         $userProfile->firstName = $data->get('first_name');
         $userProfile->lastName = $data->get('last_name');
         $userProfile->profileURL = "https://pinterest.com/{$data->get('username')}";
-        
-        $userProfile->data = (array) $data->get('counts');
+
+        $userProfile->data = (array)$data->get('counts');
 
         return $userProfile;
     }

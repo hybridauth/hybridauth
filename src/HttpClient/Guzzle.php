@@ -20,13 +20,13 @@ use GuzzleHttp\Exception\TransferException;
  * Example:
  *
  * <code>
- *  $guzzle = new Hybridauth\HttpClient\Guzzle( new GuzzleHttp\Client(), [
- *      'verify'  => '/path/to/your/certificate.crt',
- *      'headers' => [ 'User-Agent' => '..' ]
+ *  $guzzle = new Hybridauth\HttpClient\Guzzle(new GuzzleHttp\Client(), [
+ *      'verify' => '/path/to/your/certificate.crt',
+ *      'headers' => ['User-Agent' => '..']
  *      // 'proxy' => ...
  *  ]);
  *
- *  $adapter = new Hybridauth\Provider\Github( $config, $guzzle );
+ *  $adapter = new Hybridauth\Provider\Github($config, $guzzle);
  *
  *  $adapter->authenticate();
  * </code>
@@ -34,73 +34,73 @@ use GuzzleHttp\Exception\TransferException;
 class Guzzle implements HttpClientInterface
 {
     /**
-    * Method request() arguments
-    *
-    * This is used for debugging.
-    *
-    * @var array
-    */
+     * Method request() arguments
+     *
+     * This is used for debugging.
+     *
+     * @var array
+     */
     protected $requestArguments = [];
 
     /**
-    * Default request headers
-    *
-    * @var array
-    */
+     * Default request headers
+     *
+     * @var array
+     */
     protected $requestHeader = [];
 
     /**
-    * Raw response returned by server
-    *
-    * @var string
-    */
+     * Raw response returned by server
+     *
+     * @var string
+     */
     protected $responseBody = '';
 
     /**
-    * Headers returned in the response
-    *
-    * @var array
-    */
+     * Headers returned in the response
+     *
+     * @var array
+     */
     protected $responseHeader = [];
 
     /**
-    * Response HTTP status code
-    *
-    * @var integer
-    */
+     * Response HTTP status code
+     *
+     * @var int
+     */
     protected $responseHttpCode = 0;
 
     /**
-    * Last curl error number
-    *
-    * @var mixed
-    */
+     * Last curl error number
+     *
+     * @var mixed
+     */
     protected $responseClientError = null;
 
     /**
-    * Information about the last transfer
-    *
-    * @var mixed
-    */
+     * Information about the last transfer
+     *
+     * @var mixed
+     */
     protected $responseClientInfo = [];
 
     /**
-    * Hybridauth logger instance
-    *
-    * @var object
-    */
+     * Hybridauth logger instance
+     *
+     * @var object
+     */
     protected $logger = null;
 
     /**
-    * GuzzleHttp client
-    *
-    * @var \GuzzleHttp\Client
-    */
+     * GuzzleHttp client
+     *
+     * @var \GuzzleHttp\Client
+     */
     protected $client = null;
 
     /**
      * ..
-     * @param null  $client
+     * @param null $client
      * @param array $config
      */
     public function __construct($client = null, $config = [])
@@ -109,11 +109,11 @@ class Guzzle implements HttpClientInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function request($uri, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
-        $this->requestHeader = array_replace($this->requestHeader, (array) $headers);
+        $this->requestHeader = array_replace($this->requestHeader, (array)$headers);
 
         $this->requestArguments = [
             'uri' => $uri,
@@ -129,8 +129,8 @@ class Guzzle implements HttpClientInterface
                 case 'GET':
                 case 'DELETE':
                     $response = $this->client->request($method, $uri, [
-                      'query' => $parameters,
-                      'headers' => $this->requestHeader,
+                        'query' => $parameters,
+                        'headers' => $this->requestHeader,
                     ]);
                     break;
                 case 'PUT':
@@ -171,9 +171,9 @@ class Guzzle implements HttpClientInterface
         }
 
         if (!$this->responseClientError) {
-            $this->responseBody     = $response->getBody();
+            $this->responseBody = $response->getBody();
             $this->responseHttpCode = $response->getStatusCode();
-            $this->responseHeader   = $response->getHeaders();
+            $this->responseHeader = $response->getHeaders();
         }
 
         if ($this->logger) {
@@ -190,82 +190,82 @@ class Guzzle implements HttpClientInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponse()
     {
         return [
             'request' => $this->getRequestArguments(),
             'response' => [
-                'code'    => $this->getResponseHttpCode(),
+                'code' => $this->getResponseHttpCode(),
                 'headers' => $this->getResponseHeader(),
-                'body'    => $this->getResponseBody(),
+                'body' => $this->getResponseBody(),
             ],
             'client' => [
                 'error' => $this->getResponseClientError(),
-                'info'  => $this->getResponseClientInfo(),
-                'opts'  => null,
+                'info' => $this->getResponseClientInfo(),
+                'opts' => null,
             ],
         ];
     }
 
     /**
-    * Set logger instance
-    *
-    * @param object $logger
-    */
+     * Set logger instance
+     *
+     * @param object $logger
+     */
     public function setLogger($logger)
     {
         $this->logger = $logger;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseBody()
     {
         return $this->responseBody;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseHeader()
     {
         return $this->responseHeader;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseHttpCode()
     {
         return $this->responseHttpCode;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getResponseClientError()
     {
         return $this->responseClientError;
     }
 
     /**
-    * @return array
-    */
+     * @return array
+     */
     protected function getResponseClientInfo()
     {
         return $this->responseClientInfo;
     }
 
     /**
-    * Returns method request() arguments
-    *
-    * This is used for debugging.
-    *
-    * @return array
-    */
+     * Returns method request() arguments
+     *
+     * This is used for debugging.
+     *
+     * @return array
+     */
     protected function getRequestArguments()
     {
         return $this->requestArguments;

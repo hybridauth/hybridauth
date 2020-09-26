@@ -8,7 +8,7 @@ class ProfileTest extends \PHPUnit\Framework\TestCase
 {
     public function test_instance_of()
     {
-        $profile = new Profile;
+        $profile = new Profile();
 
         $this->assertInstanceOf('\\Hybridauth\\User\\Profile', $profile);
     }
@@ -41,7 +41,7 @@ class ProfileTest extends \PHPUnit\Framework\TestCase
 
     public function test_set_attributes()
     {
-        $profile = new Profile;
+        $profile = new Profile();
 
         $profile->identifier = true;
         $profile->webSiteURL = true;
@@ -72,7 +72,7 @@ class ProfileTest extends \PHPUnit\Framework\TestCase
      */
     public function test_property_overloading()
     {
-        $profile = new Profile;
+        $profile = new Profile();
         $profile->slug = true;
     }
 }

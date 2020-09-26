@@ -19,20 +19,20 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'https://www.googleapis.com/auth/userinfo.profile',
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'scope' => 'https://www.googleapis.com/auth/userinfo.profile',
  *
  *        // google's custom auth url params
  *       'authorize_url_parameters' => [
  *              'approval_prompt' => 'force', // to pass only when you need to acquire a new refresh token.
- *              'access_type'     => ..,      // is set to 'offline' by default
- *              'hd'              => ..,
- *              'state'           => ..,
+ *              'access_type' => ..,      // is set to 'offline' by default
+ *              'hd' => ..,
+ *              'state' => ..,
  *              // etc.
  *       ]
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Google( $config );
+ *   $adapter = new Hybridauth\Provider\Google($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -40,42 +40,41 @@ use Hybridauth\User;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $contacts = $adapter->getUserContacts(['max-results' => 75]);
- *   }
- *   catch( Exception $e ){
+ *   } catch (\Exception $e) {
  *       echo $e->getMessage() ;
  *   }
  */
 class Google extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     // phpcs:ignore
     protected $scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://www.googleapis.com/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://accounts.google.com/o/oauth2/auth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://accounts.google.com/o/oauth2/token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developers.google.com/identity/protocols/OAuth2';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -93,31 +92,31 @@ class Google extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * See: https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo
-    */
+     * {@inheritdoc}
+     *
+     * See: https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('oauth2/v3/userinfo');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('sub')) {
+        if (!$data->exists('sub')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('sub');
-        $userProfile->firstName   = $data->get('given_name');
-        $userProfile->lastName    = $data->get('family_name');
+        $userProfile->identifier = $data->get('sub');
+        $userProfile->firstName = $data->get('given_name');
+        $userProfile->lastName = $data->get('family_name');
         $userProfile->displayName = $data->get('name');
-        $userProfile->photoURL    = $data->get('picture');
-        $userProfile->profileURL  = $data->get('profile');
-        $userProfile->gender      = $data->get('gender');
-        $userProfile->language    = $data->get('locale');
-        $userProfile->email       = $data->get('email');
+        $userProfile->photoURL = $data->get('picture');
+        $userProfile->profileURL = $data->get('profile');
+        $userProfile->gender = $data->get('gender');
+        $userProfile->language = $data->get('locale');
+        $userProfile->email = $data->get('email');
 
         $userProfile->emailVerified = $data->get('email_verified') ? $userProfile->email : '';
 
@@ -129,8 +128,8 @@ class Google extends OAuth2
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserContacts($parameters = [])
     {
         $parameters = ['max-results' => 500] + $parameters;
@@ -155,11 +154,11 @@ class Google extends OAuth2
     protected function getGmailContacts($parameters = [])
     {
         $url = 'https://www.google.com/m8/feeds/contacts/default/full?'
-                    . http_build_query(array_replace([ 'alt' => 'json', 'v' => '3.0' ], (array)$parameters));
+            . http_build_query(array_replace(['alt' => 'json', 'v' => '3.0'], (array)$parameters));
 
         $response = $this->apiRequest($url);
 
-        if (! $response) {
+        if (!$response) {
             return [];
         }
 
@@ -170,11 +169,11 @@ class Google extends OAuth2
                 $uc = new User\Contact();
 
                 $uc->email = isset($entry->{'gd$email'}[0]->address)
-                            ? (string) $entry->{'gd$email'}[0]->address
-                            : '';
+                    ? (string)$entry->{'gd$email'}[0]->address
+                    : '';
 
-                $uc->displayName = isset($entry->title->{'$t'}) ? (string) $entry->title->{'$t'} : '';
-                $uc->identifier  = ($uc->email != '') ? $uc->email : '';
+                $uc->displayName = isset($entry->title->{'$t'}) ? (string)$entry->title->{'$t'} : '';
+                $uc->identifier = ($uc->email != '') ? $uc->email : '';
                 $uc->description = '';
 
                 if (property_exists($response, 'website')) {

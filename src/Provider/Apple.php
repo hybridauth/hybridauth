@@ -29,8 +29,8 @@ use \Firebase\JWT\JWK;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'team_id' => '', 'key_id' => '', 'key_file' => '', 'key_content' => '' ],
- *       'scope'    => 'name email',
+ *       'keys' => ['id' => '', 'team_id' => '', 'key_id' => '', 'key_file' => '', 'key_content' => ''],
+ *       'scope' => 'name email',
  *
  *        // Apple's custom auth url params
  *       'authorize_url_parameters' => [
@@ -38,7 +38,7 @@ use \Firebase\JWT\JWK;
  *       ]
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Apple( $config );
+ *   $adapter = new Hybridauth\Provider\Apple($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -46,8 +46,7 @@ use \Firebase\JWT\JWK;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
- *   }
- *   catch( Exception $e ){
+ *   } catch (\Exception $e) {
  *       echo $e->getMessage() ;
  *   }
  *
@@ -176,7 +175,7 @@ class Apple extends OAuth2
             foreach ($publicKeys->keys as $publicKey) {
                 try {
                     $rsa = new RSA();
-                    $jwk = (array) $publicKey;
+                    $jwk = (array)$publicKey;
 
                     $rsa->loadKey(
                         [
@@ -219,7 +218,7 @@ class Apple extends OAuth2
                 $name = $user->get('name');
                 $userProfile->firstName = $name->firstName;
                 $userProfile->lastName = $name->lastName;
-                $userProfile->displayName = join(' ', [ $userProfile->firstName, $userProfile->lastName ]);
+                $userProfile->displayName = join(' ', [$userProfile->firstName, $userProfile->lastName]);
             }
         }
 
