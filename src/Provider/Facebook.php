@@ -53,7 +53,7 @@ class Facebook extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://graph.facebook.com/v6.0/';
+    protected $apiBaseUrl = 'https://graph.facebook.com/v8.0/';
 
     /**
      * {@inheritdoc}
