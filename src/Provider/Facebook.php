@@ -146,15 +146,21 @@ class Facebook extends OAuth2
             'name',
             'first_name',
             'last_name',
-            'link',
             'website',
-            'gender',
             'locale',
             'about',
             'email',
             'hometown',
             'birthday',
         ];
+        
+        if (strpos($this->scope, 'user_link') !== FALSE) {
+            $fields[] = 'link';
+        }
+
+        if (strpos($this->scope, 'user_gender') !== FALSE) {
+            $fields[] = 'gender';
+        }
 
         // Note that en_US is needed for gender fields to match convention.
         $locale = $this->config->get('locale') ?: 'en_US';
