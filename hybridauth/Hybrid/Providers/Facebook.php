@@ -217,9 +217,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
                 'name',
                 'first_name',
                 'last_name',
-                'link',
                 'website',
-                'gender',
                 'locale',
                 'about',
                 'email',
@@ -227,6 +225,15 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
                 'location',
                 'birthday'
             );
+
+            if (in_array('user_link', $this->scope)) {
+                $fields[] = 'link';
+            }
+
+            if (in_array('user_gender', $this->scope)) {
+                $fields[] = 'gender';
+            }
+
             $response = $this->api->get('/me?fields=' . implode(',', $fields), $this->token('access_token'));
             $data = $response->getDecodedBody();
         } catch (FacebookSDKException $e) {
