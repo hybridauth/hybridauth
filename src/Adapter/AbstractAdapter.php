@@ -139,6 +139,14 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
+    public function maintainToken()
+    {
+        // Nothing needed for most providers
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         throw new NotImplementedException('Provider does not support this feature.');
