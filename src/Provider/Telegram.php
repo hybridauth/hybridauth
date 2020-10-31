@@ -52,7 +52,11 @@ class Telegram extends AbstractAdapter implements AdapterInterface
     protected $callbackUrl = '';
 
     /**
-     * {@inheritdoc}
+     * IPD API Documentation
+     *
+     * OPTIONAL.
+     *
+     * @var string
      */
     protected $apiDocumentation = 'https://core.telegram.org/bots';
 
@@ -99,7 +103,8 @@ class Telegram extends AbstractAdapter implements AdapterInterface
      */
     public function isConnected()
     {
-        return !empty($this->getStoredData('auth_data'));
+        $authData = $this->getStoredData('auth_data');
+        return !empty($authData);
     }
 
     /**

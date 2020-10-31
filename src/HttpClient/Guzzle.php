@@ -190,7 +190,9 @@ class Guzzle implements HttpClientInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get response details
+     *
+     * @return array Map structure of details
      */
     public function getResponse()
     {

@@ -63,7 +63,7 @@ final class Parser
     {
         libxml_use_internal_errors(true);
 
-        $result = preg_replace('/([<<\/])([a-z0-9-]+):/i', '$1', $result);
+        $result = preg_replace('/([<\/])([a-z0-9-]+):/i', '$1', $result);
         $xml = simplexml_load_string($result);
 
         libxml_use_internal_errors(false);
