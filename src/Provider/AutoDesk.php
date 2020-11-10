@@ -90,5 +90,3 @@ class AutoDesk extends OAuth2
 		return $userProfile;
     }
 }
-
-?>
