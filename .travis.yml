@@ -1,19 +1,39 @@
-language: php
+# TravisCI configuration for hybridauth/hybridauth
+
+language: "php"
+os:
+  - "linux"
+dist: "bionic"
 
 php:
-  - 7.2
-  - 7.3
+  - "7.4"
+  - "7.3"
+  - "7.2"
 
-env:
-  - PHPCS=1 PHPUNIT=1
+jobs:
+  include:
+    - name: "PHP 5.6"
+      dist: "xenial"
+      php: "5.6"
+    # "php": ">=5.4.0"
+    - name: "PHP 5.4"
+      dist: "trusty"
+      php: "5.4"
+
+cache:
+  directories:
+    - "${HOME}/.composer/cache"
 
 before_script:
-  - composer install
-  - sh -c "if [ '$PHPCS' = '1' ]; then composer global require squizlabs/php_codesniffer=*; fi"
+  - "composer validate --strict"
+
+install:
+  - "composer install --prefer-dist"
+  - "composer global require squizlabs/php_codesniffer"
 
 script:
-  - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then ~/.config/composer/vendor/bin/phpcs -p --extensions=php --standard=PSR2 --ignore=./src/Thirdparty/* ./src; fi"
+  - "vendor/bin/phpunit --verbose"
+  - "composer global exec -- phpcs -p -s --extensions=php --standard=PSR2 --ignore='./src/Thirdparty/*' ./src"
 
 notifications:
   email: false
