@@ -544,6 +544,9 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
      */
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
+        // refresh tokens if needed
+        $this->maintainToken();
+
         if (strrpos($url, 'http://') !== 0 && strrpos($url, 'https://') !== 0) {
             $url = rtrim($this->apiBaseUrl, '/') . '/' . ltrim($url, '/');
         }

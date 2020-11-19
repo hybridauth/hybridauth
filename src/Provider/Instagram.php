@@ -79,16 +79,6 @@ class Instagram extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
-    {
-        $this->maintainToken();
-
-        return parent::apiRequest($url, $method, $parameters, $headers, $multipart);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function maintainToken()
     {
         if (!$this->isConnected()) {
