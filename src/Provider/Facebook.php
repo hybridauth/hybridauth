@@ -112,7 +112,7 @@ class Facebook extends OAuth2
      * @return string Raw Provider API response
      * @throws \Hybridauth\Exception\HttpClientFailureException
      * @throws \Hybridauth\Exception\HttpRequestFailedException
-     * @throws InvalidAccessTokenException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
      */
     public function exchangeAccessToken()
     {

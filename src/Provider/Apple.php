@@ -172,6 +172,9 @@ class Apple extends OAuth2
 
             \Firebase\JWT\JWT::$leeway = 120;
 
+            $error = false;
+            $payload = null;
+
             foreach ($publicKeys->keys as $publicKey) {
                 try {
                     $rsa = new RSA();
@@ -186,7 +189,6 @@ class Apple extends OAuth2
                     $pem = $rsa->getPublicKey();
 
                     $payload = JWT::decode($id_token, $pem, ['RS256']);
-                    $error = false;
                     break;
                 } catch (\Exception $e) {
                     $error = $e->getMessage();
