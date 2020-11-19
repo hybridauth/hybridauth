@@ -8,14 +8,23 @@
 namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
+use Hybridauth\Adapter\AtomInterface;
 use Hybridauth\Data\Collection;
 use Hybridauth\Exception\UnexpectedApiResponseException;
+use Hybridauth\Exception\BadMethodCallException;
+use Hybridauth\Exception\NotImplementedException;
 use Hybridauth\User;
+use Hybridauth\Atom\Atom;
+use Hybridauth\Atom\Enclosure;
+use Hybridauth\Atom\Author;
+use Hybridauth\Atom\AtomFeedBuilder;
+use Hybridauth\Atom\AtomHelper;
+use Hybridauth\Atom\Filter;
 
 /**
  * Instagram OAuth2 provider adapter via Instagram Basic Display API.
  */
-class Instagram extends OAuth2
+class Instagram extends OAuth2 implements AtomInterface
 {
     /**
      * {@inheritdoc}
@@ -101,7 +110,7 @@ class Instagram extends OAuth2
      * @return string Raw Provider API response
      * @throws \Hybridauth\Exception\HttpClientFailureException
      * @throws \Hybridauth\Exception\HttpRequestFailedException
-     * @throws InvalidAccessTokenException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
      */
     public function exchangeAccessToken()
     {
@@ -235,5 +244,299 @@ class Instagram extends OAuth2
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildAtomFeed($filter = null, $trulyValid = false)
+    {
+        $userProfile = $this->getUserProfile();
+        list($atoms) = $this->getAtoms($filter);
+
+        $utility = new AtomFeedBuilder();
+        $title = 'Instagram feed of ' . $userProfile->displayName;
+        $feedId = 'urn:hybridauth:instagram:' . $userProfile->identifier . ':' . md5(serialize(func_get_args()));
+        $urnStub = 'urn:hybridauth:instagram:';
+        $url = $userProfile->profileURL;
+        return $utility->buildAtomFeed($title, $url, $feedId, $urnStub, $atoms, $trulyValid);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAtoms($filter = null)
+    {
+        if ($filter === null) {
+            $filter = new Filter();
+        }
+
+        $atoms = [];
+        $hasResults = false;
+        $pagination = null;
+
+        $fields = [
+            'caption',
+            'id',
+            'media_type',
+            'media_url',
+            'permalink',
+            'thumbnail_url',
+            'timestamp',
+            'username',
+
+            // Edges
+            'children',
+        ];
+
+        $params = [
+            'fields' => implode(',', $fields),
+        ];
+
+        do {
+            $response = $this->apiRequest('me/media', 'GET', $params);
+
+            $data = new Collection($response);
+            if (!$data->exists('data')) {
+                throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+            }
+
+            $dataArray = $data->get('data');
+
+            foreach ($dataArray as $item) {
+                $hasResults = true;
+
+                $atom = $this->parseInstagramMediaItem($item);
+
+                if (!$filter->passesEnclosureTest($atom->enclosures)) {
+                    continue;
+                }
+
+                $atoms[] = $atom;
+                if (count($atoms) == $filter->limit) {
+                    break 2;
+                }
+            }
+
+            if (!empty($data->get('paging')->next)) {
+                $queryString = parse_url($data->get('paging')->next, PHP_URL_QUERY);
+                parse_str($queryString, $params);
+            }
+        } while (($filter->deepProbe) && (!empty($dataArray)) && (!empty($data->get('paging')->next)));
+
+        return [$atoms, $hasResults];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAtomFull($identifier)
+    {
+        $fields = [
+            'caption',
+            'id',
+            'media_type',
+            'media_url',
+            'permalink',
+            'thumbnail_url',
+            'timestamp',
+            'username',
+
+            // Edges
+            'children',
+        ];
+
+        $params = [
+            'fields' => implode(',', $fields),
+        ];
+
+        if (strpos($identifier, '/') !== false) {
+            throw new BadMethodCallException('$identifier cannot include a slash.');
+        }
+
+        $data = $this->apiRequest($identifier, 'GET', $params);
+
+        return $this->parseInstagramMediaItem($data);
+    }
+
+    /**
+     * Convert an Instagram media item into an atom.
+     *
+     * @param object $item
+     *
+     * @return \Hybridauth\Atom\Atom
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
+     * @throws \Exception
+     */
+    protected function parseInstagramMediaItem($item)
+    {
+        $atom = new Atom();
+
+        $atom->identifier = $item->id;
+        $atom->isIncomplete = false;
+        $atom->categories = [];
+        $atom->published = new \DateTime($item->timestamp);
+        $atom->url = $item->permalink;
+
+        if (!empty($item->caption)) {
+            $urlUsernames = '<a href="http://instagram.com/$1">@$1</a>';
+            $urlHashtags = '<a href="https://instagram.com/explore/tags/$1/">#$1</a>';
+            $detectUrls = true;
+            $text = $item->caption;
+            $text = AtomHelper::plainTextToHtml($text);
+            list($text, $repped) = AtomHelper::processCodes($text, $urlUsernames, $urlHashtags, $detectUrls);
+            $atom->content = $text;
+        }
+
+        $atom->author = new Author();
+        $atom->author->identifier = $item->username;
+        $atom->author->displayName = $item->username;
+        $atom->author->profileURL = "https://instagram.com/{$item->username}";
+
+        $atom->enclosures = $this->parseInstagramMediaItemEnclosure($item);
+
+        return $atom;
+    }
+
+    /**
+     * Convert Instagram file media to an enclosure(s).
+     *
+     * @param object $item
+     *
+     * @return array List of enclosures
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
+     */
+    protected function parseInstagramMediaItemEnclosure($item)
+    {
+        $enclosures = [];
+
+        switch ($item->media_type) {
+            case 'IMAGE':
+                $enclosure = new Enclosure();
+                $enclosure->url = $item->media_url;
+                $enclosure->type = Enclosure::ENCLOSURE_IMAGE;
+                $enclosures[] = $enclosure;
+                break;
+
+            case 'VIDEO':
+                $enclosure = new Enclosure();
+                $enclosure->url = $item->media_url;
+                $enclosure->type = Enclosure::ENCLOSURE_VIDEO;
+                $enclosure->thumbnailUrl = $item->thumbnail_url;
+                $enclosures[] = $enclosure;
+                break;
+
+            case 'CAROUSEL_ALBUM':
+                foreach ($item->children->data as $child) {
+                    $fields = [
+                        'media_type',
+                        'media_url',
+                        'thumbnail_url',
+                    ];
+
+                    $params = [
+                        'fields' => implode(',', $fields),
+                    ];
+
+
+                    $data = $this->apiRequest($child->id, 'GET', $params);
+                    $enclosures = array_merge($enclosures, $this->parseInstagramMediaItemEnclosure($data));
+                }
+                break;
+
+            default:
+                $enclosure = new Enclosure();
+                $enclosure->url = $item->media_url;
+                $enclosure->type = Enclosure::ENCLOSURE_BINARY; // We don't recognize this
+                $enclosures[] = $enclosure;
+                break;
+        }
+
+        return $enclosures;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAtomFullFromURL($url)
+    {
+        // Can't work, the permalink tokens are not media IDs, and even when converted they're old style ones
+        //  Indications suggest FB management doesn't want us pulling out individual posts for some reason
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOEmbedFromURL($url, $params = [])
+    {
+        // Note that oEmbed must be enabled on the Facebook App you are using for Instagram
+
+        if (preg_match('#^https://www\.instagram\.com/p/[^/]+#', $url) == 0) {
+            return null;
+        }
+
+        $appId = $this->config->filter('keys')->get('id') ?: null;
+        $clientToken = $this->config->filter('keys')->get('client_token') ?: null;
+        if (($appId === null) || ($clientToken === null)) {
+            return;
+        }
+        $comboToken = $appId . '|' . $clientToken;
+        $endpoint = 'https://graph.facebook.com/instagram_oembed?url=' . urlencode($url);
+        $endpoint .= '&access_token=' . urlencode($comboToken);
+        foreach ($params as $key => $val) {
+            $endpoint .= '&' . $key . '=' . urlencode($val);
+        }
+
+        $allow_url_fopen = @ini_get('allow_url_fopen');
+        @ini_set('allow_url_fopen', 'On');
+        $oembed = file_get_contents($endpoint);
+        @ini_set('allow_url_fopen', $allow_url_fopen);
+
+        return json_decode($oembed);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveAtom($atom, &$messages = [])
+    {
+        throw new NotImplementedException('There is no write access on the Instagram APIs.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteAtom($identifier)
+    {
+        throw new NotImplementedException('There is no write access on the Instagram APIs.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCategories()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveCategory($category)
+    {
+        throw new NotImplementedException('There are no categories on Instagram.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteCategory($identifier)
+    {
+        throw new NotImplementedException('There are no categories on Instagram.');
     }
 }
