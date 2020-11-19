@@ -98,6 +98,12 @@ interface AdapterInterface
     public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false);
 
     /**
+     * Do whatever may be necessary to make sure tokens do not expire.
+     * Intended to be be called frequently, e.g. via Cron.
+     */
+    public function maintainToken();
+
+    /**
      * Return oauth access tokens.
      *
      * @return array
