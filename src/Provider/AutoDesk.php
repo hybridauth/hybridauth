@@ -78,7 +78,7 @@ class AutoDesk extends OAuth2
 		$userProfile = new User\Profile();
 
 		$userProfile->identifier = $collection->get('userId');
-		$userProfile->displayName = $collection->get('firstName') .''. $collection->get('lastName');
+		$userProfile->displayName = $collection->get('firstName') .' '. $collection->get('lastName');
 		$userProfile->firstName = $collection->get('firstName');
 		$userProfile->lastName = $collection->get('lastName');
 		$userProfile->email = $collection->get('emailId');
