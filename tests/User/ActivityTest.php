@@ -15,10 +15,12 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
 
     public function test_has_attributes()
     {
-        $this->assertClassHasAttribute('id', Activity::class);
-        $this->assertClassHasAttribute('date', Activity::class);
-        $this->assertClassHasAttribute('text', Activity::class);
-        $this->assertClassHasAttribute('user', Activity::class);
+        $activity_class = '\\Hybridauth\\User\\Activity';
+
+        $this->assertClassHasAttribute('id', $activity_class);
+        $this->assertClassHasAttribute('date', $activity_class);
+        $this->assertClassHasAttribute('text', $activity_class);
+        $this->assertClassHasAttribute('user', $activity_class);
     }
 
     public function test_set_attributes()
