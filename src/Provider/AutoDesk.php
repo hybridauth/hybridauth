@@ -2,7 +2,7 @@
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
+*  (c) 2020 Hybridauth authors | https://hybridauth.github.io/license.html
 */
 
 namespace Hybridauth\Provider;
@@ -36,8 +36,8 @@ class AutoDesk extends OAuth2
      * {@inheritdoc}
      */
     protected $accessTokenUrl = 'https://developer.api.autodesk.com/authentication/v1/gettoken';
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     protected $refreshTokenUrl = 'https://developer.api.autodesk.com/authentication/v1/refreshtoken';
@@ -46,24 +46,24 @@ class AutoDesk extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://forge.autodesk.com/en/docs/oauth/v2/developers_guide/overview/';
-	
-	/**
+
+    /**
      * {@inheritdoc}
      */
     protected function initialize()
     {
-		parent::initialize();
-		
-		if ($this->isRefreshTokenAvailable()) {
-			$this->tokenRefreshParameters += [
-				'client_id'     => $this->clientId,
-				'client_secret' => $this->clientSecret,
-				'grant_type'    => 'refresh_token',
-			];
-		}
+        parent::initialize();
+        
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id'     => $this->clientId,
+                'client_secret' => $this->clientSecret,
+                'grant_type'    => 'refresh_token',
+            ];
+        }
 
     }
-	
+
     /**
      * {@inheritdoc}
      *
@@ -71,21 +71,21 @@ class AutoDesk extends OAuth2
      */
     public function getUserProfile()
     {
-		$response = $this->apiRequest('userprofile/v1/users/@me');
+        $response = $this->apiRequest('userprofile/v1/users/@me');
 
-		$collection = new Data\Collection($response);
+        $collection = new Data\Collection($response);
 
-		$userProfile = new User\Profile();
+        $userProfile = new User\Profile();
 
-		$userProfile->identifier = $collection->get('userId');
-		$userProfile->displayName = $collection->get('firstName') .' '. $collection->get('lastName');
-		$userProfile->firstName = $collection->get('firstName');
-		$userProfile->lastName = $collection->get('lastName');
-		$userProfile->email = $collection->get('emailId');
-		$userProfile->language = $collection->get('language');
-		$userProfile->webSiteURL = $collection->get('websiteUrl');
-		$userProfile->photoURL = $collection->filter('profileImages')->get('sizeX360');
+        $userProfile->identifier = $collection->get('userId');
+        $userProfile->displayName = $collection->get('firstName') .' '. $collection->get('lastName');
+        $userProfile->firstName = $collection->get('firstName');
+        $userProfile->lastName = $collection->get('lastName');
+        $userProfile->email = $collection->get('emailId');
+        $userProfile->language = $collection->get('language');
+        $userProfile->webSiteURL = $collection->get('websiteUrl');
+        $userProfile->photoURL = $collection->filter('profileImages')->get('sizeX360');
 
-		return $userProfile;
+        return $userProfile;
     }
 }
