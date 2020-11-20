@@ -15,13 +15,15 @@ class ContactTest extends \PHPUnit\Framework\TestCase
 
     public function test_has_attributes()
     {
-        $this->assertClassHasAttribute('identifier', Contact::class);
-        $this->assertClassHasAttribute('webSiteURL', Contact::class);
-        $this->assertClassHasAttribute('profileURL', Contact::class);
-        $this->assertClassHasAttribute('photoURL', Contact::class);
-        $this->assertClassHasAttribute('displayName', Contact::class);
-        $this->assertClassHasAttribute('description', Contact::class);
-        $this->assertClassHasAttribute('email', Contact::class);
+        $contact_class = '\\Hybridauth\\User\\Contact';
+
+        $this->assertClassHasAttribute('identifier', $contact_class);
+        $this->assertClassHasAttribute('webSiteURL', $contact_class);
+        $this->assertClassHasAttribute('profileURL', $contact_class);
+        $this->assertClassHasAttribute('photoURL', $contact_class);
+        $this->assertClassHasAttribute('displayName', $contact_class);
+        $this->assertClassHasAttribute('description', $contact_class);
+        $this->assertClassHasAttribute('email', $contact_class);
     }
 
     public function test_set_attributes()
