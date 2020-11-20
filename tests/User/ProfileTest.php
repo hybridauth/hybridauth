@@ -15,28 +15,30 @@ class ProfileTest extends \PHPUnit\Framework\TestCase
 
     public function test_has_attributes()
     {
-        $this->assertClassHasAttribute('identifier', Profile::class);
-        $this->assertClassHasAttribute('webSiteURL', Profile::class);
-        $this->assertClassHasAttribute('profileURL', Profile::class);
-        $this->assertClassHasAttribute('photoURL', Profile::class);
-        $this->assertClassHasAttribute('displayName', Profile::class);
-        $this->assertClassHasAttribute('firstName', Profile::class);
-        $this->assertClassHasAttribute('lastName', Profile::class);
-        $this->assertClassHasAttribute('description', Profile::class);
-        $this->assertClassHasAttribute('gender', Profile::class);
-        $this->assertClassHasAttribute('language', Profile::class);
-        $this->assertClassHasAttribute('age', Profile::class);
-        $this->assertClassHasAttribute('birthDay', Profile::class);
-        $this->assertClassHasAttribute('birthMonth', Profile::class);
-        $this->assertClassHasAttribute('birthYear', Profile::class);
-        $this->assertClassHasAttribute('email', Profile::class);
-        $this->assertClassHasAttribute('emailVerified', Profile::class);
-        $this->assertClassHasAttribute('phone', Profile::class);
-        $this->assertClassHasAttribute('address', Profile::class);
-        $this->assertClassHasAttribute('country', Profile::class);
-        $this->assertClassHasAttribute('region', Profile::class);
-        $this->assertClassHasAttribute('city', Profile::class);
-        $this->assertClassHasAttribute('zip', Profile::class);
+        $profile_class = '\\Hybridauth\\User\\Profile';
+
+        $this->assertClassHasAttribute('identifier', $profile_class);
+        $this->assertClassHasAttribute('webSiteURL', $profile_class);
+        $this->assertClassHasAttribute('profileURL', $profile_class);
+        $this->assertClassHasAttribute('photoURL', $profile_class);
+        $this->assertClassHasAttribute('displayName', $profile_class);
+        $this->assertClassHasAttribute('firstName', $profile_class);
+        $this->assertClassHasAttribute('lastName', $profile_class);
+        $this->assertClassHasAttribute('description', $profile_class);
+        $this->assertClassHasAttribute('gender', $profile_class);
+        $this->assertClassHasAttribute('language', $profile_class);
+        $this->assertClassHasAttribute('age', $profile_class);
+        $this->assertClassHasAttribute('birthDay', $profile_class);
+        $this->assertClassHasAttribute('birthMonth', $profile_class);
+        $this->assertClassHasAttribute('birthYear', $profile_class);
+        $this->assertClassHasAttribute('email', $profile_class);
+        $this->assertClassHasAttribute('emailVerified', $profile_class);
+        $this->assertClassHasAttribute('phone', $profile_class);
+        $this->assertClassHasAttribute('address', $profile_class);
+        $this->assertClassHasAttribute('country', $profile_class);
+        $this->assertClassHasAttribute('region', $profile_class);
+        $this->assertClassHasAttribute('city', $profile_class);
+        $this->assertClassHasAttribute('zip', $profile_class);
     }
 
     public function test_set_attributes()
