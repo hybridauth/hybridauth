@@ -86,6 +86,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
      */
     public function authenticate(ServerRequestInterface $request = null)
     {
+        /** @var ServerRequestInterface $request */
         $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 

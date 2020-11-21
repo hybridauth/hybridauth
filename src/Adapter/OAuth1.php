@@ -210,6 +210,7 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
      */
     public function authenticate(ServerRequestInterface $request = null)
     {
+        /** @var ServerRequestInterface $request */
         $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 
@@ -221,13 +222,15 @@ abstract class OAuth1 extends AbstractAdapter implements AdapterInterface
             if (!$this->getStoredData('request_token')) {
                 // Start a new flow.
                 return $this->authenticateBegin($request);
-            } elseif (empty($_GET['oauth_token']) && empty($_GET['denied'])) {
+            }
+
+            if (empty($_GET['oauth_token']) && empty($_GET['denied'])) {
                 // A previous authentication was not finished, and this request is not finishing it.
                 return $this->authenticateBegin($request);
-            } else {
-                // Finish a flow.
-                $this->authenticateFinish($request);
             }
+
+            // Finish a flow.
+            $this->authenticateFinish($request);
         } catch (Exception $exception) {
             $this->clearStoredData();
 

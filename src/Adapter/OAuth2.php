@@ -304,6 +304,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     public function authenticate(ServerRequestInterface $request = null)
     {
+        /** @var ServerRequestInterface $request */
         $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 
@@ -314,7 +315,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         try {
             $this->authenticateCheckError($request);
 
-            $code = $request->getMethod() === 'POST' ? $request->getParsedBody()['code'] : $this->getQueryParamFromRequest('code', $request);
+            $code = $this->getBodyOrQueryParamFromRequest('code', $request);
 
             if (empty($code)) {
                 return $this->authenticateBegin($request);
@@ -423,8 +424,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             [(string)$request->getUri()]
         );
 
-        $state = $request->getMethod() === 'POST' ? $request->getParsedBody()['state'] : $this->getQueryParamFromRequest('state', $request);
-        $code = $request->getMethod() === 'POST' ? $request->getParsedBody()['code'] : $this->getQueryParamFromRequest('code', $request);
+        $state = $this->getBodyOrQueryParamFromRequest('state', $request);
+        $code = $this->getBodyOrQueryParamFromRequest('code', $request);
 
         /**
          * Authorization Request State

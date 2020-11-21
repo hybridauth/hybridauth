@@ -392,7 +392,7 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
-     * @param                        $paramKey
+     * @param string|int             $paramKey
      * @param ServerRequestInterface $request
      *
      * @return mixed|null
@@ -400,5 +400,21 @@ abstract class AbstractAdapter implements AdapterInterface
     protected function getQueryParamFromRequest($paramKey, ServerRequestInterface $request)
     {
         return array_key_exists($paramKey, $request->getQueryParams()) ? $request->getQueryParams()[$paramKey] : null;
+    }
+
+    /**
+     * @param string|int             $paramKey
+     * @param ServerRequestInterface $request
+     *
+     * @return mixed|null
+     */
+    protected function getBodyParamFromRequest($paramKey, ServerRequestInterface $request)
+    {
+        return array_key_exists($paramKey, $request->getParsedBody()) ? $request->getParsedBody()[$paramKey] : null;
+    }
+
+    protected function getBodyOrQueryParamFromRequest($paramKey, ServerRequestInterface $request)
+    {
+        return $request->getMethod() === 'POST' ? $this->getBodyParamFromRequest($paramKey, $request) : $this->getQueryParamFromRequest($paramKey, $request);
     }
 }
