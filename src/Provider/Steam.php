@@ -19,34 +19,46 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'secret' => 'steam-api-key' ]
+ *       'keys' => ['secret' => 'steam-api-key']
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Steam( $config );
+ *   $adapter = new Hybridauth\Provider\Steam($config);
  *
- *   $adapter->authenticate();
-
- *   $userProfile = $adapter->getUserProfile();
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
+ *   }
  */
 class Steam extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'http://steamcommunity.com/openid';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://steamcommunity.com/dev';
+
+    /**
+     * {@inheritdoc}
+     */
     public function authenticateFinish()
     {
         parent::authenticateFinish();
 
         $userProfile = $this->storage->get($this->providerId . '.user');
 
-        $userProfile->identifier = str_ireplace(array('http://steamcommunity.com/openid/id/', 'https://steamcommunity.com/openid/id/'), '', $userProfile->identifier);
+        $userProfile->identifier = str_ireplace([
+            'http://steamcommunity.com/openid/id/',
+            'https://steamcommunity.com/openid/id/',
+        ], '', $userProfile->identifier);
 
-        if (! $userProfile->identifier) {
+        if (!$userProfile->identifier) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -56,9 +68,8 @@ class Steam extends OpenID
             // if api key is provided, we attempt to use steam web api
             if ($apiKey) {
                 $result = $this->getUserProfileWebAPI($apiKey, $userProfile->identifier);
-            }
-            // otherwise we fallback to community data
-            else {
+            } else {
+                // otherwise we fallback to community data
                 $result = $this->getUserProfileLegacyAPI($userProfile->identifier);
             }
 
@@ -66,9 +77,7 @@ class Steam extends OpenID
             foreach ($result as $k => $v) {
                 $userProfile->$k = $v ?: $userProfile->$k;
             }
-        }
-        // these data are not mandatory, so keep it quite
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
         }
 
         // store user profile
@@ -85,7 +94,8 @@ class Steam extends OpenID
      */
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
-        $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' . $apiKey . '&steamids=' . $steam64;
+        $q = http_build_query(['key' => $apiKey, 'steamids' => $steam64]);
+        $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?' . $q;
 
         $response = $this->httpClient->request($apiUrl);
 
@@ -110,7 +120,7 @@ class Steam extends OpenID
      * Fetch user profile on community API
      * @param $steam64
      * @return array
-*/
+     */
     public function getUserProfileLegacyAPI($steam64)
     {
         libxml_use_internal_errors(false);
@@ -131,8 +141,8 @@ class Steam extends OpenID
         $userProfile['description'] = (string)$data->get('summary');
         $userProfile['region'] = (string)$data->get('location');
         $userProfile['profileURL'] = (string)$data->get('customURL')
-          ? 'http://steamcommunity.com/id/' . (string)$data->get('customURL')
-          : 'http://steamcommunity.com/profiles/' . $steam64;
+            ? 'http://steamcommunity.com/id/' . (string)$data->get('customURL')
+            : 'http://steamcommunity.com/profiles/' . $steam64;
 
         return $userProfile;
     }

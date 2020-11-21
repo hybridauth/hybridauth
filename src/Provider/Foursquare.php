@@ -18,52 +18,55 @@ use Hybridauth\User;
 class Foursquare extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.foursquare.com/v2/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://foursquare.com/oauth2/authenticate';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://foursquare.com/oauth2/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenName = 'oauth_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developer.foursquare.com/overview/auth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
 
         $apiVersion = $this->config->get('api_version') ?: '20140201';
 
-        $this->apiRequestParameters = [ 'v' => $apiVersion ];
+        $this->apiRequestParameters = [
+            'oauth_token' => $this->getStoredData('access_token'),
+            'v' => $apiVersion,
+        ];
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users/self');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('response')) {
+        if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -71,35 +74,36 @@ class Foursquare extends OAuth2
 
         $data = $data->filter('response')->filter('user');
 
-        $userProfile->identifier    = $data->get('id');
-        $userProfile->firstName     = $data->get('firstName');
-        $userProfile->lastName      = $data->get('lastName');
-        $userProfile->gender        = $data->get('gender');
-        $userProfile->city          = $data->get('homeCity');
-        $userProfile->email         = $data->filter('contact')->get('email');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->firstName = $data->get('firstName');
+        $userProfile->lastName = $data->get('lastName');
+        $userProfile->gender = $data->get('gender');
+        $userProfile->city = $data->get('homeCity');
+        $userProfile->email = $data->filter('contact')->get('email');
         $userProfile->emailVerified = $userProfile->email;
-        $userProfile->profileURL    = 'https://www.foursquare.com/user/' . $userProfile->identifier;
-        $userProfile->displayName   = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+        $userProfile->profileURL = 'https://www.foursquare.com/user/' . $userProfile->identifier;
+        $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
 
         if ($data->exists('photo')) {
             $photoSize = $this->config->get('photo_size') ?: '150x150';
 
-            $userProfile->photoURL = $data->filter('photo')->get('prefix') . $photoSize . $data->filter('photo')->get('suffix');
+            $userProfile->photoURL = $data->filter('photo')->get('prefix');
+            $userProfile->photoURL .= $photoSize . $data->filter('photo')->get('suffix');
         }
 
         return $userProfile;
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserContacts()
     {
         $response = $this->apiRequest('users/self/friends');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('response')) {
+        if (!$data->exists('response')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -125,10 +129,11 @@ class Foursquare extends OAuth2
 
         $userContact = new User\Contact();
 
-        $userContact->identifier  = $item->get('id');
-        $userContact->photoURL    = $item->filter('photo')->get('prefix') . $photoSize . $item->filter('photo')->get('suffix');
+        $userContact->identifier = $item->get('id');
+        $userContact->photoURL = $item->filter('photo')->get('prefix');
+        $userContact->photoURL .= $photoSize . $item->filter('photo')->get('suffix');
         $userContact->displayName = trim($item->get('firstName') . ' ' . $item->get('lastName'));
-        $userContact->email       = $item->filter('contact')->get('email');
+        $userContact->email = $item->filter('contact')->get('email');
 
         return $userContact;
     }

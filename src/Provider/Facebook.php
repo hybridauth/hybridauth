@@ -16,15 +16,22 @@ use Hybridauth\User;
 /**
  * Facebook OAuth2 provider adapter.
  *
+ * Facebook doesn't use standard OAuth refresh tokens.
+ * Instead it has a "token exchange" system. You exchange the token prior to
+ * expiry, to push back expiry. You start with a short-lived token and each
+ * exchange gives you a long-lived one (90 days).
+ * We control this with the 'exchange_by_expiry_days' option.
+ *
  * Example:
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'scope'    => 'email, user_status, user_posts'
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'scope' => 'email, user_status, user_posts',
+ *       'exchange_by_expiry_days' => 45, // null for no token exchange
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\Facebook( $config );
+ *   $adapter = new Hybridauth\Provider\Facebook($config);
  *
  *   try {
  *       $adapter->authenticate();
@@ -32,8 +39,7 @@ use Hybridauth\User;
  *       $userProfile = $adapter->getUserProfile();
  *       $tokens = $adapter->getAccessToken();
  *       $response = $adapter->setUserStatus("Hybridauth test message..");
- *   }
- *   catch( Exception $e ){
+ *   } catch (\Exception $e) {
  *       echo $e->getMessage() ;
  *   }
  */
@@ -47,7 +53,7 @@ class Facebook extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://graph.facebook.com/v2.12/';
+    protected $apiBaseUrl = 'https://graph.facebook.com/v8.0/';
 
     /**
      * {@inheritdoc}
@@ -86,9 +92,84 @@ class Facebook extends OAuth2
     /**
      * {@inheritdoc}
      */
+    public function maintainToken()
+    {
+        if (!$this->isConnected()) {
+            return;
+        }
+
+        // Handle token exchange prior to the standard handler for an API request
+        $exchange_by_expiry_days = $this->config->get('exchange_by_expiry_days') ?: 45;
+        if ($exchange_by_expiry_days !== null) {
+            $projected_timestamp = time() + 60 * 60 * 24 * $exchange_by_expiry_days;
+            if (!$this->hasAccessTokenExpired() && $this->hasAccessTokenExpired($projected_timestamp)) {
+                $this->exchangeAccessToken();
+            }
+        }
+    }
+
+    /**
+     * Exchange the Access Token with one that expires further in the future.
+     *
+     * @return string Raw Provider API response
+     * @throws \Hybridauth\Exception\HttpClientFailureException
+     * @throws \Hybridauth\Exception\HttpRequestFailedException
+     * @throws \Hybridauth\Exception\InvalidAccessTokenException
+     */
+    public function exchangeAccessToken()
+    {
+        $exchangeTokenParameters = [
+            'grant_type' => 'fb_exchange_token',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'fb_exchange_token' => $this->getStoredData('access_token'),
+        ];
+
+        $response = $this->httpClient->request(
+            $this->accessTokenUrl,
+            'GET',
+            $exchangeTokenParameters
+        );
+
+        $this->validateApiResponse('Unable to exchange the access token');
+
+        $this->validateAccessTokenExchange($response);
+
+        return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('me?fields=id,name,first_name,last_name,link,website,gender,locale,about,email,hometown,verified,birthday');
+        $fields = [
+            'id',
+            'name',
+            'first_name',
+            'last_name',
+            'website',
+            'locale',
+            'about',
+            'email',
+            'hometown',
+            'birthday',
+        ];
+        
+        if (strpos($this->scope, 'user_link') !== false) {
+            $fields[] = 'link';
+        }
+
+        if (strpos($this->scope, 'user_gender') !== false) {
+            $fields[] = 'gender';
+        }
+
+        // Note that en_US is needed for gender fields to match convention.
+        $locale = $this->config->get('locale') ?: 'en_US';
+        $response = $this->apiRequest('me', 'GET', [
+            'fields' => implode(',', $fields),
+            'locale' => $locale,
+        ]);
 
         $data = new Data\Collection($response);
 
@@ -118,9 +199,10 @@ class Facebook extends OAuth2
 
         $photoSize = $this->config->get('photo_size') ?: '150';
 
-        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier . '/picture?width=' . $photoSize . '&height=' . $photoSize;
+        $userProfile->photoURL = $this->apiBaseUrl . $userProfile->identifier;
+        $userProfile->photoURL .= '/picture?width=' . $photoSize . '&height=' . $photoSize;
 
-        $userProfile->emailVerified = $data->get('verified') == 1 ? $userProfile->email : '';
+        $userProfile->emailVerified = $userProfile->email;
 
         $userProfile = $this->fetchUserRegion($userProfile);
 
@@ -235,22 +317,6 @@ class Facebook extends OAuth2
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated since August 1, 2018. Scheduled for removal before Hybridauth 3.0.0.
-     *   See https://developers.facebook.com/docs/graph-api/changelog/breaking-changes#login-4-24 for more info.
-     */
-    public function setUserStatus($status, $pageId = 'me')
-    {
-        @trigger_error('The ' . __METHOD__ . ' method is deprecated since August 1, 2018 and will be removed in Hybridauth 3.0.0.', E_USER_DEPRECATED);
-        $status = is_string($status) ? ['message' => $status] : $status;
-
-        $response = $this->apiRequest("{$pageId}/feed", 'POST', $status);
-
-        return $response;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function setPageStatus($status, $pageId)
     {
@@ -258,7 +324,7 @@ class Facebook extends OAuth2
 
         // Post on user wall.
         if ($pageId === 'me') {
-            return $this->setUserStatus($status, $pageId);
+            return $this->setUserStatus($status);
         }
 
         // Retrieve writable user pages and filter by given one.
@@ -280,8 +346,8 @@ class Facebook extends OAuth2
 
         // Refresh proof for API call.
         $parameters = $status + [
-            'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
-        ];
+                'appsecret_proof' => hash_hmac('sha256', $page->access_token, $this->clientSecret),
+            ];
 
         $response = $this->apiRequest("{$pageId}/feed", 'POST', $parameters, $headers);
 
@@ -361,7 +427,8 @@ class Facebook extends OAuth2
 
             $userActivity->user->profileURL = $this->getProfileUrl($userActivity->user->identifier);
 
-            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier . '/picture?width=150&height=150';
+            $userActivity->user->photoURL = $this->apiBaseUrl . $userActivity->user->identifier;
+            $userActivity->user->photoURL .= '/picture?width=150&height=150';
         }
 
         return $userActivity;

@@ -19,66 +19,74 @@ use Hybridauth\User;
  *
  *   $config = [
  *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'     => [ 'id' => '', 'secret' => '' ],
- *       'site'     => 'stackoverflow'
- *       'api_key'  => '...' // that thing to receive a higher request quota.
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'site' => 'stackoverflow' // required parameter to call getUserProfile()
+ *       'api_key' => '...' // that thing to receive a higher request quota.
  *   ];
  *
- *   $adapter = new Hybridauth\Provider\StackExchange( $config );
+ *   $adapter = new Hybridauth\Provider\StackExchange($config);
  *
- *   $adapter->authenticate();
+ *   try {
+ *       $adapter->authenticate();
  *
- *   $userProfile = $adapter->getUserProfile();
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken();
+ *   } catch (\Exception $e ){
+ *       echo $e->getMessage() ;
+ *   }
  */
 class StackExchange extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $scope = null;
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiBaseUrl = 'https://api.stackexchange.com/2.2/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://stackexchange.com/oauth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://stackexchange.com/oauth/access_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://api.stackexchange.com/docs/authentication';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
 
         $apiKey = $this->config->get('api_key');
 
-        $this->apiRequestParameters = [ 'key' => $apiKey];
+        $this->apiRequestParameters = ['key' => $apiKey];
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $site = $this->config->get('site');
 
-        $response = $this->apiRequest('me?site=' . $site);
+        $response = $this->apiRequest('me', 'GET', [
+            'site' => $site,
+            'access_token' => $this->getStoredData('access_token'),
+        ]);
 
-        if (! $response || !isset($response->items) || !isset($response->items[0])) {
+        if (!$response || !isset($response->items) || !isset($response->items[0])) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
@@ -86,12 +94,12 @@ class StackExchange extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier  = $data->get('id');
+        $userProfile->identifier = strval($data->get('user_id'));
         $userProfile->displayName = $data->get('display_name');
-        $userProfile->photoURL    = $data->get('profile_image');
-        $userProfile->profileURL  = $data->get('link');
-        $userProfile->region      = $data->get('location');
-        $userProfile->age         = $data->get('age');
+        $userProfile->photoURL = $data->get('profile_image');
+        $userProfile->profileURL = $data->get('link');
+        $userProfile->region = $data->get('location');
+        $userProfile->age = $data->get('age');
 
         return $userProfile;
     }

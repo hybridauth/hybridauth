@@ -20,7 +20,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    public $scope = 'r_liteprofile r_emailaddress w_member_social';
+    protected $scope = 'r_liteprofile r_emailaddress w_member_social';
 
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://docs.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow';
+    protected $apiDocumentation = 'https://docs.microsoft.com/en-us/linkedin/shared/authentication/authentication';
 
     /**
      * {@inheritdoc}
@@ -55,8 +55,8 @@ class LinkedIn extends OAuth2
         ];
 
 
-        $response = $this->apiRequest('me?projection=(' . implode(',', $fields) . ')');
-        $data     = new Data\Collection($response);
+        $response = $this->apiRequest('me', 'GET', ['projection' => '(' . implode(',', $fields) . ')']);
+        $data = new Data\Collection($response);
 
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
@@ -66,21 +66,25 @@ class LinkedIn extends OAuth2
 
         // Handle localized names.
         $userProfile->firstName = $data
-          ->filter('firstName')
-          ->filter('localized')
-          ->get($this->getPreferredLocale($data, 'firstName'));
+            ->filter('firstName')
+            ->filter('localized')
+            ->get($this->getPreferredLocale($data, 'firstName'));
 
         $userProfile->lastName = $data
-          ->filter('lastName')
-          ->filter('localized')
-          ->get($this->getPreferredLocale($data, 'lastName'));
+            ->filter('lastName')
+            ->filter('localized')
+            ->get($this->getPreferredLocale($data, 'lastName'));
 
         $userProfile->identifier = $data->get('id');
-        $userProfile->photoURL = $this->getUserPhotoUrl($data->filter('profilePicture')->filter('displayImage~')->get('elements'));
         $userProfile->email = $this->getUserEmail();
         $userProfile->emailVerified = $userProfile->email;
-
         $userProfile->displayName = trim($userProfile->firstName . ' ' . $userProfile->lastName);
+
+        $photo_elements = $data
+            ->filter('profilePicture')
+            ->filter('displayImage~')
+            ->get('elements');
+        $userProfile->photoURL = $this->getUserPhotoUrl($photo_elements);
 
         return $userProfile;
     }
@@ -106,7 +110,7 @@ class LinkedIn extends OAuth2
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -114,11 +118,16 @@ class LinkedIn extends OAuth2
      *
      * @return string
      *   The user email address.
+     *
+     * @throws \Exception
      */
     public function getUserEmail()
     {
-        $response = $this->apiRequest('emailAddress?q=members&projection=(elements*(handle~))');
-        $data     = new Data\Collection($response);
+        $response = $this->apiRequest('emailAddress', 'GET', [
+            'q' => 'members',
+            'projection' => '(elements*(handle~))',
+        ]);
+        $data = new Data\Collection($response);
 
         foreach ($data->filter('elements')->toArray() as $element) {
             $item = new Data\Collection($element);
@@ -128,7 +137,7 @@ class LinkedIn extends OAuth2
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -159,8 +168,8 @@ class LinkedIn extends OAuth2
 
         $headers = [
             'Content-Type' => 'application/json',
-            'x-li-format'  => 'json',
-            'X-Restli-Protocol-Version'  => '2.0.0',
+            'x-li-format' => 'json',
+            'X-Restli-Protocol-Version' => '2.0.0',
         ];
 
         $response = $this->apiRequest("ugcPosts", 'POST', $status, $headers);
@@ -179,7 +188,8 @@ class LinkedIn extends OAuth2
      * @return string
      *   A field locale.
      */
-    protected function getPreferredLocale($data, $field_name) {
+    protected function getPreferredLocale($data, $field_name)
+    {
         $locale = $data->filter($field_name)->filter('preferredLocale');
         if ($locale) {
             return $locale->get('language') . '_' . $locale->get('country');

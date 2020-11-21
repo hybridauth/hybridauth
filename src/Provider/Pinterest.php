@@ -13,38 +13,45 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Dribbble OAuth2 provider adapter.
+ * Pinterest OAuth2 provider adapter.
  */
-class Dribbble extends OAuth2
+class Pinterest extends OAuth2
 {
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://api.dribbble.com/v2/';
+    protected $scope = 'read_public';
 
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://dribbble.com/oauth/authorize';
+    protected $apiBaseUrl = 'https://api.pinterest.com/v1/';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://dribbble.com/oauth/token';
+    protected $authorizeUrl = 'https://api.pinterest.com/oauth';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'http://developer.dribbble.com/v2/oauth/';
+    protected $accessTokenUrl = 'https://api.pinterest.com/v1/oauth/token';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://developers.pinterest.com/docs/api/overview/';
 
     /**
      * {@inheritdoc}
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('user');
+        $response = $this->apiRequest('me');
 
         $data = new Data\Collection($response);
+
+        $data = $data->filter('data');
 
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
@@ -53,15 +60,14 @@ class Dribbble extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier = $data->get('id');
-        $userProfile->profileURL = $data->get('html_url');
-        $userProfile->photoURL = $data->get('avatar_url');
         $userProfile->description = $data->get('bio');
-        $userProfile->region = $data->get('location');
-        $userProfile->displayName = $data->get('name');
+        $userProfile->photoURL = $data->get('image');
+        $userProfile->displayName = $data->get('username');
+        $userProfile->firstName = $data->get('first_name');
+        $userProfile->lastName = $data->get('last_name');
+        $userProfile->profileURL = "https://pinterest.com/{$data->get('username')}";
 
-        $userProfile->displayName = $userProfile->displayName ?: $data->get('username');
-
-        $userProfile->webSiteURL = $data->filter('links')->get('web');
+        $userProfile->data = (array)$data->get('counts');
 
         return $userProfile;
     }

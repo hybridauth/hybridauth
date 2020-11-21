@@ -18,18 +18,23 @@ use Zend\Diactoros\Response\RedirectResponse;
 class PaypalOpenID extends OpenID
 {
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $openidIdentifier = 'https://www.sandbox.paypal.com/webapps/auth/server';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://developer.paypal.com/docs/connect-with-paypal/';
+
+    /**
+     * {@inheritdoc}
+     */
     public function authenticateBegin(ServerRequestInterface $request)
     {
-        $this->openIdClient->identity  = $this->openidIdentifier;
+        $this->openIdClient->identity = $this->openidIdentifier;
         $this->openIdClient->returnUrl = $this->callback;
-        $this->openIdClient->required  = [
+        $this->openIdClient->required = [
             'namePerson/prefix',
             'namePerson/first',
             'namePerson/last',

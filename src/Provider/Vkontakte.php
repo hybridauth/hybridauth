@@ -11,15 +11,20 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
+use Hybridauth\Data;
+use Hybridauth\User;
 
 /**
- * Vkontakte provider adapter.
+ * Vkontakte OAuth2 provider adapter.
  *
  * Example:
  *
  *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => '', 'secret' => ''],
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => [
+ *           'id' => '', // App ID
+ *           'secret' => '' // Secure key
+ *       ],
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\Vkontakte($config);
@@ -30,13 +35,16 @@ use Hybridauth\User\Profile;
  *       }
  *
  *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
+ *   } catch (\Exception $e) {
  *       print $e->getMessage() ;
  *   }
  */
 class Vkontakte extends OAuth2
 {
+    const API_VERSION = '5.95';
+
+    const URL = 'https://vk.com/';
+
     /**
      * {@inheritdoc}
      */
@@ -57,18 +65,24 @@ class Vkontakte extends OAuth2
      */
     protected $scope = 'email,offline';
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function hasAccessTokenExpired()
-	{
-		// As we using offline scope, $expired will be false.
-		$expired = $this->getStoredData('expires_in')
-			? $this->getStoredData('expires_at') <= time()
-			: false;
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 
-		return $expired;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        // The VK API requires version and access_token from authenticated users
+        // for each endpoint.
+        $accessToken = $this->getStoredData($this->accessTokenName);
+        $this->apiRequestParameters[$this->accessTokenName] = $accessToken;
+        $this->apiRequestParameters['v'] = static::API_VERSION;
+    }
 
     /**
      * {@inheritdoc}
@@ -77,26 +91,37 @@ class Vkontakte extends OAuth2
     {
         $data = parent::validateAccessTokenExchange($response);
 
-        // Need to store user_id as token for later use.
-        $this->storeData('user_id', $data->get('user_id'));
+        // Need to store email for later use.
         $this->storeData('email', $data->get('email'));
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
+    public function hasAccessTokenExpired($time = null)
+    {
+        if ($time === null) {
+            $time = time();
+        }
+
+        // If we are using offline scope, $expired will be false.
+        $expired = $this->getStoredData('expires_in')
+            ? $this->getStoredData('expires_at') <= $time
+            : false;
+
+        return $expired;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $photoField = 'photo_' . ($this->config->get('photo_size') ?: 'max_orig');
-        $parameters = [
-            'user_ids' => $this->getStoredData('user_id'),
-            // Required fields: id,first_name,last_name
-            'fields' => 'screen_name,sex,has_photo,' . $photoField,
-            'v' => '5.95',
-            $this->accessTokenName => $this->getStoredData($this->accessTokenName),
-        ];
 
-        $response = $this->apiRequest('users.get', 'GET', $parameters);
+        $response = $this->apiRequest('users.get', 'GET', [
+            'fields' => 'screen_name,sex,education,bdate,has_photo,' . $photoField,
+        ]);
 
         if (property_exists($response, 'error')) {
             throw new UnexpectedApiResponseException($response->error->error_msg);
@@ -110,15 +135,27 @@ class Vkontakte extends OAuth2
 
         $userProfile = new Profile();
 
-        $userProfile->identifier  = $data->get('id');
-        $userProfile->email       = $this->getStoredData('email');
-        $userProfile->firstName   = $data->get('first_name');
-        $userProfile->lastName    = $data->get('last_name');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->email = $this->getStoredData('email');
+        $userProfile->firstName = $data->get('first_name');
+        $userProfile->lastName = $data->get('last_name');
         $userProfile->displayName = $data->get('screen_name');
-        $userProfile->photoURL    = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
+        $userProfile->photoURL = $data->get('has_photo') === 1 ? $data->get($photoField) : '';
 
-        $screen_name = 'https://vk.com/' . ($data->get('screen_name') ?: 'id' . $data->get('id'));
-        $userProfile->profileURL  = $screen_name;
+        // Handle b-date.
+        if ($data->get('bdate')) {
+            $bday = explode('.', $data->get('bdate'));
+            $userProfile->birthDay = (int)$bday[0];
+            $userProfile->birthMonth = (int)$bday[1];
+            $userProfile->birthYear = (int)$bday[2];
+        }
+
+        $userProfile->data = [
+            'education' => $data->get('education'),
+        ];
+
+        $screen_name = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
+        $userProfile->profileURL = $screen_name;
 
         switch ($data->get('sex')) {
             case 1:
@@ -133,4 +170,47 @@ class Vkontakte extends OAuth2
         return $userProfile;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserContacts()
+    {
+        $response = $this->apiRequest('friends.get', 'GET', [
+            'fields' => 'uid,name,photo_200_orig',
+        ]);
+
+        $data = new Data\Collection($response);
+        if (!$data->exists('response')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
+
+        $contacts = [];
+        if (!$data->filter('response')->filter('items')->isEmpty()) {
+            foreach ($data->filter('response')->filter('items')->toArray() as $item) {
+                $contacts[] = $this->fetchUserContact($item);
+            }
+        }
+
+        return $contacts;
+    }
+
+    /**
+     * Parse the user contact.
+     *
+     * @param array $item
+     *
+     * @return \Hybridauth\User\Contact
+     */
+    protected function fetchUserContact($item)
+    {
+        $userContact = new User\Contact();
+        $data = new Data\Collection($item);
+
+        $userContact->identifier = $data->get('id');
+        $userContact->displayName = sprintf('%s %s', $data->get('first_name'), $data->get('last_name'));
+        $userContact->profileURL = static::URL . ($data->get('screen_name') ?: 'id' . $data->get('id'));
+        $userContact->photoURL = $data->get('photo_200_orig');
+
+        return $userContact;
+    }
 }

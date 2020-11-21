@@ -47,12 +47,13 @@ try {
     // Handle invalid provider errors
     //
     if ($error) {
-        error_log('HybridAuth Error: Provider '. json_encode($error) .' not found or not enabled in $config');
+        error_log('Hybridauth Error: Provider ' . json_encode($error) . ' not found or not enabled in $config');
         // Close the pop-up window
         echo "
             <script>
-                window.opener.location.reload();
-                window.close();
+                if (window.opener.closeAuthWindow) {
+                    window.opener.closeAuthWindow();
+                }
             </script>";
         exit;
     }
@@ -73,25 +74,26 @@ try {
         // add your custom AUTH functions (if any) here
         // ...
         $data = [
-            'token'         => $accessToken,
-            'identifier'    => $userProfile->identifier,
-            'email'         => $userProfile->email,
-            'first_name'    => $userProfile->firstName,
-            'last_name'     => $userProfile->lastName,
-            'photoURL'      => strtok($userProfile->photoURL,'?'),
-            ];
+            'token' => $accessToken,
+            'identifier' => $userProfile->identifier,
+            'email' => $userProfile->email,
+            'first_name' => $userProfile->firstName,
+            'last_name' => $userProfile->lastName,
+            'photoURL' => strtok($userProfile->photoURL, '?'),
+        ];
         // ...
 
         // Close pop-up window
         echo "
             <script>
-                window.opener.location.reload();
-                window.close();
+                if (window.opener.closeAuthWindow) {
+                    window.opener.closeAuthWindow();
+                }
             </script>";
 
     }
 
 } catch (Exception $e) {
-    error_log( $e->getMessage());
+    error_log($e->getMessage());
     echo $e->getMessage();
 }

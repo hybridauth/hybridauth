@@ -13,29 +13,8 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
 
-
 /**
- * Yandex provider adapter.
- *
- * Example:
- *
- *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => '', 'secret' => ''],
- *   ];
- *
- *   $adapter = new Hybridauth\Provider\Yandex($config);
- *
- *   try {
- *       if (!$adapter->isConnected()) {
- *           $adapter->authenticate();
- *       }
- *
- *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
- *       print $e->getMessage() ;
- *   }
+ * Yandex OAuth2 provider adapter.
  */
 class Yandex extends OAuth2
 {
@@ -55,19 +34,23 @@ class Yandex extends OAuth2
     protected $accessTokenUrl = 'https://oauth.yandex.ru/token';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = 'https://yandex.com/dev/oauth/doc/dg/concepts/about-docpage/';
+
+    /**
      * load the user profile from the IDp api client
      *
      * @throws Exception
      */
     public function getUserProfile()
     {
-
         $this->scope = implode(',', []);
 
-        $response = $this->apiRequest($this->apiBaseUrl . "?format=json");
+        $response = $this->apiRequest($this->apiBaseUrl, 'GET', ['format' => 'json']);
 
         if (!isset($response->id)) {
-            throw new UnexpectedApiResponseException("User profile request failed! {$this->providerId} returned an invalid response.", 6);
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $data = new Collection($response);

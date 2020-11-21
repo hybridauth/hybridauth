@@ -1,7 +1,7 @@
 Contributing
 ============
 
-HybridAuth is a community driven project, and it needs your help to keep the project going.
+Hybridauth is a community driven project, and it needs your help to keep the project going.
 
 
 ### Report Problems
@@ -30,7 +30,7 @@ Before contributing code, please consider these guide lines:
 
 **Coding Style**
 
-HybridAuth follows [PSR-1](http://www.php-fig.org/psr/psr-1/) and [PSR-2](http://www.php-fig.org/psr/psr-2/).
+Hybridauth follows [PSR-1](http://www.php-fig.org/psr/psr-1/) and [PSR-2](http://www.php-fig.org/psr/psr-2/).
 
 Please prevent your IDE for reformatting huge chunks of code/files as it make it nearly impossible to see what changes were
 actually made to a file on your Pull Request.
@@ -40,7 +40,7 @@ actually made to a file on your Pull Request.
 Additional providers, minor enhancements, bugs and typos fixes are most welcome. Large and "breaking" changes should be 
 discussed ahead of time. **Please ask first**.
 
-HybridAuth 3 is compatible with **PHP 5.4** and therefore all code supplied must stick to this requirement.
+Hybridauth 3 is compatible with **PHP 5.4** and therefore all code supplied must stick to this requirement.
 
 **License**
 

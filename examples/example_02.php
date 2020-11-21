@@ -1,6 +1,6 @@
 <?php
 /*!
-* Details how to use users in a similar fashion to Hybridauth 2. Note that while Hybridauth 3 provides 
+* Details how to use users in a similar fashion to Hybridauth 2. Note that while Hybridauth 3 provides
 * a similar interface to Hybridauth 2, both versions are not fully compatible with each other.
 */
 
@@ -13,24 +13,24 @@ $config = [
     'callback' => HttpClient\Util::getCurrentUrl(),
 
     'providers' => [
-        'GitHub' => [ 
+        'GitHub' => [
             'enabled' => true,
-            'keys'    => [ 'id' => '', 'secret' => '' ], 
+            'keys' => ['id' => '', 'secret' => ''],
         ],
 
-        'Google' => [ 
+        'Google' => [
             'enabled' => true,
-            'keys'    => [ 'id' => '', 'secret' => '' ],
+            'keys' => ['id' => '', 'secret' => ''],
         ],
 
-        'Facebook' => [ 
+        'Facebook' => [
             'enabled' => true,
-            'keys'    => [ 'id' => '', 'secret' => '' ],
+            'keys' => ['id' => '', 'secret' => ''],
         ],
 
-        'Twitter' => [ 
+        'Twitter' => [
             'enabled' => true,
-            'keys'    => [ 'key' => '', 'secret' => '' ],
+            'keys' => ['key' => '', 'secret' => ''],
         ]
     ],
 
@@ -40,37 +40,36 @@ $config = [
         'debug_file' => __FILE__ . '.log', */
 
     /* optional : customize Curl settings
-        // for more information on curl, refer to: http://www.php.net/manual/fr/function.curl-setopt.php  
+        // for more information on curl, refer to: http://www.php.net/manual/fr/function.curl-setopt.php
         'curl_options' => [
             // setting custom certificates
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_CAINFO         => '/path/to/your/certificate.crt',
+            CURLOPT_CAINFO => '/path/to/your/certificate.crt',
 
             // set a valid proxy ip address
             CURLOPT_PROXY => '*.*.*.*:*',
 
             // set a custom user agent
-            CURLOPT_USERAGENT      => ''
+            CURLOPT_USERAGENT => ''
         ] */
 ];
 
-try {    
-    $hybridauth = new Hybridauth( $config );
+try {
+    $hybridauth = new Hybridauth($config);
 
-    $adapter = $hybridauth->authenticate( 'GitHub' );
+    $adapter = $hybridauth->authenticate('GitHub');
 
-    // $adapter = $hybridauth->authenticate( 'Google' );
-    // $adapter = $hybridauth->authenticate( 'Facebook' );
-    // $adapter = $hybridauth->authenticate( 'Twitter' );
+    // $adapter = $hybridauth->authenticate('Google');
+    // $adapter = $hybridauth->authenticate('Facebook');
+    // $adapter = $hybridauth->authenticate('Twitter');
 
     $tokens = $adapter->getAccessToken();
     $userProfile = $adapter->getUserProfile();
 
-    // print_r( $tokens );
-    // print_r( $userProfile );
+    // print_r($tokens);
+    // print_r($userProfile);
 
     $adapter->disconnect();
-}
-catch (\Exception $e) {
+} catch (\Exception $e) {
     echo $e->getMessage();
 }

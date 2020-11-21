@@ -45,6 +45,16 @@ class TwitchTV extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $this->apiRequestHeaders['Client-ID'] = $this->clientId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('users');
@@ -55,7 +65,7 @@ class TwitchTV extends OAuth2
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
-        $users = $data->filter('data')->properties();
+        $users = $data->filter('data')->values();
         $user = new Data\Collection($users[0]);
 
         $userProfile = new User\Profile();

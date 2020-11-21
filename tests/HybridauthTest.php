@@ -1,4 +1,6 @@
-<?php namespace HybridauthTest\Hybridauth;
+<?php
+
+namespace HybridauthTest\Hybridauth;
 
 use Hybridauth\Hybridauth;
 

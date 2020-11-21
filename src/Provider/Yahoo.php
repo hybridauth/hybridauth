@@ -13,122 +13,91 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
+ * For this provider to work it is necessary to assign the "OpenID Connect Permissions",
+ * even if you only use basic OAuth2.
+ */
+
+/**
  * Yahoo OAuth2 provider adapter.
  */
 class Yahoo extends OAuth2
 {
     /**
-    * {@inheritdoc}
-    */
-    protected $scope = 'sdpp-w';
+     * {@inheritdoc}
+     */
+    protected $scope = 'profile';
 
     /**
-    * {@inheritdoc}
-    */
-    protected $apiBaseUrl = 'https://social.yahooapis.com/v1/';
+     * {@inheritdoc}
+     */
+    protected $apiBaseUrl = 'https://api.login.yahoo.com/openid/v1/';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $authorizeUrl = 'https://api.login.yahoo.com/oauth2/request_auth';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $accessTokenUrl = 'https://api.login.yahoo.com/oauth2/get_token';
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected $apiDocumentation = 'https://developer.yahoo.com/oauth2/guide/';
 
     /**
-    * Currently authenticated user
-    */
+     * Currently authenticated user
+     */
     protected $userId = null;
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
 
         $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId .  ':' . $this->clientSecret)
+            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
         ];
+
+        $this->tokenRefreshHeaders = $this->tokenExchangeHeaders;
     }
 
     /**
-     * Returns current user id
-     *
-     * @return int
-     * @throws \Hybridauth\Exception\HttpClientFailureException
-     * @throws \Hybridauth\Exception\HttpRequestFailedException
-     * @throws \Hybridauth\Exception\InvalidAccessTokenException
-     * @throws \Hybridauth\Exception\UnexpectedApiResponseException
+     * {@inheritdoc}
      */
-    protected function getCurrentUserId()
-    {
-        if ($this->userId) {
-            return $this->userId;
-        }
-
-        $response = $this->apiRequest('me/guid', 'GET', [ 'format' => 'json']);
-
-        $data = new Data\Collection($response);
-
-        if (! $data->filter('guid')->exists('value')) {
-            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
-        }
-
-        return $this->userId =  $data->filter('guid')->get('value');
-    }
-
-    /**
-    * {@inheritdoc}
-    */
     public function getUserProfile()
     {
-        // Retrieve current user guid if needed
-        $this->getCurrentUserId();
-
-        $response = $this->apiRequest('user/'  . $this->userId . '/profile', 'GET', [ 'format' => 'json']);
+        $response = $this->apiRequest('userinfo');
 
         $data = new Data\Collection($response);
 
-        if (! $data->exists('profile')) {
+        if (!$data->exists('sub')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $data = $data->filter('profile');
+        $userProfile->identifier = $data->get('sub');
+        $userProfile->firstName = $data->get('given_name');
+        $userProfile->lastName = $data->get('family_name');
+        $userProfile->displayName = $data->get('name');
+        $userProfile->gender = $data->get('gender');
+        $userProfile->language = $data->get('locale');
+        $userProfile->email = $data->get('email');
 
-        $userProfile->identifier  = $data->get('guid');
-        $userProfile->firstName   = $data->get('givenName');
-        $userProfile->lastName    = $data->get('familyName');
-        $userProfile->displayName = $data->get('nickname');
-        $userProfile->photoURL    = $data->filter('image')->get('imageUrl');
-        $userProfile->profileURL  = $data->get('profileUrl');
-        $userProfile->language    = $data->get('lang');
-        $userProfile->address     = $data->get('location');
+        $userProfile->emailVerified = $data->get('email_verified') ? $userProfile->email : '';
 
-        if ('F' == $data->get('gender')) {
-            $userProfile->gender = 'female';
-        } elseif ('M' == $data->get('gender')) {
-            $userProfile->gender = 'male';
+        $profileImages = $data->get('profile_images');
+        if ($this->config->get('photo_size')) {
+            $prop = 'image' . $this->config->get('photo_size');
+        } else {
+            $prop = 'image192';
         }
-
-        // E-mail is returned only with sdpp-w scope ( Read/Write (Public and Private) )
-        foreach ($data->filter('emails')->toArray() as $item) {
-            $item = new Data\Collection($item);
-
-            if ($item->get('primary')) {
-                $userProfile->email = $item->get('handle');
-                $userProfile->emailVerified = $item->get('handle');
-            }
-        }
+        $userProfile->photoURL = $profileImages->$prop;
 
         return $userProfile;
     }

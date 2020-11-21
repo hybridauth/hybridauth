@@ -16,50 +16,80 @@ namespace Hybridauth\Data;
 final class Parser
 {
     /**
-    * Decodes a string into an object.
-    *
-    * This method will first attempt to parse data as a JSON string (since most providers use this format)
-    * then parse_str.
-    *
-    * @param string $raw
-    *
-    * @return mixed
-    */
+     * Decodes a string into an object.
+     *
+     * This method will first attempt to parse data as a JSON string (since most providers use this format)
+     * then XML and parse_str.
+     *
+     * @param string $raw
+     *
+     * @return mixed
+     */
     public function parse($raw = null)
     {
         $data = $this->parseJson($raw);
 
-        if (! $data) {
-            $data = $this->parseQueryString($raw);
+        if (!$data) {
+            $data = $this->parseXml($raw);
+
+            if (!$data) {
+                $data = $this->parseQueryString($raw);
+            }
         }
 
         return $data;
     }
 
     /**
-    * Decodes a JSON string
-    *
-    * @param $result
-    *
-    * @return mixed
-    */
+     * Decodes a JSON string
+     *
+     * @param $result
+     *
+     * @return mixed
+     */
     public function parseJson($result)
     {
         return json_decode($result);
     }
 
     /**
-    * Parses a string into variables
-    *
-    * @param $result
-    *
-    * @return \StdClass
-    */
+     * Decodes a XML string
+     *
+     * @param $result
+     *
+     * @return mixed
+     */
+    public function parseXml($result)
+    {
+        libxml_use_internal_errors(true);
+
+        $result = preg_replace('/([<\/])([a-z0-9-]+):/i', '$1', $result);
+        $xml = simplexml_load_string($result);
+
+        libxml_use_internal_errors(false);
+
+        if (!$xml) {
+            return [];
+        }
+
+        $arr = json_decode(json_encode((array)$xml), true);
+        $arr = array($xml->getName() => $arr);
+
+        return $arr;
+    }
+
+    /**
+     * Parses a string into variables
+     *
+     * @param $result
+     *
+     * @return \StdClass
+     */
     public function parseQueryString($result)
     {
         parse_str($result, $output);
 
-        if (! is_array($output)) {
+        if (!is_array($output)) {
             return $result;
         }
 
@@ -84,6 +114,6 @@ final class Parser
     {
         $birthday = date_parse($birthday);
 
-        return [ $birthday['year'], $birthday['month'], $birthday['day'] ];
+        return [$birthday['year'], $birthday['month'], $birthday['day']];
     }
 }

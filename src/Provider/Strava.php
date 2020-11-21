@@ -13,57 +13,59 @@ use Hybridauth\Data;
 use Hybridauth\User;
 
 /**
- * Instagram OAuth2 provider adapter.
+ * GitLab OAuth2 provider adapter.
  */
-class SteemConnect extends OAuth2
+class Strava extends OAuth2
 {
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'login,vote';
+    protected $scope = 'profile:read_all';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://v2.steemconnect.com/';
+    protected $apiBaseUrl = 'https://www.strava.com/api/v3/';
 
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://v2.steemconnect.com/oauth2/authorize';
+    protected $authorizeUrl = 'https://www.strava.com/oauth/authorize';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://v2.steemconnect.com/api/oauth2/token';
+    protected $accessTokenUrl = 'https://www.strava.com/oauth/token';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://steemconnect.com/';
+    protected $apiDocumentation = 'https://developers.strava.com/docs/reference/';
 
     /**
      * {@inheritdoc}
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('api/me');
+        $response = $this->apiRequest('athlete');
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('result')) {
+        if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
 
-        $data = $data->filter('result');
-
         $userProfile->identifier = $data->get('id');
-        $userProfile->description = $data->get('about');
-        $userProfile->photoURL = $data->get('profile_image');
-        $userProfile->webSiteURL = $data->get('website');
-        $userProfile->displayName = $data->get('name');
+        $userProfile->firstName = $data->get('firstname');
+        $userProfile->lastName = $data->get('lastname');
+        $userProfile->gender = $data->get('sex');
+        $userProfile->country = $data->get('country');
+        $userProfile->city = $data->get('city');
+        $userProfile->email = $data->get('email');
+
+        $userProfile->displayName = $userProfile->displayName ?: $data->get('username');
 
         return $userProfile;
     }

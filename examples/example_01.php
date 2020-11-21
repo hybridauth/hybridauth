@@ -8,9 +8,9 @@
 /**
  * Step 0: Start PHP session
  *
- * Normally this step is not required as HybridAuth will attempt to start the session for you, however
+ * Normally this step is not required as Hybridauth will attempt to start the session for you, however
  * in some cases it might be better to call session_start() at top of script to avoid cookie-based sessions
- * issues. 
+ * issues.
  *
  * See: http://php.net/manual/en/function.session-start.php#refsect1-function.session-start-notes
  *      http://stackoverflow.com/a/8028987
@@ -57,7 +57,7 @@ include 'vendor/autoload.php';
 $config = [
     'callback' => 'https://path/to/hybridauth/examples/example_01.php', // or Hybridauth\HttpClient\Util::getCurrentUrl()
 
-    'keys' => [ 'id' => 'your-app-id', 'secret' => 'your-app-secret' ], // Your Github application credentials
+    'keys' => ['id' => 'your-app-id', 'secret' => 'your-app-secret'], // Your Github application credentials
 
     /* optional : set scope
         'scope' => 'user:email', */
@@ -68,17 +68,17 @@ $config = [
         'debug_file' => __FILE__ . '.log', */
 
     /* optional : customize Curl settings
-        // for more information on curl, refer to: http://www.php.net/manual/fr/function.curl-setopt.php  
+        // for more information on curl, refer to: http://www.php.net/manual/fr/function.curl-setopt.php
         'curl_options' => [
             // setting custom certificates
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_CAINFO         => '/path/to/your/certificate.crt',
+            CURLOPT_CAINFO => '/path/to/your/certificate.crt',
 
             // set a valid proxy ip address
             CURLOPT_PROXY => '*.*.*.*:*',
 
             // set a custom user agent
-            CURLOPT_USERAGENT      => ''
+            CURLOPT_USERAGENT => ''
         ] */
 ];
 
@@ -106,14 +106,14 @@ $github->authenticate();
 /**
  * Step 5: Retrieve Users Profiles
  *
- * Calling getUserProfile returns an instance of class Hybridauth\User\Profile which contain the 
+ * Calling getUserProfile returns an instance of class Hybridauth\User\Profile which contain the
  * connected user's profile in simple and standardized structure across all the social APIs supported
- * by HybridAuth.
+ * by Hybridauth.
  */
 
 $userProfile = $github->getUserProfile();
 
-echo 'Hi '.$userProfile->displayName;
+echo 'Hi ' . $userProfile->displayName;
 
 /**
  * Bonus: Access GitHub API
@@ -164,9 +164,8 @@ try {
  *
  * The full list of curl errors that may happen can be found at http://curl.haxx.se/libcurl/c/libcurl-errors.html
  */
-
 catch (Hybridauth\Exception\HttpClientFailureException $e) {
-    echo 'Curl text error message : '.$github->getHttpClient()->getResponseClientError();
+    echo 'Curl text error message : ' . $github->getHttpClient()->getResponseClientError();
 }
 
 /**
@@ -176,15 +175,13 @@ catch (Hybridauth\Exception\HttpClientFailureException $e) {
  *     - Wrong URI or a mal-formatted http request.
  *     - Protected resource without providing a valid access token.
  */
-
 catch (Hybridauth\Exception\HttpRequestFailedException $e) {
-    echo 'Raw API Response: '.$github->getHttpClient()->getResponseBody();
+    echo 'Raw API Response: ' . $github->getHttpClient()->getResponseBody();
 }
 
 /**
  * Base PHP's exception that catches everything [else]
  */
-
 catch (\Exception $e) {
-    echo 'Oops! We ran into an unknown issue: '.$e->getMessage();
+    echo 'Oops! We ran into an unknown issue: ' . $e->getMessage();
 }

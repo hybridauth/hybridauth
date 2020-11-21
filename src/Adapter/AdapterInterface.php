@@ -23,7 +23,7 @@ interface AdapterInterface
      *
      * @param ServerRequestInterface|null $request
      *
-     * @return boolean|ResponseInterface|null If already connected, returns true.
+     * @return bool|ResponseInterface|null If already connected, returns true.
      * If $request is not null a RedirectResponse is returned.
      */
     public function authenticate(ServerRequestInterface $request = null);
@@ -31,7 +31,7 @@ interface AdapterInterface
     /**
      * Returns TRUE if the user is connected
      *
-     * @return boolean
+     * @return bool
      */
     public function isConnected();
 
@@ -96,10 +96,17 @@ interface AdapterInterface
      * @param string $method
      * @param array $parameters
      * @param array $headers
+     * @param bool $multipart
      *
      * @return mixed
      */
-    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = []);
+    public function apiRequest($url, $method = 'GET', $parameters = [], $headers = [], $multipart = false);
+
+    /**
+     * Do whatever may be necessary to make sure tokens do not expire.
+     * Intended to be be called frequently, e.g. via Cron.
+     */
+    public function maintainToken();
 
     /**
      * Return oauth access tokens.

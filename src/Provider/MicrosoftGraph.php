@@ -13,14 +13,40 @@ use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
 
 /**
- * Microsoft Graph provider adapter.
+ * Microsoft Graph OAuth2 provider adapter.
+ *
+ * Create an "Azure Active Directory" resource at https://portal.azure.com/
+ * (not from the Visual Studio site).
+ *
+ * The "Supported account types" choice maps to the 'tenant' setting, see "Authority" @
+ * https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-client-application-configuration
+ *
+ * Example:
+ *
+ *   $config = [
+ *       'callback' => Hybridauth\HttpClient\Util::getCurrentUrl(),
+ *       'keys' => ['id' => '', 'secret' => ''],
+ *       'tenant' => 'user',
+ *         // ^ May be 'common', 'organizations' or 'consumers' or a specific tenant ID or a domain
+ *   ];
+ *
+ *   $adapter = new Hybridauth\Provider\MicrosoftGraph($config);
+ *
+ *   try {
+ *       $adapter->authenticate();
+ *
+ *       $userProfile = $adapter->getUserProfile();
+ *       $tokens = $adapter->getAccessToken();
+ *   } catch (\Exception $e) {
+ *       echo $e->getMessage() ;
+ *   }
  */
 class MicrosoftGraph extends OAuth2
 {
     /**
      * {@inheritdoc}
      */
-    public $scope = 'openid user.read contacts.read';
+    protected $scope = 'openid user.read contacts.read';
 
     /**
      * {@inheritdoc}
@@ -45,6 +71,24 @@ class MicrosoftGraph extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $tenant = $this->config->get('tenant');
+        if (!empty($tenant)) {
+            $adjustedEndpoints = [
+                'authorize_url' => str_replace('/common/', '/' . $tenant . '/', $this->authorizeUrl),
+                'access_token_url' => str_replace('/common/', '/' . $tenant . '/', $this->accessTokenUrl),
+            ];
+
+            $this->setApiEndpoints($adjustedEndpoints);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserProfile()
     {
         $response = $this->apiRequest('me');
@@ -57,12 +101,27 @@ class MicrosoftGraph extends OAuth2
 
         $userProfile = new User\Profile();
 
-        $userProfile->identifier    = $data->get('id');
-        $userProfile->displayName   = $data->get('displayName');
-        $userProfile->firstName     = $data->get('givenName');
-        $userProfile->lastName      = $data->get('surname');
-        $userProfile->email         = $data->get('mail');
-        $userProfile->language      = $data->get('preferredLanguage');
+        $userProfile->identifier = $data->get('id');
+        $userProfile->displayName = $data->get('displayName');
+        $userProfile->firstName = $data->get('givenName');
+        $userProfile->lastName = $data->get('surname');
+        $userProfile->language = $data->get('preferredLanguage');
+
+        $userProfile->phone = $data->get('mobilePhone');
+        if (empty($userProfile->phone)) {
+            $businessPhones = $data->get('businessPhones');
+            if (isset($businessPhones[0])) {
+                $userProfile->phone = $businessPhones[0];
+            }
+        }
+
+        $userProfile->email = $data->get('mail');
+        if (empty($userProfile->email)) {
+            $email = $data->get('userPrincipalName');
+            if (strpos($email, '@') !== false) {
+                $userProfile->email = $email;
+            }
+        }
 
         return $userProfile;
     }
@@ -72,22 +131,23 @@ class MicrosoftGraph extends OAuth2
      */
     public function getUserContacts()
     {
-        $apiUrl   = 'me/contacts?$top=50';
+        $apiUrl = 'me/contacts?$top=50';
         $contacts = [];
 
         do {
             $response = $this->apiRequest($apiUrl);
-            $data     = new Data\Collection($response);
+            $data = new Data\Collection($response);
             if (!$data->exists('value')) {
                 throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
             }
             foreach ($data->filter('value')->toArray() as $entry) {
                 $entry = new Data\Collection($entry);
-                $userContact              = new User\Contact();
-                $userContact->identifier  = $entry->get('id');
+                $userContact = new User\Contact();
+                $userContact->identifier = $entry->get('id');
                 $userContact->displayName = $entry->get('displayName');
-                if (!empty($entry->get('emailAddresses'))) {
-                    $userContact->email = $entry->get('emailAddresses')[0]->address;
+                $emailAddresses = $entry->get('emailAddresses');
+                if (!empty($emailAddresses)) {
+                    $userContact->email = $emailAddresses[0]->address;
                 }
                 // only add to collection if we have usefull data
                 if (!empty($userContact->displayName) || !empty($userContact->email)) {

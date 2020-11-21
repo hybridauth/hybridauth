@@ -13,27 +13,7 @@ use Hybridauth\Data\Collection;
 use Hybridauth\User\Profile;
 
 /**
- * Mailru provider adapter.
- *
- * Example:
- *
- *   $config = [
- *       'callback'  => Hybridauth\HttpClient\Util::getCurrentUrl(),
- *       'keys'      => ['id' => '', 'secret' => ''],
- *   ];
- *
- *   $adapter = new Hybridauth\Provider\Mailru($config);
- *
- *   try {
- *       if (!$adapter->isConnected()) {
- *           $adapter->authenticate();
- *       }
- *
- *       $userProfile = $adapter->getUserProfile();
- *   }
- *   catch(\Exception $e) {
- *       print $e->getMessage() ;
- *   }
+ * Mailru OAuth2 provider adapter.
  */
 class Mailru extends OAuth2
 {
@@ -52,13 +32,23 @@ class Mailru extends OAuth2
      */
     protected $accessTokenUrl = 'https://connect.mail.ru/oauth/token';
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $apiDocumentation = ''; // Not available
 
     /**
      * {@inheritdoc}
      */
     public function getUserProfile()
     {
-        $sign = md5('app_id=' . $this->clientId . 'method=users.getInfosecure=1session_key=' . $this->getStoredData('access_token') . $this->clientSecret);
+        $params = [
+            'app_id' => $this->clientId,
+            'method' => 'users.getInfo',
+            'secure' => 1,
+            'session_key' => $this->getStoredData('access_token'),
+        ];
+        $sign = md5(http_build_query($params, null, '') . $this->clientSecret);
 
         $param = [
             'app_id' => $this->clientId,
@@ -72,7 +62,7 @@ class Mailru extends OAuth2
 
         $data = new Collection($response[0]);
 
-        if (! $data->exists('uid')) {
+        if (!$data->exists('uid')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
