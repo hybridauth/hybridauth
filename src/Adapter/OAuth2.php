@@ -16,11 +16,7 @@ use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\RedirectResponse;
-
-use function filter_var;
-
-use const FILTER_SANITIZE_SPECIAL_CHARS;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
  * This class  can be used to simplify the authorization flow of OAuth 2 based service providers.

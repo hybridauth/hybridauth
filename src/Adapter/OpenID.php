@@ -15,7 +15,7 @@ use Hybridauth\HttpClient;
 use Hybridauth\User;
 use Hybridauth\Thirdparty\OpenID\LightOpenID;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
  * This class can be used to simplify the authentication flow of OpenID based service providers.

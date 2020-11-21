@@ -19,7 +19,7 @@ use Hybridauth\HttpClient\HttpClientInterface;
 use Hybridauth\HttpClient\Curl as HttpClient;
 use Hybridauth\Data;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 
 /**
  * Class AbstractAdapter

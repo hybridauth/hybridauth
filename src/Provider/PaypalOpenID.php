@@ -10,7 +10,7 @@ namespace Hybridauth\Provider;
 use Hybridauth\Adapter\OpenID;
 use Hybridauth\HttpClient;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
  * PayPal OpenID provider adapter.

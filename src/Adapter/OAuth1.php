@@ -19,7 +19,7 @@ use Hybridauth\Thirdparty\OAuth\OAuthRequest;
 use Hybridauth\Thirdparty\OAuth\OAuthSignatureMethodHMACSHA1;
 use Hybridauth\Thirdparty\OAuth\OAuthUtil;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
  * This class  can be used to simplify the authorization flow of OAuth 1 based service providers.
