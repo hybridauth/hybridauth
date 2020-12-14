@@ -234,7 +234,7 @@ class Twitter extends OAuth1
             'Content-Type' => 'application/json'
         ];
         
-        $response = $this->adapter->apiRequest( 'direct_messages/events/new.json', 'POST', $params, $header );
+        $response = $this->apiRequest( 'direct_messages/events/new.json', 'POST', $params, $header );
 
         return $response;
     }
