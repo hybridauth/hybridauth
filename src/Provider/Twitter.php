@@ -214,6 +214,32 @@ class Twitter extends OAuth1
     }
 
     /**
+     * Direct Message to friend
+     * @param string $to_uid
+     * @param string $message
+     */
+    public function setUserDirectMessage( $to_uid = '', $message = '' ) {
+
+        $params = [
+            'event' => [
+                'type' => 'message_create',
+                'message_create'    => [
+                    'target'        => [ 'recipient_id' => esc_html( $to_uid ) ],
+                    'message_data'  => [ 'text' => esc_html( $message ) ],
+                ],
+            ],
+        ];
+
+        $header = [
+            'Content-Type' => 'application/json'
+        ];
+        
+        $response = $this->adapter->apiRequest( 'direct_messages/events/new.json', 'POST', $params, $header );
+
+        return $response;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getUserActivity($stream = 'me')
