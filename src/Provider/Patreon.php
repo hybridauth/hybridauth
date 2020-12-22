@@ -9,6 +9,7 @@ namespace Hybridauth\Provider;
 
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception\UnexpectedApiResponseException;
+use Hybridauth\User;
 use Hybridauth\User\Profile;
 use Hybridauth\Data\Collection;
 
@@ -87,5 +88,107 @@ class Patreon extends OAuth2
         $userProfile->emailVerified = $attributes->get('is_email_verified') ? $userProfile->email : '';
 
         return $userProfile;
+    }
+
+    /**
+     * Contacts are defined as Patrons here
+     */
+    public function getUserContacts()
+    {
+        $campaignId = $this->config->get('campaign_id') ?: null;
+        $tierFilter = $this->config->get('tier_filter') ?: null;
+
+        $campaigns = [];
+        if ($campaignId === null) {
+            $campaignsUrl = 'oauth2/v2/campaigns';
+            do {
+                $response = $this->apiRequest($campaignsUrl);
+                $data = new Collection($response);
+
+                if (!$data->exists('data')) {
+                    throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+                }
+
+                foreach ($data->filter('data')->toArray() as $item) {
+                    $campaign = new Collection($item);
+                    $campaigns[] = $campaign->get('id');
+                }
+
+                if ($data->filter('links')->exists('next')) {
+                    $campaignsUrl = $data->filter('links')->get('next');
+
+                    $pagedList = true;
+                } else {
+                    $pagedList = false;
+                }
+            } while ($pagedList);
+        } else {
+            $campaigns[] = $campaignId;
+        }
+
+        $contacts = [];
+
+        foreach ($campaigns as $campaignId) {
+            $params = [
+                'include' => 'currently_entitled_tiers',
+                'fields[member]' => 'full_name,patron_status,email',
+                'fields[tier]' => 'title',
+            ];
+            $membersUrl = 'oauth2/v2/campaigns/' . $campaignId . '/members?' . http_build_query($params);
+
+            do {
+                $response = $this->apiRequest($membersUrl);
+
+                $data = new Collection($response);
+
+                if (!$data->exists('data')) {
+                    throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+                }
+
+                $tierTitles = [];
+
+                foreach ($data->filter('included')->toArray() as $item) {
+                    $includedItem = new Collection($item);
+                    if ($includedItem->get('type') == 'tier') {
+                        $tierTitles[$includedItem->get('id')] = $includedItem->filter('attributes')->get('title');
+                    }
+                }
+
+                foreach ($data->filter('data')->toArray() as $item) {
+                    $member = new Collection($item);
+
+                    if ($member->filter('attributes')->get('patron_status') == 'active_patron') {
+                        $tiers = [];
+                        $tierObs = $member->filter('relationships')->filter('currently_entitled_tiers')->get('data');
+                        foreach ($tierObs as $item) {
+                            $tier = new Collection($item);
+                            $tierId = $tier->get('id');
+                            $tiers[] = $tierTitles[$tierId];
+                        }
+
+                        if (($tierFilter === null) || (in_array($tierFilter, $tiers))) {
+                            $userContact = new User\Contact();
+
+                            $userContact->identifier = $member->get('id');
+                            $userContact->email = $member->filter('attributes')->get('email');
+                            $userContact->displayName = $member->filter('attributes')->get('full_name');
+                            $userContact->description = json_encode($tiers);
+
+                            $contacts[] = $userContact;
+                        }
+                    }
+                }
+
+                if ($data->filter('links')->exists('next')) {
+                    $membersUrl = $data->filter('links')->get('next');
+
+                    $pagedList = true;
+                } else {
+                    $pagedList = false;
+                }
+            } while ($pagedList);
+        }
+
+        return $contacts;
     }
 }
