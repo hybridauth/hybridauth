@@ -105,14 +105,31 @@ class Instagram extends OAuth2
      */
     public function exchangeAccessToken()
     {
-        $exchangeTokenParameters = [
-            'grant_type'        => 'ig_exchange_token',
-            'client_secret'     => $this->clientSecret,
-            'access_token'      => $this->getStoredData('access_token'),
-        ];
+        if ($this->getStoredData('expires_in') >= 5000000) {
+            /*
+            Refresh a long-lived token (needed on Instagram, but not Facebook).
+            It's not an oAuth style refresh using a refresh token.
+            Actually it's really just another exchange, and invalidates the old token.
+            Facebook/Instagram documentation is not very helpful at explaining that!
+            */
+            $exchangeTokenParameters = [
+                'grant_type'        => 'ig_refresh_token',
+                'client_secret'     => $this->clientSecret,
+                'access_token'      => $this->getStoredData('access_token'),
+            ];
+            $url = 'https://graph.instagram.com/refresh_access_token';
+        } else {
+            // Exchange short-lived to long-lived
+            $exchangeTokenParameters = [
+                'grant_type'        => 'ig_exchange_token',
+                'client_secret'     => $this->clientSecret,
+                'access_token'      => $this->getStoredData('access_token'),
+            ];
+            $url = 'https://graph.instagram.com/access_token';
+        }
 
         $response = $this->httpClient->request(
-            'https://graph.instagram.com/access_token',
+            $url,
             'GET',
             $exchangeTokenParameters
         );
