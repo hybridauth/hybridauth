@@ -15,6 +15,8 @@ use Hybridauth\Exception\AuthorizationDeniedException;
 use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
+use Psr\Http\Message\ServerRequestInterface;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
  * This class  can be used to simplify the authorization flow of OAuth 2 based service providers.
@@ -300,8 +302,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function authenticate()
+    public function authenticate(ServerRequestInterface $request = null)
     {
+        /** @var ServerRequestInterface $request */
+        $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 
         if ($this->isConnected()) {
@@ -309,15 +313,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         try {
-            $this->authenticateCheckError();
+            $this->authenticateCheckError($request);
 
-            $code = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
+            $code = $this->getBodyOrQueryParamFromRequest('code', $request);
 
             if (empty($code)) {
-                $this->authenticateBegin();
-            } else {
-                $this->authenticateFinish();
+                return $this->authenticateBegin($request);
             }
+
+            $this->authenticateFinish($request);
         } catch (Exception $e) {
             $this->clearStoredData();
 
@@ -357,16 +361,18 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      *
      * http://tools.ietf.org/html/rfc6749#section-4.1.2.1
      *
+     * @param ServerRequestInterface|null $request
+     *
      * @throws \Hybridauth\Exception\InvalidAuthorizationCodeException
      * @throws \Hybridauth\Exception\AuthorizationDeniedException
      */
-    protected function authenticateCheckError()
+    protected function authenticateCheckError(ServerRequestInterface $request)
     {
-        $error = filter_input(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
+        $error = filter_var($this->getQueryParamFromRequest('error', $request), FILTER_SANITIZE_SPECIAL_CHARS);
 
         if (!empty($error)) {
-            $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
-            $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_description = filter_var($this->getQueryParamFromRequest('error_description', $request), FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_uri = filter_var($this->getQueryParamFromRequest('error_uri', $request), FILTER_SANITIZE_SPECIAL_CHARS);
 
             $collated_error = sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri);
 
@@ -383,12 +389,20 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      *
      * Build Authorization URL for Authorization Request and redirect the user-agent to the
      * Authorization Server.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return RedirectResponse|void
      */
-    protected function authenticateBegin()
+    protected function authenticateBegin(ServerRequestInterface $request)
     {
         $authUrl = $this->getAuthorizeUrl();
 
         $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
+
+        if (!$this->isGeneratedRequest($request)) {
+            return new RedirectResponse($authUrl);
+        }
 
         HttpClient\Util::redirect($authUrl);
     }
@@ -396,20 +410,22 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
     /**
      * Finalize the authorization process
      *
+     * @param ServerRequestInterface $request
+     *
      * @throws \Hybridauth\Exception\HttpClientFailureException
      * @throws \Hybridauth\Exception\HttpRequestFailedException
      * @throws InvalidAccessTokenException
      * @throws InvalidAuthorizationStateException
      */
-    protected function authenticateFinish()
+    protected function authenticateFinish(ServerRequestInterface $request)
     {
         $this->logger->debug(
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
-            [HttpClient\Util::getCurrentUrl(true)]
+            [(string)$request->getUri()]
         );
 
-        $state = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'state');
-        $code = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
+        $state = $this->getBodyOrQueryParamFromRequest('state', $request);
+        $code = $this->getBodyOrQueryParamFromRequest('code', $request);
 
         /**
          * Authorization Request State

@@ -18,6 +18,8 @@ use Hybridauth\Logger\Logger;
 use Hybridauth\HttpClient\HttpClientInterface;
 use Hybridauth\HttpClient\Curl as HttpClient;
 use Hybridauth\Data;
+use Psr\Http\Message\ServerRequestInterface;
+use Laminas\Diactoros\ServerRequestFactory;
 
 /**
  * Class AbstractAdapter
@@ -368,5 +370,51 @@ abstract class AbstractAdapter implements AdapterInterface
                 '. Raw Provider API response: ' . $this->httpClient->getResponseBody() . '.'
             );
         }
+    }
+
+    /**
+     * @param ServerRequestInterface|null $request
+     *
+     * @return ServerRequestInterface
+     */
+    protected function generateRequest(ServerRequestInterface $request = null)
+    {
+        if ($request === null) {
+            $request = ServerRequestFactory::fromGlobals()->withAttribute('HYBRIDAUTH::GENERATED', true);
+        }
+
+        return $request;
+    }
+
+    protected function isGeneratedRequest(ServerRequestInterface $request)
+    {
+        return $request->getAttribute('HYBRIDAUTH::GENERATED', false) === true;
+    }
+
+    /**
+     * @param string|int             $paramKey
+     * @param ServerRequestInterface $request
+     *
+     * @return mixed|null
+     */
+    protected function getQueryParamFromRequest($paramKey, ServerRequestInterface $request)
+    {
+        return array_key_exists($paramKey, $request->getQueryParams()) ? $request->getQueryParams()[$paramKey] : null;
+    }
+
+    /**
+     * @param string|int             $paramKey
+     * @param ServerRequestInterface $request
+     *
+     * @return mixed|null
+     */
+    protected function getBodyParamFromRequest($paramKey, ServerRequestInterface $request)
+    {
+        return array_key_exists($paramKey, $request->getParsedBody()) ? $request->getParsedBody()[$paramKey] : null;
+    }
+
+    protected function getBodyOrQueryParamFromRequest($paramKey, ServerRequestInterface $request)
+    {
+        return $request->getMethod() === 'POST' ? $this->getBodyParamFromRequest($paramKey, $request) : $this->getQueryParamFromRequest($paramKey, $request);
     }
 }

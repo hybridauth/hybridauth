@@ -14,6 +14,8 @@ use Hybridauth\Data;
 use Hybridauth\HttpClient;
 use Hybridauth\User;
 use Hybridauth\Thirdparty\OpenID\LightOpenID;
+use Psr\Http\Message\ServerRequestInterface;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
  * This class can be used to simplify the authentication flow of OpenID based service providers.
@@ -82,8 +84,10 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function authenticate()
+    public function authenticate(ServerRequestInterface $request = null)
     {
+        /** @var ServerRequestInterface $request */
+        $request = $this->generateRequest($request);
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
 
         if ($this->isConnected()) {
@@ -91,12 +95,10 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         }
 
         if (empty($_REQUEST['openid_mode'])) {
-            $this->authenticateBegin();
-        } else {
-            return $this->authenticateFinish();
+            return $this->authenticateBegin($request);
         }
 
-        return null;
+        return $this->authenticateFinish();
     }
 
     /**
@@ -121,8 +123,12 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
      * Initiate the authorization protocol
      *
      * Include and instantiate LightOpenID
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return RedirectResponse|void
      */
-    protected function authenticateBegin()
+    protected function authenticateBegin(ServerRequestInterface $request)
     {
         $this->openIdClient->identity = $this->openidIdentifier;
         $this->openIdClient->returnUrl = $this->callback;
@@ -148,6 +154,10 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
         $authUrl = $this->openIdClient->authUrl();
 
         $this->logger->debug(sprintf('%s::authenticateBegin(), redirecting user to:', get_class($this)), [$authUrl]);
+
+        if (!$this->isGeneratedRequest($request)) {
+            return new RedirectResponse($authUrl);
+        }
 
         HttpClient\Util::redirect($authUrl);
     }

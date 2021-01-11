@@ -18,7 +18,8 @@
     "require": {
         "php": "^5.4 || ^7.0 || ^8.0",
         "firebase/php-jwt": "^4.0 || ^5.0",
-        "phpseclib/phpseclib": "~2.0"
+        "phpseclib/phpseclib": "~2.0",
+        "laminas/laminas-diactoros": "^1.4||^2.0"
     },
     "require-dev": {
         "ext-curl": "*",
@@ -31,7 +32,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-           "HybridauthTest\\Hybridauth\\": "test/"
+           "HybridauthTest\\Hybridauth\\": "tests/"
         }
     }
 }
