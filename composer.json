@@ -16,7 +16,7 @@
         "gitter": "https://gitter.im/hybridauth/hybridauth"
     },
     "require": {
-        "php": "^5.4 || ^7.0 || ^8.0",
+        "php": "^5.4 || ^7.0 || ^8.0"
     },
     "require-dev": {
         "ext-curl": "*",
