@@ -62,7 +62,7 @@ class Yandex extends OAuth2
         $userProfile = new User\Profile();
 		
         $userProfile->identifier = $data->get('id');
-		$userProfile->firstName = $data->get('first_name');
+        $userProfile->firstName = $data->get('first_name');
         $userProfile->lastName = $data->get('last_name');
         $userProfile->displayName = $data->get('display_name');
         $userProfile->photoURL = 'https://avatars.yandex.net/get-yapic/' . $data->get('default_avatar_id') . '/islands-200';
