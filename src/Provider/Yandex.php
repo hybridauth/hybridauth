@@ -48,21 +48,19 @@ class Yandex extends OAuth2
     {
         $this->scope = implode(',', []);
 
-        $response
-            = $this->apiRequest($this->apiBaseUrl, 'GET', ['format' => 'json']);
-        
+        $response = $this->apiRequest($this->apiBaseUrl, 'GET', ['format' => 'json']);
+
         if (!isset($response->id)) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $data = new Data\Collection($response);
-        
+
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
-        
+
         $userProfile = new User\Profile();
-        
         $userProfile->identifier = $data->get('id');
         $userProfile->firstName = $data->get('first_name');
         $userProfile->lastName = $data->get('last_name');
