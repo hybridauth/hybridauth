@@ -158,7 +158,7 @@ class Apple extends OAuth2
         $id_token = $this->getStoredData('id_token');
 
         $verifyTokenSignature =
-            ($this->config->exists('verifyTokenSignature')) ? $this->config->get('verifyTokenSignature') : true;
+            $this->config->exists('verifyTokenSignature') ? $this->config->get('verifyTokenSignature') : true;
 
         if (!$verifyTokenSignature) {
             // payload extraction by https://github.com/omidborjian
@@ -197,7 +197,8 @@ class Apple extends OAuth2
                     }
                 }
             }
-            if ($error) {
+
+            if ($error && !$payload) {
                 throw new \Exception($error);
             }
         }
