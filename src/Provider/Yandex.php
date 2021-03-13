@@ -48,7 +48,7 @@ class Yandex extends OAuth2
     {
         $this->scope = implode(',', []);
 
-        $response 
+        $response
             = $this->apiRequest($this->apiBaseUrl, 'GET', ['format' => 'json']);
         
         if (!isset($response->id)) {
@@ -67,15 +67,15 @@ class Yandex extends OAuth2
         $userProfile->firstName = $data->get('first_name');
         $userProfile->lastName = $data->get('last_name');
         $userProfile->displayName = $data->get('display_name');
-        $userProfile->photoURL 
-            = 'https://avatars.yandex.net/get-yapic/' . 
+        $userProfile->photoURL
+            = 'https://avatars.yandex.net/get-yapic/' .
             $data->get('default_avatar_id') . '/islands-200';
         $userProfile->gender = $data->get('sex');
         $userProfile->email = $data->get('default_email');
         $userProfile->emailVerified = $data->get('default_email');
 
         if ($data->get('birthday')) {
-            list($birthday_year, $birthday_month, $birthday_day) 
+            list($birthday_year, $birthday_month, $birthday_day)
                 = explode('-', $response->birthday);
             $userProfile->birthDay = (int)$birthday_day;
             $userProfile->birthMonth = (int)$birthday_month;
