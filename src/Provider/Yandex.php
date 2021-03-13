@@ -10,8 +10,8 @@ namespace Hybridauth\Provider;
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Exception\Exception;
 use Hybridauth\Exception\UnexpectedApiResponseException;
-use Hybridauth\Data;
-use Hybridauth\User;
+use Hybridauth\Data\Collection;
+use Hybridauth\User\Profile;
 
 /**
  * Yandex OAuth2 provider adapter.
@@ -48,24 +48,24 @@ class Yandex extends OAuth2
         $this->scope = implode(',', []);
 
         $response = $this->apiRequest($this->apiBaseUrl, 'GET', ['format' => 'json']);
-		
+
         if (!isset($response->id)) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
-        $data = new Data\Collection($response);
-		
+        $data = new Collection($response);
+
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
-		
-        $userProfile = new User\Profile();
-		
+
+        $userProfile = new Profile();
+
         $userProfile->identifier = $data->get('id');
-		$userProfile->firstName = $data->get('first_name');
-        $userProfile->lastName = $data->get('last_name');
+        $userProfile->firstName = $data->get('real_name');
+        $userProfile->lastName = $data->get('family_name');
         $userProfile->displayName = $data->get('display_name');
-        $userProfile->photoURL = 'https://avatars.yandex.net/get-yapic/' . $data->get('default_avatar_id') . '/islands-200';
+        $userProfile->photoURL = 'http://upics.yandex.net/' . $userProfile->identifier . '/normal';
         $userProfile->profileURL = "";
         $userProfile->gender = $data->get('sex');
         $userProfile->email = $data->get('default_email');
