@@ -1,9 +1,9 @@
 <?php
 /*!
-* Hybridauth
-* https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
-*  (c) 2020 Hybridauth authors | https://hybridauth.github.io/license.html
-*/
+ * Hybridauth
+ * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
+ *  (c) 2020 Hybridauth authors | https://hybridauth.github.io/license.html
+ */
 
 namespace Hybridauth\Provider;
 
@@ -30,22 +30,26 @@ class AutoDesk extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://developer.api.autodesk.com/authentication/v1/authorize';
+    protected $authorizeUrl 
+        = 'https://developer.api.autodesk.com/authentication/v1/authorize';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://developer.api.autodesk.com/authentication/v1/gettoken';
+    protected $accessTokenUrl 
+        = 'https://developer.api.autodesk.com/authentication/v1/gettoken';
 
     /**
      * {@inheritdoc}
      */
-    protected $refreshTokenUrl = 'https://developer.api.autodesk.com/authentication/v1/refreshtoken';
+    protected $refreshTokenUrl 
+        = 'https://developer.api.autodesk.com/authentication/v1/refreshtoken';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://forge.autodesk.com/en/docs/oauth/v2/developers_guide/overview/';
+    protected $apiDocumentation 
+        = 'https://forge.autodesk.com/en/docs/oauth/v2/developers_guide/overview/';
 
     /**
      * {@inheritdoc}
@@ -77,13 +81,15 @@ class AutoDesk extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier = $collection->get('userId');
-        $userProfile->displayName = $collection->get('firstName') .' '. $collection->get('lastName');
+        $userProfile->displayName 
+            = $collection->get('firstName') .' '. $collection->get('lastName');
         $userProfile->firstName = $collection->get('firstName');
         $userProfile->lastName = $collection->get('lastName');
         $userProfile->email = $collection->get('emailId');
         $userProfile->language = $collection->get('language');
         $userProfile->webSiteURL = $collection->get('websiteUrl');
-        $userProfile->photoURL = $collection->filter('profileImages')->get('sizeX360');
+        $userProfile->photoURL 
+            = $collection->filter('profileImages')->get('sizeX360');
 
         return $userProfile;
     }
