@@ -30,25 +30,25 @@ class AutoDesk extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl 
+    protected $authorizeUrl
         = 'https://developer.api.autodesk.com/authentication/v1/authorize';
 
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl 
+    protected $accessTokenUrl
         = 'https://developer.api.autodesk.com/authentication/v1/gettoken';
 
     /**
      * {@inheritdoc}
      */
-    protected $refreshTokenUrl 
+    protected $refreshTokenUrl
         = 'https://developer.api.autodesk.com/authentication/v1/refreshtoken';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation 
+    protected $apiDocumentation
         = 'https://forge.autodesk.com/en/docs/oauth/v2/developers_guide/overview/';
 
     /**
@@ -81,14 +81,14 @@ class AutoDesk extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier = $collection->get('userId');
-        $userProfile->displayName 
+        $userProfile->displayName
             = $collection->get('firstName') .' '. $collection->get('lastName');
         $userProfile->firstName = $collection->get('firstName');
         $userProfile->lastName = $collection->get('lastName');
         $userProfile->email = $collection->get('emailId');
         $userProfile->language = $collection->get('language');
         $userProfile->webSiteURL = $collection->get('websiteUrl');
-        $userProfile->photoURL 
+        $userProfile->photoURL
             = $collection->filter('profileImages')->get('sizeX360');
 
         return $userProfile;
