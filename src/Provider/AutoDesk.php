@@ -61,7 +61,6 @@ class AutoDesk extends OAuth2
                 'grant_type'    => 'refresh_token',
             ];
         }
-
     }
 
     /**
