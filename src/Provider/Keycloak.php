@@ -36,10 +36,6 @@ class Keycloak extends OAuth2
      */
     public $scope = 'openid profile email';
 
-    protected $url;
-
-    protected $realm;
-
     /**
      * {@inheritdoc}
      */
@@ -57,17 +53,16 @@ class Keycloak extends OAuth2
                 'You must define a provider url'
             );
         }
-        $this->url = $this->config->get('url');
-
+        $url = $this->config->get('url');
 
         if (!$this->config->exists('realm')) {
             throw new InvalidApplicationCredentialsException(
                 'You must define a realm'
             );
         }
-        $this->realm = $this->config->get('realm');
+        $realm = $this->config->get('realm');
 
-        $this->apiBaseUrl = $this->url . '/realms/' . $this->realm . '/protocol/openid-connect/';
+        $this->apiBaseUrl = $url . '/realms/' . $realm . '/protocol/openid-connect/';
 
         $this->authorizeUrl = $this->apiBaseUrl . 'auth';
         $this->accessTokenUrl = $this->apiBaseUrl . 'token';
