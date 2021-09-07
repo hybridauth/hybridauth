@@ -82,22 +82,19 @@ class Hybrid_Providers_HumanitarianId extends Hybrid_Provider_Model_OAuth2
       "Authorization: Bearer {$this->api->access_token}",
     );
     $data = $this->api->post( "account.json" );
-    if ( ! isset( $data->id ) ){
+    if ( ! isset( $data->sub ) ){
       throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
     }
 
-    $this->user->profile->identifier  = @ $data->user_id;
+    $this->user->profile->identifier  = @ $data->sub;
     $this->user->profile->displayName = @ $data->name;
     $this->user->profile->email       = @ $data->email;
     $this->user->profile->firstName   = @ $data->given_name;
     $this->user->profile->lastName    = @ $data->family_name;
     $this->user->profile->emailVerified    = @ $data->email_verified;
-    $this->user->profile->locale = @ $data->locale;
-    $this->user->profile->zoneinfo = @ $data->zoneinfo;
-    $this->user->profile->photoURL = @ $data->picture;
 
     if( empty($this->user->profile->displayName) ){
-      $this->user->profile->displayName = @ $data->user_id;
+      $this->user->profile->displayName = @ $data->email;
     }
 
     return $this->user->profile;
