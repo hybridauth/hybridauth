@@ -112,7 +112,7 @@ final class Parser
      */
     public function parseBirthday($birthday, $seperator)
     {
-        $birthday = date_parse($birthday);
+        $birthday = date_parse((string) $birthday);
 
         return [$birthday['year'], $birthday['month'], $birthday['day']];
     }
