@@ -106,11 +106,10 @@ final class Parser
      * needs to be improved
      *
      * @param $birthday
-     * @param $seperator
      *
      * @return array
      */
-    public function parseBirthday($birthday, $seperator)
+    public function parseBirthday($birthday)
     {
         $birthday = date_parse((string) $birthday);
 
