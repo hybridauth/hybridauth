@@ -145,7 +145,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      *
      * @var bool
      */
-    protected $supportRequestState = true;
+    public $supportRequestState = true;
 
     /**
      * Access Token name
