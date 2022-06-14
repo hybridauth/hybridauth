@@ -7,8 +7,8 @@
 
 namespace Hybridauth\Provider;
 
-use Hybridauth\Exception\InvalidArgumentException;
-use Hybridauth\Exception\UnexpectedApiResponseException;
+use Exception;
+use Firebase\JWT\ExpiredException;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\UnexpectedValueException;
 
@@ -19,8 +19,7 @@ use Hybridauth\User;
 use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
 
-use \Firebase\JWT\JWT;
-use \Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
 
 /**
  * Apple OAuth2 provider adapter.
@@ -110,7 +109,7 @@ class Apple extends OAuth2
         $keys = $this->config->get('keys');
         $keys['secret'] = $this->getSecret();
         $this->config->set('keys', $keys);
-        return parent::configure();
+        parent::configure();
     }
 
     /**
@@ -170,7 +169,7 @@ class Apple extends OAuth2
             // validate the token signature and get the payload
             $publicKeys = $this->apiRequest('keys');
 
-            \Firebase\JWT\JWT::$leeway = 120;
+            JWT::$leeway = 120;
 
             $error = false;
             $payload = null;
@@ -190,15 +189,15 @@ class Apple extends OAuth2
 
                     $payload = JWT::decode($id_token, $pem, ['RS256']);
                     break;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $error = $e->getMessage();
-                    if ($e instanceof \Firebase\JWT\ExpiredException) {
+                    if ($e instanceof ExpiredException) {
                         break;
                     }
                 }
             }
             if ($error) {
-                throw new \Exception($error);
+                throw new Exception($error);
             }
         }
 
