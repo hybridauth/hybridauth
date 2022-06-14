@@ -7,6 +7,7 @@
 
 namespace Hybridauth\Provider;
 
+use Composer\InstalledVersions;
 use Exception;
 use Firebase\JWT\ExpiredException;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
@@ -20,6 +21,7 @@ use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 /**
  * Apple OAuth2 provider adapter.
@@ -187,7 +189,9 @@ class Apple extends OAuth2
                     );
                     $pem = $rsa->getPublicKey();
 
-                    $payload = JWT::decode($id_token, $pem, ['RS256']);
+                    $payload = ($this->getJwtVersion() < '6.2') ?
+                        JWT::decode($id_token, $pem, ['RS256']) :
+                        JWT::decode($id_token, new Key($pem, 'RS256'));
                     break;
                 } catch (Exception $e) {
                     $error = $e->getMessage();
@@ -283,5 +287,10 @@ class Apple extends OAuth2
         $secret = JWT::encode($data, $key_content, 'ES256', $key_id);
 
         return $secret;
+    }
+
+    private function getJwtVersion()
+    {
+        return InstalledVersions::getVersion('firebase/php-jwt');
     }
 }
