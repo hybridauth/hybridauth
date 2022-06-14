@@ -104,7 +104,7 @@ class Twitter extends OAuth1
         $userProfile->region = $data->get('location');
 
         $userProfile->profileURL = $data->exists('screen_name')
-            ? ('http://twitter.com/' . $data->get('screen_name'))
+            ? ('https://twitter.com/' . $data->get('screen_name'))
             : '';
 
         $photoSize = $this->config->get('photo_size') ?: 'original';
@@ -181,7 +181,7 @@ class Twitter extends OAuth1
         $userContact->description = $item->get('description');
 
         $userContact->profileURL = $item->exists('screen_name')
-            ? ('http://twitter.com/' . $item->get('screen_name'))
+            ? ('https://twitter.com/' . $item->get('screen_name'))
             : '';
 
         return $userContact;
@@ -256,7 +256,7 @@ class Twitter extends OAuth1
         $userActivity->user->photoURL = $item->filter('user')->get('profile_image_url');
 
         $userActivity->user->profileURL = $item->filter('user')->get('screen_name')
-            ? ('http://twitter.com/' . $item->filter('user')->get('screen_name'))
+            ? ('https://twitter.com/' . $item->filter('user')->get('screen_name'))
             : '';
 
         return $userActivity;

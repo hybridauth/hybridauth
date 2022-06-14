@@ -24,12 +24,6 @@ final class Collection
      */
     public function __construct($data = null)
     {
-        $this->collection = new \stdClass();
-
-        if (is_object($data)) {
-            $this->collection = $data;
-        }
-
         $this->collection = (object)$data;
     }
 

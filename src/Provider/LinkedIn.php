@@ -20,7 +20,7 @@ class LinkedIn extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'r_liteprofile r_emailaddress w_member_social';
+    protected $scope = 'r_liteprofile r_emailaddress';
 
     /**
      * {@inheritdoc}
@@ -144,9 +144,14 @@ class LinkedIn extends OAuth2
      * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin
+     * @throws \Exception
      */
     public function setUserStatus($status, $userID = null)
     {
+        if (strpos($this->scope, 'w_member_social') === false) {
+            throw new \Exception('Set user status requires w_member_social permission!');
+        }
+
         if (is_string($status)) {
             $status = [
                 'author' => 'urn:li:person:' . $userID,
