@@ -147,7 +147,7 @@ class Vkontakte extends OAuth2
             $bday = explode('.', $data->get('bdate'));
             $userProfile->birthDay = (int)$bday[0];
             $userProfile->birthMonth = (int)$bday[1];
-            $userProfile->birthYear = (int)$bday[2];
+            $userProfile->birthYear = isset($bday[2]) ? (int)$bday[2] : null;
         }
 
         $userProfile->data = [
