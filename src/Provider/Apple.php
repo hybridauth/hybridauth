@@ -299,6 +299,9 @@ class Apple extends OAuth2
 
     private function getJwtVersion()
     {
-        return InstalledVersions::getVersion('firebase/php-jwt');
+        // assume old JWT version if no version check is possible because composer 1 is installed
+        return class_exists('Composer\InstalledVersions') ?
+            InstalledVersions::getVersion('firebase/php-jwt') :
+            '';
     }
 }
