@@ -48,7 +48,7 @@ class Mailru extends OAuth2
             'secure' => 1,
             'session_key' => $this->getStoredData('access_token'),
         ];
-        $sign = md5(http_build_query($params, null, '') . $this->clientSecret);
+        $sign = md5(http_build_query($params, '', '') . $this->clientSecret);
 
         $param = [
             'app_id' => $this->clientId,
