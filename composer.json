@@ -1,5 +1,5 @@
 {
-    "name": "hybridauth/hybridauth",
+    "name": "zoonru/hybridauth",
     "description": "PHP Social Authentication Library",
     "keywords": ["oauth", "openid", "authentication", "authorization", "social", "api", "google", "facebook", "twitter", "apple"],
     "homepage": "https://hybridauth.github.io",
