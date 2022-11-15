@@ -20,6 +20,8 @@ class PlexTv extends OAuth2
             $this->product = $product;
         }
         $this->setCallback($this->config->get('callback'));
+
+        $this->clientId = $this->callback;
     }
 
     protected function initialize()
@@ -27,25 +29,24 @@ class PlexTv extends OAuth2
         $this->apiRequestHeaders = [
             'Accept' => 'application/json',
             'X-Plex-Product' => $this->product,
-            'X-Plex-Client-Identifier' => $this->getStoredData('client_id') ?: '',
+            'X-Plex-Client-Identifier' => $this->clientId,
             'X-Plex-Token' =>  $this->getStoredData('access_token') ?: '',
         ];
     }
 
     protected function getAuthorizeUrl($parameters = [])
     {
-        $clientId = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
-        $this->storeData('client_id', $clientId);
-        $this->storeData('authorization_state', $clientId);
+        $state = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+        $this->storeData('authorization_state', $state);
         $pin = $this->apiRequest('pins', 'POST', [
             'strong' => 'true',
-            'X-Plex-Client-Identifier' => $clientId,
+            'X-Plex-Client-Identifier' => $this->clientId,
         ]);
 
         return 'https://app.plex.tv/auth#?'.http_build_query([
-            'clientID' => $clientId,
+            'clientID' => $this->clientId,
             'code' => $pin->code,
-            'forwardUrl' => $this->callback.'?'.http_build_query(['code' => $pin->id, 'state' => $clientId]),
+            'forwardUrl' => $this->callback.'?'.http_build_query(['code' => $pin->id, 'state' => $state]),
             'context' => ['device' => ['product' => $this->product]],
         ]);
     }
