@@ -76,10 +76,30 @@ class Mastodon extends OAuth2
         }
         
 		if (isset($status['picture'])) {
-            $params['media_ids'] = $status['picture'];
+			$headers = [
+				'Content-Type' => 'multipart/form-data',
+			];
+			
+			$pictures = $status['picture'];
+			
+			$ids = [];
+			
+			foreach($pictures as $picture) {
+				$images = $this->apiRequest($this->config->get('url') . '/api/v2/media', 'POST', [
+					'file' => new \CurlFile($picture, 'image/jpg', 'filename'),
+				], $headers, true);
+			   
+				$ids[] = $images->id;
+			}
+			
+			$params['media_ids'] = $ids;
         }
 
-        $response = $this->apiRequest('statuses', 'POST', $params);
+        $headers = [
+			'Content-Type' => 'application/json',
+		];
+
+        $response = $this->apiRequest('statuses', 'POST', $params, $headers, false);
 
         return $response;
     }
