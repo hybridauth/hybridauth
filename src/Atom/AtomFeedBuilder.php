@@ -45,13 +45,20 @@ class AtomFeedBuilder
             ';
 
             $title = $atom->title;
-            if (($title == '') && ($trulyValid)) {
+            if (empty($title) && ($trulyValid)) {
                 if ($atom->summary !== null) {
                     $title = AtomHelper::htmlToPlainText($atom->summary);
                 } elseif ($atom->content !== null) {
                     $title = AtomHelper::htmlToPlainText($atom->content);
                 }
+                if ($title === null) {
+                    $title = '';
+                }
                 AtomHelper::limitLengthTo($title, 50);
+            } else {
+                if ($title === null) {
+                    $title = '';
+                }
             }
             $xml .= '
         <title>' . htmlentities($title, ENT_XML1) . '</title>
@@ -126,7 +133,7 @@ class AtomFeedBuilder
                     $mimeType = Enclosure::guessMimeType($enclosure->url);
                 }
                 if ($mimeType !== null) {
-                    $typeAttribute = ' type="' . htmlentities($enclosure->mimeType, ENT_XML1) . '"';
+                    $typeAttribute = ' type="' . htmlentities($mimeType, ENT_XML1) . '"';
                 }
                 $xml .= '
         <link' . $lengthAttribute . $hrefAttribute . $typeAttribute . ' rel="enclosure" />
