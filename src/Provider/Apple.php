@@ -7,8 +7,12 @@
 
 namespace Hybridauth\Provider;
 
-use Hybridauth\Exception\InvalidArgumentException;
-use Hybridauth\Exception\UnexpectedApiResponseException;
+use Composer\InstalledVersions;
+use Exception;
+use Firebase\JWT\ExpiredException;
+use Hybridauth\Exception\HttpClientFailureException;
+use Hybridauth\Exception\HttpRequestFailedException;
+use Hybridauth\Exception\InvalidAccessTokenException;
 use Hybridauth\Exception\InvalidApplicationCredentialsException;
 use Hybridauth\Exception\UnexpectedValueException;
 
@@ -19,8 +23,8 @@ use Hybridauth\User;
 use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
 
-use \Firebase\JWT\JWT;
-use \Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 /**
  * Apple OAuth2 provider adapter.
@@ -111,13 +115,14 @@ class Apple extends OAuth2
 
     /**
      * {@inheritdoc}
+     * @throws InvalidApplicationCredentialsException
      */
     protected function configure()
     {
         $keys = $this->config->get('keys');
         $keys['secret'] = $this->getSecret();
         $this->config->set('keys', $keys);
-        return parent::configure();
+        parent::configure();
     }
 
     /**
@@ -160,6 +165,15 @@ class Apple extends OAuth2
         return $collection;
     }
 
+    /**
+     * Get the user profile
+     *
+     * @throws HttpClientFailureException
+     * @throws InvalidAccessTokenException
+     * @throws UnexpectedValueException
+     * @throws HttpRequestFailedException
+     * @throws Exception
+     */
     public function getUserProfile()
     {
         $id_token = $this->getStoredData('id_token');
@@ -177,7 +191,7 @@ class Apple extends OAuth2
             // validate the token signature and get the payload
             $publicKeys = $this->apiRequest('keys');
 
-            \Firebase\JWT\JWT::$leeway = 120;
+            JWT::$leeway = 120;
 
             $error = false;
             $payload = null;
@@ -195,18 +209,20 @@ class Apple extends OAuth2
                     );
                     $pem = $rsa->getPublicKey();
 
-                    $payload = JWT::decode($id_token, $pem, ['RS256']);
+                    $payload = (version_compare($this->getJwtVersion(), '6.2') < 0) ?
+                        JWT::decode($id_token, $pem, ['RS256']) :
+                        JWT::decode($id_token, new Key($pem, 'RS256'));
                     break;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $error = $e->getMessage();
-                    if ($e instanceof \Firebase\JWT\ExpiredException) {
+                    if ($e instanceof ExpiredException) {
                         break;
                     }
                 }
             }
 
             if ($error && !$payload) {
-                throw new \Exception($error);
+                throw new Exception($error);
             }
         }
 
@@ -236,26 +252,35 @@ class Apple extends OAuth2
     }
 
     /**
+     * Get the Apple secret as a JWT token
+     *
      * @return string secret token
+     * @throws InvalidApplicationCredentialsException
      */
     private function getSecret()
     {
         // Your 10-character Team ID
-        if (!$team_id = $this->config->filter('keys')->get('team_id')) {
+        $team_id = $this->config->filter('keys')->get('team_id');
+
+        if (!$team_id) {
             throw new InvalidApplicationCredentialsException(
                 'Missing parameter team_id: your team id is required to generate the JWS token.'
             );
         }
 
         // Your Services ID, e.g. com.aaronparecki.services
-        if (!$client_id = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key')) {
+        $client_id = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key');
+
+        if (!$client_id) {
             throw new InvalidApplicationCredentialsException(
                 'Missing parameter id: your client id is required to generate the JWS token.'
             );
         }
 
         // Find the 10-char Key ID value from the portal
-        if (!$key_id = $this->config->filter('keys')->get('key_id')) {
+        $key_id = $this->config->filter('keys')->get('key_id');
+
+        if (!$key_id) {
             throw new InvalidApplicationCredentialsException(
                 'Missing parameter key_id: your key id is required to generate the JWS token.'
             );
@@ -266,7 +291,9 @@ class Apple extends OAuth2
 
         // Save your private key from Apple in a file called `key.txt`
         if (!$key_content) {
-            if (!$key_file = $this->config->filter('keys')->get('key_file')) {
+            $key_file = $this->config->filter('keys')->get('key_file');
+
+            if (!$key_file) {
                 throw new InvalidApplicationCredentialsException(
                     'Missing parameter key_content or key_file: your key is required to generate the JWS token.'
                 );
@@ -289,8 +316,22 @@ class Apple extends OAuth2
             'sub' => $client_id
         ];
 
-        $secret = JWT::encode($data, $key_content, 'ES256', $key_id);
+        return JWT::encode($data, $key_content, 'ES256', $key_id);
+    }
 
-        return $secret;
+    /**
+     * Try to get the installed JWT version
+     *
+     * If composer 2 is installed use InstalledVersions::getVersion,
+     * otherwise return an empty string because no version check is available
+     *
+     * @return string|null
+     */
+    private function getJwtVersion()
+    {
+        // assume old JWT version if no version check is possible because composer 1 is installed
+        return class_exists('Composer\InstalledVersions') ?
+            InstalledVersions::getVersion('firebase/php-jwt') :
+            '';
     }
 }
