@@ -20,8 +20,8 @@ use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
 use Hybridauth\User;
 
-use phpseclib\Crypt\RSA;
-use phpseclib\Math\BigInteger;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Math\BigInteger;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -198,16 +198,18 @@ class Apple extends OAuth2
 
             foreach ($publicKeys->keys as $publicKey) {
                 try {
-                    $rsa = new RSA();
                     $jwk = (array)$publicKey;
 
-                    $rsa->loadKey(
+                    $key = PublicKeyLoader::load(
                         [
                             'e' => new BigInteger(base64_decode($jwk['e']), 256),
                             'n' => new BigInteger(base64_decode(strtr($jwk['n'], '-_', '+/'), true), 256)
                         ]
-                    );
-                    $pem = $rsa->getPublicKey();
+                    )
+                        ->withHash('sha1')
+                        ->withMGFHash('sha1');
+
+                    $pem = (string)$key;
 
                     $payload = (version_compare($this->getJwtVersion(), '6.2') < 0) ?
                         JWT::decode($id_token, $pem, ['RS256']) :
