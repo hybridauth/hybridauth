@@ -111,7 +111,7 @@ class Hybrid_Providers_Odnoklassniki extends Hybrid_Provider_Model_OAuth2
 			$this->authodnoklass($code);
 		}
 		catch (Exception $e) {
-			throw new Exception("User profile request failed! {$this->providerId} returned an error: $e->getMessage() ", 6);
+			throw new Exception("User profile request failed! {$this->providerId} returned an error: {$e->getMessage()} ", 6);
 		}
 		// Check if authenticated
 		if (!$this->api->access_token) {
