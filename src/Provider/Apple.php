@@ -244,9 +244,11 @@ class Apple extends OAuth2
             $user = new Data\Collection($objUser);
             if (!$user->isEmpty()) {
                 $name = $user->get('name');
-                $userProfile->firstName = $name->firstName;
-                $userProfile->lastName = $name->lastName;
-                $userProfile->displayName = join(' ', [$userProfile->firstName, $userProfile->lastName]);
+                if (!empty($name->firstName)) {
+                    $userProfile->firstName = $name->firstName;
+                    $userProfile->lastName = $name->lastName;
+                    $userProfile->displayName = join(' ', [$userProfile->firstName, $userProfile->lastName]);
+                }
             }
         }
 
