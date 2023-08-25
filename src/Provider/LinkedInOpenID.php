@@ -72,16 +72,12 @@ class LinkedInOpenID extends OAuth2
 
         $userProfile = new User\Profile();
 
-        // Handle localized names.
         $userProfile->firstName = $data->get('given_name');
-
         $userProfile->lastName = $data->get('family_name');
-
         $userProfile->identifier = $data->get('sub');
         $userProfile->email = $data->get('email');
         $userProfile->emailVerified = $data->get('email_verified');
         $userProfile->displayName = $data->get('name');
-
         $userProfile->photoURL = $data->get('picture');
 
         return $userProfile;
