@@ -127,7 +127,7 @@ class Hybridauth
             foreach ($fs as $file) {
                 if (!$file->isDir()) {
                     $provider = strtok($file->getFilename(), '.');
-                    if ($name === mb_strtolower($provider)) {
+                    if (strtolower($name) === mb_strtolower($provider)) {
                         $adapter = sprintf('Hybridauth\\Provider\\%s', $provider);
                         break;
                     }
