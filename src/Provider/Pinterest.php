@@ -20,12 +20,12 @@ class Pinterest extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'read_public';
+    protected $scope = 'user_accounts:read';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiBaseUrl = 'https://api.pinterest.com/v1/';
+    protected $apiBaseUrl = 'https://api.pinterest.com/v5/';
 
     /**
      * {@inheritdoc}
@@ -35,19 +35,19 @@ class Pinterest extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $accessTokenUrl = 'https://api.pinterest.com/v1/oauth/token';
+    protected $accessTokenUrl = 'https://api.pinterest.com/v5/oauth/token';
 
     /**
      * {@inheritdoc}
      */
-    protected $apiDocumentation = 'https://developers.pinterest.com/docs/api/overview/';
+    protected $apiDocumentation = 'https://developers.pinterest.com/docs/api/v5/';
 
     /**
      * {@inheritdoc}
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('me');
+        $response = $this->apiRequest('user_account');
 
         $data = new Data\Collection($response);
 
