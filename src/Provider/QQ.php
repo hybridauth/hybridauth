@@ -61,6 +61,11 @@ class QQ extends OAuth2
     /**
      * {@inheritdoc}
      */
+    protected $responseDataFormat = 'json';
+    
+    /**
+     * {@inheritdoc}
+     */
     protected function initialize()
     {
         parent::initialize();
@@ -73,7 +78,8 @@ class QQ extends OAuth2
         }
 
         $this->apiRequestParameters = [
-            'access_token' => $this->getStoredData('access_token')
+            'access_token' => $this->getStoredData('access_token'),
+            'fmt' => $this>responseDataFormat
         ];
 
         $this->apiRequestHeaders = [];
@@ -87,18 +93,12 @@ class QQ extends OAuth2
         $collection = parent::validateAccessTokenExchange($response);
 
         $resp = $this->apiRequest($this->accessTokenInfoUrl);
-        $resp = key($resp);
 
-        $len = strlen($resp);
-        $res = substr($resp, 10, $len - 14);
-
-        $response = (new Data\Parser())->parse($res);
-
-        if (!isset($response->openid)) {
+        if (!isset($resp->openid)) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
-        $this->storeData('openid', $response->openid);
+        $this->storeData('openid', $resp->openid);
 
         return $collection;
     }
@@ -113,7 +113,7 @@ class QQ extends OAuth2
         $userRequestParameters = [
             'oauth_consumer_key' => $this->clientId,
             'openid' => $openid,
-            'format' => 'json'
+            'format' => $this>responseDataFormat
         ];
 
         $response = $this->apiRequest($this->accessUserInfo, 'GET', $userRequestParameters);
