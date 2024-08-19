@@ -91,6 +91,12 @@ class Keycloak extends OAuth2
         $userProfile->lastName = $data->get('family_name');
         $userProfile->emailVerified = $data->get('email_verified');
 
+        // Collect organization claim if provided in the IDToken
+        if ($data->exists('organization')) {
+            $kc_orgs = array_keys($data->get('organization'));
+            $userProfile->data['organization'] = array_shift($kc_orgs); //Get the first key
+        }
+
         return $userProfile;
     }
 }
