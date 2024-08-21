@@ -63,9 +63,7 @@ class KeycloakTest extends \PHPUnit\Framework\TestCase
                 'given_name' => 'Alice',
                 'family_name' => 'Jenkins',
                 'email_verified' => true,
-                'organization' => [
-                    'my_org' => []
-                ]
+                'organization' => json_decode('{ "my_org": {} }'),
             ]);
 
         $profile = new Profile();
