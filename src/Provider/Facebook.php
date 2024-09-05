@@ -7,11 +7,17 @@
 
 namespace Hybridauth\Provider;
 
-use Hybridauth\Exception\InvalidArgumentException;
-use Hybridauth\Exception\UnexpectedApiResponseException;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Hybridauth\Adapter\OAuth2;
 use Hybridauth\Data;
+use Hybridauth\Exception\HttpRequestFailedException;
+use Hybridauth\Exception\InvalidArgumentException;
+use Hybridauth\Exception\UnexpectedApiResponseException;
 use Hybridauth\User;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Math\BigInteger;
+use UnexpectedValueException;
 
 /**
  * Facebook OAuth2 provider adapter.
@@ -143,6 +149,16 @@ class Facebook extends OAuth2
      */
     public function getUserProfile()
     {
+        return $this->getUserProfileFromOIDCToken() ?? $this->getUserProfileFromAccessToken();
+    }
+
+    /**
+     * Retrieve the user data from access token.
+     *
+     * @return \Hybridauth\User\Profile
+     */
+    public function getUserProfileFromAccessToken()
+    {
         $fields = [
             'id',
             'name',
@@ -155,7 +171,7 @@ class Facebook extends OAuth2
             'hometown',
             'birthday',
         ];
-        
+
         if (strpos($this->scope, 'user_link') !== false) {
             $fields[] = 'link';
         }
@@ -207,6 +223,79 @@ class Facebook extends OAuth2
         $userProfile = $this->fetchUserRegion($userProfile);
 
         $userProfile = $this->fetchBirthday($userProfile, $data->get('birthday'));
+
+        return $userProfile;
+    }
+
+    /**
+     * Get the user profile from OIDC token.
+     *
+     * @return \Hybridauth\User\Profile
+     */
+    public function getUserProfileFromOIDCToken()
+    {
+        $accessToken = $this->getStoredData('access_token');
+
+        $kid = $this->getKidFromOLDCToken($accessToken);
+
+        if (!$kid) {
+            return null;
+        }
+
+        $clientId = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key');
+
+        if (!$clientId) {
+            throw new InvalidApplicationCredentialsException(
+                'Missing parameter id: your client id is required to generate the JWS token.'
+            );
+        }
+
+        $response = $this->apiRequest('https://www.facebook.com/.well-known/oauth/openid/jwks/');
+
+        $publicKeys = new Data\Collection($response);
+
+        if (!$publicKeys->exists('keys') || !$publicKeys->get('keys')) {
+            throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
+        }
+
+        $filteredKeys = array_filter($publicKeys->get('keys'), function ($k) use ($kid) {
+            return $k->kid === $kid;
+        });
+
+        if (empty($filteredKeys)) {
+            throw new UnexpectedValueException('Unable to find key with kid: ' . $kid);
+        }
+
+        $jwk = array_shift($filteredKeys);
+
+        $keyData = [
+            'e' => new BigInteger(base64_decode($jwk->e), 256),
+            'n' => new BigInteger(base64_decode(strtr($jwk->n, '-_', '+/'), true), 256),
+        ];
+
+        $pem = (string) PublicKeyLoader::load($keyData)->withHash('sha1')->withMGFHash('sha1');
+
+        $payload = JWT::decode($accessToken, new Key($pem, $jwk->alg));
+
+        $data = new Data\Collection($payload);
+
+        if ($data->get('iss') !== 'https://www.facebook.com') {
+            throw new UnexpectedValueException('Invalid issuer');
+        } elseif ($data->get('aud') !== $clientId) {
+            throw new UnexpectedValueException('Invalid audience');
+        }
+
+        $userProfile = new User\Profile();
+        $userProfile->identifier = $data->get('sub');
+        $userProfile->email = $data->get('email');
+        $userProfile->firstName = $data->get('given_name');
+        $userProfile->lastName = $data->get('family_name');
+        $userProfile->displayName = $userProfile->firstName.' '.$userProfile->lastName;
+        $userProfile->photoURL = $data->get('picture');
+        // Fallback for profile URL in case Facebook does not provide "pretty" link with username (if user set it).
+        if (empty($userProfile->profileURL)) {
+            $userProfile->profileURL = $this->getProfileUrl($userProfile->identifier);
+        }
 
         return $userProfile;
     }
@@ -432,6 +521,29 @@ class Facebook extends OAuth2
         }
 
         return $userActivity;
+    }
+
+    /**
+     * Get key ID from OIDC token.
+     *
+     * @param string $accessToken
+     * @return string|null
+     */
+    private function getKidFromOLDCToken(string $accessToken): ?string
+    {
+        $segments = explode('.', $accessToken);
+
+        if (count($segments) !== 3) {
+            return null;
+        }
+
+        $payload = json_decode(base64_decode($segments[0] ?? ''));
+
+        if (!is_object($payload) || $payload?->kid === null) {
+            return null;
+        }
+
+        return $payload->kid;
     }
 
     /**
