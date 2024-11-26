@@ -134,7 +134,7 @@ class Hybridauth
                 }
             }
             if ($adapter === null) {
-                throw new InvalidArgumentException('Unknown Provider.');
+                throw new InvalidArgumentException("Unknown Provider ($adapter).");
             }
         }
 
