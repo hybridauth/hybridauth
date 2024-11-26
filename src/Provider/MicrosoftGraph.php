@@ -46,7 +46,7 @@ class MicrosoftGraph extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'openid user.read contacts.read';
+    protected $scope = 'openid user.read contacts.read offline_access';
 
     /**
      * {@inheritdoc}
@@ -75,6 +75,10 @@ class MicrosoftGraph extends OAuth2
     {
         parent::initialize();
 
+        $this->AuthorizeUrlParameters += [
+			'prompt' => 'consent',
+        ];
+
         $tenant = $this->config->get('tenant');
         if (!empty($tenant)) {
             $adjustedEndpoints = [
@@ -83,6 +87,13 @@ class MicrosoftGraph extends OAuth2
             ];
 
             $this->setApiEndpoints($adjustedEndpoints);
+        }
+
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ];
         }
     }
 
