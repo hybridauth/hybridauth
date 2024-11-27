@@ -10,13 +10,9 @@ use Hybridauth\User;
 class OpenStreetMap extends OAuth2
 {
     protected $scope = 'read_prefs';
-
     protected $apiBaseUrl = 'https://api.openstreetmap.org/api/0.6/';
-    
     protected $authorizeUrl = 'https://www.openstreetmap.org/oauth2/authorize';
-    
     protected $accessTokenUrl = 'https://www.openstreetmap.org/oauth2/token';
-
     public function getUserProfile()
     {
   $response = $this->apiRequest('user/details');
