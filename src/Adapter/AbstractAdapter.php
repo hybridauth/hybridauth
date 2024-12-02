@@ -114,6 +114,14 @@ abstract class AbstractAdapter implements AdapterInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Load adapter's configuration
      */
     abstract protected function configure();
