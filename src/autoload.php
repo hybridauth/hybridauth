@@ -6,8 +6,8 @@
  * Note that you'd ONLY need this file if you are not using composer.
  */
 
-if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-    throw new Exception('Hybridauth 3 requires PHP version 5.4 or higher.');
+if (version_compare(PHP_VERSION, '7.3.0', '<')) {
+    throw new Exception('Hybridauth 4 requires PHP version 7.3 or higher.');
 }
 
 /**
