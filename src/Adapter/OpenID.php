@@ -112,6 +112,11 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
      */
     public function disconnect()
     {
+        if ($this->isLogoutRequiredBeforeDisconnect){
+            $resp = $this->logout();
+            $this->logger->debug("logout", [$resp]);
+        }
+
         $this->storage->delete($this->providerId . '.user');
 
         return true;
