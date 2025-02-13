@@ -181,7 +181,7 @@ class Instagram extends OAuth2
      * @throws \Hybridauth\Exception\InvalidAccessTokenException
      * @throws \Hybridauth\Exception\UnexpectedApiResponseException
      */
-    public function getUserMedia($limit = 12, $pageId = null, array $fields = null)
+    public function getUserMedia($limit = 12, $pageId = null, ?array $fields = null)
     {
         if (empty($fields)) {
             $fields = [
@@ -227,7 +227,7 @@ class Instagram extends OAuth2
      * @throws \Hybridauth\Exception\InvalidAccessTokenException
      * @throws \Hybridauth\Exception\UnexpectedApiResponseException
      */
-    public function getMedia($mediaId, array $fields = null)
+    public function getMedia($mediaId, ?array $fields = null)
     {
         if (empty($fields)) {
             $fields = [
