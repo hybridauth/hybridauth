@@ -79,7 +79,7 @@ class QQ extends OAuth2
 
         $this->apiRequestParameters = [
             'access_token' => $this->getStoredData('access_token'),
-            'fmt' => $this>responseDataFormat
+            'fmt' => $this->responseDataFormat
         ];
 
         $this->apiRequestHeaders = [];
