@@ -66,7 +66,21 @@ class Keycloak extends OAuth2
 
         $this->authorizeUrl = $this->apiBaseUrl . 'auth';
         $this->accessTokenUrl = $this->apiBaseUrl . 'token';
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ];
+        }
     }
 
     /**

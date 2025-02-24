@@ -88,7 +88,7 @@ class Telegram extends AbstractAdapter implements AdapterInterface
     public function authenticate()
     {
         $this->logger->info(sprintf('%s::authenticate()', get_class($this)));
-        if (!filter_input(INPUT_GET, 'hash')) {
+        if (!$this->filter_input(INPUT_GET, 'hash')) {
             $this->authenticateBegin();
         } else {
             $this->authenticateCheckError();
@@ -209,13 +209,13 @@ HTML
     protected function parseAuthData()
     {
         return [
-            'id' => filter_input(INPUT_GET, 'id'),
-            'first_name' => filter_input(INPUT_GET, 'first_name'),
-            'last_name' => filter_input(INPUT_GET, 'last_name'),
-            'username' => filter_input(INPUT_GET, 'username'),
-            'photo_url' => filter_input(INPUT_GET, 'photo_url'),
-            'auth_date' => filter_input(INPUT_GET, 'auth_date'),
-            'hash' => filter_input(INPUT_GET, 'hash'),
+            'id' => $this->filter_input(INPUT_GET, 'id'),
+            'first_name' => $this->filter_input(INPUT_GET, 'first_name'),
+            'last_name' => $this->filter_input(INPUT_GET, 'last_name'),
+            'username' => $this->filter_input(INPUT_GET, 'username'),
+            'photo_url' => $this->filter_input(INPUT_GET, 'photo_url'),
+            'auth_date' => $this->filter_input(INPUT_GET, 'auth_date'),
+            'hash' => $this->filter_input(INPUT_GET, 'hash'),
         ];
     }
 }
