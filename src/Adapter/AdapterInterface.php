@@ -36,6 +36,13 @@ interface AdapterInterface
     public function disconnect();
 
     /**
+     * Logout from IdP
+     *
+     * @return mixed
+     */
+    public function logout();
+
+    /**
      * Retrieve the connected user profile
      *
      * @return \Hybridauth\User\Profile
