@@ -92,9 +92,9 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function __construct(
         $config = [],
-        HttpClientInterface $httpClient = null,
-        StorageInterface $storage = null,
-        LoggerInterface $logger = null
+        ?HttpClientInterface $httpClient = null,
+        ?StorageInterface $storage = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->providerId = (new \ReflectionClass($this))->getShortName();
 
@@ -243,7 +243,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setHttpClient(HttpClientInterface $httpClient = null)
+    public function setHttpClient(?HttpClientInterface $httpClient = null)
     {
         $this->httpClient = $httpClient ?: new HttpClient();
 
@@ -263,7 +263,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setStorage(StorageInterface $storage = null)
+    public function setStorage(?StorageInterface $storage = null)
     {
         $this->storage = $storage ?: new Session();
     }
@@ -279,7 +279,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setLogger(LoggerInterface $logger = null)
+    public function setLogger(?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: new Logger(
             $this->config->get('debug_mode'),
