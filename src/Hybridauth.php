@@ -162,7 +162,8 @@ class Hybridauth
             throw new InvalidArgumentException('Unknown Provider.');
         }
 
-        if (!$providersConfig[$name]['enabled']) {
+        $enabled = $providersConfig[$name]['enabled'] ?? false;
+        if (!$enabled) {
             throw new UnexpectedValueException('Disabled Provider.');
         }
 
