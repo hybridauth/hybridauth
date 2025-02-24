@@ -8,18 +8,17 @@ dist: "bionic"
 php:
   - "7.4"
   - "7.3"
-  - "7.2"
   - "8.0"
 
 jobs:
   include:
-    - name: "PHP 5.6"
+    - name: "PHP 7.3"
       dist: "xenial"
-      php: "5.6"
-    # "php": ">=5.4.0"
-    - name: "PHP 5.4"
+      php: "7.3"
+    # "php": ">=7.3.0"
+    - name: "PHP 7.3"
       dist: "trusty"
-      php: "5.4"
+      php: "7.3"
 
 cache:
   directories:

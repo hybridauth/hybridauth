@@ -40,7 +40,7 @@ actually made to a file on your Pull Request.
 Additional providers, minor enhancements, bugs and typos fixes are most welcome. Large and "breaking" changes should be 
 discussed ahead of time. **Please ask first**.
 
-Hybridauth 3 is compatible with **PHP 5.4** and therefore all code supplied must stick to this requirement.
+Hybridauth 4 is compatible with **PHP 7.3** and therefore all code supplied must stick to this requirement.
 
 **License**
 
