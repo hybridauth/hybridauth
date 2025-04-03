@@ -12,7 +12,7 @@ class KeycloakTest extends \PHPUnit\Framework\TestCase
         //Mock OAuth2 Api request
         $keycloak = $this->getMockBuilder(Keycloak::class)
             ->disableOriginalConstructor()
-            ->setMethods(['apiRequest'])
+            ->onlyMethods(['apiRequest'])
             ->getMock();
         $keycloak->expects($this->once())
             ->method('apiRequest')
@@ -36,7 +36,7 @@ class KeycloakTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($profile, $keycloak->getUserProfile());
     }
 
-    /* Test parsing keycloak user profile with organization feature enabled. The issued ID token is similar but contains the organization scope with this format:    
+    /* Test parsing keycloak user profile with organization feature enabled. The issued ID token is similar but contains the organization scope with this format:
         "name": "Alice Jenkins",
         "preferred_username": "alice@acme.org",
         "given_name": "Alice",
@@ -52,7 +52,7 @@ class KeycloakTest extends \PHPUnit\Framework\TestCase
         //Mock OAuth2 Api request
         $keycloak = $this->getMockBuilder(Keycloak::class)
             ->disableOriginalConstructor()
-            ->setMethods(['apiRequest'])
+            ->onlyMethods(['apiRequest'])
             ->getMock();
         $keycloak->expects($this->once())
             ->method('apiRequest')

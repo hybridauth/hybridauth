@@ -3,6 +3,7 @@
 namespace HybridauthTest\Hybridauth\User;
 
 use Hybridauth\User\Activity;
+use ReflectionClass;
 
 class ActivityTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,29 +16,33 @@ class ActivityTest extends \PHPUnit\Framework\TestCase
 
     public function test_has_attributes()
     {
-        $activity_class = '\\Hybridauth\\User\\Activity';
+        $reflection = new ReflectionClass('\\Hybridauth\\User\\Activity');
 
-        $this->assertClassHasAttribute('id', $activity_class);
-        $this->assertClassHasAttribute('date', $activity_class);
-        $this->assertClassHasAttribute('text', $activity_class);
-        $this->assertClassHasAttribute('user', $activity_class);
+        $this->assertTrue($reflection->hasProperty('id'));
+        $this->assertTrue($reflection->hasProperty('date'));
+        $this->assertTrue($reflection->hasProperty('text'));
+        $this->assertTrue($reflection->hasProperty('user'));
     }
 
     public function test_set_attributes()
     {
         $activity = new Activity();
 
-        $activity->id = true;
-        $activity->date = true;
-        $activity->text = true;
-        $activity->user = true;
+        $activity->id = 'activity-id';
+        $activity->date = '2023-01-01';
+        $activity->text = 'Example activity';
+        $activity->user = 'user-info';
+
+        $this->assertSame('activity-id', $activity->id);
+        $this->assertSame('2023-01-01', $activity->date);
+        $this->assertSame('Example activity', $activity->text);
+        $this->assertSame('user-info', $activity->user);
     }
 
-    /**
-     * @expectedException \Hybridauth\Exception\UnexpectedValueException
-     */
     public function test_property_overloading()
     {
+        $this->expectException(\Hybridauth\Exception\UnexpectedValueException::class);
+
         $activity = new Activity();
         $activity->slug = true;
     }

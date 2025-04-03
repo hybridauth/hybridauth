@@ -3,44 +3,54 @@
 namespace HybridauthTest\Hybridauth\Storage;
 
 use Hybridauth\Storage\Session;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Covers;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 session_start(); // they will hate me for this..
 
-class SessionTest extends \PHPUnit\Framework\TestCase
+#[CoversClass(Session::class)]
+class SessionTest extends TestCase
 {
-    public function some_random_session_data()
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    public static function some_random_session_data(): array
     {
         return [
-            ['foo', 'bar'],
-            [1234, 'bar'],
-            ['foo', 1234],
+            'string values' => ['foo', 'bar'],
+            'numeric key' => [1234, 'bar'],
+            'numeric value' => ['foo', 1234],
 
-            ['Bonjour', '안녕하세요'],
-            ['ஹலோ', 'Γεια σας'],
+            'international strings' => ['Bonjour', '안녕하세요'],
+            'more international strings' => ['ஹலோ', 'Γεια σας'],
 
-            ['array', [1, 2, 3]],
-            ['string', json_encode($this)],
-            ['object', $this],
+            'array value' => ['array', [1, 2, 3]],
+            'json string' => ['string', json_encode(new \stdClass())],
+            'object value' => ['object', new \stdClass()],
 
-            ['provider.token.request_token', '9DYPEJ&qhvhP3eJ!'],
-            ['provider.token.oauth_token', '80359084-clg1DEtxQF3wstTcyUdHF3wsdHM'],
-            ['provider.token.oauth_token_secret', 'qiHTi1znz6qiH3tTcyUdHnz6qiH3tTcyUdH3xW3wsDvV08e'],
+            'request token' => ['provider.token.request_token', '9DYPEJ&qhvhP3eJ!'],
+            'oauth token' => ['provider.token.oauth_token', '80359084-clg1DEtxQF3wstTcyUdHF3wsdHM'],
+            'oauth token secret' => ['provider.token.oauth_token_secret', 'qiHTi1znz6qiH3tTcyUdHnz6qiH3tTcyUdH3xW3wsDvV08e']
         ];
     }
 
-    public function test_instance_of()
+    #[Test]
+    public function test_instance_of(): void
     {
         $storage = new Session();
 
         $this->assertInstanceOf('\\Hybridauth\\Storage\\StorageInterface', $storage);
     }
 
-    /**
-     * @dataProvider some_random_session_data
-     * @covers       Session::get
-     * @covers       Session::set
-     */
-    public function test_set_and_get_data($key, $value)
+    #[Test]
+    /** @dataProvider some_random_session_data */
+    #[DataProvider('some_random_session_data')]
+    #[Covers([Session::class, 'get'])]
+    #[Covers([Session::class, 'set'])]
+    public function testSetAndGetData($key, $value): void
     {
         $storage = new Session();
 
@@ -51,11 +61,11 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($value, $data);
     }
 
-    /**
-     * @dataProvider some_random_session_data
-     * @covers       Session::delete
-     */
-    public function test_delete_data($key, $value)
+    #[Test]
+    /** @dataProvider some_random_session_data */
+    #[DataProvider('some_random_session_data')]
+    #[Covers([Session::class, 'delete'])]
+    public function testDeleteData($key, $value): void
     {
         $storage = new Session();
 
@@ -68,57 +78,52 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($data);
     }
 
-    /**
-     * @dataProvider some_random_session_data
-     * @covers       Session::clear
-     */
-    public function test_clear_data($key, $value)
+    #[Test]
+    /** @dataProvider some_random_session_data */
+    #[DataProvider('some_random_session_data')]
+    #[Covers([Session::class, 'clear'])]
+    public function testClearData($key, $value): void
     {
         $storage = new Session();
-
         $storage->set($key, $value);
-
         $storage->clear();
-
         $data = $storage->get($key);
-
         $this->assertNull($data);
     }
 
-    /**
-     * @covers Session::clear
-     */
-    public function test_clear_data_bulk()
+    #[Test]
+    #[Covers([Session::class, 'clear'])]
+    public function testClearDataBulk(): void
     {
         $storage = new Session();
+        $testData = self::some_random_session_data();
 
-        foreach ((array)$this->some_random_session_data() as $key => $value) {
+        // Set all test data
+        foreach ($testData as $testCase) {
+            list($key, $value) = $testCase;
             $storage->set($key, $value);
         }
 
         $storage->clear();
 
-        foreach ((array)$this->some_random_session_data() as $key => $value) {
+        // Check each key is now null
+        foreach ($testData as $testCase) {
+            list($key, $value) = $testCase;
             $data = $storage->get($key);
-
-            $this->assertNull($data);
+            $this->assertNull($data, "Data for key '$key' should be null after clear()");
         }
     }
 
-    /**
-     * @dataProvider some_random_session_data
-     * @covers       Session::deleteMatch
-     */
-    public function test_delete_match_data($key, $value)
+    #[Test]
+    #[DataProvider('some_random_session_data')]
+    /** @dataProvider some_random_session_data */
+    #[Covers([Session::class, 'deleteMatch'])]
+    public function testDeleteMatchData($key, $value): void
     {
         $storage = new Session();
-
         $storage->set($key, $value);
-
         $storage->deleteMatch('provider.token.');
-
         $data = $storage->get('provider.token.request_token');
-
         $this->assertNull($data);
     }
 }
