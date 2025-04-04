@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "ext-curl": "*",
-        "phpunit/phpunit": "^4.8.35 || ^6.5 || ^8.0"
+        "phpunit/phpunit": "^4.8.35 || ^6.5 || ^8.0 || ^12.0"
     },
     "suggest": {
         "firebase/php-jwt": "Needed to support Apple provider",
