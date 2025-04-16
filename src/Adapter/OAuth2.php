@@ -260,13 +260,17 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         if ($this->config->exists('tokens')) {
             $this->setAccessToken($this->config->get('tokens'));
         }
-        
+
         if ($this->config->exists('supportRequestState')) {
             $this->supportRequestState = $this->config->get('supportRequestState');
         }
 
         $this->setCallback($this->config->get('callback'));
         $this->setApiEndpoints($this->config->get('endpoints'));
+
+        if ($this->config->exists('logout_before_disconnect')) {
+            $this->isLogoutRequiredBeforeDisconnect = $this->config->get('logout_before_disconnect');
+        }
     }
 
     /**
