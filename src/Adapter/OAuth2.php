@@ -260,7 +260,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         if ($this->config->exists('tokens')) {
             $this->setAccessToken($this->config->get('tokens'));
         }
-        
+
         if ($this->config->exists('supportRequestState')) {
             $this->supportRequestState = $this->config->get('supportRequestState');
         }
@@ -315,7 +315,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         try {
             $this->authenticateCheckError();
 
-            $code = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
+            $code = $this->filterInput($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
 
             if (empty($code)) {
                 $this->authenticateBegin();
@@ -366,11 +366,11 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function authenticateCheckError()
     {
-        $error = filter_input(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
+        $error = $this->filterInput(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
 
         if (!empty($error)) {
-            $error_description = filter_input(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
-            $error_uri = filter_input(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_description = $this->filterInput(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_uri = $this->filterInput(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
 
             $collated_error = sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri);
 
@@ -412,8 +412,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             [HttpClient\Util::getCurrentUrl(true)]
         );
 
-        $state = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'state');
-        $code = filter_input($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
+        $state = $this->filterInput($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'state');
+        $code = $this->filterInput($_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET, 'code');
 
         /**
          * Authorization Request State
