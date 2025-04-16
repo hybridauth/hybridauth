@@ -100,7 +100,6 @@ class KeycloakTest extends \PHPUnit\Framework\TestCase
         ];
 
         $httpClient = $this->createMock(HttpClientInterface::class);
-        $storage = $this->createMock(StorageInterface::class);
         $keycloak = new Keycloak($config, $httpClient, new StorageImpl());
 
         $httpClient->expects($this->once())

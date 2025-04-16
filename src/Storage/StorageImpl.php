@@ -3,7 +3,7 @@
 namespace Hybridauth\Storage;
 
 class StorageImpl implements StorageInterface {
-    private array $data;
+    private $data;
 
     public function __construct()
     {
