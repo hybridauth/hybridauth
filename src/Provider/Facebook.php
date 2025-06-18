@@ -539,7 +539,7 @@ class Facebook extends OAuth2
 
         $payload = json_decode(base64_decode($segments[0] ?? ''));
 
-        if (!is_object($payload) || $payload?->kid === null) {
+        if (!is_object($payload) || !isset($payload->kid)) {
             return null;
         }
 
