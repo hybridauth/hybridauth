@@ -83,6 +83,13 @@ abstract class AbstractAdapter implements AdapterInterface
     protected $validateApiResponseHttpCode = true;
 
     /**
+     * Used for testing purpose to specify filter_input behaviours
+     *
+     * @var FilterService
+     */
+    protected static $filterService;
+
+    /**
      * Common adapters constructor.
      *
      * @param array $config
@@ -92,9 +99,9 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function __construct(
         $config = [],
-        HttpClientInterface $httpClient = null,
-        StorageInterface $storage = null,
-        LoggerInterface $logger = null
+        ?HttpClientInterface $httpClient = null,
+        ?StorageInterface $storage = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->providerId = (new \ReflectionClass($this))->getShortName();
 
@@ -243,7 +250,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setHttpClient(HttpClientInterface $httpClient = null)
+    public function setHttpClient(?HttpClientInterface $httpClient = null)
     {
         $this->httpClient = $httpClient ?: new HttpClient();
 
@@ -263,7 +270,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setStorage(StorageInterface $storage = null)
+    public function setStorage(?StorageInterface $storage = null)
     {
         $this->storage = $storage ?: new Session();
     }
@@ -279,7 +286,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setLogger(LoggerInterface $logger = null)
+    public function setLogger(?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: new Logger(
             $this->config->get('debug_mode'),
@@ -368,5 +375,31 @@ abstract class AbstractAdapter implements AdapterInterface
                 '. Raw Provider API response: ' . $this->httpClient->getResponseBody() . '.'
             );
         }
+    }
+
+    /**
+     *
+     * @param int $type: One of INPUT_GET, INPUT_POST, INPUT_COOKIE, INPUT_SERVER, or INPUT_ENV
+     * @param string $var_name: Name of a variable to get
+     * @param int $filter: [optional] The ID of the filter to apply. The manual page lists the available filters.
+     * @param mixed $options: Associative array of options or bitwise disjunction of flags. If filter accepts options, flags can be provided in "flags" field of array.
+     *
+     * @return mixed: Value of the requested variable on success, FALSE if the filter fails, or NULL if the variable_name variable is not set. If the flag FILTER_NULL_ON_FAILURE is used, it returns FALSE if the variable is not set and NULL if the filter fails.
+     * https://php.net/manual/en/function.filter-input.php
+     */
+    public function filterInput($type, $var_name, $filter = FILTER_DEFAULT, $options = 0) {
+        if (!isset(self::$filterService)) {
+            self::$filterService = new FilterService();
+        }
+        return self::$filterService->filterInput($type, $var_name, $filter, $options);
+    }
+
+    /**
+     * @param FilterService|null $filterService
+     *
+     * @return void
+     */
+    public static function setFilterService($filterService) {
+        self::$filterService = $filterService;
     }
 }

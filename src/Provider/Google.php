@@ -80,13 +80,14 @@ class Google extends OAuth2
         parent::initialize();
 
         $this->AuthorizeUrlParameters += [
-            'access_type' => 'offline'
+            'access_type' => 'offline',
+            'prompt' => 'consent'
         ];
 
         if ($this->isRefreshTokenAvailable()) {
             $this->tokenRefreshParameters += [
                 'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret
+                'client_secret' => $this->clientSecret,
             ];
         }
     }

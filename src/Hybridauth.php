@@ -62,9 +62,9 @@ class Hybridauth
      */
     public function __construct(
         $config,
-        HttpClientInterface $httpClient = null,
-        StorageInterface $storage = null,
-        LoggerInterface $logger = null
+        ?HttpClientInterface $httpClient = null,
+        ?StorageInterface $storage = null,
+        ?LoggerInterface $logger = null
     ) {
         if (is_string($config) && file_exists($config)) {
             $config = include $config;
@@ -121,20 +121,21 @@ class Hybridauth
         $adapter = isset($config['adapter']) ? $config['adapter'] : sprintf('Hybridauth\\Provider\\%s', $name);
 
         if (!class_exists($adapter)) {
+            $unexistingConfiguredAdapter = $adapter;
             $adapter = null;
             $fs = new \FilesystemIterator(__DIR__ . '/Provider/');
             /** @var \SplFileInfo $file */
             foreach ($fs as $file) {
                 if (!$file->isDir()) {
                     $provider = strtok($file->getFilename(), '.');
-                    if ($name === mb_strtolower($provider)) {
+                    if (mb_strtolower($name) === mb_strtolower($provider)) {
                         $adapter = sprintf('Hybridauth\\Provider\\%s', $provider);
                         break;
                     }
                 }
             }
             if ($adapter === null) {
-                throw new InvalidArgumentException('Unknown Provider.');
+                throw new InvalidArgumentException("Unknown Provider (name: $name / configured: $unexistingConfiguredAdapter).");
             }
         }
 
@@ -161,7 +162,8 @@ class Hybridauth
             throw new InvalidArgumentException('Unknown Provider.');
         }
 
-        if (!$providersConfig[$name]['enabled']) {
+        $enabled = $providersConfig[$name]['enabled'] ?? false;
+        if (!$enabled) {
             throw new UnexpectedValueException('Disabled Provider.');
         }
 

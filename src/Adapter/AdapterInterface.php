@@ -122,7 +122,7 @@ interface AdapterInterface
      *
      * @param HttpClientInterface $httpClient
      */
-    public function setHttpClient(HttpClientInterface $httpClient = null);
+    public function setHttpClient(?HttpClientInterface $httpClient = null);
 
     /**
      * Return http client instance.
@@ -134,7 +134,7 @@ interface AdapterInterface
      *
      * @param StorageInterface $storage
      */
-    public function setStorage(StorageInterface $storage = null);
+    public function setStorage(?StorageInterface $storage = null);
 
     /**
      * Return storage instance.
@@ -146,7 +146,7 @@ interface AdapterInterface
      *
      * @param LoggerInterface $logger
      */
-    public function setLogger(LoggerInterface $logger = null);
+    public function setLogger(?LoggerInterface $logger = null);
 
     /**
      * Return logger instance.
