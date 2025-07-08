@@ -72,12 +72,13 @@ class Hybridauth
             throw new InvalidArgumentException('Hybridauth config does not exist on the given path.');
         }
 
-        $this->config = $config + [
+        $default_config = [
                 'debug_mode' => Logger::NONE,
                 'debug_file' => '',
                 'curl_options' => null,
                 'providers' => []
             ];
+        $this->config =  array_merge ($default_config, $config);
         $this->storage = $storage;
         $this->logger = $logger;
         $this->httpClient = $httpClient;
