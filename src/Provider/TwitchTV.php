@@ -1,4 +1,5 @@
 <?php
+
 /*!
 * Hybridauth
 * https://hybridauth.github.io | https://github.com/hybridauth/hybridauth
@@ -20,27 +21,21 @@ class TwitchTV extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'user:read:email';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $apiBaseUrl = 'https://api.twitch.tv/helix/';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $authorizeUrl = 'https://id.twitch.tv/oauth2/authorize';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $accessTokenUrl = 'https://id.twitch.tv/oauth2/token';
+    protected $scope = 'openid user:read:email';
 
     /**
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://dev.twitch.tv/docs/authentication/';
+
+    protected function configure()
+    {
+        parent::configure();
+
+        $this->apiBaseUrl = 'https://id.twitch.tv/oauth2';
+        $this->authorizeUrl = $this->apiBaseUrl . '/authorize';
+        $this->accessTokenUrl = $this->apiBaseUrl . '/token';
+    }
 
     /**
      * {@inheritdoc}
@@ -49,7 +44,12 @@ class TwitchTV extends OAuth2
     {
         parent::initialize();
 
-        $this->apiRequestHeaders['Client-ID'] = $this->clientId;
+        if ($this->isRefreshTokenAvailable()) {
+            $this->tokenRefreshParameters += [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ];
+        }
     }
 
     /**
@@ -57,25 +57,29 @@ class TwitchTV extends OAuth2
      */
     public function getUserProfile()
     {
-        $response = $this->apiRequest('users');
+        $response = $this->getStoredData('/userinfo');
+        if (!$response) {
+            $response = $this->apiRequest('/userinfo');
+            $this->storeData('/userinfo', $response);
+        }
 
         $data = new Data\Collection($response);
 
-        if (!$data->exists('data')) {
+        if (!$data->exists('sub')) {
+            $this->deleteStoredData('/userinfo');
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
-        $users = $data->filter('data')->values();
-        $user = new Data\Collection($users[0]);
-
         $userProfile = new User\Profile();
 
-        $userProfile->identifier = $user->get('id');
-        $userProfile->displayName = $user->get('display_name');
-        $userProfile->photoURL = $user->get('profile_image_url');
-        $userProfile->email = $user->get('email');
-        $userProfile->description = strip_tags($user->get('description'));
-        $userProfile->profileURL = "https://www.twitch.tv/{$userProfile->displayName}";
+        $userProfile->identifier = $data->get('sub');
+        $userProfile->displayName = $data->get('preferred_username');
+        $userProfile->email = $data->get('email');
+        $userProfile->firstName = $data->get('name') ?? $data->get('nickname');
+        $userProfile->emailVerified = $data->get('email_verified');
+
+        $userProfile->photoURL = $data->get('picture');
+        $userProfile->profileURL = $data->get('profile');
 
         return $userProfile;
     }
