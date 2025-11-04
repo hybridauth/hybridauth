@@ -113,7 +113,7 @@ class QQ extends OAuth2
         $userRequestParameters = [
             'oauth_consumer_key' => $this->clientId,
             'openid' => $openid,
-            'format' => $this>responseDataFormat
+            'format' => $this->responseDataFormat
         ];
 
         $response = $this->apiRequest($this->accessUserInfo, 'GET', $userRequestParameters);
