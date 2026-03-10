@@ -53,7 +53,8 @@ class Seznam extends OAuth2
         $userProfile = new User\Profile();
 
         $userProfile->identifier = $data->get('oauth_user_id');
-        $userProfile->email = $data->get('account_name');
+        $userProfile->email = $data->get('email');
+        $userProfile->emailVerified = $data->get('email_verified');
         $userProfile->firstName = $data->get('firstname');
         $userProfile->lastName = $data->get('lastname');
         $userProfile->photoURL = $data->get('avatar_url');
