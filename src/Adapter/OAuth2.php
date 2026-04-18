@@ -433,6 +433,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
                 . 'of this page is either invalid or has already been consumed.'
             );
         }
+        
+        // Before request oauth server, the basic authorization info should be provided.
+        $basic = base64_encode($this->tokenExchangeParameters['client_id'] . ':' . $this->tokenExchangeParameters['client_secret']);
+        $this->tokenExchangeHeaders['Authorization'] = 'Basic ' . $basic;
 
         /**
          * Authorization Request Code
