@@ -30,7 +30,7 @@ class Pinterest extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $authorizeUrl = 'https://api.pinterest.com/oauth';
+    protected $authorizeUrl = 'https://www.pinterest.com/oauth/';
 
     /**
      * {@inheritdoc}
@@ -42,6 +42,21 @@ class Pinterest extends OAuth2
      */
     protected $apiDocumentation = 'https://developers.pinterest.com/docs/api/v5/';
 
+    protected function initialize()
+    {
+        parent::initialize();
+
+        unset(
+            $this->tokenExchangeParameters['client_id'],
+            $this->tokenExchangeParameters['client_secret']
+        );
+
+        $authorization = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+
+        $this->tokenExchangeHeaders['Authorization'] = $authorization;
+        $this->tokenRefreshHeaders['Authorization'] = $authorization;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -51,23 +66,27 @@ class Pinterest extends OAuth2
 
         $data = new Data\Collection($response);
 
-        $data = $data->filter('data');
-
         if (!$data->exists('id')) {
             throw new UnexpectedApiResponseException('Provider API returned an unexpected response.');
         }
 
         $userProfile = new User\Profile();
-
         $userProfile->identifier = $data->get('id');
-        $userProfile->description = $data->get('bio');
-        $userProfile->photoURL = $data->get('image');
-        $userProfile->displayName = $data->get('username');
-        $userProfile->firstName = $data->get('first_name');
-        $userProfile->lastName = $data->get('last_name');
-        $userProfile->profileURL = "https://pinterest.com/{$data->get('username')}";
+        $userProfile->description = $data->get('about');
+        $userProfile->photoURL = $data->get('profile_image');
+        $userProfile->displayName = $data->get('business_name') ?: $data->get('username');
+        $userProfile->profileURL = "https://www.pinterest.com/{$data->get('username')}/";
+        $userProfile->webSiteURL = $data->get('website_url');
 
-        $userProfile->data = (array)$data->get('counts');
+        $userProfile->data = [
+            'username' => $data->get('username'),
+            'account_type' => $data->get('account_type'),
+            'monthly_views' => $data->get('monthly_views'),
+            'pin_count' => $data->get('pin_count'),
+            'board_count' => $data->get('board_count'),
+            'following_count' => $data->get('following_count'),
+            'follower_count' => $data->get('follower_count'),
+        ];
 
         return $userProfile;
     }
