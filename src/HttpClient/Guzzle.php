@@ -166,8 +166,6 @@ class Guzzle implements HttpClientInterface
                     break;
             }
         } catch (\Exception $e) {
-            $response = $e->getResponse();
-
             $this->responseClientError = $e->getMessage();
         }
 
