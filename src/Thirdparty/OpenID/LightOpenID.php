@@ -549,6 +549,9 @@ class LightOpenID
         $data = file_get_contents($url, false, $context);
         # This is a hack for providers who don't support HEAD requests.
         # It just creates the headers array for the last request in $this->headers.
+        if (function_exists('http_get_last_response_headers')) {
+            $http_response_header = http_get_last_response_headers();
+        }
         if (isset($http_response_header)) {
             $this->headers = $this->parse_header_array($http_response_header, $update_claimed_id);
         }
