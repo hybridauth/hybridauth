@@ -41,7 +41,7 @@ class LightOpenID
          ;
     public $optional = array()
          ;
-    public $verify_peer = null
+    public $verify_peer = true
          ;
     public $capath = null
          ;
