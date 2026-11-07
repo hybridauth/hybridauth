@@ -14,6 +14,18 @@ class FilterService {
      * https://php.net/manual/en/function.filter-input.php
      */
     public function filterInput($type, $var_name, $filter = FILTER_DEFAULT, $options = 0) {
-        return filter_input($type, $var_name, $filter, $options);
+        switch ($type) {
+            case INPUT_GET: $input = $_GET; break;
+            case INPUT_POST: $input = $_POST; break;
+            case INPUT_COOKIE: $input = $_COOKIE; break;
+            case INPUT_SERVER: $input = $_SERVER; break;
+            case INPUT_ENV: $input = $_ENV; break;
+            default: return filter_input($type, $var_name, $filter, $options);
+        }
+        if (!array_key_exists($var_name, $input)) {
+            $flags = is_array($options) ? (isset($options['flags']) ? $options['flags'] : 0) : $options;
+            return ($flags & FILTER_NULL_ON_FAILURE) ? false : null;
+        }
+        return filter_var($input[$var_name], $filter, $options);
     }
 }
