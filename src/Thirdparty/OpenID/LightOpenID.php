@@ -41,7 +41,7 @@ class LightOpenID
          ;
     public $optional = array()
          ;
-    public $verify_peer = null
+    public $verify_peer = true
          ;
     public $capath = null
          ;
@@ -49,6 +49,7 @@ class LightOpenID
          ;
     public $cnmatch = null
          ;
+    public $trustedEndpoints = [];
     public $data
          ;
     public $oauth = array()
@@ -69,6 +70,7 @@ class LightOpenID
     protected $setup_url = null;
     protected $headers = array()
             ;
+    protected $responseCode = 0;
     protected $proxy = null;
     protected $user_agent = 'LightOpenID'
             ;
@@ -91,13 +93,15 @@ class LightOpenID
      *
      * @param      $host
      * @param null $proxy
+     * @param array $trustedEndpoints Exact origins and approved private addresses/CIDRs.
      *
      * @throws ErrorException
      */
-    public function __construct($host, $proxy = null)
+    public function __construct($host, $proxy = null, $trustedEndpoints = [])
     {
         $this->set_realm($host);
         $this->set_proxy($proxy);
+        $this->trustedEndpoints = $trustedEndpoints;
 
         $uri = rtrim(preg_replace('#((?<=\?)|&)openid\.[^&]+#', '', $_SERVER['REQUEST_URI']), '?');
         $this->returnUrl = $this->trustRoot . $uri;
@@ -183,28 +187,35 @@ class LightOpenID
      */
     public function set_proxy($proxy)
     {
-        if (!empty($proxy)) {
-            // When the proxy is a string - try to parse it.
-            if (!is_array($proxy)) {
-                $proxy = parse_url($proxy);
-            }
-
-            // Check if $proxy is valid after the parsing.
-            if ($proxy && !empty($proxy['host'])) {
-                // Make sure that a valid port number is specified.
-                if (array_key_exists('port', $proxy)) {
-                    if (!is_int($proxy['port'])) {
-                        $proxy['port'] = is_numeric($proxy['port']) ? intval($proxy['port']) : 0;
-                    }
-
-                    if ($proxy['port'] <= 0) {
-                        throw new ErrorException('The specified proxy port number is invalid.');
-                    }
-                }
-
-                $this->proxy = $proxy;
-            }
+        if (empty($proxy)) {
+            $this->proxy = null;
+            return;
         }
+        if (is_string($proxy)) {
+            if (preg_match('/[\x00-\x20\x7f\\\\]/', $proxy)) {
+                throw new ErrorException('Invalid OpenID proxy.');
+            }
+            $proxy = parse_url(strpos($proxy, '://') === false ? 'http://' . $proxy : $proxy);
+        }
+        if (!is_array($proxy) || empty($proxy['host'])) {
+            throw new ErrorException('Invalid OpenID proxy.');
+        }
+        $proxy += ['scheme' => 'http'];
+        $proxy['scheme'] = strtolower($proxy['scheme']);
+        $host = trim($proxy['host'], '[]');
+        if (!in_array($proxy['scheme'], ['http', 'https'], true)
+            || (!filter_var($host, FILTER_VALIDATE_IP) && !preg_match('/^[a-z0-9.-]+$/iD', $host))
+            || isset($proxy['query']) || isset($proxy['fragment'])
+            || (isset($proxy['path']) && $proxy['path'] !== '' && $proxy['path'] !== '/')
+        ) {
+            throw new ErrorException('OpenID requires a configured HTTP(S) CONNECT proxy.');
+        }
+        $proxy += ['port' => $proxy['scheme'] === 'https' ? 443 : 80];
+        if (!ctype_digit((string) $proxy['port']) || $proxy['port'] < 1 || $proxy['port'] > 65535) {
+            throw new ErrorException('The specified proxy port number is invalid.');
+        }
+        $proxy['port'] = (int) $proxy['port'];
+        $this->proxy = $proxy;
     }
 
     /**
@@ -276,102 +287,101 @@ class LightOpenID
      */
     protected function request_curl($url, $method='GET', $params=array(), $update_claimed_id=false)
     {
-        $params = http_build_query($params, '', '&');
-        $curl = curl_init($url . ($method == 'GET' && $params ? '?' . $params : ''));
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        $target = $this->resolveUrl($url);
+        $query = http_build_query($params, '', '&');
+        if ($method === 'GET' && $query !== '') {
+            $url .= (strpos($url, '?') === false ? '?' : '&') . $query;
+        }
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+        curl_setopt($curl, CURLOPT_PROXY, '');
+        if ($this->proxy) {
+            if (!defined('CURLOPT_CONNECT_TO')) {
+                $this->closeCurl($curl);
+                throw new ErrorException('OpenID proxies require cURL 7.49 or newer for address pinning.');
+            }
+            $host = strpos($target['host'], ':') === false ? $target['host'] : '[' . $target['host'] . ']';
+            $address = strpos($target['address'], ':') === false ? $target['address'] : '[' . $target['address'] . ']';
+            curl_setopt($curl, CURLOPT_PROXY, $this->proxy['scheme'] . '://' . $this->proxy['host']);
+            curl_setopt($curl, CURLOPT_PROXYPORT, $this->proxy['port']);
+            curl_setopt($curl, CURLOPT_NOPROXY, '');
+            curl_setopt($curl, CURLOPT_HTTPPROXYTUNNEL, true);
+            // CONNECT names the checked IP; the original hostname still controls Host, SNI and certificate checks.
+            curl_setopt($curl, CURLOPT_CONNECT_TO, [$host . ':' . $target['port'] . ':' . $address . ':' . $target['port']]);
+            if (defined('CURLOPT_SUPPRESS_CONNECT_HEADERS')) {
+                curl_setopt($curl, CURLOPT_SUPPRESS_CONNECT_HEADERS, true);
+            }
+            if (isset($this->proxy['user'])) {
+                curl_setopt($curl, CURLOPT_PROXYUSERPWD, rawurldecode($this->proxy['user']) . ':'
+                    . (isset($this->proxy['pass']) ? rawurldecode($this->proxy['pass']) : ''));
+            }
+            if ($this->proxy['scheme'] === 'https' && isset($this->proxy['cainfo'])) {
+                if (!defined('CURLOPT_PROXY_CAINFO')) {
+                    $this->closeCurl($curl);
+                    throw new ErrorException('This cURL version cannot configure the HTTPS proxy CA bundle.');
+                }
+                curl_setopt($curl, CURLOPT_PROXY_CAINFO, $this->proxy['cainfo']);
+            }
+        }
+        if (defined('CURLOPT_PROTOCOLS_STR')) {
+            curl_setopt($curl, CURLOPT_PROTOCOLS_STR, 'http,https');
+        } else {
+            curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        }
+        $responseHeaders = [];
         curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($handle, $line) use (&$responseHeaders) {
+            if (preg_match('#^HTTP/\S+\s+\d+#', $line)) {
+                $responseHeaders = [];
+            }
+            $responseHeaders[] = $line;
+            return strlen($line);
+        });
         curl_setopt($curl, CURLOPT_USERAGENT, $this->user_agent);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->verify_peer !== false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        if ($method == 'POST') {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded'));
-        } else {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
+        curl_setopt($curl, CURLOPT_TIMEOUT, $this->curl_time_out);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->curl_connect_time_out);
+        if (!filter_var($target['host'], FILTER_VALIDATE_IP)) {
+            if (!defined('CURLOPT_RESOLVE')) {
+                $this->closeCurl($curl);
+                throw new ErrorException('This cURL version cannot pin OpenID destination addresses.');
+            }
+            $address = strpos($target['address'], ':') === false
+                ? $target['address'] : '[' . $target['address'] . ']';
+            curl_setopt($curl, CURLOPT_RESOLVE, [$target['host'] . ':' . $target['port'] . ':' . $address]);
         }
-
-        curl_setopt($curl, CURLOPT_TIMEOUT, $this->curl_time_out); // defaults to infinite
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->curl_connect_time_out); // defaults to 300s
-
-        if (!empty($this->proxy)) {
-            curl_setopt($curl, CURLOPT_PROXY, $this->proxy['host']);
-
-            if (!empty($this->proxy['port'])) {
-                curl_setopt($curl, CURLOPT_PROXYPORT, $this->proxy['port']);
-            }
-
-            if (!empty($this->proxy['user'])) {
-                curl_setopt($curl, CURLOPT_PROXYUSERPWD, $this->proxy['user'] . ':' . $this->proxy['pass']);
-            }
+        if ($this->capath) {
+            curl_setopt($curl, CURLOPT_CAPATH, $this->capath);
         }
-
-        if ($this->verify_peer !== null) {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-            if ($this->capath) {
-                curl_setopt($curl, CURLOPT_CAPATH, $this->capath);
-            }
-
-            if ($this->cainfo) {
-                curl_setopt($curl, CURLOPT_CAINFO, $this->cainfo);
-            }
+        if ($this->cainfo) {
+            curl_setopt($curl, CURLOPT_CAINFO, $this->cainfo);
         }
-
-        if ($method == 'POST') {
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [$method === 'POST'
+            ? 'Content-type: application/x-www-form-urlencoded' : 'Accept: application/xrds+xml, */*']);
+        if ($method === 'POST') {
             curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-        } elseif ($method == 'HEAD') {
-            curl_setopt($curl, CURLOPT_HEADER, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
+        } elseif ($method === 'HEAD') {
             curl_setopt($curl, CURLOPT_NOBODY, true);
-        } else {
-            curl_setopt($curl, CURLOPT_HEADER, true);
-            curl_setopt($curl, CURLOPT_HTTPGET, true);
         }
         $response = curl_exec($curl);
-
-        if ($method == 'HEAD' && curl_getinfo($curl, CURLINFO_HTTP_CODE) == 405) {
-            curl_setopt($curl, CURLOPT_HTTPGET, true);
-            $response = curl_exec($curl);
-            $response = substr($response, 0, strpos($response, "\r\n\r\n"));
+        $this->responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $error = curl_error($curl);
+        $this->closeCurl($curl);
+        if ($response === false) {
+            throw new ErrorException($error);
         }
+        $this->headers = $this->parse_header_array($responseHeaders, false);
+        return $method === 'HEAD' ? $this->headers : $response;
+    }
 
-        if ($method == 'HEAD' || $method == 'GET') {
-            $header_response = $response;
-
-            # If it's a GET request, we want to only parse the header part.
-            if ($method == 'GET') {
-                $header_response = substr($response, 0, strpos($response, "\r\n\r\n"));
-            }
-
-            $headers = array();
-            foreach (explode("\n", $header_response) as $header) {
-                $pos = strpos($header, ':');
-                if ($pos !== false) {
-                    $name = strtolower(trim(substr($header, 0, $pos)));
-                    $headers[$name] = trim(substr($header, $pos+1));
-                }
-            }
-
-            if ($update_claimed_id) {
-                # Update the claimed_id value in case of redirections.
-                $effective_url = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
-                # Ignore the fragment (some cURL versions don't handle it well).
-                if (strtok($effective_url, '#') != strtok($url, '#')) {
-                    $this->identity = $this->claimed_id = $effective_url;
-                }
-            }
-
-            if ($method == 'HEAD') {
-                return $headers;
-            } else {
-                $this->headers = $headers;
-            }
+    private function closeCurl($curl)
+    {
+        if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+            curl_close($curl);
         }
-
-        if (curl_errno($curl)) {
-            throw new ErrorException(curl_error($curl), curl_errno($curl));
-        }
-
-        return $response;
     }
 
     /**
@@ -384,6 +394,10 @@ class LightOpenID
     {
         $headers = array();
         foreach ($array as $header) {
+            if (preg_match('#^HTTP/\S+\s+\d+#', $header)) {
+                $headers = [];
+                continue;
+            }
             $pos = strpos($header, ':');
             if ($pos !== false) {
                 $name = strtolower(trim(substr($header, 0, $pos)));
@@ -421,142 +435,69 @@ class LightOpenID
      */
     protected function request_streams($url, $method='GET', $params=array(), $update_claimed_id=false)
     {
-        if (!$this->hostExists($url)) {
-            throw new ErrorException("Could not connect to $url.", 404);
-        }
-
-        if (empty($this->cnmatch)) {
-            $this->cnmatch = parse_url($url, PHP_URL_HOST);
-        }
-
-        $params = http_build_query($params, '', '&');
-        switch ($method) {
-        case 'GET':
-            $opts = array(
-                'http' => array(
-                    'method' => 'GET',
-                    'header' => 'Accept: application/xrds+xml, */*',
-                    'user_agent' => $this->user_agent,
-                    'ignore_errors' => true,
-                ),
-                'ssl' => array(
-                    'CN_match' => $this->cnmatch
-                )
-            );
-            $url = $url . ($params ? '?' . $params : '');
-            if (!empty($this->proxy)) {
-                $opts['http']['proxy'] = $this->proxy_url();
+        $target = $this->resolveUrl($url);
+        if ($this->proxy) {
+            if (!function_exists('curl_init')) {
+                throw new ErrorException('OpenID proxy requests require cURL 7.49 or newer.');
             }
-            break;
-        case 'POST':
-            $opts = array(
-                'http' => array(
-                    'method' => 'POST',
-                    'header'  => 'Content-type: application/x-www-form-urlencoded',
-                    'user_agent' => $this->user_agent,
-                    'content' => $params,
-                    'ignore_errors' => true,
-                ),
-                'ssl' => array(
-                    'CN_match' => $this->cnmatch
-                )
-            );
-            if (!empty($this->proxy)) {
-                $opts['http']['proxy'] = $this->proxy_url();
-            }
-            break;
-        case 'HEAD':
-            // We want to send a HEAD request, but since get_headers() doesn't
-            // accept $context parameter, we have to change the defaults.
-            $default = stream_context_get_options(stream_context_get_default());
-
-            // PHP does not reset all options. Instead, it just sets the options
-            // available in the passed array, therefore set the defaults manually.
-            $default += array(
-                'http' => array(),
-                'ssl' => array()
-            );
-            $default['http'] += array(
-                'method' => 'GET',
-                'header' => '',
-                'user_agent' => '',
-                'ignore_errors' => false
-            );
-            $default['ssl'] += array(
-                'CN_match' => ''
-            );
-
-            $opts = array(
-                'http' => array(
-                    'method' => 'HEAD',
-                    'header' => 'Accept: application/xrds+xml, */*',
-                    'user_agent' => $this->user_agent,
-                    'ignore_errors' => true,
-                ),
-                'ssl' => array(
-                    'CN_match' => $this->cnmatch
-                )
-            );
-
-            // Enable validation of the SSL certificates.
-            if ($this->verify_peer) {
-                $default['ssl'] += array(
-                    'verify_peer' => false,
-                    'capath' => '',
-                    'cafile' => ''
-                );
-                $opts['ssl'] += array(
-                    'verify_peer' => true,
-                    'capath' => $this->capath,
-                    'cafile' => $this->cainfo
-                );
-            }
-
-            // Change the stream context options.
-            stream_context_get_default($opts);
-
-            $headers = get_headers($url . ($params ? '?' . $params : ''));
-
-            // Restore the stream context options.
-            stream_context_get_default($default);
-
-            if (!empty($headers)) {
-                if (intval(substr($headers[0], strlen('HTTP/1.1 '))) == 405) {
-                    // The server doesn't support HEAD - emulate it with a GET.
-                    $args = func_get_args();
-                    $args[1] = 'GET';
-                    call_user_func_array(array($this, 'request_streams'), $args);
-                    $headers = $this->headers;
-                } else {
-                    $headers = $this->parse_header_array($headers, $update_claimed_id);
-                }
-            } else {
-                $headers = array();
-            }
-
-            return $headers;
+            return self::request_curl($url, $method, $params, $update_claimed_id);
         }
-
-        if ($this->verify_peer) {
-            $opts['ssl'] += array(
-                'verify_peer' => true,
-                'capath'      => $this->capath,
-                'cafile'      => $this->cainfo
-            );
+        $parts = $target['parts'];
+        $address = strpos($target['address'], ':') === false ? $target['address'] : '[' . $target['address'] . ']';
+        $pinnedUrl = $parts['scheme'] . '://' . $address . ':' . $target['port']
+            . (isset($parts['path']) ? $parts['path'] : '/')
+            . (isset($parts['query']) ? '?' . $parts['query'] : '');
+        $host = strpos($target['host'], ':') === false ? $target['host'] : '[' . $target['host'] . ']';
+        if (isset($parts['port'])) {
+            $host .= ':' . $target['port'];
         }
-
-        $context = stream_context_create($opts);
-        $data = file_get_contents($url, false, $context);
-        # This is a hack for providers who don't support HEAD requests.
-        # It just creates the headers array for the last request in $this->headers.
+        $query = http_build_query($params, '', '&');
+        if ($method === 'GET' && $query !== '') {
+            $pinnedUrl .= (strpos($pinnedUrl, '?') === false ? '?' : '&') . $query;
+        }
+        $options = [
+            'http' => [
+                'method' => $method,
+                'header' => 'Host: ' . $host . "\r\n" . ($method === 'POST'
+                    ? 'Content-type: application/x-www-form-urlencoded' : 'Accept: application/xrds+xml, */*'),
+                'user_agent' => $this->user_agent,
+                'ignore_errors' => true,
+                'follow_location' => 0,
+                'timeout' => $this->curl_time_out,
+            ],
+            'ssl' => [
+                'verify_peer' => $this->verify_peer !== false,
+                'verify_peer_name' => true,
+                'peer_name' => $target['host'],
+                'CN_match' => $target['host'],
+                'SNI_enabled' => true,
+                'SNI_server_name' => $target['host'],
+            ],
+        ];
+        if ($method === 'POST') {
+            $options['http']['content'] = $query;
+        }
+        if ($this->capath) {
+            $options['ssl']['capath'] = $this->capath;
+        }
+        if ($this->cainfo) {
+            $options['ssl']['cafile'] = $this->cainfo;
+        }
+        $response = @file_get_contents($pinnedUrl, false, stream_context_create($options));
         if (function_exists('http_get_last_response_headers')) {
             $http_response_header = http_get_last_response_headers();
         }
-        if (isset($http_response_header)) {
-            $this->headers = $this->parse_header_array($http_response_header, $update_claimed_id);
+        if ($response === false) {
+            throw new ErrorException('OpenID HTTP request failed.');
         }
-
-        return $data;
+        $this->responseCode = 0;
+        foreach ($http_response_header as $header) {
+            if (preg_match('#^HTTP/\S+\s+(\d+)#', $header, $match)) {
+                $this->responseCode = (int) $match[1];
+            }
+        }
+        $this->headers = $this->parse_header_array($http_response_header, false);
+        return $method === 'HEAD' ? $this->headers : $response;
     }
 
     /**
@@ -570,29 +511,51 @@ class LightOpenID
      */
     protected function request($url, $method='GET', $params=array(), $update_claimed_id=false)
     {
-        $use_curl = false;
-
-        if (function_exists('curl_init')) {
-            if (!$use_curl) {
-                # When allow_url_fopen is disabled, PHP streams will not work.
-                $use_curl = !ini_get('allow_url_fopen');
+        $originalMethod = $method;
+        $redirected = false;
+        for ($redirects = 0; $redirects <= 5; $redirects++) {
+            // Validate every hop, including URLs obtained from discovery documents.
+            $this->resolveUrl($url);
+            $this->headers = [];
+            $this->responseCode = 0;
+            // Redirects are followed here, so open_basedir no longer restricts cURL.
+            $response = function_exists('curl_init')
+                ? $this->request_curl($url, $method, $params, false)
+                : $this->request_streams($url, $method, $params, false);
+            if ($this->responseCode === 405 && $method === 'HEAD') {
+                $method = 'GET';
+                continue;
             }
-
-            if (!$use_curl) {
-                # When there is no HTTPS wrapper, PHP streams cannott be used.
-                $use_curl = !in_array('https', stream_get_wrappers());
+            if (in_array($this->responseCode, [301, 302, 303, 307, 308], true) && isset($this->headers['location'])) {
+                $location = $this->headers['location'];
+                $next = \Hybridauth\HttpClient\Url::redirect($url, $location);
+                if (strtolower(parse_url($url, PHP_URL_SCHEME)) === 'https'
+                    && strtolower(parse_url($next, PHP_URL_SCHEME)) !== 'https'
+                ) {
+                    throw new ErrorException('OpenID HTTPS redirects must remain HTTPS.');
+                }
+                $url = $next;
+                if ($this->responseCode === 303 || (($this->responseCode === 301 || $this->responseCode === 302) && $method === 'POST')) {
+                    $method = 'GET';
+                }
+                if ($method !== 'POST') {
+                    $params = [];
+                }
+                $redirected = true;
+                continue;
             }
-
-            if (!$use_curl) {
-                # With open_basedir or safe_mode set, cURL can't follow redirects.
-                $use_curl = !(ini_get('safe_mode') || ini_get('open_basedir'));
+            // Only a followed redirect changes the claimed identifier (e.g. not an X-XRDS-Location hop).
+            if ($update_claimed_id && $redirected) {
+                $this->identity = $this->claimed_id = strtok($url, '#');
             }
+            return $originalMethod === 'HEAD' ? $this->headers : $response;
         }
+        throw new ErrorException('Too many OpenID redirects.');
+    }
 
-        return
-            $use_curl
-                ? $this->request_curl($url, $method, $params, $update_claimed_id)
-                : $this->request_streams($url, $method, $params, $update_claimed_id);
+    protected function resolveUrl($url)
+    {
+        return \Hybridauth\HttpClient\Url::resolve($url, $this->trustedEndpoints);
     }
 
     /**
@@ -1063,6 +1026,29 @@ class LightOpenID
             return false;
         }
 
+        foreach ($this->data as $name => $value) {
+            if (strpos($name, 'openid_') === 0 && !is_string($value)) {
+                return false;
+            }
+        }
+        $required = ['identity', 'return_to', 'assoc_handle'];
+        $isV2 = isset($this->data['openid_ns']);
+        if ($isV2) {
+            if ($this->data['openid_ns'] !== 'http://specs.openid.net/auth/2.0') {
+                return false;
+            }
+            $required = array_merge($required, ['op_endpoint', 'claimed_id', 'response_nonce']);
+        }
+        if (empty($this->data['openid_signed']) || empty($this->data['openid_sig'])) {
+            return false;
+        }
+        $signed = explode(',', $this->data['openid_signed']);
+        foreach ($required as $name) {
+            if (empty($this->data['openid_' . $name]) || !in_array($name, $signed, true)) {
+                return false;
+            }
+        }
+
         $this->claimed_id = isset($this->data['openid_claimed_id'])?$this->data['openid_claimed_id']:$this->data['openid_identity'];
         $params = array(
             'openid.assoc_handle' => $this->data['openid_assoc_handle'],
@@ -1090,10 +1076,21 @@ class LightOpenID
             return false;
         }
 
-        $server = $this->discover($this->claimed_id);
+        $this->identity = strtok($this->claimed_id, '#');
+        $this->identifier_select = false;
+        $server = $this->discover(strtok($this->claimed_id, '#'));
+        if (!$server || $this->identifier_select || $this->identity !== $this->data['openid_identity']
+            || ($isV2 && ($this->version !== 2 || $server !== $this->data['openid_op_endpoint']))
+        ) {
+            return false;
+        }
 
         foreach (explode(',', $this->data['openid_signed']) as $item) {
-            $value = $this->data['openid_' . str_replace('.', '_', $item)];
+            $key = 'openid_' . str_replace('.', '_', $item);
+            if (!isset($this->data[$key])) {
+                return false;
+            }
+            $value = $this->data[$key];
             $params['openid.' . $item] = $value;
         }
 
@@ -1101,7 +1098,7 @@ class LightOpenID
 
         $response = $this->request($server, 'POST', $params);
 
-        return preg_match('/is_valid\s*:\s*true/i', $response);
+        return preg_match('/^is_valid:true\r?$/m', $response);
     }
 
     /**
@@ -1254,6 +1251,12 @@ class LightOpenID
      */
     private function getItem($id)
     {
-        return isset($this->data[$id]) ? $this->data[$id] : null;
+        $signed = isset($this->data['openid_signed']) ? explode(',', $this->data['openid_signed']) : [];
+        foreach ($signed as $name) {
+            if ('openid_' . str_replace('.', '_', $name) === $id) {
+                return isset($this->data[$id]) ? $this->data[$id] : null;
+            }
+        }
+        return null;
     }
 }

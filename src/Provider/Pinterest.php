@@ -17,6 +17,8 @@ use Hybridauth\User;
  */
 class Pinterest extends OAuth2
 {
+    protected $tokenEndpointAuthMethod = 'client_secret_basic';
+
     /**
      * {@inheritdoc}
      */
@@ -41,21 +43,6 @@ class Pinterest extends OAuth2
      * {@inheritdoc}
      */
     protected $apiDocumentation = 'https://developers.pinterest.com/docs/api/v5/';
-
-    protected function initialize()
-    {
-        parent::initialize();
-
-        unset(
-            $this->tokenExchangeParameters['client_id'],
-            $this->tokenExchangeParameters['client_secret']
-        );
-
-        $authorization = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
-
-        $this->tokenExchangeHeaders['Authorization'] = $authorization;
-        $this->tokenRefreshHeaders['Authorization'] = $authorization;
-    }
 
     /**
      * {@inheritdoc}

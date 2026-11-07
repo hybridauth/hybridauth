@@ -37,7 +37,7 @@ class Steam extends OpenID
     /**
      * {@inheritdoc}
      */
-    protected $openidIdentifier = 'http://steamcommunity.com/openid';
+    protected $openidIdentifier = 'https://steamcommunity.com/openid';
 
     /**
      * {@inheritdoc}
@@ -95,7 +95,7 @@ class Steam extends OpenID
     public function getUserProfileWebAPI($apiKey, $steam64)
     {
         $q = http_build_query(['key' => $apiKey, 'steamids' => $steam64]);
-        $apiUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?' . $q;
+        $apiUrl = 'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?' . $q;
 
         $response = $this->httpClient->request($apiUrl);
 
@@ -125,7 +125,7 @@ class Steam extends OpenID
     {
         libxml_use_internal_errors(false);
 
-        $apiUrl = 'http://steamcommunity.com/profiles/' . $steam64 . '/?xml=1';
+        $apiUrl = 'https://steamcommunity.com/profiles/' . $steam64 . '/?xml=1';
 
         $response = $this->httpClient->request($apiUrl);
 
@@ -141,8 +141,8 @@ class Steam extends OpenID
         $userProfile['description'] = (string)$data->get('summary');
         $userProfile['region'] = (string)$data->get('location');
         $userProfile['profileURL'] = (string)$data->get('customURL')
-            ? 'http://steamcommunity.com/id/' . (string)$data->get('customURL')
-            : 'http://steamcommunity.com/profiles/' . $steam64;
+            ? 'https://steamcommunity.com/id/' . (string)$data->get('customURL')
+            : 'https://steamcommunity.com/profiles/' . $steam64;
 
         return $userProfile;
     }

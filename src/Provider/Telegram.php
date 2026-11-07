@@ -47,6 +47,8 @@ use Hybridauth\User;
  *   $adapter->setAccessToken($tokensFromDb);
  *   $profile = $adapter->getUserProfile();
  *
+ * Bots that still use the Login Widget (bot token and /setdomain) can use the TelegramWidget provider.
+ *
  * @see https://core.telegram.org/bots/telegram-login
  */
 class Telegram extends AbstractAdapter
@@ -68,6 +70,9 @@ class Telegram extends AbstractAdapter
 
     /** @var string */
     protected $apiDocumentation = 'https://core.telegram.org/bots/telegram-login';
+
+    /** @var array|null */
+    protected $jwks = null;
 
     protected function configure()
     {
@@ -216,8 +221,11 @@ class Telegram extends AbstractAdapter
         $returnedState = $this->filterInput(INPUT_GET, 'state');
         $savedState    = $this->getStoredData('authorization_state');
 
-        if (! $savedState || $savedState !== $returnedState) {
-            $this->deleteStoredData('authorization_state');
+        $this->deleteStoredData('authorization_state');
+
+        if (! Data\Random::equals($savedState, $returnedState)) {
+            $this->deleteStoredData('pkce_code_verifier');
+            $this->deleteStoredData('oidc_nonce');
             throw new InvalidAuthorizationStateException(
                 'The authorization state [state=' . htmlentities((string) $returnedState, ENT_QUOTES) . '] '
                 . 'is either invalid or has already been consumed.'
@@ -226,6 +234,15 @@ class Telegram extends AbstractAdapter
 
         $codeVerifier = (string) $this->getStoredData('pkce_code_verifier');
         $nonce        = (string) $this->getStoredData('oidc_nonce');
+
+        $this->deleteStoredData('pkce_code_verifier');
+        $this->deleteStoredData('oidc_nonce');
+
+        if ($codeVerifier === '' || $nonce === '') {
+            throw new InvalidAuthorizationStateException(
+                'The PKCE verifier or nonce of this login attempt is missing or has already been consumed.'
+            );
+        }
 
         $rawResponse = $this->httpClient->request(
             self::TOKEN_URL,
@@ -255,14 +272,14 @@ class Telegram extends AbstractAdapter
             ));
         }
 
-        if (! $tokenData->exists('id_token')) {
+        if (!is_string($tokenData->get('id_token')) || $tokenData->get('id_token') === '') {
             throw new UnexpectedApiResponseException(
-                'Telegram token endpoint returned no "id_token". Raw response: ' . $rawResponse
+                'Telegram token endpoint returned no usable "id_token".'
             );
         }
 
         $idToken = $tokenData->get('id_token');
-        $claims  = $this->validateIdToken($idToken, $nonce !== '' ? $nonce : null);
+        $claims  = $this->validateIdToken($idToken, $nonce);
 
         $this->storeData('access_token', $tokenData->get('access_token'));
         $this->storeData('token_type',   $tokenData->get('token_type'));
@@ -270,14 +287,10 @@ class Telegram extends AbstractAdapter
 
         if ($tokenData->exists('expires_in')) {
             $this->storeData('expires_in', $tokenData->get('expires_in'));
-            $this->storeData('expires_at', time() + (int) $tokenData->get('expires_in'));
         }
+        $this->storeData('expires_at', $claims['exp']);
 
         $this->storeData('user_claims', json_encode($claims));
-
-        $this->deleteStoredData('pkce_code_verifier');
-        $this->deleteStoredData('authorization_state');
-        $this->deleteStoredData('oidc_nonce');
 
         $this->initialize();
     }
@@ -288,13 +301,10 @@ class Telegram extends AbstractAdapter
             return false;
         }
 
-        $expiresAt = $this->getStoredData('expires_at');
+        $claims = $this->getClaimsFromStorage();
+        $expiresAt = isset($claims['exp']) ? $claims['exp'] : 0;
 
-        if ($expiresAt === null) {
-            return true;
-        }
-
-        return (int) $expiresAt > time();
+        return is_int($expiresAt) && $expiresAt > time();
     }
 
     public function getAccessToken()
@@ -332,6 +342,7 @@ class Telegram extends AbstractAdapter
             $this->storeData($key, $value);
         }
 
+        $this->storeData('expires_at', isset($claims['exp']) && is_int($claims['exp']) ? $claims['exp'] : 0);
         $this->storeData('user_claims', json_encode($claims));
 
         $this->initialize();
@@ -421,7 +432,7 @@ class Telegram extends AbstractAdapter
 
         $exp = isset($payload['exp']) ? (int) $payload['exp'] : 0;
 
-        if ($exp < (time() - self::CLOCK_SKEW)) {
+        if (!isset($payload['exp']) || !is_int($payload['exp']) || $exp <= (time() - self::CLOCK_SKEW)) {
             throw new UnexpectedApiResponseException(
                 'JWT id_token has expired (exp=' . $exp . ').'
             );
@@ -429,7 +440,7 @@ class Telegram extends AbstractAdapter
 
         $nonce = isset($payload['nonce']) ? $payload['nonce'] : '';
 
-        if ($expectedNonce !== null && $nonce !== $expectedNonce) {
+        if ($expectedNonce !== null && ! Data\Random::equals($expectedNonce, $nonce)) {
             throw new UnexpectedApiResponseException(
                 'JWT nonce mismatch — possible replay attack.'
             );
@@ -468,6 +479,10 @@ class Telegram extends AbstractAdapter
             throw new UnexpectedApiResponseException(
                 'Failed to JSON-decode the JWT header or payload.'
             );
+        }
+
+        if (!isset($payload['sub']) || !is_string($payload['sub']) || $payload['sub'] === '') {
+            throw new UnexpectedApiResponseException('JWT subject (sub) must be a nonempty string.');
         }
 
         $iss = isset($payload['iss']) ? $payload['iss'] : '';
@@ -551,24 +566,27 @@ class Telegram extends AbstractAdapter
      */
     protected function findJwk($kid)
     {
-        static $cache = null;
+        // A cached key set is refetched once when the kid is unknown, so key rotation works in long-lived workers.
+        for ($attempt = 0; $attempt < 2; $attempt++) {
+            if ($this->jwks === null || $attempt > 0) {
+                $raw  = $this->httpClient->request(self::JWKS_URL);
+                $this->validateApiResponse('Failed to fetch JWKS from Telegram');
+                $jwks = json_decode($raw, true);
 
-        if ($cache === null) {
-            $raw   = $this->httpClient->request(self::JWKS_URL);
-            $this->validateApiResponse('Failed to fetch JWKS from Telegram');
-            $cache = json_decode($raw, true);
+                if (empty($jwks['keys']) || ! is_array($jwks['keys'])) {
+                    throw new UnexpectedApiResponseException(
+                        'Failed to parse JWKS from: ' . self::JWKS_URL
+                    );
+                }
 
-            if (empty($cache['keys']) || ! is_array($cache['keys'])) {
-                throw new UnexpectedApiResponseException(
-                    'Failed to parse JWKS from: ' . self::JWKS_URL
-                );
+                $this->jwks = $jwks;
             }
-        }
 
-        foreach ($cache['keys'] as $jwk) {
-            $jwkKid = isset($jwk['kid']) ? $jwk['kid'] : null;
-            if ($kid === null || $jwkKid === $kid) {
-                return $jwk;
+            foreach ($this->jwks['keys'] as $jwk) {
+                $jwkKid = isset($jwk['kid']) ? $jwk['kid'] : null;
+                if ($kid === null || $jwkKid === $kid) {
+                    return $jwk;
+                }
             }
         }
 

@@ -36,6 +36,12 @@ use Hybridauth\User;
  */
 class X extends OAuth2
 {
+    protected $tokenEndpointAuthMethod = 'client_secret_basic';
+
+    protected $pkceMethod = 'S256';
+
+    protected $ignoreLegacyPkceDisable = true;
+
     /**
      * {@inheritdoc}
      */
@@ -68,30 +74,6 @@ class X extends OAuth2
     {
         parent::initialize();
 
-        $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret),
-            'Content-Type'  => 'application/x-www-form-urlencoded',
-        ];
-
-        $codeVerifier = $this->getStoredData('codeVerifier');
-        if (!$codeVerifier) {
-            $codeVerifier = $this->generateCodeVerifier();
-            $this->storeData('codeVerifier', $codeVerifier);
-        }
-
-        $codeChallenge = $this->getStoredData('codeChallenge');
-        if (!$codeChallenge) {
-            $codeChallenge = $this->generateCodeChallenge($codeVerifier);
-            $this->storeData('codeChallenge', $codeChallenge);
-        }
-
-        // Set additional authorize URL parameters required by Twitter
-        $this->AuthorizeUrlParameters += [
-            'code_challenge' => $codeChallenge,
-            'code_challenge_method' => 'S256',
-            'response_type' => 'code',
-        ];
-
         if ($this->isRefreshTokenAvailable()) {
             $this->tokenRefreshParameters += [
                 'client_id' => $this->clientId,
@@ -101,51 +83,23 @@ class X extends OAuth2
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function exchangeCodeForAccessToken($code)
+    protected function getAuthorizeUrl($parameters = [])
     {
-        $parameters = [
-            'grant_type' => 'authorization_code',
-            'code' => $code,
-            'redirect_uri' => $this->callback,
-            'code_verifier' => $this->getStoredData('codeVerifier'),
-        ];
-
-        $response = $this->httpClient->request(
-            $this->accessTokenUrl,
-            $this->tokenExchangeMethod,
-            $parameters,
-            $this->tokenExchangeHeaders,
-        );
-
-        $this->validateApiResponse('Unable to exchange code for API access token');
-
-        return $response;
+        $this->deleteStoredData('codeVerifier');
+        $this->deleteStoredData('codeChallenge');
+        return parent::getAuthorizeUrl($parameters);
     }
 
-    /**
-     * Generate a random code verifier for PKCE
-     *
-     * @return string
-     */
-    protected function generateCodeVerifier()
+    protected function consumePkceVerifier()
     {
-        $random = random_bytes(64);
-        return rtrim(strtr(base64_encode($random), '+/', '-_'), '=');
-    }
-
-    /**
-     * Generate a code challenge for PKCE
-     *
-     * @param string $codeVerifier
-     * @return string
-     */
-    protected function generateCodeChallenge($codeVerifier)
-    {
-        $hash = hash('sha256', $codeVerifier, true);
-        return rtrim(strtr(base64_encode($hash), '+/', '-_'), '=');
+        $verifier = parent::consumePkceVerifier();
+        // Complete pre-upgrade attempts after state validation, then discard the old session keys.
+        if ($verifier === null) {
+            $verifier = $this->getStoredData('codeVerifier');
+        }
+        $this->deleteStoredData('codeVerifier');
+        $this->deleteStoredData('codeChallenge');
+        return $verifier;
     }
 
     /**

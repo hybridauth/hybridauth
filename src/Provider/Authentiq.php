@@ -17,6 +17,8 @@ use Hybridauth\User;
  */
 class Authentiq extends OAuth2
 {
+    protected $tokenEndpointAuthMethod = 'client_secret_basic';
+
     /**
      * {@inheritdoc}
      */
@@ -51,14 +53,6 @@ class Authentiq extends OAuth2
 
         $this->AuthorizeUrlParameters += [
             'prompt' => 'consent'
-        ];
-
-        $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
-        ];
-
-        $this->tokenRefreshHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
         ];
     }
 
