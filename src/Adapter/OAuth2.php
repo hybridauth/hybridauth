@@ -241,6 +241,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected $apiRequestHeaders = [];
 
+    protected $refreshingAccessToken = false;
+
     /**
      * {@inheritdoc}
      */
@@ -288,6 +290,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             'redirect_uri' => $this->callback
         ];
 
+        $this->tokenRefreshParameters = null;
         $refreshToken = $this->getStoredData('refresh_token');
         if (!empty($refreshToken)) {
             $this->tokenRefreshParameters = [
@@ -323,7 +326,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
                 $this->authenticateFinish();
             }
         } catch (Exception $e) {
-            $this->clearStoredData();
+            $this->disconnect();
 
             throw $e;
         }
@@ -352,6 +355,27 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         return is_array($this->tokenRefreshParameters);
     }
 
+    public function disconnect()
+    {
+        parent::disconnect();
+        $this->tokenRefreshParameters = null;
+        $this->tokenRefreshHeaders = [];
+        $this->apiRequestHeaders = [];
+        $this->apiRequestParameters = [];
+    }
+
+    public function getAccessToken()
+    {
+        $tokens = parent::getAccessToken();
+        foreach (['scope', 'token_metadata', 'expires_in', 'expires_at'] as $name) {
+            $value = $this->getStoredData($name);
+            if ($value !== null) {
+                $tokens[$name] = $value;
+            }
+        }
+        return $tokens;
+    }
+
     /**
      * Authorization Request Error Response
      *
@@ -366,11 +390,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function authenticateCheckError()
     {
-        $error = $this->filterInput(INPUT_GET, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
+        $input = isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' ? INPUT_POST : INPUT_GET;
+        $error = $this->filterInput($input, 'error', FILTER_SANITIZE_SPECIAL_CHARS);
 
         if (!empty($error)) {
-            $error_description = $this->filterInput(INPUT_GET, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
-            $error_uri = $this->filterInput(INPUT_GET, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_description = $this->filterInput($input, 'error_description', FILTER_SANITIZE_SPECIAL_CHARS);
+            $error_uri = $this->filterInput($input, 'error_uri', FILTER_SANITIZE_SPECIAL_CHARS);
 
             $collated_error = sprintf('Provider returned an error: %s %s %s', $error, $error_description, $error_uri);
 
@@ -425,14 +450,16 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
          * http://tools.ietf.org/html/rfc6749#section-4.1.1
          */
         if ($this->supportRequestState
-            && (!$state || $this->getStoredData('authorization_state') != $state)
+            && !Data\Random::equals($this->getStoredData('authorization_state'), $state)
         ) {
             $this->deleteStoredData('authorization_state');
             throw new InvalidAuthorizationStateException(
-                'The authorization state [state=' . substr(htmlentities($state), 0, 100) . '] '
+                'The authorization state [state=' . substr(htmlentities((string) $state, ENT_QUOTES, 'UTF-8'), 0, 100) . '] '
                 . 'of this page is either invalid or has already been consumed.'
             );
         }
+
+        $this->deleteStoredData('authorization_state');
 
         /**
          * Authorization Request Code
@@ -471,7 +498,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function getAuthorizeUrl($parameters = [])
     {
-        $this->AuthorizeUrlParameters = !empty($parameters)
+        $parameters = !empty($parameters)
             ? $parameters
             : array_replace(
                 (array)$this->AuthorizeUrlParameters,
@@ -479,15 +506,23 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             );
 
         if ($this->supportRequestState) {
-            if (!isset($this->AuthorizeUrlParameters['state'])) {
-                $this->AuthorizeUrlParameters['state'] = 'HA-' . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+            if (!isset($parameters['state'])) {
+                $parameters['state'] = 'HA-' . Data\Random::token();
             }
 
-            $this->storeData('authorization_state', $this->AuthorizeUrlParameters['state']);
+            if (!is_string($parameters['state']) || $parameters['state'] === '') {
+                throw new InvalidAuthorizationStateException('Authorization state must be a nonempty string.');
+            }
+            $this->storeData('authorization_state', $parameters['state']);
         }
 
-        $queryParams = http_build_query($this->AuthorizeUrlParameters, '', '&', $this->AuthorizeUrlParametersEncType);
-        return $this->authorizeUrl . '?' . $queryParams;
+        if (isset($parameters['scope']) && is_array($parameters['scope'])) {
+            $parameters['scope'] = implode(' ', $parameters['scope']);
+        }
+        $queryParams = http_build_query($parameters, '', '&', $this->AuthorizeUrlParametersEncType);
+        $parts = explode('#', $this->authorizeUrl, 2);
+        $separator = strpos($parts[0], '?') === false ? '?' : (preg_match('/[?&]$/', $parts[0]) ? '' : '&');
+        return $parts[0] . $separator . $queryParams . (isset($parts[1]) ? '#' . $parts[1] : '');
     }
 
     /**
@@ -563,36 +598,120 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function validateAccessTokenExchange($response)
     {
-        $data = (new Data\Parser())->parse($response);
-
+        $data = $this->parseTokenResponse($response);
         $collection = new Data\Collection($data);
 
-        if (!$collection->exists('access_token')) {
-            throw new InvalidAccessTokenException(
-                'Provider returned no access_token: ' . htmlentities($response)
-            );
+        if ($collection->exists('error') && $collection->get('error') !== null && $collection->get('error') !== '') {
+            throw new InvalidAccessTokenException('Provider returned an OAuth token error.');
+        }
+        $accessToken = $collection->get('access_token');
+        if (!is_string($accessToken) || trim($accessToken) === '') {
+            throw new InvalidAccessTokenException('Provider returned no usable access_token.');
+        }
+        // Null fields are treated as omitted.
+        foreach (['refresh_token', 'token_type'] as $name) {
+            $value = $collection->get($name);
+            if ($value !== null && !is_string($value)) {
+                throw new InvalidAccessTokenException('Provider returned an invalid ' . $name . '.');
+            }
+        }
+        // Some providers (e.g. Twitch) return the granted scopes as an array.
+        $scope = $collection->get('scope');
+        if (is_array($scope)) {
+            foreach ($scope as $item) {
+                if (!is_string($item)) {
+                    throw new InvalidAccessTokenException('Provider returned an invalid scope.');
+                }
+            }
+            $scope = implode(' ', $scope);
+        } elseif ($scope !== null && !is_string($scope)) {
+            throw new InvalidAccessTokenException('Provider returned an invalid scope.');
         }
 
-        $this->storeData('access_token', $collection->get('access_token'));
+        $lifetimes = [];
+        foreach (['expires_in', 'expires'] as $name) {
+            $value = $collection->get($name);
+            if ($value === null) {
+                continue;
+            }
+            if ((!is_int($value) && !is_float($value) && !is_string($value))
+                || !preg_match('/^[0-9]+$/D', (string) $value)
+                || (float) $value > PHP_INT_MAX - time()
+            ) {
+                throw new InvalidAccessTokenException('Provider returned an invalid ' . $name . '.');
+            }
+            $lifetimes[$name] = (int) $value;
+        }
+        // Legacy "expires" (Facebook, Deezer) is a relative lifetime in seconds where 0 means non-expiring.
+        $expiresAt = null;
+        if (isset($lifetimes['expires_in'])) {
+            $expiresAt = time() + $lifetimes['expires_in'];
+        } elseif (!empty($lifetimes['expires'])) {
+            $expiresAt = time() + $lifetimes['expires'];
+        }
+
+        $this->storeData('access_token', $accessToken);
         $this->storeData('token_type', $collection->get('token_type'));
 
         if ($collection->get('refresh_token')) {
             $this->storeData('refresh_token', $collection->get('refresh_token'));
+        } elseif (!$this->refreshingAccessToken) {
+            $this->deleteStoredData('refresh_token');
         }
 
-        // calculate when the access token expire
-        if ($collection->exists('expires_in')) {
-            $expires_at = time() + (int)$collection->get('expires_in');
-
+        $this->deleteStoredData('expires_in');
+        $this->deleteStoredData('expires_at');
+        if (isset($lifetimes['expires_in'])) {
             $this->storeData('expires_in', $collection->get('expires_in'));
-            $this->storeData('expires_at', $expires_at);
         }
+        if ($expiresAt !== null) {
+            $this->storeData('expires_at', $expiresAt);
+        }
+
+        if ($scope !== null) {
+            $this->storeData('scope', $scope);
+        } elseif (!$this->refreshingAccessToken) {
+            $this->deleteStoredData('scope');
+        }
+        $metadata = $collection->toArray();
+        foreach (['access_token', 'refresh_token', 'token_type', 'expires_in', 'expires', 'scope'] as $name) {
+            unset($metadata[$name]);
+        }
+        $this->storeData('token_metadata', $metadata);
 
         $this->deleteStoredData('authorization_state');
 
         $this->initialize();
 
         return $collection;
+    }
+
+    protected function parseTokenResponse($response)
+    {
+        $contentType = '';
+        foreach ((array) $this->httpClient->getResponseHeader() as $name => $value) {
+            if (strtolower(str_replace('_', '-', $name)) === 'content-type') {
+                $contentType = strtolower(is_array($value) ? implode(';', $value) : $value);
+            }
+        }
+        $prefix = substr(ltrim((string) $response), 0, 1);
+        if (strpos($contentType, '/json') !== false || strpos($contentType, '+json') !== false
+            || $prefix === '{' || $prefix === '['
+        ) {
+            $data = json_decode($response);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_object($data)) {
+                throw new InvalidAccessTokenException('Provider returned an invalid JSON token response.');
+            }
+            return $data;
+        }
+        if ($prefix === '<') {
+            if (stripos($response, '<!DOCTYPE') !== false || stripos($response, '<!ENTITY') !== false) {
+                throw new InvalidAccessTokenException('XML token responses must not declare entities.');
+            }
+            $data = (new Data\Parser())->parseXml($response);
+            return is_array($data) && count($data) === 1 ? reset($data) : $data;
+        }
+        return (new Data\Parser())->parseQueryString($response);
     }
 
     /**
@@ -620,18 +739,15 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     public function refreshAccessToken($parameters = [])
     {
-        $this->tokenRefreshParameters = !empty($parameters)
-            ? $parameters
-            : $this->tokenRefreshParameters;
-
-        if (!$this->isRefreshTokenAvailable()) {
+        if (empty($parameters) && !$this->isRefreshTokenAvailable()) {
             return null;
         }
 
+        $parameters = !empty($parameters) ? $parameters : $this->tokenRefreshParameters;
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
             $this->tokenRefreshMethod,
-            $this->tokenRefreshParameters,
+            $parameters,
             $this->tokenRefreshHeaders
         );
 
@@ -655,7 +771,7 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         $expires_at = $this->getStoredData('expires_at');
-        if (!$expires_at) {
+        if ($expires_at === null || $expires_at === false || $expires_at === '') {
             return null;
         }
 
@@ -684,7 +800,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function validateRefreshAccessToken($response)
     {
-        return $this->validateAccessTokenExchange($response);
+        $this->refreshingAccessToken = true;
+        try {
+            return $this->validateAccessTokenExchange($response);
+        } finally {
+            $this->refreshingAccessToken = false;
+        }
     }
 
     /**
