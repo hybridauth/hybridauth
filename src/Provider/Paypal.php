@@ -17,6 +17,8 @@ use Hybridauth\User;
  */
 class Paypal extends OAuth2
 {
+    protected $tokenEndpointAuthMethod = 'client_secret_basic';
+
     /**
      * {@inheritdoc}
      */
@@ -51,14 +53,6 @@ class Paypal extends OAuth2
 
         $this->AuthorizeUrlParameters += [
             'flowEntry' => 'static'
-        ];
-
-        $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
-        ];
-
-        $this->tokenRefreshHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
         ];
     }
 

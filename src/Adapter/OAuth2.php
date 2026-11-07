@@ -243,6 +243,17 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
     protected $refreshingAccessToken = false;
 
+    /** @var string|null */
+    protected $pkceMethod = null;
+
+    protected $ignoreLegacyPkceDisable = false;
+
+    /** @var string */
+    protected $tokenEndpointAuthMethod = 'client_secret_post';
+
+    /** @var string auto|json|form|xml; the token_response_format option overrides it. */
+    protected $tokenResponseFormat = 'auto';
+
     /**
      * {@inheritdoc}
      */
@@ -251,20 +262,49 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         $this->clientId = $this->config->filter('keys')->get('id') ?: $this->config->filter('keys')->get('key');
         $this->clientSecret = $this->config->filter('keys')->get('secret');
 
-        if (!$this->clientId || !$this->clientSecret) {
+        if ($this->config->exists('token_endpoint_auth_method')) {
+            $this->tokenEndpointAuthMethod = $this->config->get('token_endpoint_auth_method');
+        }
+        if (!in_array($this->tokenEndpointAuthMethod, ['client_secret_post', 'client_secret_basic', 'none'], true)) {
+            throw new InvalidApplicationCredentialsException('Unsupported token_endpoint_auth_method.');
+        }
+        if (!$this->clientId || ($this->tokenEndpointAuthMethod !== 'none' && !$this->clientSecret)) {
             throw new InvalidApplicationCredentialsException(
-                'Your application id is required in order to connect to ' . $this->providerId
+                'Your application id and the credentials required by the token authentication method are missing for '
+                . $this->providerId
             );
+        }
+        if ($this->tokenEndpointAuthMethod === 'none') {
+            $this->pkceMethod = 'S256';
         }
 
         $this->scope = $this->config->exists('scope') ? $this->config->get('scope') : $this->scope;
 
-        if ($this->config->exists('tokens')) {
-            $this->setAccessToken($this->config->get('tokens'));
-        }
-
         if ($this->config->exists('supportRequestState')) {
             $this->supportRequestState = $this->config->get('supportRequestState');
+        }
+
+        if ($this->config->exists('pkce')) {
+            $pkce = $this->config->get('pkce');
+            if ($pkce === true || $pkce === 'S256') {
+                $this->pkceMethod = 'S256';
+            } elseif ($pkce !== false) {
+                throw new InvalidApplicationCredentialsException('Only S256 PKCE is supported.');
+            } elseif ($this->pkceMethod !== null
+                && (!$this->ignoreLegacyPkceDisable || $this->tokenEndpointAuthMethod === 'none')
+            ) {
+                throw new InvalidApplicationCredentialsException(
+                    'PKCE cannot be disabled for ' . $this->providerId
+                    . ' because the provider or public client authentication requires it.'
+                );
+            }
+        }
+        if ($this->pkceMethod && !$this->supportRequestState) {
+            throw new InvalidApplicationCredentialsException('PKCE requires authorization state validation.');
+        }
+
+        if ($this->config->exists('tokens')) {
+            $this->setAccessToken($this->config->get('tokens'));
         }
 
         $this->setCallback($this->config->get('callback'));
@@ -296,6 +336,8 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->tokenRefreshParameters = [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $refreshToken,
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
             ];
         }
 
@@ -453,8 +495,10 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             && !Data\Random::equals($this->getStoredData('authorization_state'), $state)
         ) {
             $this->deleteStoredData('authorization_state');
+            $this->deleteStoredData('pkce_code_verifier');
             throw new InvalidAuthorizationStateException(
-                'The authorization state [state=' . substr(htmlentities((string) $state, ENT_QUOTES, 'UTF-8'), 0, 100) . '] '
+                'The authorization state [state='
+                . substr(htmlentities((string) $state, ENT_QUOTES, 'UTF-8'), 0, 100) . '] '
                 . 'of this page is either invalid or has already been consumed.'
             );
         }
@@ -516,6 +560,13 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
             $this->storeData('authorization_state', $parameters['state']);
         }
 
+        if ($this->pkceMethod === 'S256') {
+            $verifier = Data\Random::token();
+            $this->storeData('pkce_code_verifier', $verifier);
+            $challenge = base64_encode(hash('sha256', $verifier, true));
+            $parameters['code_challenge'] = rtrim(strtr($challenge, '+/', '-_'), '=');
+            $parameters['code_challenge_method'] = 'S256';
+        }
         if (isset($parameters['scope']) && is_array($parameters['scope'])) {
             $parameters['scope'] = implode(' ', $parameters['scope']);
         }
@@ -549,18 +600,65 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
      */
     protected function exchangeCodeForAccessToken($code)
     {
-        $this->tokenExchangeParameters['code'] = $code;
+        $parameters = $this->tokenExchangeParameters;
+        $parameters['code'] = $code;
+        if ($this->pkceMethod === 'S256') {
+            $verifier = $this->consumePkceVerifier();
+            if (!is_string($verifier) || !preg_match('/^[A-Za-z0-9._~-]{43,128}$/D', $verifier)) {
+                throw new InvalidAuthorizationCodeException(
+                    'Missing or consumed PKCE verifier; restart authorization.'
+                );
+            }
+            $parameters['code_verifier'] = $verifier;
+        }
 
+        list($parameters, $headers) = $this->prepareTokenRequest($parameters, $this->tokenExchangeHeaders);
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
             $this->tokenExchangeMethod,
-            $this->tokenExchangeParameters,
-            $this->tokenExchangeHeaders
+            $parameters,
+            $headers
         );
 
         $this->validateApiResponse('Unable to exchange code for API access token');
 
         return $response;
+    }
+
+    protected function prepareTokenRequest($parameters, $headers)
+    {
+        $explicit = $this->config->exists('token_endpoint_auth_method');
+        $basicHeader = false;
+        foreach ($headers as $name => $value) {
+            if (strcasecmp($name, 'Authorization') === 0) {
+                $basicHeader = stripos($value, 'Basic ') === 0;
+                if ($explicit || $this->tokenEndpointAuthMethod !== 'client_secret_post') {
+                    unset($headers[$name]);
+                }
+            }
+        }
+        if ($this->tokenEndpointAuthMethod === 'none') {
+            unset($parameters['client_secret']);
+            $parameters['client_id'] = $this->clientId;
+        } elseif ($this->tokenEndpointAuthMethod === 'client_secret_basic') {
+            unset($parameters['client_id'], $parameters['client_secret']);
+            $headers['Authorization'] = 'Basic '
+                . base64_encode(urlencode($this->clientId) . ':' . urlencode($this->clientSecret));
+        } elseif ($basicHeader && !$explicit) {
+            // Preserve custom provider authentication without duplicating credentials in the body.
+            unset($parameters['client_id'], $parameters['client_secret']);
+        } else {
+            $parameters['client_id'] = $this->clientId;
+            $parameters['client_secret'] = $this->clientSecret;
+        }
+        return [$parameters, $headers];
+    }
+
+    protected function consumePkceVerifier()
+    {
+        $verifier = $this->getStoredData('pkce_code_verifier');
+        $this->deleteStoredData('pkce_code_verifier');
+        return $verifier;
     }
 
     /**
@@ -688,28 +786,36 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
 
     protected function parseTokenResponse($response)
     {
+        $format = $this->config->get('token_response_format') ?: $this->tokenResponseFormat;
+        if (!in_array($format, ['auto', 'json', 'form', 'xml'], true)) {
+            throw new InvalidAccessTokenException('Unsupported token_response_format.');
+        }
         $contentType = '';
         foreach ((array) $this->httpClient->getResponseHeader() as $name => $value) {
             if (strtolower(str_replace('_', '-', $name)) === 'content-type') {
                 $contentType = strtolower(is_array($value) ? implode(';', $value) : $value);
             }
         }
+        $json = strpos($contentType, '/json') !== false || strpos($contentType, '+json') !== false;
         $prefix = substr(ltrim((string) $response), 0, 1);
-        if (strpos($contentType, '/json') !== false || strpos($contentType, '+json') !== false
-            || $prefix === '{' || $prefix === '['
-        ) {
+        if ($json || $format === 'json' || ($format === 'auto' && ($prefix === '{' || $prefix === '['))) {
             $data = json_decode($response);
             if (json_last_error() !== JSON_ERROR_NONE || !is_object($data)) {
                 throw new InvalidAccessTokenException('Provider returned an invalid JSON token response.');
             }
             return $data;
         }
-        if ($prefix === '<') {
+        if ($format === 'xml') {
             if (stripos($response, '<!DOCTYPE') !== false || stripos($response, '<!ENTITY') !== false) {
                 throw new InvalidAccessTokenException('XML token responses must not declare entities.');
             }
             $data = (new Data\Parser())->parseXml($response);
             return is_array($data) && count($data) === 1 ? reset($data) : $data;
+        }
+        if ($format === 'auto' && $contentType !== ''
+            && strpos($contentType, 'application/x-www-form-urlencoded') === false
+        ) {
+            throw new InvalidAccessTokenException('Provider returned an unsupported token response content type.');
         }
         return (new Data\Parser())->parseQueryString($response);
     }
@@ -744,11 +850,12 @@ abstract class OAuth2 extends AbstractAdapter implements AdapterInterface
         }
 
         $parameters = !empty($parameters) ? $parameters : $this->tokenRefreshParameters;
+        list($parameters, $headers) = $this->prepareTokenRequest($parameters, $this->tokenRefreshHeaders);
         $response = $this->httpClient->request(
             $this->accessTokenUrl,
             $this->tokenRefreshMethod,
             $parameters,
-            $this->tokenRefreshHeaders
+            $headers
         );
 
         $this->validateApiResponse('Unable to refresh the access token');

@@ -10,6 +10,7 @@ namespace Hybridauth\Adapter;
 use Hybridauth\Exception\InvalidOpenidIdentifierException;
 use Hybridauth\Exception\AuthorizationDeniedException;
 use Hybridauth\Exception\UnexpectedApiResponseException;
+use Hybridauth\Exception\InvalidAuthorizationStateException;
 use Hybridauth\Data;
 use Hybridauth\HttpClient;
 use Hybridauth\User;
@@ -75,8 +76,12 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             $hostUrl .= ':' . $hostPort;
         }
 
-        // @fixme: add proxy
-        $this->openIdClient = new LightOpenID($hostUrl, null);
+        $this->openIdClient = new LightOpenID(
+            $hostUrl,
+            $this->config->get('openid_proxy'),
+            $this->config->get('openid_trusted_endpoints') ?: []
+        );
+        $this->openIdClient->cainfo = $this->config->get('openid_cainfo');
     }
 
     /**
@@ -90,7 +95,8 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
             return true;
         }
 
-        if (empty($_REQUEST['openid_mode'])) {
+        $input = isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+        if (empty($input['openid_mode'])) {
             $this->authenticateBegin();
         } else {
             return $this->authenticateFinish();
@@ -113,6 +119,7 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     public function disconnect()
     {
         $this->storage->delete($this->providerId . '.user');
+        $this->clearStoredData();
 
         return true;
     }
@@ -125,7 +132,12 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
     protected function authenticateBegin()
     {
         $this->openIdClient->identity = $this->openidIdentifier;
-        $this->openIdClient->returnUrl = $this->callback;
+        $state = Data\Random::token();
+        $this->storeData('authorization_state', $state);
+        $callback = explode('#', $this->callback, 2)[0];
+        $this->openIdClient->returnUrl = $callback
+            . (strpos($callback, '?') === false ? '?' : '&') . 'ha_state=' . $state;
+        $this->storeData('openid_return_to', $this->openIdClient->returnUrl);
         $this->openIdClient->required = [
             'namePerson/first',
             'namePerson/last',
@@ -160,6 +172,16 @@ abstract class OpenID extends AbstractAdapter implements AdapterInterface
      */
     protected function authenticateFinish()
     {
+        $expectedState = $this->getStoredData('authorization_state');
+        $returnUrl = $this->getStoredData('openid_return_to');
+        $this->deleteStoredData('authorization_state');
+        $this->deleteStoredData('openid_return_to');
+        if (!Data\Random::equals($expectedState, $this->filterInput(INPUT_GET, 'ha_state'))
+            || !is_string($returnUrl) || $returnUrl === ''
+        ) {
+            throw new InvalidAuthorizationStateException('Invalid or consumed OpenID login state.');
+        }
+        $this->openIdClient->returnUrl = $returnUrl;
         $this->logger->debug(
             sprintf('%s::authenticateFinish(), callback url:', get_class($this)),
             [HttpClient\Util::getCurrentUrl(true)]

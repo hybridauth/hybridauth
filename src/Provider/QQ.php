@@ -54,6 +54,13 @@ class QQ extends OAuth2
     protected $tokenRefreshMethod = 'GET';
 
     /**
+     * QQ answers token requests with a form-encoded body labelled text/html.
+     *
+     * {@inheritdoc}
+     */
+    protected $tokenResponseFormat = 'form';
+
+    /**
      * {@inheritdoc}
      */
     protected $apiDocumentation = ''; // Not available

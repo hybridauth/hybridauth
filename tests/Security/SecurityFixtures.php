@@ -25,6 +25,15 @@ class MemoryStorage implements StorageInterface
     public function clear() { $this->items = []; }
 }
 
+class TelegramWidget extends \Hybridauth\Provider\TelegramWidget
+{
+    public $input = [];
+    public function widget() { return $this->getLoginHtml(); }
+    public function filterInput($type, $name, $filter = FILTER_DEFAULT, $options = 0) {
+        return isset($this->input[$name]) ? $this->input[$name] : null;
+    }
+}
+
 class Google extends \Hybridauth\Provider\Google
 {
     public $input = [];
