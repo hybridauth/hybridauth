@@ -113,13 +113,18 @@ class Guzzle implements HttpClientInterface
      */
     public function request($uri, $method = 'GET', $parameters = [], $headers = [], $multipart = false)
     {
-        $this->requestHeader = array_replace($this->requestHeader, (array)$headers);
+        $requestHeaders = Util::mergeHeaders($this->requestHeader, $headers);
+        $this->responseBody = '';
+        $this->responseHeader = [];
+        $this->responseHttpCode = 0;
+        $this->responseClientError = null;
+        $this->responseClientInfo = [];
 
         $this->requestArguments = [
             'uri' => $uri,
             'method' => $method,
             'parameters' => $parameters,
-            'headers' => $this->requestHeader,
+            'headers' => $requestHeaders,
         ];
 
         $response = null;
@@ -130,7 +135,7 @@ class Guzzle implements HttpClientInterface
                 case 'DELETE':
                     $response = $this->client->request($method, $uri, [
                         'query' => $parameters,
-                        'headers' => $this->requestHeader,
+                        'headers' => $requestHeaders,
                     ]);
                     break;
                 case 'PUT':
@@ -138,9 +143,7 @@ class Guzzle implements HttpClientInterface
                 case 'POST':
                     $body_type = $multipart ? 'multipart' : 'form_params';
 
-                    if (isset($this->requestHeader['Content-Type'])
-                        && $this->requestHeader['Content-Type'] === 'application/json'
-                    ) {
+                    if (Util::isJsonContentType($requestHeaders)) {
                         $body_type = 'json';
                     }
 
@@ -161,12 +164,12 @@ class Guzzle implements HttpClientInterface
 
                     $response = $this->client->request($method, $uri, [
                         $body_type => $body_content,
-                        'headers' => $this->requestHeader,
+                        'headers' => $requestHeaders,
                     ]);
                     break;
             }
         } catch (\Exception $e) {
-            $response = $e->getResponse();
+            $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
 
             $this->responseClientError = $e->getMessage();
         }

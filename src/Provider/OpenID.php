@@ -27,6 +27,13 @@ use Hybridauth\Adapter;
  *       // 'openid_identifier' => 'http://steamcommunity.com/openid',
  *
  *       // etc.
+ *
+ *       // Corporate authorities must explicitly allow their private destination addresses.
+ *       // 'openid_trusted_endpoints' => [
+ *       //     ['origin' => 'https://sso.corp.example', 'addresses' => ['10.20.30.10/32']],
+ *       // ],
+ *       // 'openid_proxy' => 'http://proxy.corp.example:8080',
+ *       // 'openid_cainfo' => '/path/to/corporate-ca.pem',
  *   ];
  *
  *   $adapter = new Hybridauth\Provider\OpenID($config);

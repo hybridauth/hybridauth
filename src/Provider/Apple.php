@@ -132,24 +132,10 @@ class Apple extends OAuth2
      */
     public function getAccessToken()
     {
-        $tokenNames = [
-            'access_token',
-            'id_token',
-            'access_token_secret',
-            'token_type',
-            'refresh_token',
-            'expires_in',
-            'expires_at',
-        ];
-
-        $tokens = [];
-
-        foreach ($tokenNames as $name) {
-            if ($this->getStoredData($name)) {
-                $tokens[$name] = $this->getStoredData($name);
-            }
+        $tokens = parent::getAccessToken();
+        if ($this->getStoredData('id_token')) {
+            $tokens['id_token'] = $this->getStoredData('id_token');
         }
-
         return $tokens;
     }
 

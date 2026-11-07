@@ -17,6 +17,8 @@ use Hybridauth\User;
  */
 class Reddit extends OAuth2
 {
+    protected $tokenEndpointAuthMethod = 'client_secret_basic';
+
     /**
      * {@inheritdoc}
      */
@@ -52,18 +54,6 @@ class Reddit extends OAuth2
         $this->AuthorizeUrlParameters += [
             'duration' => 'permanent'
         ];
-
-        $this->tokenExchangeParameters = [
-            'client_id' => $this->clientId,
-            'grant_type' => 'authorization_code',
-            'redirect_uri' => $this->callback
-        ];
-
-        $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
-        ];
-
-        $this->tokenRefreshHeaders = $this->tokenExchangeHeaders;
     }
 
     /**

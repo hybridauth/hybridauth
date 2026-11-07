@@ -97,4 +97,47 @@ class Util
             $collection->get('HTTP_HOST') .
             $collection->get($requestUri ? 'REQUEST_URI' : 'PHP_SELF');
     }
+
+    /**
+     * Merge per-request headers over defaults; header names are case-insensitive.
+     *
+     * @param array $defaults
+     * @param array $headers
+     *
+     * @return array
+     */
+    public static function mergeHeaders($defaults, $headers)
+    {
+        $merged = (array) $defaults;
+        foreach ((array) $headers as $name => $value) {
+            foreach (array_keys($merged) as $existing) {
+                if (strcasecmp($name, $existing) === 0) {
+                    unset($merged[$existing]);
+                }
+            }
+            $merged[$name] = $value;
+        }
+
+        return $merged;
+    }
+
+    /**
+     * Whether the request headers declare a JSON body (parameters such as charset are ignored).
+     *
+     * @param array $headers
+     *
+     * @return bool
+     */
+    public static function isJsonContentType($headers)
+    {
+        foreach ((array) $headers as $name => $value) {
+            if (strcasecmp($name, 'Content-Type') === 0
+                && strtolower(trim(strtok((string) $value, ';'))) === 'application/json'
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -22,6 +22,8 @@ use Hybridauth\User;
  */
 class Yahoo extends OAuth2
 {
+    protected $tokenEndpointAuthMethod = 'client_secret_basic';
+
     /**
      * {@inheritdoc}
      */
@@ -51,20 +53,6 @@ class Yahoo extends OAuth2
      * Currently authenticated user
      */
     protected $userId = null;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->tokenExchangeHeaders = [
-            'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)
-        ];
-
-        $this->tokenRefreshHeaders = $this->tokenExchangeHeaders;
-    }
 
     /**
      * {@inheritdoc}

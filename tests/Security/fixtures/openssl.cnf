@@ -1,0 +1,11 @@
+[req]
+distinguished_name = dn
+default_md = sha256
+
+[dn]
+
+[server]
+basicConstraints = critical,CA:TRUE
+keyUsage = critical,digitalSignature,keyEncipherment,keyCertSign
+extendedKeyUsage = serverAuth
+subjectAltName = DNS:sso.corp.invalid
